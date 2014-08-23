@@ -10,25 +10,25 @@
     - group: virl
     - file_mode: 755
     {% if grains['cml?'] == True %}
-    - source: "salt://virl/files/ank/release/cml/"
+    - source: "salt://ank/release/cml/"
     {% elif virltype == 'stable' %}
-    - source: "salt://virl/files/ank/release/stable/"
+    - source: "salt://ank/release/stable/"
     {% elif virltype == 'testing' %}
-    - source: "salt://virl/files/ank/release/testing/"
+    - source: "salt://ank/release/testing/"
     {% endif %}
 
 ank_init:
   file.managed:
     - order: 2
     - name: /etc/init.d/ank-webserver
-    - source: "salt://virl/files/ank-webserver.init"
+    - source: "salt://files/ank-webserver.init"
     - mode: 0755
 
 /root/.autonetkit/autonetkit.cfg:
   file.managed:
     - order: 3
     - makedirs: True
-    - source: "salt://virl/files/autonetkit.cfg"
+    - source: "salt://files/autonetkit.cfg"
     - mode: 0755
 
 /etc/rc2.d/S98ank-webserver:
@@ -96,13 +96,13 @@ ank-webserver:
 # /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so:
 #   file.managed:
 #     - order: 3
-#     - source: salt://virl/files/ank/release/cml/autonetkit_cisco_cml.so
+#     - source: salt://files/ank/release/cml/autonetkit_cisco_cml.so
 #     - mode: 755
 # {% else %}
 # autonetkit_cisco:
 #   file.managed:
 #     - order: 3
-#     - source: salt://virl/files/ank/release/stable/autonetkit_cisco.so
+#     - source: salt://files/ank/release/stable/autonetkit_cisco.so
 #     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
 #     - require:
 #       - pip: autonetkit
