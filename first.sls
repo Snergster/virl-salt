@@ -42,30 +42,30 @@ basic:
 
 /usr/local/bin/vinstall:
   file.managed:
-    - source: salt://virl/files/vinstall.py
+    - source: salt://files/vinstall.py
     - user: virl
     - group: virl
     - mode: 755
 
 /usr/bin/telnet_front:
   file.managed:
-    - source: salt://virl/files/install_scripts/telnet_front
+    - source: salt://files/install_scripts/telnet_front
     - mode: 755
 
 /etc/modprobe.d/kvm-intel.conf:
   file.managed:
-    - source: salt://virl/files/kvm-intel.conf
+    - source: salt://files/kvm-intel.conf
     - mode: 755
 
 /home/virl/.virl.jpg:
   file.managed:
-    - source: salt://virl/files/virl.jpg
+    - source: salt://files/virl.jpg
     - user: virl
     - group: virl
 
 /home/virl/orig.settings.ini:
   file.managed:
-    - source: salt://virl/files/vsettings.ini
+    - source: salt://files/vsettings.ini
     - user: virl
     - group: virl
     - mode: 755
@@ -73,7 +73,7 @@ basic:
 virlwebpages:
   file.recurse:
     - name: /var/www/html
-    - source: salt://virl/files/virlweb
+    - source: salt://files/virlweb
     - user: root
     - group: root
     - file_mode: 755

@@ -3,7 +3,7 @@
     - file_mode: 755
     - dir_mode: 755
     - makedirs: True
-    - source: "salt://virl/files/training"
+    - source: "salt://files/training"
   cmd.wait:
     - name: service apache2 restart
     - watch:
@@ -14,7 +14,7 @@
     - file_mode: 755
     - dir_mode: 755
     - makedirs: True
-    - source: "salt://virl/files/virl.standalone/glocal/std/virl-cli/doc/build/html"
+    - source: "salt://files/virl.standalone/glocal/std/virl-cli/doc/build/html"
   cmd.wait:
     - name: service apache2 restart
     - watch:

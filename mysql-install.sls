@@ -19,7 +19,7 @@
 /tmp/debconf:
   file.managed:
     - order: 1
-    - source: salt://virl/files/debconf
+    - source: salt://files/debconf
 
 debconf-replace:
   file.replace:
@@ -49,7 +49,7 @@ mysql:
     - name: mysql-server
   file.managed:
     - name: /etc/mysql/my.cnf
-    - source: salt://virl/files/my.cnf
+    - source: salt://files/my.cnf
     - require:
       - pkg: mysql-server
   service:

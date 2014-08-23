@@ -24,7 +24,7 @@ cinder-pkgs:
 /etc/cinder/cinder.conf:
   file.managed:
     - file_mode: 755
-    - source: "salt://virl/files/cinder.conf"
+    - source: "salt://files/cinder.conf"
 
 cinder-conn:
   file.replace:

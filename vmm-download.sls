@@ -18,11 +18,11 @@ download2:
     - file_mode: 755
     - dir_mode: 755
    {% if grains['virl type'] == 'stable' and grains['cml?'] == False %}
-    - source: "salt://virl/files/vmm/stable/"
+    - source: "salt://vmm/stable/"
    {% elif grains['virl type'] == 'stable' and grains['cml?'] == True %}
-    - source: "salt://virl/files/cml/stable/"
+    - source: "salt://cml/stable/"
    {% elif grains['virl type'] == 'testing' and grains['cml?'] == False %}
-    - source: "salt://virl/files/vmm/testing/"
+    - source: "salt://vmm/testing/"
    {% elif grains['virl type'] == 'testing' and grains['cml?'] == True %}
-   - source: "salt://virl/files/cml/testing/"
+   - source: "salt://cml/testing/"
    {% endif %}

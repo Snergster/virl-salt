@@ -170,4 +170,4 @@ vhostname:
 /etc/init/failsafe.conf:
   file.managed:
     - file_mode: 644
-    - source: "salt://virl/files/failsafe.conf"
+    - source: "salt://files/failsafe.conf"

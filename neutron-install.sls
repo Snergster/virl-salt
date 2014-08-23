@@ -26,7 +26,7 @@ neutron-pkgs:
     - order: 2
     - makedirs: True
     - file_mode: 755
-    - source: "salt://virl/files/neutron.conf"
+    - source: "salt://files/neutron.conf"
 
 linuxbridge_neutron_agent.py:
   file.managed:
@@ -34,7 +34,7 @@ linuxbridge_neutron_agent.py:
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - file_mode: 755
     - makedirs: True
-    - source: "salt://virl/files/linuxbridge_neutron_agent.py"
+    - source: "salt://files/linuxbridge_neutron_agent.py"
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
@@ -55,14 +55,14 @@ linuxbridge_apt_add:
     - order: 4
     - file_mode: 755
     - makedirs: True
-    - source: "salt://virl/files/linuxbridge_conf.ini"
+    - source: "salt://files/linuxbridge_conf.ini"
 
 /etc/neutron/plugins/ml2/ml2_conf.ini:
   file.managed:
     - order: 4
     - file_mode: 755
     - makedirs: True
-    - source: "salt://virl/files/ml2_conf.ini"
+    - source: "salt://files/ml2_conf.ini"
 
 neutron-conn:
   openstack_config.present:

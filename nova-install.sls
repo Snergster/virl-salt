@@ -37,7 +37,7 @@ nova-pkgs:
 /etc/nova/nova.conf:
   file.managed:
     - file_mode: 755
-    - source: "salt://virl/files/nova.conf"
+    - source: "salt://files/nova.conf"
 
 
 nova-conn:
@@ -154,7 +154,7 @@ nova-compute-libvirt-serport:
 /etc/init.d/nova-serialproxy:
   file.managed:
     - order: 4
-    - source: "salt://virl/files/nova-serialproxy"
+    - source: "salt://files/nova-serialproxy"
     - mode: 0755
 
 /etc/rc2.d/S98nova-serialproxy:
@@ -166,7 +166,7 @@ nova-compute-libvirt-serport:
 /usr/bin/kvm:
   file.managed:
     - order: 4
-    - source: "salt://virl/files/install_scripts/kvm"
+    - source: "salt://files/install_scripts/kvm"
     - mode: 0755
 
 /usr/bin/kvm.real:

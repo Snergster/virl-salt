@@ -16,16 +16,6 @@ ntpdate:
     - order: 2
     - installed
 
-# ntp.conf:
-#   file:
-#     - order: 3
-#     - managed
-#     - name: /etc/ntp.conf
-#     - source: salt://virl/files/vntp.conf
-#     - mode: 755
-#     - require:
-#       - pkg: ntp
-
 /etc/ntp.conf:
   file.replace:
     - order: 4

@@ -24,7 +24,7 @@ tightvnc-pkgs:
     - group: virl
     - dir_mode: 700
     - mode: 755
-    - source: "salt://virl/files/xstartup"
+    - source: "salt://files/xstartup"
 
 /home/virl/.vnc:
     file.directory:
@@ -37,7 +37,7 @@ tightvnc-pkgs:
   file.managed:
     - order: 2
     - mode: 755
-    - source: "salt://virl/files/install_scripts/tightvnc.init"
+    - source: "salt://files/install_scripts/tightvnc.init"
 
 /etc/rc2.d/S97tightvnc:
   file.symlink:
@@ -53,7 +53,7 @@ tightvnc-pkgs:
     - makedirs: True
     - dir_mode: 700
     - mode: 600
-    - source: "salt://virl/files/install_scripts/vnc.passwd"
+    - source: "salt://files/install_scripts/vnc.passwd"
 
 
 tight-restart:

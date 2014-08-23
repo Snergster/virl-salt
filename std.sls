@@ -13,20 +13,20 @@
     - group: virl
     - file_mode: 755
     {% if grains['virl type'] == 'stable' and grains['cml?'] == False %}
-    - source: "salt://virl/files/std/release/stable/"
+    - source: "salt://std/release/stable/"
     {% elif grains['virl type'] == 'stable' and grains['cml?'] == True %}
-    - source: "salt://virl/files/std/cml/stable/"
+    - source: "salt://std/cml/stable/"
     {% elif grains['virl type'] == 'testing' and grains['cml?'] == False %}
-    - source: "salt://virl/files/std/release/testing/"
+    - source: "salt://std/release/testing/"
     {% elif grains['virl type'] == 'testing' and grains['cml?'] == True %}
-    - source: "salt://virl/files/std/cml/testing/"
+    - source: "salt://std/cml/testing/"
     {% endif %}
 
 std_init:
   file.managed:
     - order: 3
     - name: /etc/init.d/virl-std
-    - source: "salt://virl/files/virl-std.init"
+    - source: "salt://files/virl-std.init"
     - mode: 0755
 
 /etc/virl/virl.cfg:
@@ -39,7 +39,7 @@ uwm_init:
   file.managed:
     - order: 4
     - name: /etc/init.d/virl-uwm
-    - source: "salt://virl/files/virl-uwm.init"
+    - source: "salt://files/virl-uwm.init"
     - mode: 0755
 
 /etc/rc2.d/S98virl-std:

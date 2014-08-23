@@ -7,9 +7,9 @@
     - user: virl
     - group: virl
     {% if grains['cml?'] == True %}
-    - source: "salt://virl/files/images/cml/"
+    - source: "salt://images/cml/"
     {% else %}
-    - source: "salt://virl/files/images/full/"
+    - source: "salt://images/full/"
     {% endif %}
 
 {% if grains['cml?'] == True %}
@@ -32,4 +32,4 @@ virlimages:
   file.managed:
     - order: 1
     - file_mode: 755
-    - source: "salt://virl/files/install_scripts/update_images"
+    - source: "salt://files/install_scripts/update_images"

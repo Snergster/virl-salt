@@ -5,4 +5,4 @@
     - file_mode: 755
     - dir_mode: 755
     - makedirs: True
-    - source: "salt://virl/files/virl.standalone"
+    - source: "salt://files/virl.standalone"
