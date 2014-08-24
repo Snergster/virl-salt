@@ -2,10 +2,8 @@
 {% set domain = salt['grains.get']('append_domain', ' ') %}
 
 
-
-
 iosv:
-{% if {{salt['pillar.get]('vmimages']['iosv']}}
+{% if {{salt['pillar.get]('vmimages']['iosv'] == 'True' }}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
@@ -19,7 +17,7 @@ iosv:
 {%endif%}
 
 iosxrv:
-{% if {{salt['pillar.get]('vmimages']['iosxrv']}}
+{% if {{salt['pillar.get]('vmimages']['iosxrv'] == 'True' }}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
