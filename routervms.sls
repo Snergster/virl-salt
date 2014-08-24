@@ -18,10 +18,10 @@
   cmd.wait:
     - name: /usr/local/bin/add-images-auto {{image}}.pkg
     - cwd: /home/virl/images
-{%endif%}
-{%endfor%}
+{% endif %}
+{% endfor %}
 {% else %}
-{% for image in 'iosv'}
+{% for image in 'iosv' %}
 {% if {{image}}grain == 'True' %}
 /home/virl/images:
   file.recurse:
@@ -33,6 +33,6 @@
   cmd.wait:
     - name: /usr/local/bin/add-images-auto {{image}}.pkg
     - cwd: /home/virl/images
-{%endif%}
-{%endfor%}
-{%endif%}
+{% endif %}
+{% endfor %}
+{% endif %}
