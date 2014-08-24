@@ -1,8 +1,8 @@
 {% set onedev = salt['grains.get']('onedev', 'False') %}
 {% set domain = salt['grains.get']('append_domain', ' ') %}
-{% for image in 'iosxrv','iosxrv511','nxosv','csr1000v','vpagent','iosv' %}
-  {% set {{image}}grain = salt['grains.get']({{image}}, 'True') %}
-{% endfor %}
+{% set iosxrvgrain = salt['grains.get']('iosxrv', 'True') %}
+{% set iosv = salt['grains.get']('iosv', 'True') %}
+
 
 
 {% if domain == 'cisco.com' %}
@@ -36,3 +36,8 @@
 {% endif %}
 {% endfor %}
 {% endif %}
+
+
+# {% for image in 'iosxrv','iosxrv511','nxosv','csr1000v','vpagent','iosv' %}
+#   {% set {{image}}grain = salt['grains.get']({{image}}, 'True') %}
+# {% endfor %}
