@@ -1,7 +1,7 @@
 {% set onedev = salt['grains.get']('onedev', 'False') %}
 {% set domain = salt['grains.get']('append_domain', ' ') %}
-{% set iosv {{salt['pillar.get]('vmimages:iosv', 'False'  }}
-{% set iosxrv {{salt['pillar.get]('vmimages:iosxrv', 'False'  }}
+{% set iosv = salt['pillar.get]('vmimages:iosv', 'False'  ) %}
+{% set iosxrv = salt['pillar.get]('vmimages:iosxrv', 'False') %}
 
 {% if iosv == 'True' %}
 iosv:
