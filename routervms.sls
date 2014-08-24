@@ -6,7 +6,7 @@
 
 
 {% if domain == 'cisco.com' %}
-{% for image in 'iosxrv','iosxrv511','nxosv','csr1000v','vpagent'}
+{% for image in 'iosxrv','iosxrv511','nxosv','csr1000v','vpagent'} %}
 {% if {{image}}grain == 'True' %}
 /home/virl/images:
   file.recurse:
