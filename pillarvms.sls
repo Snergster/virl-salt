@@ -17,7 +17,7 @@ iosv:
     - cwd: /home/virl/images
 {%endif%}
 
-{% if salt['pillar.get']('vmimages:iosv', 'False') %}
+{% if salt['pillar.get']('iosv', 'False') %}
 iosv2:
   file.recurse:
     - name: /home/virl/images
