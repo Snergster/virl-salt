@@ -9,6 +9,7 @@
 {% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set serstart = salt['grains.get']('start of serial port range', '17000') %}
 {% set serend = salt['grains.get']('end of serial port range', '18000') %}
+{% set ramdisk = salt['grains.get']('ramdisk', 'True') %}
 
 nova-api:
   pkg.installed:
@@ -180,3 +181,14 @@ nova-compute-libvirt-serport:
     - order: 7
     - target: /usr/bin/nova
     - mode: 0755
+
+{% if ramdisk == 'True' %}
+/etc/fstab:
+  file.append:
+    - text: 'ramdisk /var/lib/nova/instances tmpfs rw,relatime 0 0'
+{% else %}
+ramdisk off:
+  file.comment:
+    - name: /etc/fstab
+    - regex: ^ramdisk
+{% endif %}
