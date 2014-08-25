@@ -33,6 +33,9 @@ iosxrv:
   cmd.wait:
     - name: /usr/local/bin/add-images-auto iosxrv.pkg
     - cwd: /home/virl/images
+    - watch:
+      - file: iosv
+
 {%endif%}
 
 {% if salt['pillar.get']('iosxrv511', 'False') %}
@@ -47,6 +50,8 @@ iosxrv511:
   cmd.wait:
     - name: /usr/local/bin/add-images-auto iosxrv511.pkg
     - cwd: /home/virl/images
+    - watch:
+      - file: iosv
 {%endif%}
 
 {% if salt['pillar.get']('nxosv', 'False') %}
@@ -61,32 +66,42 @@ nxosv:
   cmd.wait:
     - name: /usr/local/bin/add-images-auto nxosv.pkg
     - cwd: /home/virl/images
+    - watch:
+      - file: iosv
+
+
 {%endif%}
 
-{% if salt['pillar.get']('csr1000v', 'False') %}
-csr1000v:
+{% for each in 'csr1000v','vpagent' %}
+{% if salt['pillar.get']({{each}}, 'False') %}
+{{each}}:
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
     - dir_mode: 755
     - user: virl
     - group: virl
-    - source: salt://images/salt/csr1000v
+    - source: salt://images/salt/{{each}}
   cmd.wait:
-    - name: /usr/local/bin/add-images-auto csr1000v.pkg
+    - name: /usr/local/bin/add-images-auto {{each}}.pkg
     - cwd: /home/virl/images
+    - watch:
+      - file: {{each}}
 {%endif%}
+{% endfor %}
 
-{% if salt['pillar.get']('vpagent', 'False') %}
-vpagent:
-  file.recurse:
-    - name: /home/virl/images
-    - file_mode: 755
-    - dir_mode: 755
-    - user: virl
-    - group: virl
-    - source: salt://images/salt/vpagent
-  cmd.wait:
-    - name: /usr/local/bin/add-images-auto vpagent.pkg
-    - cwd: /home/virl/images
-{%endif%}
+# {% if salt['pillar.get']('vpagent', 'False') %}
+# vpagent:
+#   file.recurse:
+#     - name: /home/virl/images
+#     - file_mode: 755
+#     - dir_mode: 755
+#     - user: virl
+#     - group: virl
+#     - source: salt://images/salt/vpagent
+#   cmd.wait:
+#     - name: /usr/local/bin/add-images-auto vpagent.pkg
+#     - cwd: /home/virl/images
+#     - watch:
+#       - file: iosv
+# {%endif%}
