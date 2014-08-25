@@ -16,6 +16,8 @@ iosv:
   cmd.wait:
     - name: /usr/local/bin/add-images-auto iosv.pkg
     - cwd: /home/virl/images
+    - watch:
+      - file: iosv
 {%endif%}
 
 
