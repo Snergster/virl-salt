@@ -25,7 +25,7 @@
     - name: /usr/local/bin/add-images-auto {{each}}.pkg
     - cwd: /home/virl/images
     - watch:
-      - file.recurse: {{each}}
+      - file: {{each}}
 {% else %}
   file.exists:
     - name: /home/virl/images
