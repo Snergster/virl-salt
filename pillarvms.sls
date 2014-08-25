@@ -72,7 +72,7 @@ nxosv:
 
 {%endif%}
 
-{% for each in 'csr1000v','vpagent' %}
+{% for each in 'csr1000v','vpagent','nxosv' %}
 {% if salt['pillar.get']({{each}}, 'False') %}
 {{each}}:
   file.recurse:
@@ -90,18 +90,3 @@ nxosv:
 {%endif%}
 {% endfor %}
 
-# {% if salt['pillar.get']('vpagent', 'False') %}
-# vpagent:
-#   file.recurse:
-#     - name: /home/virl/images
-#     - file_mode: 755
-#     - dir_mode: 755
-#     - user: virl
-#     - group: virl
-#     - source: salt://images/salt/vpagent
-#   cmd.wait:
-#     - name: /usr/local/bin/add-images-auto vpagent.pkg
-#     - cwd: /home/virl/images
-#     - watch:
-#       - file: iosv
-# {%endif%}
