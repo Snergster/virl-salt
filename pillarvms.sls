@@ -43,7 +43,7 @@
     - group: virl
     - source: salt://images/salt/{{each}}
   cmd.wait:
-    - name: /usr/local/bin/add-server {{each}}.pkg
+    - name: /usr/local/bin/add-servers {{each}}.pkg
     - cwd: /home/virl/images
     - watch:
       - file: {{each}}
