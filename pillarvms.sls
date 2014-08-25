@@ -57,7 +57,7 @@ iosxrv511:
 
 {% for each in 'csr1000v','vpagent','nxosv' %}
 {{each}}:
-{% if salt['pillar.get']( each , 'False') %}
+{% if salt['pillar.get']( each , 'False') == False %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
