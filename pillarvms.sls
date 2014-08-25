@@ -5,7 +5,7 @@
 
 
 {% for each in 'iosv','iosxrv','iosxrv511','csr1000v','vpagent','nxosv' %}
-{{each}}:
+{{each}}absent:
   file.absent:
     - name: /home/virl/images/{{each}}.pkg
 {% endfor %}
