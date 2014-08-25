@@ -54,23 +54,6 @@ iosxrv511:
       - file: iosv
 {%endif%}
 
-{% if salt['pillar.get']('nxosv', 'False') %}
-nxosv:
-  file.recurse:
-    - name: /home/virl/images
-    - file_mode: 755
-    - dir_mode: 755
-    - user: virl
-    - group: virl
-    - source: salt://images/salt/nxosv
-  cmd.wait:
-    - name: /usr/local/bin/add-images-auto nxosv.pkg
-    - cwd: /home/virl/images
-    - watch:
-      - file: iosv
-
-
-{%endif%}
 
 {% for each in 'csr1000v','vpagent','nxosv' %}
 {% if salt['pillar.get']({{each}}, 'False') %}
