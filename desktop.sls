@@ -2,11 +2,8 @@ lubuntu_desktop:
   pkg.installed:
     - skip_verify: True
     - refresh: False
-    - pkgs:
-      - openjdk-7-jre
-      - libswt-webkit-gtk-3-jni
-      - libwebkitgtk-3.0-0
-      - lubuntu-desktop
+    - require:
+      - pkg: desktop_require
 
 
 /usr/share/themes/Lubuntu-default:
@@ -14,3 +11,13 @@ lubuntu_desktop:
     - source: "salt://files/Clearlooks"
     - owner: virl
     - group: virl
+
+desktop_require:
+  pkg.installed:
+    - skip_verify: True
+    - refresh: True
+    - pkgs:
+      - openjdk-7-jre
+      - libswt-webkit-gtk-3-jni
+      - libwebkitgtk-3.0-0
+
