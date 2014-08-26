@@ -20,3 +20,17 @@ delete guest account:
   cmd.run:
     - name: /usr/local/bin/virl_uwm_client -u uwmadmin -p {{ uwmpass }} project-delete --name guest
 {% endif %}
+
+virl-std:
+  service:
+    - running
+    - enable: True
+    - restart: True
+
+
+virl-uwm:
+  service:
+    - running
+    - enable: True
+    - restart: True
+
