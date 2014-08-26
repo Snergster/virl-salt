@@ -5,6 +5,8 @@
 
 create guest account:
   cmd.run:
+    - name: service virl-uwm start
+    - name: service virl-std start
     - name: /usr/local/bin/virl_uwm_client -u uwmadmin -p {{ uwmpass }} project-create --name guest
     - require:
       - service: virl-std
