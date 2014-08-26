@@ -2,9 +2,13 @@
 {% set uwmpass = salt['grains.get']('uwmadmin password', 'password') %}
 
 {% if guestaccount == True %}
+
 create guest account:
   cmd.run:
     - name: /usr/local/bin/virl_uwm_client -u uwmadmin -p {{ uwmpass }} project-create --name guest
+    - require:
+      - service: virl-std
+      - service: virl-uwm
 
 fix guest password:
   cmd.wait:

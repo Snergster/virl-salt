@@ -31,7 +31,6 @@ basic:
       - apache2
       - libapache2-mod-wsgi
       - qemu-kvm
-      - gedit
       - mtools
       - socat
 
