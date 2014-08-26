@@ -5,12 +5,10 @@
 
 create guest account:
   cmd.run:
-    - name: service virl-uwm start
-    - name: service virl-std start
     - name: /usr/local/bin/virl_uwm_client -u uwmadmin -p {{ uwmpass }} project-create --name guest
     - require:
-      - service: virl-std
-      - service: virl-uwm
+      - cmd: virl-std
+      - cmd: virl-uwm
 
 fix guest password:
   cmd.wait:
@@ -24,15 +22,11 @@ delete guest account:
 {% endif %}
 
 virl-std:
-  service:
-    - running
-    - enable: True
-    - restart: True
-
+  cmd.run:
+    - name: service virl-std start
 
 virl-uwm:
-  service:
-    - running
-    - enable: True
-    - restart: True
+  cmd.run:
+    - name: service virl-uwm start
+
 
