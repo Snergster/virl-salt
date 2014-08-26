@@ -3,4 +3,5 @@
     - source: salt://files/vinstall.py
     - user: virl
     - group: virl
-    - mode: 755
+    - mode: 0755
+
