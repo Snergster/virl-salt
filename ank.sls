@@ -1,7 +1,7 @@
 {% set ank = salt['grains.get']('ank', '19401') %}
 {% set virltype = salt['grains.get']('virl type', 'stable') %}
 {% set proxy = salt['grains.get']('proxy', 'False') %}
-{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80') %}
+{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 /tmp/ankfiles:
   file.recurse:
@@ -36,6 +36,21 @@ ank_init:
     - target: /etc/init.d/ank-webserver
     - mode: 0755
 
+ank_prereq:
+  pip.installed:
+    {% if grains['proxy'] == true %}
+    - proxy: {{ httpproxy }}
+    {% endif %}
+    - names:
+      - lxml == 3.1.0
+      - configobj == 4.7.1
+      - Mako == 0.8.0
+      - MarkupSafe == 0.18
+      - netaddr == 0.7.10
+      - networkx == 1.7
+      - PyYAML == 3.10
+      - tornado == 3.0.1
+
 autonetkit:
   pip.installed:
     - order: 2
@@ -43,6 +58,8 @@ autonetkit:
     - use_wheel: True
     - no_index: True
     - find_links: "file:///tmp/ankfiles"
+    - require:
+      - pip: ank_prereq
   cmd.wait:
     - names:
       - wheel install-scripts autonetkit
