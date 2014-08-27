@@ -4,7 +4,7 @@
 {% set stdport = salt['grains.get']('virl webservices', '19399') %}
 {% set uwmport = salt['grains.get']('virl user management', '19400') %}
 {% set uwmpass = salt['grains.get']('uwmadmin password', 'password') %}
-{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80') %}
+{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 /tmp/stdfiles:
   file.recurse:
@@ -61,25 +61,27 @@ std_prereq:
     - proxy: {{ httpproxy }}
 {% endif %}
     - names:
-      - ipaddr
-      - flask-sqlalchemy
-      - Flask
-      - Flask_Login
-      - Flask_RESTful
-      - Flask_WTF
-      - itsdangerous
-      - Jinja2
-      - lxml
-      - MarkupSafe
-      - mock
-      - requests
-      - simplejson
-      - sqlalchemy
+      - ipaddr == 2.1.0
+      - flask-sqlalchemy == 0.16
+      - Flask == 0.9
+      - Flask_Login == 0.2.7
+      - Flask_RESTful == 0.1.2
+      - Flask_WTF == 0.9.3
+      - itsdangerous == 0.23
+      - Jinja2 == 2.2.6
+      - lxml == 3.1.0
+      - MarkupSafe == 0.18
+      - mock == 1.0.1
+      - requests == 2.0.1
+      - paramiko == 1.11.0
+      - pycrypto == 2.6.1
+      - simplejson == 2.1.6
+      - sqlalchemy == 0.7.9
       - tornado == 3.0.1
-      - websocket_client
-      - Werkzeug
-      - wsgiref
-      - WTForms
+      - websocket_client == 0.11.0
+      - Werkzeug == 0.8.3
+      - wsgiref == 0.1.2
+      - WTForms == 1.0.5
 
 
 VIRL_CORE:
@@ -96,7 +98,7 @@ VIRL_CORE:
     - name: VIRL_CORE
     {% endif %}
   cmd.wait:
-    - names: 
+    - names:
     {% if grains['cml?'] == True %}
       - virl_config lsb-links
     {% else %}
