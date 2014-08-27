@@ -3,7 +3,6 @@
 base:
   '*':
     {% if grains['inside cisco?'] == true %}
-       - ank-internal
        - std-internal
        - vmm-download-internal
        - virl-install-internal
