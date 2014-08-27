@@ -1,6 +1,7 @@
 openstack:
   '*':
      - basics
+     - ntp
      - first
      - mysql-install
      - rabbitmq-install
