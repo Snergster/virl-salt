@@ -8,10 +8,10 @@
 /etc/fstab:
   file:
 {% if ramdisk == 'True' %}
-    - append:
+    - append
     - text: 'ramdisk /var/lib/nova/instances tmpfs rw,relatime 0 0'
 {% else %}
-    - comment:
+    - comment
     - name: /etc/fstab
     - regex: ^ramdisk
 {% endif %}
