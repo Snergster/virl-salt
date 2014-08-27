@@ -182,13 +182,13 @@ nova-compute-libvirt-serport:
     - target: /usr/bin/nova
     - mode: 0755
 
-{% if ramdisk == 'True' %}
 /etc/fstab:
-  file.append:
+  file:
+{% if ramdisk == True %}
+    - append
     - text: 'ramdisk /var/lib/nova/instances tmpfs rw,relatime 0 0'
 {% else %}
-ramdisk off:
-  file.comment:
+    - comment
     - name: /etc/fstab
     - regex: ^ramdisk
 {% endif %}
