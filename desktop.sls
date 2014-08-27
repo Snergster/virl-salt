@@ -1,4 +1,4 @@
-lubuntu_desktop:
+lubuntu-desktop:
   pkg.installed:
     - skip_verify: True
     - refresh: False
