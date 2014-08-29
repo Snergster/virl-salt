@@ -57,6 +57,7 @@ uwm_init:
 std_prereq:
   pip.installed:
     - order: 2
+    - find_links: "file:///tmp/stdfiles"
 {% if grains['proxy'] == true %}
     - proxy: {{ httpproxy }}
 {% endif %}
