@@ -64,12 +64,9 @@ first-vinstall:
   file.managed:
     - name: /usr/local/bin/vinstall
     - source: 'salt://files/vinstall.py'
+    - mode: 0755
   cmd.wait:
     - name: /usr/local/bin/vinstall salt
-    - name: rm -rf /tmp/install.out
-    - name: rm -rf /tmp/grains
-    - name: rm -rf /tmp/openstack
-    - name: rm -rf /tmp/extra
     - watch:
       - file: /usr/local/bin/vinstall
 
