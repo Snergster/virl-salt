@@ -1,6 +1,6 @@
 /tmp/vmwaretools.tar.gz:
   file.managed:
-    - source: "salt://files/vmwaretools.tar.gz"
+    - source: "salt://images/vmware/vmwaretools.tar.gz"
     - order: 1
 
 tar-vmware:
