@@ -286,8 +286,8 @@ neutron-sysctlforward:
     - pattern: '#net.ipv4.ip_forward=1'
     - repl: 'net.ipv4.ip_forward=1'
 
-db-sync:
-  cmd.run: 
+neutron db-sync:
+  cmd.run:
     - name: |
         service neutron-server restart
         sysctl -p

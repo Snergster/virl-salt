@@ -107,16 +107,15 @@ glance-reg-flavor:
     - repl: 'flavor=keystone'
 
 
-db-sync:
+glance db-sync:
   cmd.run:
     - name: su -s /bin/sh -c "glance-manage db_sync" glance
 
 db-restart:
   cmd.run:
     - order: last
-    - names: 
+    - names:
       - service glance-registry restart
       - service glance-api restart
     - require:
       - pkg: glance
-
