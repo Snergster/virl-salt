@@ -69,6 +69,14 @@ basic:
     - group: virl
     - mode: 755
 
+/var/www/html:
+  file.directory:
+    - order: 1
+    - mode: 755
+    - makedirs: True
+    - name: /var/www/download
+
+
 virlwebpages:
   file.recurse:
     - name: /var/www/html
@@ -76,6 +84,8 @@ virlwebpages:
     - user: root
     - group: root
     - file_mode: 755
+    - require:
+      - file: /var/www/html
 
 # base_index_pointer:
 #   file.replace:

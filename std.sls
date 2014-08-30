@@ -57,32 +57,31 @@ uwm_init:
 std_prereq:
   pip.installed:
     - order: 2
-    - find_links: "file:///tmp/stdfiles"
 {% if grains['proxy'] == true %}
     - proxy: {{ httpproxy }}
 {% endif %}
     - names:
-      - ipaddr == 2.1.11
-      - flask-sqlalchemy == 0.16
-      - Flask == 0.9
-      - Flask_Login == 0.2.7
-      - Flask_RESTful == 0.1.2
-      - Flask_WTF == 0.9.3
-      - itsdangerous == 0.23
-      - Jinja2 == 2.7.2
-      - lxml == 3.1.0
-      - MarkupSafe == 0.18
-      - mock == 1.0.1
-      - requests == 2.0.1
-      - paramiko == 1.11.0
-      - pycrypto == 2.6.1
-      - simplejson == 2.1.6
-      - sqlalchemy == 0.7.9
+      - ipaddr
+      - flask-sqlalchemy
+      - Flask
+      - Flask_Login
+      - Flask_RESTful
+      - Flask_WTF
+      - itsdangerous
+      - Jinja2
+      - lxml
+      - MarkupSafe
+      - mock
+      - requests
+      - paramiko
+      - pycrypto
+      - simplejson
+      - sqlalchemy
       - tornado == 3.0.1
-      - websocket_client == 0.11.0
-      - Werkzeug == 0.8.3
-      - wsgiref == 0.1.2
-      - WTForms == 1.0.5
+      - websocket_client
+      - Werkzeug
+      - wsgiref
+      - WTForms 
 
 
 VIRL_CORE:
