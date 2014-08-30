@@ -89,8 +89,8 @@ virlwebpages:
     - user: root
     - group: root
     - file_mode: 755
-    - require:
-      - file: /var/www/html
+    # - require:
+    #   - file: /var/www/html
 
 # base_index_pointer:
 #   file.replace:
