@@ -13,7 +13,7 @@ basic:
       - python-dev
       - git
       - qemu-kvm
-      - build-essential 
+      - build-essential
       - python-pip
       - python-configparser
       - ntp
@@ -78,19 +78,22 @@ basic:
 
 
 virlwebpages:
-  file.recurse:
+  file:
+    directory:
+      - mode: 755
+      - makedirs: True
+      - name: /var/www/download
+    recurse:
     - name: /var/www/html
     - source: salt://files/virlweb
     - user: root
     - group: root
     - file_mode: 755
-    - require:
-      - file: /var/www/html
+#    - require:
+#      - file: /var/www/html
 
 # base_index_pointer:
 #   file.replace:
 #     - name: /var/www/index.html
 #     - pattern: 'UWMPORT'
 #     - repl: '{{ uwmport }}'
-
-

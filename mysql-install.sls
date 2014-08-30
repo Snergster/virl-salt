@@ -75,6 +75,7 @@ mysql:
       - service: mysql
   mysql_database:
     - present
+    - name: {{ user }}
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
@@ -87,7 +88,7 @@ mysql:
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
-      - mysql_database: {{ user }}
+      - mysql_database: {{ user }}-mysql
     - watch:
       - service: mysql
 
