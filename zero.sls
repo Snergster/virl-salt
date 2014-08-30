@@ -60,16 +60,6 @@ python-pip:
   pkg.installed:
    - refresh: True
 
-first-vinstall:
-  file.managed:
-    - order: last
-    - name: /usr/local/bin/vinstall
-    - source: 'salt://files/vinstall.py'
-    - mode: 0755
-  cmd.wait:
-    - name: /usr/local/bin/vinstall salt
-    - watch:
-      - file: /usr/local/bin/vinstall
 
 
 {% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
@@ -83,3 +73,13 @@ first-vinstall:
     - proxy: {{ proxy }}
     {% endif %}
 {% endfor %}
+
+first-vinstall:
+  file.managed:
+    - name: /usr/local/bin/vinstall
+    - source: 'salt://files/vinstall.py'
+    - mode: 0755
+  cmd.wait:
+    - name: /usr/local/bin/vinstall salt
+    - watch:
+      - file: /usr/local/bin/vinstall
