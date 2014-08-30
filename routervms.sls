@@ -1,7 +1,7 @@
 {% set onedev = salt['grains.get']('onedev', 'False') %}
 {% set domain = salt['grains.get']('append_domain', ' ') %}
-{% set iosv = salt['pillar.get']('iosv', 'False'  ) %}
-{% set iosxrv = salt['pillar.get']('iosxrv', 'False') %}
+{% set iosv = salt['pillar.get']('routervms:iosv', 'False'  ) %}
+{% set iosxrv = salt['pillar.get']('routervms:iosxrv', 'False') %}
 
 
 {% for each in 'iosv','iosxrv','iosxrv511','csr1000v','vpagent','nxosv','jumphost','UbuntuServertrusty' %}
@@ -13,7 +13,7 @@
 
 {% for each in 'iosv','iosxrv','iosxrv511','csr1000v','vpagent','nxosv' %}
 {{each}}:
-{% if salt['pillar.get']( each , 'False') == True %}
+{% if salt['pillar.get']( 'routervms:{{each}}' , 'False') == True %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
@@ -34,7 +34,7 @@
 
 {% for each in 'jumphost','UbuntuServertrusty' %}
 {{each}}:
-{% if salt['pillar.get']( each , 'False') == True %}
+{% if salt['pillar.get']( 'routervms:{{each}}' , 'False') == True %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
@@ -52,4 +52,3 @@
     - name: /home/virl/images
 {%endif%}
 {% endfor %}
-
