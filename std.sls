@@ -62,14 +62,14 @@ std_prereq:
     - proxy: {{ httpproxy }}
 {% endif %}
     - names:
-      - ipaddr == 2.1.0
+      - ipaddr == 2.1.11
       - flask-sqlalchemy == 0.16
       - Flask == 0.9
       - Flask_Login == 0.2.7
       - Flask_RESTful == 0.1.2
       - Flask_WTF == 0.9.3
       - itsdangerous == 0.23
-      - Jinja2 == 2.2.6
+      - Jinja2 == 2.3.1
       - lxml == 3.1.0
       - MarkupSafe == 0.18
       - mock == 1.0.1
