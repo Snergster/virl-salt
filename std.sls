@@ -69,7 +69,7 @@ std_prereq:
       - Flask_RESTful == 0.1.2
       - Flask_WTF == 0.9.3
       - itsdangerous == 0.23
-      - Jinja2 == 2.3.1
+      - Jinja2 == 2.7.2
       - lxml == 3.1.0
       - MarkupSafe == 0.18
       - mock == 1.0.1
