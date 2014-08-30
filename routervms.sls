@@ -12,8 +12,9 @@
 
 
 {% for each in 'iosv','iosxrv','iosxrv511','csr1000v','vpagent','nxosv' %}
+{% set toget = 'routervms:{{each}}' %}
 {{each}}:
-{% if salt['pillar.get']( 'routervms:{{each}}' , 'False') == True %}
+{% if salt['pillar.get']( toget , 'False') == True %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
