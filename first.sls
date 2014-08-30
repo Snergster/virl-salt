@@ -79,11 +79,11 @@ basic:
 
 virlwebpages:
   file:
-    - directory
-    - mode: 755
-    - makedirs: True
-    - name: /var/www/download
-    - recurse:
+    directory:
+      - mode: 755
+      - makedirs: True
+      - name: /var/www/download
+    recurse:
     - name: /var/www/html
     - source: salt://files/virlweb
     - user: root
