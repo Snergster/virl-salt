@@ -62,6 +62,7 @@ python-pip:
 
 first-vinstall:
   file.managed:
+    - order: last
     - name: /usr/local/bin/vinstall
     - source: 'salt://files/vinstall.py'
     - mode: 0755
@@ -69,6 +70,7 @@ first-vinstall:
     - name: /usr/local/bin/vinstall salt
     - watch:
       - file: /usr/local/bin/vinstall
+
 
 {% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
 {{ pyreq }}:
