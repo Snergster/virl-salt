@@ -1,5 +1,6 @@
-openstack:
-  '*':
+all:
+  match: 'ejk*'
+  require
      - basics
      - ntp
      - first
