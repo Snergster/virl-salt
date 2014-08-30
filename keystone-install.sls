@@ -29,7 +29,7 @@ logdir:
     - pattern: '#log_dir=<None>'
     - repl:  'log_dir = /var/log/keystone'
 
-db-sync:
+keystone db-sync:
   cmd.run:
     - name: su -s /bin/sh -c "keystone-manage db_sync" keystone
     - require:
@@ -43,4 +43,3 @@ db-sync:
 key-db-sync:
   cmd.run:
     - name: service keystone restart
-

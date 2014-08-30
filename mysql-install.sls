@@ -63,9 +63,9 @@ mysql:
 
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
 {% for user in accounts %}
-{{ user }}:
+{{ user }}-mysql:
   mysql_user.present:
-#    - host: '%'
+    - name: {{ user }}
     - host: 'localhost'
     - password: {{ mypassword }}
     - require:
@@ -123,4 +123,3 @@ mysql:
       - mysql_database: {{ user }}
 
 {% endfor %}
-

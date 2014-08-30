@@ -42,13 +42,13 @@ ank_prereq:
     - proxy: {{ httpproxy }}
     {% endif %}
     - names:
-      - lxml == 3.1.0
-      - configobj == 4.7.1
-      - Mako == 0.8.0
-      - MarkupSafe == 0.18
-      - netaddr == 0.7.10
-      - networkx == 1.7
-      - PyYAML == 3.10
+      - lxml
+      - configobj
+      - Mako
+      - MarkupSafe
+      - netaddr
+      - networkx
+      - PyYAML
       - tornado == 3.0.1
 
 autonetkit:
