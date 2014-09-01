@@ -1,4 +1,4 @@
-{% set ifproxy = salt['grains.get']('http proxy', 'None') %}
+{% set ifproxy = salt['grains.get']('proxy', 'False') %}
 
 /etc/apt/sources.list.d/cisco-openstack-mirror_icehouse.list:
   file.managed:
@@ -60,7 +60,13 @@ python-pip:
   pkg.installed:
    - refresh: True
 
+openssh-server:
+  pkg.installed:
+   - refresh: False
 
+crudini:
+  pkg.installed:
+   - refresh: False
 
 {% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
 {{ pyreq }}:
