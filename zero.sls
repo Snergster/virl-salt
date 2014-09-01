@@ -79,7 +79,11 @@ first-vinstall:
     - name: /usr/local/bin/vinstall
     - source: 'salt://files/vinstall.py'
     - mode: 0755
-  cmd.wait:
-    - name: /usr/local/bin/vinstall salt
-    - watch:
-      - file: /usr/local/bin/vinstall
+
+
+first-vsettings:
+  file.managed:
+    - name: /home/virl/vsettings.ini
+    - source: 'salt://files/vsettings.ini'
+    - mode: 0755
+
