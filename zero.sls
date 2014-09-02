@@ -77,8 +77,7 @@ crudini:
     - target: /usr/bin/crudini
     - mode: 0755
     - require:
-      - pip: crudini
-
+      - pkg: crudini
 
 first-vinstall:
   file.managed:
