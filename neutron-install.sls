@@ -8,6 +8,13 @@
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
 {% set int_ip = salt['grains.get']('internalnet ip', '172.16.10.250' ) %}
+{% set l2_port = salt['grains.get']('l2_port', 'eth1' ) %}
+{% set l2_address = salt['grains.get']('l2_address', '172.16.1.254' ) %}
+{% set l2_address2 = salt['grains.get']('l2_address2', '172.16.2.254' ) %}
+{% set l3_address = salt['grains.get']('l3_address', '172.16.3.254' ) %}
+{% set l2_port2 = salt['grains.get']('l2_port2', 'eth2' ) %}
+{% set l2_port2_enabled = salt['grains.get']('l2_port2_enabled', 'True' ) %}
+{% set l3_port = salt['grains.get']('l3_port', 'eth3' ) %}
 
 neutron-pkgs:
   pkg.installed:
@@ -91,6 +98,17 @@ neutron-plugin-localip:
     - section: 'vxlan'
     - parameter: 'local_ip'
     - value: ' {{ int_ip}}'
+
+neutron-provider-networks:
+  openstack_config.present:
+    - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
+    - section: 'linux_bridge'
+    - parameter: 'network_vlan_ranges'
+    {% if l2_port2 == True %}
+    - value: 'flat:{{ l2_port }},flat2:{{ l2_port2 }},ext-net:{{ l3_port }}'
+    {% else %}
+    - value: 'flat:{{ l2_port }},ext-net:{{ l3_port }}'
+    {% endif %}
 
 neutron-hostname:
   openstack_config.present:
