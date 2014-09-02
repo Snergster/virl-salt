@@ -18,7 +18,6 @@ basic:
       - python-configparser
       - ntp
       - openssh-server
-      - crudini
       - zile
       - gcc
       - ntp
@@ -33,6 +32,8 @@ basic:
       - qemu-kvm
       - mtools
       - socat
+
+
 
 /usr/local/bin/openstack-config:
   file.symlink:
