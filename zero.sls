@@ -4,14 +4,6 @@
   file.managed:
     - source: salt://files/cisco-openstack-mirror_icehouse.list
 
-/etc/apt/sources.list.d/docker.list:
-  file.managed:
-    - source: salt://files/docker.list
-  cmd.wait:
-    - name: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
-    - cwd: /tmp
-    - watch:
-      - file: /etc/apt/sources.list.d/docker.list
 
 /etc/apt/preferences.d/cisco-openstack:
   file.managed:
@@ -93,3 +85,11 @@ first-vsettings:
     - source: 'salt://files/vsettings.ini'
     - mode: 0755
 
+# /etc/apt/sources.list.d/docker.list:
+#   file.managed:
+#     - source: salt://files/docker.list
+#   cmd.wait:
+#     - name: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9
+#     - cwd: /tmp
+#     - watch:
+#       - file: /etc/apt/sources.list.d/docker.list
