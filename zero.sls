@@ -72,6 +72,14 @@ crudini:
     {% endif %}
 {% endfor %}
 
+/usr/local/bin/openstack-config:
+  file.symlink:
+    - target: /usr/bin/crudini
+    - mode: 0755
+    - require:
+      - pip: crudini
+
+
 first-vinstall:
   file.managed:
     - name: /usr/local/bin/vinstall
