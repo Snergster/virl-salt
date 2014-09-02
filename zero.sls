@@ -56,6 +56,9 @@ openssh-server:
   pkg.installed:
    - refresh: False
 
+crudini:
+  pkg.installed:
+   - refresh: False
 
 {% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2', 'crudini' %}
 {{ pyreq }}:
