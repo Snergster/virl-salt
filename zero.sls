@@ -60,7 +60,7 @@ crudini:
   pkg.installed:
    - refresh: False
 
-{% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2', 'crudini' %}
+{% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
 {{ pyreq }}:
   pip.installed:
     - require:
