@@ -44,6 +44,7 @@ ank_prereq:
     - names:
       - lxml
       - configobj
+      - six
       - Mako
       - MarkupSafe
       - netaddr
