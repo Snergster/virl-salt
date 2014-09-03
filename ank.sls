@@ -3,7 +3,7 @@
 {% set proxy = salt['grains.get']('proxy', 'False') %}
 {% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
-/tmp/ankfiles:
+/var/cache/virl/ank:
   file.recurse:
     - order: 1
     - user: virl
@@ -60,7 +60,7 @@ autonetkit:
     - upgrade: True
     - use_wheel: True
     - no_index: True
-    - find_links: "file:///tmp/ankfiles"
+    - find_links: "file:///var/cache/virl/ank"
     - require:
       - pip: ank_prereq
   cmd.wait:
@@ -76,7 +76,7 @@ autonetkit_cisco:
     - upgrade: True
     - use_wheel: True
     - no_index: True
-    - find_links: "file:///tmp/ankfiles"
+    - find_links: "file:///var/cache/virl/ank"
     - require:
       - pip: autonetkit
 
@@ -88,7 +88,7 @@ autonetkit_cisco_webui:
     - use_wheel: True
     - no_index: True
     - name: autonetkit_cisco_webui
-    - find_links: "file:///tmp/ankfiles"
+    - find_links: "file:///var/cache/virl/ank"
     - require:
       - pip: autonetkit_cisco
 

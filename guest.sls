@@ -12,7 +12,7 @@ create guest account:
 
 fix guest password:
   cmd.wait:
-    - name: /usr/local/bin/virl_uwm_server set-password -u guest -p {{ uwmpass }} -P guest
+    - name: sleep 4 && /usr/local/bin/virl_uwm_server set-password -u guest -p {{ uwmpass }} -P guest
     - watch:
       - cmd: create guest account
 {% else %}

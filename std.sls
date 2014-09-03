@@ -6,7 +6,7 @@
 {% set uwmpass = salt['grains.get']('uwmadmin password', 'password') %}
 {% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
-/tmp/stdfiles:
+/var/cache/virl/std:
   file.recurse:
     - order: 1
     - user: virl
@@ -91,7 +91,7 @@ VIRL_CORE:
     - use_wheel: True
     - no_index: True
     - no_deps: True
-    - find_links: "file:///tmp/stdfiles"
+    - find_links: "file:///var/cache/virl/std"
     {% if grains['cml?'] == True %}
     - name: CML_CORE
     {% else %}
