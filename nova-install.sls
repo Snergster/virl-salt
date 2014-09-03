@@ -189,6 +189,7 @@ nova-compute-libvirt-serport:
     - text: 'ramdisk /var/lib/nova/instances tmpfs rw,relatime 0 0'
 {% else %}
     - comment
+    - unless: grep ramdisk /etc/fstab
     - name: /etc/fstab
     - regex: ^ramdisk
 {% endif %}

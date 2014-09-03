@@ -111,7 +111,13 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_std_url http://localhost:{{ stdport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_port {{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ uwmport }}
-      - /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpass }} -U uwmadmin -P {{ uwmpass }} -T uwmadmin
+    - watch:
+      - pip: VIRL_CORE
+
+virl init:
+  cmd.wait:
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpass }} -U uwmadmin -P {{ uwmpass }} -T uwmadmin
+    - unless: ls /var/local/virl/users
     - watch:
       - pip: VIRL_CORE
 
@@ -122,6 +128,7 @@ virl-std:
     - restart: True
     - watch:
       - pip: VIRL_CORE
+      - cmd: virl init
 
 virl-uwm:
   service:
@@ -130,3 +137,4 @@ virl-uwm:
     - restart: True
     - watch:
       - pip: VIRL_CORE
+      - cmd: virl init
