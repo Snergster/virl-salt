@@ -47,6 +47,8 @@ ank_prereq:
       - six
       - Mako
       - MarkupSafe
+      - certifi
+      - backports.ssl_match_hostname
       - netaddr
       - networkx
       - PyYAML
