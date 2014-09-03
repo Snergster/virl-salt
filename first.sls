@@ -32,6 +32,36 @@ basic:
       - qemu-kvm
       - mtools
       - socat
+:     - configobj
+      - six
+      - Mako
+      - MarkupSafe
+      - certifi
+      - backports.ssl_match_hostname
+      - netaddr
+      - networkx
+      - PyYAML
+      - tornado == 3.0.1
+      - ipaddr
+      - flask-sqlalchemy
+      - Flask
+      - Flask_Login
+      - Flask_RESTful
+      - Flask_WTF
+      - itsdangerous
+      - Jinja2
+      - lxml
+      - MarkupSafe
+      - mock
+      - requests
+      - paramiko
+      - pycrypto
+      - simplejson
+      - sqlalchemy
+      - websocket_client
+      - Werkzeug
+      - wsgiref
+      - WTForms
 
 
 
