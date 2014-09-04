@@ -2,8 +2,12 @@
 {% set ospassword = salt['grains.get']('password', 'password') %}
 {% set rabbitpassword = salt['grains.get']('password', 'password') %}
 {% set hostname = salt['grains.get']('hostname', 'virl') %}
+{% set horizon = salt['grains.get']('enable horizon', 'False') %}
 {% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
+{% set uwmport = salt['grains.get']('virl user management', '19400') %}
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
+
+{% if horizon == True %}
 
 horizon-pkgs:
   pkg.installed:
@@ -58,4 +62,18 @@ horizon-restart:
     - name: |
         service apache2 restart
         service memcached restart
+{% endif %}
 
+virl index:
+  file.managed:
+    - name: /var/www/index.html
+    - mode: 0755
+    - source: salt://files/install_scripts/index.html
+
+uwm port replace:
+  file.replace:
+    - name: /var/www/index.html
+    - pattern: 'location.host + ":.*"'
+    - repl: 'location.host + ":{{ uwmport }}"'
+    - require:
+      - file: virl index
