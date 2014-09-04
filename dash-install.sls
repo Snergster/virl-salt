@@ -73,7 +73,9 @@ virl index:
 uwm port replace:
   file.replace:
     - name: /var/www/index.html
-    - pattern: 'location.host + ":.*"'
+    - pattern: 'UWMPORT'
     - repl: 'location.host + ":{{ uwmport }}"'
     - require:
       - file: virl index
+
+#    - pattern: 'location.host + ":UWMPORT"'
