@@ -22,9 +22,9 @@ download2:
    {% elif grains['virl type'] == 'stable' and grains['cml?'] == True %}
     - source: "salt://cml/stable/"
    {% elif grains['virl type'] == 'testing' and grains['cml?'] == False %}
-    - source: "salt://vmm/testing/"
+    - source: "salt://vmm/qa/"
    {% elif grains['virl type'] == 'testing' and grains['cml?'] == True %}
-    - source: "salt://cml/testing/"
+    - source: "salt://cml/qa/"
    {% endif %}
     - require:
       - file: download2

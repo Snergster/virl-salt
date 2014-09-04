@@ -12,9 +12,9 @@
     {% if grains['cml?'] == True %}
     - source: "salt://ank/release/cml/"
     {% elif virltype == 'stable' %}
-    - source: "salt://ank/release/stable/"
+    - source: "salt://ank/stable/"
     {% elif virltype == 'testing' %}
-    - source: "salt://ank/release/testing/"
+    - source: "salt://ank/qa/"
     {% endif %}
 
 ank_init:
