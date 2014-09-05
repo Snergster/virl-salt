@@ -304,6 +304,16 @@ neutron-sysctlforward:
     - pattern: '#net.ipv4.ip_forward=1'
     - repl: 'net.ipv4.ip_forward=1'
 
+{% for each in ["dhcp-agent","l3-agent","metadata-agent","plugin-linuxbridge-agent","server"] %}
+/etc/init/neutron-{{ each }}.conf:
+  file.replace:
+    - pattern: ^start on runlevel \[2345\]$
+    - repl: 'start on runlevel [2345] and stopped rc'
+    - backup: ''
+    - require:
+      - pkg: neutron-pkgs
+{% endfor %}
+
 neutron db-sync:
   cmd.run:
     - name: |
