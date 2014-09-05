@@ -1,4 +1,7 @@
 {% set uwmport = salt['grains.get']('virl user management', '19400') %}
+{% set proxy = salt['grains.get']('proxy', 'False') %}
+{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
+
 
 cpu-checker:
   pkg.installed:
@@ -33,6 +36,18 @@ basic:
       - qemu-kvm
       - mtools
       - socat
+
+pip install:
+  pkg.installed:
+    - order: 2
+    - name: python-pip
+
+various python prereqs:
+  pip.installed:
+    {% if grains['proxy'] == true %}
+    - proxy: {{ httpproxy }}
+    {% endif %}
+    - names:
       - configobj
       - six
       - Mako
@@ -63,6 +78,8 @@ basic:
       - Werkzeug
       - wsgiref
       - WTForms
+    - require:
+      - pkg: pip install
 
 
 
