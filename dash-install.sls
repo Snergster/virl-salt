@@ -64,6 +64,16 @@ horizon-restart:
         service memcached restart
 {% endif %}
 
+apache overwrite:
+  file.recurse:
+    - name: /var/www/html
+    - source: salt://files/virlweb
+    - user: root
+    - group: root
+    - file_mode: 755
+    - watch:
+      - pkg: horizon-pkgs
+
 virl index:
   file.managed:
     - name: /var/www/index.html
