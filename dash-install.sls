@@ -74,12 +74,6 @@ apache overwrite:
     - watch:
       - pkg: horizon-pkgs
 
-virl index:
-  file.managed:
-    - name: /var/www/index.html
-    - mode: 0755
-    - source: salt://files/install_scripts/index.html
-
 uwm port replace:
   file.replace:
     - name: /var/www/index.html

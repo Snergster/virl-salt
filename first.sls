@@ -33,7 +33,7 @@ basic:
       - qemu-kvm
       - mtools
       - socat
-:     - configobj
+      - configobj
       - six
       - Mako
       - MarkupSafe
