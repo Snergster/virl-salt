@@ -66,7 +66,6 @@ various python prereqs:
       - Flask_WTF
       - itsdangerous
       - Jinja2
-      - lxml
       - MarkupSafe
       - mock
       - requests
