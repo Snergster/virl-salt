@@ -1,3 +1,4 @@
+##comments ok here?
 {% set guestaccount = salt['grains.get']('guest account', 'True') %}
 {% set uwmpass = salt['grains.get']('uwmadmin password', 'password') %}
 
@@ -10,8 +11,10 @@ create guest account:
       - cmd: virl-std
       - cmd: virl-uwm
 
+## what about inside if
+
 fix guest password:
-  cmd.wait:
+  cmd.run:
     - name: sleep 4 && /usr/local/bin/virl_uwm_server set-password -u guest -p {{ uwmpass }} -P guest
     - watch:
       - cmd: create guest account
