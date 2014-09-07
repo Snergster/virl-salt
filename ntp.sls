@@ -41,5 +41,5 @@ ntp start:
 
 /etc/init/ntp.conf:
   file.managed:
-    - mode: 544
+    - mode: 644
     - contents: exec /etc/init.d/ntp start

@@ -13,7 +13,7 @@ create guest account:
 
 fix guest password:
   cmd.run:
-    - name: sleep 4 && /usr/local/bin/virl_uwm_server set-password -u guest -p {{ uwmpass }} -P guest
+    - name: sleep 4 && /usr/local/bin/virl_uwm_server set-password -u guest -p guest -P guest
 {% else %}
 delete guest account:
   cmd.run:
