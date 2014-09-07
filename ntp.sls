@@ -38,3 +38,8 @@ ntp start:
     cmd.run:
       - order: 7
       - name: service ntp start
+
+/etc/init/ntp.conf:
+  file.managed:
+    - mode: 544
+    - contents: exec /etc/init.d/ntp start
