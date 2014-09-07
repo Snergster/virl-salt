@@ -43,6 +43,12 @@ mysql-server-5.5:
 python-mysqldb:
   pkg.installed
 
+verify symlink:
+  file.symlink:
+    - name: /usr/local/bin/openstack-config
+    - target: /usr/bin/crudini
+    - mode: 0755
+
 mysql:
   pkg:
     - installed
