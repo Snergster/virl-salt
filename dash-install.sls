@@ -76,10 +76,10 @@ apache overwrite:
 
 uwm port replace:
   file.replace:
-    - name: /var/www/index.html
+    - name: /var/www/html/index.html
     - pattern: 'UWMPORT'
     - repl: 'location.host + ":{{ uwmport }}"'
     - require:
-      - file: virl index
+      - file: apache overwrite
 
 #    - pattern: 'location.host + ":UWMPORT"'
