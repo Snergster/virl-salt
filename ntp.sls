@@ -42,4 +42,6 @@ ntp start:
 /etc/init/ntp.conf:
   file.managed:
     - mode: 644
-    - contents: exec /etc/init.d/ntp start
+    - contents: |
+       start on runlevel [2345]
+       exec /etc/init.d/ntp start

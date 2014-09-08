@@ -52,7 +52,7 @@ eth0:
     - netmask: {{ int_mask }}
     - type: eth
     - enabled: True
-    - mtu: 1550
+    - mtu: 9100
 
 loop0:
   network.managed:
