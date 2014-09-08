@@ -39,7 +39,7 @@ ntp start:
       - order: 7
       - name: service ntp start
 
-/etc/init/ntp.conf:
+/etc/init/ntpd.conf:
   file.managed:
     - mode: 644
     - contents: |
