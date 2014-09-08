@@ -1,5 +1,5 @@
 {% set onedev = salt['grains.get']('onedev', '') %}
-{% set saltmaster = salt['grains.get']('salt master', 'none') %}
+{% set saltmaster = salt['grains.get']('salt_master', 'none') %}
 base:
   '*':
     {% if grains['inside cisco?'] == true %}

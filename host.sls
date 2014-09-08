@@ -3,8 +3,8 @@
 {% set domain = salt['grains.get']('domain', 'cisco.com') %}
 {% set hostname = salt['grains.get']('hostname', 'virl') %}
 {% set publicport = salt['grains.get']('public_port', 'eth0') %}
-{% set dhcp = salt['grains.get']('using dhcp on the public port?', True ) %}
-{% set public_ip = salt['grains.get']('static ip', '127.0.0.1' ) %}
+{% set dhcp = salt['grains.get']('using_dhcp_on_the_public_port', True ) %}
+{% set public_ip = salt['grains.get']('static_ip', '127.0.0.1' ) %}
 {% set public_gateway = salt['grains.get']('public_gateway', '172.16.6.1' ) %}
 {% set public_netmask = salt['grains.get']('public_netmask', '255.255.255.0' ) %}
 {% set l2_port = salt['grains.get']('l2_port', 'eth1' ) %}
@@ -14,9 +14,9 @@
 {% set l2_port2 = salt['grains.get']('l2_port2', 'eth2' ) %}
 {% set l2_port2_enabled = salt['grains.get']('l2_port2_enabled', 'True' ) %}
 {% set l3_port = salt['grains.get']('l3_port', 'eth3' ) %}
-{% set fdns = salt['grains.get']('first nameserver', '8.8.8.8' ) %}
-{% set sdns = salt['grains.get']('second nameserver', '8.8.4.4' ) %}
-{% set int_ip = salt['grains.get']('internalnet ip', '172.16.10.250' ) %}
+{% set fdns = salt['grains.get']('first_nameserver', '8.8.8.8' ) %}
+{% set sdns = salt['grains.get']('second_nameserver', '8.8.4.4' ) %}
+{% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
 {% set int_port = salt['grains.get']('internalnet_port', 'eth4' ) %}
 {% set int_mask = salt['grains.get']('internalnet_netmask', '255.255.255.0' ) %}
 

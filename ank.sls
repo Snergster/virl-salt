@@ -1,7 +1,7 @@
 {% set ank = salt['grains.get']('ank', '19401') %}
-{% set virltype = salt['grains.get']('virl type', 'stable') %}
+{% set virltype = salt['grains.get']('virl_type', 'stable') %}
 {% set proxy = salt['grains.get']('proxy', 'False') %}
-{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
+{% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 /var/cache/virl/ank:
   file.recurse:

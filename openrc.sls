@@ -1,8 +1,8 @@
 {% set ADMIN_PASS = salt['grains.get']('password', 'password') %}
 {% set controllername = salt['grains.get']('hostname', 'localhost') %}
 {% set token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set ifhorizon = salt['grains.get']('enable horizon', 'False') %}
-{% set uwmport = salt['grains.get']('virl user management', '19400') %}
+{% set ifhorizon = salt['grains.get']('enable_horizon', 'False') %}
+{% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
 
 /usr/local/bin/virl-openrc.sh:
   file.managed:

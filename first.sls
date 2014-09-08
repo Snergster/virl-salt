@@ -1,6 +1,6 @@
-{% set uwmport = salt['grains.get']('virl user management', '19400') %}
+{% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
 {% set proxy = salt['grains.get']('proxy', 'False') %}
-{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
+{% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 
 cpu-checker:

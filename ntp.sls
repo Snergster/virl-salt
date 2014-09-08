@@ -45,3 +45,7 @@ ntp start:
     - contents: |
        start on runlevel [2345]
        exec /etc/init.d/ntp start
+
+old ntp remove:
+  file.absent:
+    - name: /etc/init/ntp.conf

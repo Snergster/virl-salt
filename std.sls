@@ -1,10 +1,10 @@
 {% set proxy = salt['grains.get']('proxy', 'False') %}
 {% set password = salt['grains.get']('password', 'password') %}
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'password') %}
-{% set stdport = salt['grains.get']('virl webservices', '19399') %}
-{% set uwmport = salt['grains.get']('virl user management', '19400') %}
-{% set uwmpass = salt['grains.get']('uwmadmin password', 'password') %}
-{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
+{% set stdport = salt['grains.get']('virl_webservices', '19399') %}
+{% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
+{% set uwmpass = salt['grains.get']('uwmadmin_password', 'password') %}
+{% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 /var/cache/virl/std:
   file.recurse:

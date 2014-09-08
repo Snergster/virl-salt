@@ -1,7 +1,7 @@
 {% set ank = salt['grains.get']('ank', '19401') %}
-{% set virltype = salt['grains.get']('virl type', 'stable') %}
+{% set virltype = salt['grains.get']('virl_type', 'stable') %}
 {% set ramdisk = salt['grains.get']('ramdisk', True) %}
-{% set httpproxy = salt['grains.get']('http proxy', 'https://proxy-wsa.esl.cisco.com:80') %}
+{% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80') %}
 
 
 

@@ -2,9 +2,9 @@
 {% set ospassword = salt['grains.get']('password', 'password') %}
 {% set rabbitpassword = salt['grains.get']('password', 'password') %}
 {% set hostname = salt['grains.get']('hostname', 'virl') %}
-{% set horizon = salt['grains.get']('enable horizon', 'False') %}
+{% set horizon = salt['grains.get']('enable_horizon', 'False') %}
 {% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set uwmport = salt['grains.get']('virl user management', '19400') %}
+{% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 
 {% if horizon == True %}

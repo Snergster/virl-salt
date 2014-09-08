@@ -7,7 +7,7 @@
 {% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
-{% set int_ip = salt['grains.get']('internalnet ip', '172.16.10.250' ) %}
+{% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
 {% set l2_port = salt['grains.get']('l2_port', 'eth1' ) %}
 {% set l2_address = salt['grains.get']('l2_address', '172.16.1.254' ) %}
 {% set l2_address2 = salt['grains.get']('l2_address2', '172.16.2.254' ) %}

@@ -6,10 +6,10 @@
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
 {% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set serstart = salt['grains.get']('start of serial port range', '17000') %}
-{% set serend = salt['grains.get']('end of serial port range', '18000') %}
-{% set controllerhname = salt['grains.get']('internalnet controller hostname', 'controller') %}
-{% set controllerip = salt['grains.get']('internalnet controller IP', '172.16.10.250') %}
+{% set serstart = salt['grains.get']('start_of_serial_port_range', '17000') %}
+{% set serend = salt['grains.get']('end_of_serial_port_range', '18000') %}
+{% set controllerhname = salt['grains.get']('internalnet_controller_hostname', 'controller') %}
+{% set controllerip = salt['grains.get']('internalnet_controller_IP', '172.16.10.250') %}
 
 nova-common:
   pkg.installed:
