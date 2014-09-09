@@ -126,11 +126,9 @@ nova-password:
     - value: '{{ novapassword }}'
 
 nova-mtu:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'network'
-    - parameter: 'network_device_mtu'
-    - value: '9100'
+  cmd.run:
+    - name: /usr/bin/crudini --set /etc/nova/nova.conf network network_device_mtu 9100
+
 
 nova-verbose:
   file.replace:
