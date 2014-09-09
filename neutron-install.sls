@@ -35,6 +35,15 @@ neutron-pkgs:
     - file_mode: 755
     - source: "salt://files/neutron.conf"
 
+neutron-mtu:
+  openstack_config.present:
+    - filename: /etc/neutron/neutron.conf
+    - section: 'DEFAULT'
+    - parameter: 'network_device_mtu'
+    - value: '9100'
+    - require:
+      - file: /etc/neutron/neutron.conf
+
 linuxbridge_neutron_agent.py:
   file.managed:
     - order: 3
@@ -215,6 +224,13 @@ l3-agent:
     - section: 'DEFAULT'
     - parameter: 'l3_agent_manager'
     - value: ' neutron.agent.l3_agent.L3NATAgentWithStateReport'
+
+l3-mtu:
+  openstack_config.present:
+    - filename: /etc/neutron/l3_agent.ini
+    - section: 'DEFAULT'
+    - parameter: 'network_device_mtu'
+    - value: '1500'
 
 
 dhcp-interface:

@@ -125,6 +125,13 @@ nova-password:
     - parameter: 'admin_password'
     - value: '{{ novapassword }}'
 
+nova-mtu:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'network'
+    - parameter: 'network_device_mtu'
+    - value: '9100'
+
 nova-verbose:
   file.replace:
     - name: /etc/nova/nova.conf
