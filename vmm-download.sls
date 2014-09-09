@@ -20,7 +20,7 @@ download2:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-   {% if virl type == 'testing' %}
+   {% if virl_type == 'testing' %}
     - source: "salt://vmm/qa/"
    {% else %}
     - source: "salt://vmm/stable/"
