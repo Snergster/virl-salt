@@ -14,10 +14,10 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    {% if virl_type == 'stable' %}
+    {% if virl_type == 'testing' %}
     - source: "salt://std/release/testing/"
     {% else %}
-    - source: "salt://std/release/testing/"
+    - source: "salt://std/release/stable/"
     {% endif %}
 
 std_init:
