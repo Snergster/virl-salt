@@ -1,9 +1,11 @@
 {% set proxy = salt['grains.get']('proxy', 'False') %}
+{% set cml = salt['grains.get']('cml', 'False') %}
 {% set password = salt['grains.get']('password', 'password') %}
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'password') %}
 {% set stdport = salt['grains.get']('virl_webservices', '19399') %}
 {% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
 {% set uwmpass = salt['grains.get']('uwmadmin_password', 'password') %}
+{% set virl_type = salt['grains.get']('virl_type', 'stable') %}
 {% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 /var/cache/virl/std:
@@ -12,13 +14,13 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    {% if grains['virl type'] == 'stable' and grains['cml'] == False %}
+    {% if virl_type == 'stable' and cml == False %}
     - source: "salt://std/release/stable/"
-    {% elif grains['virl type'] == 'stable' and grains['cml'] == True %}
+    {% elif virl_type == 'stable' and cml == True %}
     - source: "salt://std/cml/stable/"
-    {% elif grains['virl type'] == 'testing' and grains['cml'] == False %}
+    {% elif virl_type == 'testing' and cml == False %}
     - source: "salt://std/release/testing/"
-    {% elif grains['virl type'] == 'testing' and grains['cml'] == True %}
+    {% elif virl_type == 'testing' and cml == True %}
     - source: "salt://std/cml/testing/"
     {% endif %}
 
@@ -57,7 +59,7 @@ uwm_init:
 std_prereq:
   pip.installed:
     - order: 2
-{% if grains['proxy'] == true %}
+{% if proxy == true %}
     - proxy: {{ httpproxy }}
 {% endif %}
     - names:
@@ -92,14 +94,14 @@ VIRL_CORE:
     - no_index: True
     - no_deps: True
     - find_links: "file:///var/cache/virl/std"
-    {% if grains['cml'] == True %}
+    {% if cml == True %}
     - name: CML_CORE
     {% else %}
     - name: VIRL_CORE
     {% endif %}
   cmd.wait:
     - names:
-    {% if grains['cml'] == True %}
+    {% if cml == True %}
       - virl_config lsb-links
     {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False

@@ -2,6 +2,7 @@
 {% set virltype = salt['grains.get']('virl_type', 'stable') %}
 {% set proxy = salt['grains.get']('proxy', 'False') %}
 {% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
+{% set cml = salt['grains.get']('cml', 'False') %}
 
 /var/cache/virl/ank:
   file.recurse:
@@ -9,7 +10,7 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    {% if grains['cml'] == True %}
+    {% if cml == True %}
     - source: "salt://ank/release/cml/"
     {% elif virltype == 'stable' %}
     - source: "salt://ank/stable/"
@@ -38,7 +39,7 @@ ank_init:
 
 ank_prereq:
   pip.installed:
-    {% if grains['proxy'] == true %}
+    {% if proxy == true %}
     - proxy: {{ httpproxy }}
     {% endif %}
     - names:
@@ -112,7 +113,7 @@ ank-webserver:
       - pip: autonetkit
 
 
-# {% if grains['cml'] == True %}
+# {% if cml == True %}
 # /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so:
 #   file.managed:
 #     - order: 3

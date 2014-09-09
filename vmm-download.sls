@@ -1,3 +1,6 @@
+{% set cml = salt['grains.get']('cml', 'False') %}
+{% set virl_type = salt['grains.get']('virl_type', 'stable') %}
+
 # download:
 #   file.absent:
 #     - order: 1
@@ -17,13 +20,13 @@ download2:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-   {% if grains['virl type'] == 'stable' and grains['cml'] == False %}
+   {% if virl type == 'stable' and cml == False %}
     - source: "salt://vmm/stable/"
-   {% elif grains['virl type'] == 'stable' and grains['cml'] == True %}
+   {% elif virl type == 'stable' and cml == True %}
     - source: "salt://cml/stable/"
-   {% elif grains['virl type'] == 'testing' and grains['cml'] == False %}
+   {% elif virl type == 'testing' and cml == False %}
     - source: "salt://vmm/qa/"
-   {% elif grains['virl type'] == 'testing' and grains['cml'] == True %}
+   {% elif virl type == 'testing' and cml == True %}
     - source: "salt://cml/qa/"
    {% endif %}
     - require:
