@@ -1,5 +1,5 @@
 {% set proxy = salt['grains.get']('proxy', 'False') %}
-{% set cml = salt['grains.get']('cml', 'False') %}
+{% set cml = salt['grains.get']('cml', False) %}
 {% set password = salt['grains.get']('password', 'password') %}
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'password') %}
 {% set stdport = salt['grains.get']('virl_webservices', '19399') %}
@@ -14,13 +14,13 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    {% if {{virl_type}} == 'stable' and {{cml}} == False %}
+    {% if virl_type == 'stable' and cml == False %}
     - source: "salt://std/release/stable/"
-    {% elif {{virl_type}} == 'stable' and {{cml}} == True %}
+    {% elif virl_type == 'stable' and cml == True %}
     - source: "salt://std/cml/stable/"
-    {% elif {{virl_type}} == 'testing' and {{cml}} == False %}
+    {% elif virl_type == 'testing' and cml == False %}
     - source: "salt://std/release/testing/"
-    {% elif {{virl_type}} == 'testing' and {{cml}} == True %}
+    {% elif virl_type == 'testing' and cml == True %}
     - source: "salt://std/cml/testing/"
     {% endif %}
 
@@ -60,7 +60,7 @@ std_prereq:
   pip.installed:
     - order: 2
 {% if proxy == true %}
-    - proxy: {{ httpproxy }}
+    - proxy: {{  httpproxy }}
 {% endif %}
     - names:
       - ipaddr
@@ -94,14 +94,14 @@ VIRL_CORE:
     - no_index: True
     - no_deps: True
     - find_links: "file:///var/cache/virl/std"
-    {% if {{cml}} == True %}
+    {% if cml == True %}
     - name: CML_CORE
     {% else %}
     - name: VIRL_CORE
     {% endif %}
   cmd.wait:
     - names:
-    {% if {{cml}} == True %}
+    {% if cml == True %}
       - virl_config lsb-links
     {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
