@@ -135,6 +135,7 @@ lubuntu-desktop:
     - mode: 0755
     - user: virl
     - group: virl
+    - contents: |
          [Desktop Entry]
          Version=1.0
          Name=4. REBOOT
@@ -171,7 +172,7 @@ lubuntu-desktop:
     - contents: |
          [Desktop Entry]
          Version=1.0
-         Name=README
+         Name=0. README
          Comment=Readme for install
          Exec=sudo gedit /etc/virl.ini
          Icon=/usr/share/icons/Humanity/apps/48/gedit-icon.svg
