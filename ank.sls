@@ -9,7 +9,7 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    {% if grains['cml?'] == True %}
+    {% if grains['cml'] == True %}
     - source: "salt://ank/release/cml/"
     {% elif virltype == 'stable' %}
     - source: "salt://ank/stable/"
@@ -112,7 +112,7 @@ ank-webserver:
       - pip: autonetkit
 
 
-# {% if grains['cml?'] == True %}
+# {% if grains['cml'] == True %}
 # /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so:
 #   file.managed:
 #     - order: 3

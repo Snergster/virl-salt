@@ -12,13 +12,13 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    {% if grains['virl type'] == 'stable' and grains['cml?'] == False %}
+    {% if grains['virl type'] == 'stable' and grains['cml'] == False %}
     - source: "salt://std/release/stable/"
-    {% elif grains['virl type'] == 'stable' and grains['cml?'] == True %}
+    {% elif grains['virl type'] == 'stable' and grains['cml'] == True %}
     - source: "salt://std/cml/stable/"
-    {% elif grains['virl type'] == 'testing' and grains['cml?'] == False %}
+    {% elif grains['virl type'] == 'testing' and grains['cml'] == False %}
     - source: "salt://std/release/testing/"
-    {% elif grains['virl type'] == 'testing' and grains['cml?'] == True %}
+    {% elif grains['virl type'] == 'testing' and grains['cml'] == True %}
     - source: "salt://std/cml/testing/"
     {% endif %}
 
@@ -92,14 +92,14 @@ VIRL_CORE:
     - no_index: True
     - no_deps: True
     - find_links: "file:///var/cache/virl/std"
-    {% if grains['cml?'] == True %}
+    {% if grains['cml'] == True %}
     - name: CML_CORE
     {% else %}
     - name: VIRL_CORE
     {% endif %}
   cmd.wait:
     - names:
-    {% if grains['cml?'] == True %}
+    {% if grains['cml'] == True %}
       - virl_config lsb-links
     {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False

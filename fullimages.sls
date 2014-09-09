@@ -6,13 +6,13 @@
     - dir_mode: 755
     - user: virl
     - group: virl
-    {% if grains['cml?'] == True %}
+    {% if grains['cml'] == True %}
     - source: "salt://images/cml/"
     {% else %}
     - source: "salt://images/full/"
     {% endif %}
 
-{% if grains['cml?'] == True %}
+{% if grains['cml'] == True %}
 cmlimages:
   cmd.run:
     - name: /home/virl/files/images/cml.install-list-auto
@@ -21,7 +21,7 @@ cmlimages:
     - group: virl
 
 
-{% elif grains['cml?'] == False %}
+{% elif grains['cml'] == False %}
 virlimages:
   cmd.run:
     - name: /home/virl/images/install-list-auto
