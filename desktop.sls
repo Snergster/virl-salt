@@ -195,7 +195,6 @@ lubuntu-desktop:
          X-GNOME-Autostart-enabled=true
          Type=Application
 
-	
 /usr/share/themes/Lubuntu-default:
   file.recurse:
     - source: "salt://files/Clearlooks"
