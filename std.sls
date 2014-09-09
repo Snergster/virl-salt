@@ -1,4 +1,4 @@
-{% set proxy = salt['grains.get']('proxy', 'False') %}
+{% set proxy = salt['grains.get']('proxy', False) %}
 {% set cml = salt['grains.get']('cml', False) %}
 {% set password = salt['grains.get']('password', 'password') %}
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'password') %}
@@ -105,6 +105,8 @@ VIRL_CORE:
       - virl_config lsb-links
     {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
+      - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
+      - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_custom_floating_ip True
     {% endif %}
       - /usr/local/bin/virl_config update --global
       - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ password }}
