@@ -18,6 +18,10 @@ lubuntu-desktop:
     - owner: virl
     - group: virl
 
+gedit:
+  pkg.installed:
+    - refresh: True
+
 desktop_require:
   pkg.installed:
     - skip_verify: True

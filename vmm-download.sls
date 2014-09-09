@@ -20,14 +20,10 @@ download2:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-   {% if virl type == 'stable' and cml == False %}
-    - source: "salt://vmm/stable/"
-   {% elif virl type == 'stable' and cml == True %}
-    - source: "salt://cml/stable/"
-   {% elif virl type == 'testing' and cml == False %}
+   {% if virl type == 'testing' %}
     - source: "salt://vmm/qa/"
-   {% elif virl type == 'testing' and cml == True %}
-    - source: "salt://cml/qa/"
+   {% else %}
+    - source: "salt://vmm/stable/"
    {% endif %}
     - require:
       - file: download2

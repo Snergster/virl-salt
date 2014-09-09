@@ -1,4 +1,5 @@
 {% set onedev = salt['grains.get']('onedev', 'False') %}
+{% set cml = salt['grains.get']('cml', False) %}
 
 /home/virl/images:
   file.recurse:
@@ -12,7 +13,7 @@
     - source: "salt://images/full/"
     {% endif %}
 
-{% if grains['cml'] == True %}
+{% if cml == True %}
 cmlimages:
   cmd.run:
     - name: /home/virl/files/images/cml.install-list-auto
@@ -20,8 +21,7 @@ cmlimages:
     - user: virl
     - group: virl
 
-
-{% elif grains['cml'] == False %}
+{% else %}
 virlimages:
   cmd.run:
     - name: /home/virl/images/install-list-auto

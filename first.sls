@@ -22,7 +22,6 @@ basic:
       - ntp
       - openssh-server
       - zile
-      - gedit
       - gcc
       - ntp
       - ntpdate
