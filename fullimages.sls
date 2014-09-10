@@ -31,7 +31,3 @@ virlimages:
     - file_mode: 755
     - source: "salt://files/install_scripts/update_images"
 
-##     {% if cml] == True %}
-##     - source: "salt://images/cml/"
-##     {% else %}
-##     {% endif %}
