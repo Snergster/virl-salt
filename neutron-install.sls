@@ -44,6 +44,32 @@ neutron-pkgs:
 ##     - require:
 ##       - file: /etc/neutron/neutron.conf
 
+/usr/lib/python2.7/dist-packages/neutron/extensions/l3.py:
+  file.patch:
+    - source: salt://files/patches/l3.py.patch
+    - hash: md5=3739e6a7463a3e2102b76d1cc3ebeff6
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
+    - require:
+      - pkg: neutron-pkgs
+
+
+/usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
+  file.patch:
+    - source: salt://files/patches/l3_db.patch
+    - hash: md5=c99c80ba6aa209fcd046a972af51a914
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
+    - require:
+      - pkg: neutron-pkgs
+  
+
 linuxbridge_neutron_agent.py:
   file.managed:
     - order: 3
