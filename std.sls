@@ -27,6 +27,11 @@ std_init:
     - source: "salt://files/virl-std.init"
     - mode: 0755
 
+/etc/virl directory:
+  file.directory:
+    - name: /etc/virl
+    - dir_mode: 755
+
 /etc/virl/virl.cfg:
   file.managed:
     - order: 3
