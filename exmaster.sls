@@ -1,4 +1,4 @@
-{% for each in 'ank','files','images','std','vmm', 'virl-salt' %}
+{% for each in 'ank','files','images/devops-setup','images/salt','images/vmware','std','vmm', 'virl-salt' %}
 /srv/virl/{{ each }}:
   file.recurse:
     - source: 'salt://{{each}}'
