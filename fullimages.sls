@@ -7,11 +7,8 @@
     - dir_mode: 755
     - user: virl
     - group: virl
-    {% if grains['cml'] == True %}
-    - source: "salt://images/cml/"
-    {% else %}
     - source: "salt://images/full/"
-    {% endif %}
+
 
 {% if cml == True %}
 cmlimages:
@@ -33,3 +30,8 @@ virlimages:
     - order: 1
     - file_mode: 755
     - source: "salt://files/install_scripts/update_images"
+
+##     {% if cml] == True %}
+##     - source: "salt://images/cml/"
+##     {% else %}
+##     {% endif %}
