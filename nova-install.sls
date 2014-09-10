@@ -125,9 +125,9 @@ nova-password:
     - parameter: 'admin_password'
     - value: '{{ novapassword }}'
 
-nova-mtu:
-  cmd.run:
-    - name: /usr/bin/crudini --set /etc/nova/nova.conf network network_device_mtu 9100
+## nova-mtu:
+##   cmd.run:
+##     - name: /usr/bin/crudini --set /etc/nova/nova.conf network network_device_mtu 9100
 
 
 nova-verbose:
