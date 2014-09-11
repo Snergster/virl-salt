@@ -33,3 +33,41 @@ variable reset uwm:
     - restart: True
     - watch:
       - cmd: VIRL variable reset
+
+ank_init rehost:
+  file.managed:
+    - order: 2
+    - name: /etc/init.d/ank-webserver
+    - source: "salt://files/ank-webserver.init"
+    - mode: 0755
+
+autonetkit_cfg rehost:
+  file.managed:
+    - name: /root/.autonetkit/autonetkit.cfg:
+    - order: 3
+    - makedirs: True
+    - source: "salt://files/autonetkit.cfg"
+    - mode: 0755
+
+ank-webserver rehost:
+  file.replace:
+    - name: /etc/init.d/ank-webserver
+    - pattern: portnumber
+    - repl: {{ ank }}
+
+rootank rehost:
+  file.replace:
+    - name: /root/.autonetkit/autonetkit.cfg
+    - pattern: portnumber
+    - repl: {{ ank }}
+
+ank-webserver rehost:
+  service:
+    - running
+    - name: ank-webserver
+    - enable: True
+    - restart: True
+    - watch:
+      - file: rootank rehost
+
+
