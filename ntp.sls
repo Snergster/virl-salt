@@ -44,6 +44,7 @@ ntp start:
     - mode: 644
     - contents: |
        start on runlevel [2345]
+       stop on runlevel [!2345]
        exec /etc/init.d/ntp start
 
 old ntp remove:
