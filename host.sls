@@ -19,6 +19,14 @@
 {% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
 {% set int_port = salt['grains.get']('internalnet_port', 'eth4' ) %}
 {% set int_mask = salt['grains.get']('internalnet_netmask', '255.255.255.0' ) %}
+{% set dummy_int = salt['grains.get']('dummy_int', False ) %}
+
+{% if dummy_int == True %}
+dummy modprobe:
+  file.append:
+    - name: /etc/modules
+    - text: dummy numdummies=5
+{% endif %}
 
 system:
   network.system:
