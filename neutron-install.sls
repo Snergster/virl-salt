@@ -57,7 +57,7 @@ neutron-pkgs:
       - pkg: neutron-pkgs
 
 
-/usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
+/usr/lib/python2.7/dist-packages/neutron/db/l3_db.py:
   file.patch:
     - source: salt://files/patches/l3_db.patch
     - hash: md5=c99c80ba6aa209fcd046a972af51a914
