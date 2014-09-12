@@ -40,6 +40,7 @@ std docs:
     - source: "salt://files/std/release/stable/doc/html_ext.tar.gz"
     - source_hash: md5=9ec5c0249e103e83e9c79fcfa8cfc19d
     - archive_format: tar
+    - tar_options: z
     - if_missing: /var/www/doc/index.html
 
 /etc/virl/virl.cfg:
