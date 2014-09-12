@@ -37,7 +37,7 @@ std docs:
   archive:
     - extracted
     - name: /var/www/doc/
-    - source: "salt://files/std/release/stable/doc/html_ext.tar.gz"
+    - source: "salt://std/release/stable/doc/html_ext.tar.gz"
     - source_hash: md5=9ec5c0249e103e83e9c79fcfa8cfc19d
     - archive_format: tar
     - tar_options: z
