@@ -33,6 +33,15 @@ std_init:
     - name: /etc/virl
     - dir_mode: 755
 
+std docs:
+  archive:
+    - extracted
+    - name: /var/www/doc/
+    - source: "salt://files/std/release/stable/doc/html_ext.tar.gz"
+    - source_hash: md5=9ec5c0249e103e83e9c79fcfa8cfc19d
+    - archive_format: tar
+    - if_missing: /var/www/doc/index.html
+
 /etc/virl/virl.cfg:
   file.managed:
     - order: 3
