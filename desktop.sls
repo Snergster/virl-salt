@@ -172,8 +172,25 @@ lubuntu-desktop:
     - contents: |
          [Desktop Entry]
          Version=1.0
-         Name=0. README
+         Name=README
          Comment=Readme for install
+         Exec=gedit /home/virl/.README
+         Icon=/usr/share/icons/Humanity/apps/48/accessories-dictionary.svg
+         Terminal=False
+         Type=Application
+         Categories=Utility;Application;
+
+/home/virl/Desktop/Edit-settings.desktop:
+  file.managed:
+    - mode: 0755
+    - user: virl
+    - group: virl
+    - makedirs: True
+    - contents: |
+         [Desktop Entry]
+         Version=1.0
+         Name=0. Edit virl.ini
+         Comment=To edit virl.ini file
          Exec=sudo gedit /etc/virl.ini
          Icon=/usr/share/icons/Humanity/apps/48/gedit-icon.svg
          Terminal=False

@@ -3,9 +3,7 @@ neutron-mtu:
     - filename: /etc/neutron/neutron.conf
     - section: 'DEFAULT'
     - parameter: 'network_device_mtu'
-    - value: '1550'
-    - require:
-      - file: /etc/neutron/neutron.conf
+    - value: '9100'
 
 linuxbridge_neutron_agent.py:
   file.managed:
