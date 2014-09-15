@@ -6,6 +6,7 @@
 {% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
 {% set uwmpass = salt['grains.get']('uwmadmin_password', 'password') %}
 {% set virl_type = salt['grains.get']('virl_type', 'stable') %}
+{% set ank = salt['grains.get']('ank', '19401') %}
 {% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 VIRL variable reset:
