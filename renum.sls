@@ -21,6 +21,7 @@ VIRL variable reset:
 
 variable reset std:
   service:
+    - name virl-std
     - running
     - enable: True
     - restart: True
@@ -29,6 +30,7 @@ variable reset std:
 
 variable reset uwm:
   service:
+    - name virl-uwm
     - running
     - enable: True
     - restart: True
