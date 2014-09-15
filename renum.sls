@@ -44,7 +44,7 @@ ank_init rehost:
 
 autonetkit_cfg rehost:
   file.managed:
-    - name: /root/.autonetkit/autonetkit.cfg:
+    - name: /root/.autonetkit/autonetkit.cfg
     - order: 3
     - makedirs: True
     - source: "salt://files/autonetkit.cfg"
@@ -55,12 +55,16 @@ ank-webserver rehost:
     - name: /etc/init.d/ank-webserver
     - pattern: portnumber
     - repl: {{ ank }}
+    - require:
+      - file: ank_init rehost
 
 rootank rehost:
   file.replace:
     - name: /root/.autonetkit/autonetkit.cfg
     - pattern: portnumber
     - repl: {{ ank }}
+    - require:
+      - file: autonetkit_cfg rehost
 
 ank-webserver rehost:
   service:
