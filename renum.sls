@@ -66,7 +66,7 @@ rootank rehost:
     - require:
       - file: autonetkit_cfg rehost
 
-ank-webserver rehost:
+ank-webserver service rehost:
   service:
     - running
     - name: ank-webserver
