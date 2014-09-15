@@ -14,6 +14,7 @@
 {% set l3_address = salt['grains.get']('l3_address', '172.16.3.254' ) %}
 {% set l2_port2 = salt['grains.get']('l2_port2', 'eth2' ) %}
 {% set l2_port2_enabled = salt['grains.get']('l2_port2_enabled', 'True' ) %}
+{% set jumbo_frames = salt['grains.get']('jumbo_frames', False ) %}
 {% set l3_port = salt['grains.get']('l3_port', 'eth3' ) %}
 
 neutron-pkgs:
@@ -40,7 +41,11 @@ neutron-mtu:
     - filename: /etc/neutron/neutron.conf
     - section: 'DEFAULT'
     - parameter: 'network_device_mtu'
+{% if jumbo_frames == True %}
+    - value: '9100'
+{% else %}
     - value: '1550'
+{% endif %}
     - require:
       - file: /etc/neutron/neutron.conf
 

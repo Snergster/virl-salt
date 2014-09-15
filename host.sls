@@ -20,6 +20,7 @@
 {% set int_port = salt['grains.get']('internalnet_port', 'eth4' ) %}
 {% set int_mask = salt['grains.get']('internalnet_netmask', '255.255.255.0' ) %}
 {% set dummy_int = salt['grains.get']('dummy_int', False ) %}
+{% set jumbo_frames = salt['grains.get']('jumbo_frames', False ) %}
 
 {% if dummy_int == True %}
 dummy modprobe:
@@ -60,7 +61,11 @@ eth0:
     - netmask: {{ int_mask }}
     - type: eth
     - enabled: True
+{% if jumbo_frames == True %}
+    - mtu: 9100
+{% else %}
     - mtu: 1550
+{% endif %}
 
 loop0:
   network.managed:
