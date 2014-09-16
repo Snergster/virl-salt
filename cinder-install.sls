@@ -8,6 +8,7 @@
 {% set cinder_file = salt['grains.get']('cinder_file', 'True') %}
 {% set cinder_loc = salt['grains.get']('cinder_loc', '/var/lib/cinder/cinder-volumes.lvm') %}
 {% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
+{% set cinder_enabled = salt['grains.get']('cinder_enabled', False) %}
 
 cinder-pkgs:
   pkg.installed:
@@ -38,12 +39,15 @@ cinder-rabbitpass:
     - pattern: 'rabbit_password = RABBIT_PASS'
     - repl: 'rabbit_password = {{ rabbitpassword }}'
 
+{% if cinder_enabled = True %}
 cinder-rclocal:
   file.append:
     - name: /etc/rc.local
     - text: |
         /sbin/losetup -f {{ cinder_loc }}
         exit 0
+
+{% endif %}
 
 cinder-hostname:
   file.replace:
