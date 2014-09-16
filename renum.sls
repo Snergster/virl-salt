@@ -77,4 +77,18 @@ ank-webserver service rehost:
     - watch:
       - file: rootank rehost
 
+apache overwrite renum:
+  file.recurse:
+    - name: /var/www/html
+    - source: salt://files/virlweb
+    - user: root
+    - group: root
+    - file_mode: 755
 
+uwm port replace renum:
+  file.replace:
+    - name: /var/www/html/index.html
+    - pattern: 'UWMPORT'
+    - repl: 'location.host + ":{{ uwmport }}"'
+    - require:
+      - file: apache overwrite renum
