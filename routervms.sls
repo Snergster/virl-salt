@@ -157,7 +157,7 @@ UbuntuServertrusty image:
     - name: /usr/local/bin/add-servers Ubuntu.Server.trusty.pkg
     - cwd: /home/virl/images
     - watch:
-      - file: jumphost image
+      - file: UbuntuServertrusty image
 {% else %}
   file.exists:
     - name: /home/virl/images
