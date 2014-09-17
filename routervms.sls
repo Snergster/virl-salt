@@ -153,7 +153,7 @@ UbuntuServertrusty image:
     - user: virl
     - group: virl
     - source: salt://images/salt/UbuntuServertrusty
-  cmd.wait:
+  cmd.run:
     - name: /usr/local/bin/add-servers Ubuntu.Server.trusty.pkg
     - cwd: /home/virl/images
     - watch:

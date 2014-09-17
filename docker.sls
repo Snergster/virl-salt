@@ -23,7 +23,7 @@ ethtool:
     - refresh: false
 
 /usr/local/bin/weave:
-  file.managed:
-    - source: https://raw.githubusercontent.com/zettio/weave/master/weaver/weave
-    - mode: 0755
-
+  cmd.run:
+    - names:
+      - wget -O /usr/local/bin/weave https://raw.githubusercontent.com/zettio/weave/master/weaver/weave
+      - chmod 0755 /usr/local/bin/weave
