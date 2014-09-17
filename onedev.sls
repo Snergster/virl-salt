@@ -5,10 +5,8 @@ devops copy:
     - file_mode: 755
     - dir_mode: 755
     - source: "salt://images/devops-setup"
-
-devops install:
-    - cmd.run:
+  cmd.wait:
       - cwd: /var/cache/virl/devops
-      - name: './devops_installer.sh -default -a'
+      - name: ./devops_installer.sh -default -a
       - watch:
         - file: devops copy
