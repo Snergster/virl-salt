@@ -39,7 +39,7 @@ cinder-rabbitpass:
     - pattern: 'rabbit_password = RABBIT_PASS'
     - repl: 'rabbit_password = {{ rabbitpassword }}'
 
-{% if cinder_enabled %}
+{% if cinder_enabled == True %}
 cinder-rclocal:
   file.append:
     - name: /etc/rc.local
