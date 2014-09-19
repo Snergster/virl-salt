@@ -142,10 +142,21 @@ neutron-plugin-localip:
 neutron-provider-networks:
   openstack_config.present:
     - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
-    - section: 'linux_bridge'
+    - section: 'DEFAULT'
     - parameter: 'network_vlan_ranges'
     {% if l2_port2 == True %}
-    - value: 'flat:{{ l2_port }},flat2:{{ l2_port2 }},ext-net:{{ l3_port }}'
+    - value: 'flat,flat1,ext-net'
+    {% else %}
+    - value: 'flat,ext-net'
+    {% endif %}
+
+neutron-provider-networks-phymap:
+  openstack_config.present:
+    - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
+    - section: 'linux_bridge'
+    - parameter: 'physical_interface_mappings'
+    {% if l2_port2 == True %}
+    - value: 'flat:{{ l2_port }},flat1:{{ l2_port2 }},ext-net:{{ l3_port }}'
     {% else %}
     - value: 'flat:{{ l2_port }},ext-net:{{ l3_port }}'
     {% endif %}

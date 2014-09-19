@@ -27,6 +27,10 @@ dummy modprobe:
   file.append:
     - name: /etc/modules
     - text: dummy numdummies=5
+
+blank what is there:
+  file.absent:
+    - name: /etc/network/interfaces
 {% endif %}
 
 system:
