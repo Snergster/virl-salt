@@ -155,7 +155,7 @@ neutron-provider-networks-phymap:
     - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
     - section: 'linux_bridge'
     - parameter: 'physical_interface_mappings'
-    {% if l2_port_enabled == True %}
+    {% if l2_port2_enabled == True %}
     - value: 'flat:{{ l2_port }},flat1:{{ l2_port2 }},ext-net:{{ l3_port }}'
     {% else %}
     - value: 'flat:{{ l2_port }},ext-net:{{ l3_port }}'
