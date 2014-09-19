@@ -219,6 +219,13 @@ lubuntu-desktop:
     - user: virl
     - group: virl
 
+virl background:
+  openstack_config.present:
+    - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
+    - section: '*'
+    - parameter: 'wallpaper'
+    - value: '/home/virl.virl.jpg'
+
 gedit:
   pkg.installed:
     - refresh: True
