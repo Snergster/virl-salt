@@ -41,45 +41,6 @@ pip install:
     - order: 2
     - name: python-pip
 
-## various python prereqs:
-##   pip.installed:
-##     {% if grains['proxy'] == true %}
-##     - proxy: {{ httpproxy }}
-##     {% endif %}
-##     - names:
-##       - configobj
-##       - six
-##       - Mako
-##       - MarkupSafe
-##       - certifi
-##       - backports.ssl_match_hostname
-##       - netaddr
-##       - networkx
-##       - PyYAML
-##       - tornado == 3.0.1
-##       - ipaddr
-##       - flask-sqlalchemy
-##       - Flask
-##       - Flask_Login
-##       - Flask_RESTful
-##       - Flask_WTF
-##       - itsdangerous
-##       - Jinja2
-##       - MarkupSafe
-##       - mock
-##       - requests
-##       - paramiko
-##       - pycrypto
-##       - simplejson
-##       - sqlalchemy
-##       - websocket_client
-##       - Werkzeug
-##       - wsgiref
-##       - WTForms
-##     - require:
-##       - pkg: pip install
-
-
 
 /usr/local/bin/openstack-config:
   file.symlink:
@@ -109,7 +70,7 @@ pip install:
     - user: virl
     - group: virl
 
-/home/virl/orig.settings.ini:
+/etc/orig.virl.ini:
   file.managed:
     - source: salt://files/vsettings.ini
     - user: virl
