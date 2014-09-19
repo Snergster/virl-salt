@@ -224,7 +224,7 @@ virl background:
     - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
     - section: '*'
     - parameter: 'wallpaper'
-    - value: '/home/virl.virl.jpg'
+    - value: '/home/virl/.virl.jpg'
 
 gedit:
   pkg.installed:
