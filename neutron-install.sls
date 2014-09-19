@@ -13,7 +13,7 @@
 {% set l2_address2 = salt['grains.get']('l2_address2', '172.16.2.254' ) %}
 {% set l3_address = salt['grains.get']('l3_address', '172.16.3.254' ) %}
 {% set l2_port2 = salt['grains.get']('l2_port2', 'eth2' ) %}
-{% set l2_port2_enabled = salt['grains.get']('l2_port2_enabled', 'True' ) %}
+{% set l2_port2_enabled = salt['grains.get']('l2_port2_enabled', True ) %}
 {% set jumbo_frames = salt['grains.get']('jumbo_frames', False ) %}
 {% set l3_port = salt['grains.get']('l3_port', 'eth3' ) %}
 
@@ -155,7 +155,7 @@ neutron-provider-networks-phymap:
     - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
     - section: 'linux_bridge'
     - parameter: 'physical_interface_mappings'
-    {% if l2_port2 == True %}
+    {% if l2_port_enabled == True %}
     - value: 'flat:{{ l2_port }},flat1:{{ l2_port2 }},ext-net:{{ l3_port }}'
     {% else %}
     - value: 'flat:{{ l2_port }},ext-net:{{ l3_port }}'
