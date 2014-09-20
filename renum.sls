@@ -36,6 +36,7 @@ variable reset uwm:
     - restart: True
     - watch:
       - cmd: VIRL variable reset
+      - file: uwm port replace renum
 
 ank_init rehost:
   file.managed:
@@ -88,7 +89,7 @@ apache overwrite renum:
 uwm port replace renum:
   file.replace:
     - name: /var/www/html/index.html
-    - pattern: 'UWMPORT'
-    - repl: 'location.host + ":{{ uwmport }}"'
+    - pattern: '19400'
+    - repl: '{{ uwmport }}'
     - require:
       - file: apache overwrite renum
