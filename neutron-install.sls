@@ -144,7 +144,7 @@ neutron-provider-networks:
     - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
     - section: 'vlans'
     - parameter: 'network_vlan_ranges'
-    {% if l2_port2 == True %}
+    {% if l2_port2_enabled == True %}
     - value: 'flat,flat1,ext-net'
     {% else %}
     - value: 'flat,ext-net'
