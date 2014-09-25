@@ -86,9 +86,3 @@ first-vinstall:
     - mode: 0755
 
 
-first-vsettings:
-  file.managed:
-    - name: /home/virl/vsettings.ini
-    - source: 'salt://files/vsettings.ini'
-    - mode: 0755
-

@@ -117,6 +117,12 @@ cinder service:
     - service_type: volume
     - description: OpenStack storage Service
 
+cinderv2 service:
+  keystone.service_present:
+    - name: cinderv2
+    - service_type: volumev2
+    - description: OpenStack storage Service v2
+
 heat service:
    keystone.service_present:
      - name: heat
