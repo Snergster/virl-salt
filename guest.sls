@@ -17,7 +17,7 @@ fix guest password:
     - name: guest
     - password: guest
     - project: guest
-    - role: _member
+    - role: _member_
     - require:
       - virl_core: create guest account
 {% else %}
