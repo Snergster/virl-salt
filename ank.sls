@@ -72,12 +72,10 @@ autonetkit:
       - pip: autonetkit
 
 autonetkit_cisco:
-  pip.installed:
+  file.managed:
     - order: 3
-    - upgrade: True
-    - use_wheel: True
-    - no_index: True
-    - find_links: "file:///var/cache/virl/ank"
+    - source: salt://ank/release/stable/autonetkit_cisco.so
+    - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
     - require:
       - pip: autonetkit
 
@@ -91,7 +89,7 @@ autonetkit_cisco_webui:
     - name: autonetkit_cisco_webui
     - find_links: "file:///var/cache/virl/ank"
     - require:
-      - pip: autonetkit_cisco
+      - file: autonetkit_cisco
 
 /etc/init.d/ank-webserver:
   file.replace:
@@ -128,3 +126,12 @@ ank-webserver:
 #     - require:
 #       - pip: autonetkit
 # {% endif %}
+# autonetkit_cisco:
+#   pip.installed:
+#     - order: 3
+#     - upgrade: True
+#     - use_wheel: True
+#     - no_index: True
+#     - find_links: "file:///var/cache/virl/ank"
+#     - require:
+#       - pip: autonetkit
