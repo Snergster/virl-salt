@@ -74,7 +74,7 @@ autonetkit:
 autonetkit_cisco:
   file.managed:
     - order: 3
-    - source: salt://ank/release/stable/autonetkit_cisco.so
+    - source: salt://ank/stable/autonetkit_cisco.so
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
     - require:
       - pip: autonetkit
