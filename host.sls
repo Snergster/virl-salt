@@ -167,8 +167,6 @@ man-int-promisc:
     - require:
       - network: {{ int_port }}
 
-
-
 vhost:
   host.present:
     - name: {{ hostname }}.{{domain}}
@@ -188,5 +186,3 @@ vhostname:
   file.managed:
     - file_mode: 644
     - source: "salt://files/failsafe.conf"
-
-    
