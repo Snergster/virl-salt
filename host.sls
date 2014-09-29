@@ -26,9 +26,9 @@
 {% set jumbo_frames = salt['grains.get']('jumbo_frames', False ) %}
 
 blank what is there:
-  file.absent:
+  cmd.run:
     - order: 1
-    - name: /etc/network/interfaces
+    - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
 
 
 {% if dummy_int == True %}
@@ -66,6 +66,7 @@ eth0:
 
 {{ int_port }}:
   network.managed:
+    - order: 2
     - ipaddr: {{ int_ip }}
     - proto: static
     - netmask: {{ int_mask }}
@@ -101,7 +102,7 @@ loop1:
   network.managed:
     - order: 2
     - enabled: True
-    - proto: manual
+    - proto: static
     - type: eth
     - ipaddr: {{ l2_address }}
     - netmask: {{ l2_mask }}
@@ -112,7 +113,7 @@ loop1:
   network.managed:
     - order: 2
     - enabled: True
-    - proto: manual
+    - proto: static
     - type: eth
     - ipaddr: {{ l2_address2 }}
     - netmask: {{ l2_mask2 }}
@@ -123,7 +124,7 @@ man-flat2-address:
     - order: 3
     - name: /etc/network/interfaces
     - pattern: {{ l2_address2 }}
-    - repl: '{{ l2_address2 }}\n    up ip link set {{l2_port2}} promisc on'
+    - repl: '{{ l2_address2 }}\n    post-up ip link set {{l2_port2}} promisc on'
     - require:
       - network: {{ l2_port2 }}
 
@@ -134,7 +135,7 @@ man-flat2-address:
     - order: 2
     - name: {{ l3_port }}
     - enabled: True
-    - proto: manual
+    - proto: static
     - type: eth
     - ipaddr: {{ l3_address }}
     - netmask: {{ l3_mask }}
@@ -145,7 +146,7 @@ man-flat-promisc:
     - order: 3
     - name: /etc/network/interfaces
     - pattern: {{ l2_address }}
-    - repl: '{{ l2_address }}\n    up ip link set {{l2_port}} promisc on'
+    - repl: '{{ l2_address }}\n    post-up ip link set {{l2_port}} promisc on'
     - require:
       - network: {{ l2_port }}
 
@@ -154,7 +155,7 @@ man-snat-promisc:
     - order: 3
     - name: /etc/network/interfaces
     - pattern: {{ l3_address }}
-    - repl: '{{ l3_address }}\n    up ip link set {{l3_port}} promisc on'
+    - repl: '{{ l3_address }}\n    post-up ip link set {{l3_port}} promisc on'
     - require:
       - network: {{ l3_port }}
 
@@ -163,7 +164,7 @@ man-int-promisc:
     - order: 3
     - name: /etc/network/interfaces
     - pattern: {{ int_ip }}
-    - repl: '{{ int_ip }}\n    up ip link set {{int_port}} promisc on'
+    - repl: '{{ int_ip }}\n    post-up ip link set {{int_port}} promisc on'
     - require:
       - network: {{ int_port }}
 
