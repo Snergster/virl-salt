@@ -3,3 +3,5 @@ files/*
 images/*
 vmm/*
 std/*
+_modules/*
+_states/*

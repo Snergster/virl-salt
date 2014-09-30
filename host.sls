@@ -32,6 +32,11 @@ blank what is there:
 
 
 {% if dummy_int == True %}
+add dummy right now:
+  cmd.run:
+    - order: 1
+    - name: modprobe dummy numdummies=5
+
 dummy modprobe:
   file.append:
     - name: /etc/modules
