@@ -5,3 +5,4 @@ vmm/*
 std/*
 _modules/*
 _states/*
+.idea/*
