@@ -7,7 +7,7 @@
 {% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
 {% set uwmpass = salt['grains.get']('uwmadmin_password', 'password') %}
 {% set virl_type = salt['grains.get']('virl_type', 'stable') %}
-{% set virl_type = salt['pillar.get']('behave:environment', 'stable') %}
+{% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 {% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 /var/cache/virl/std:
@@ -16,7 +16,7 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    - source: "salt://std/"
+    - source: "salt://std/{{venv}}/"
 
 
 std_init:
@@ -40,7 +40,7 @@ std docs:
   archive:
     - extracted
     - name: /var/www/doc/
-    - source: "salt://std/doc/html_ext.tar.gz"
+    - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
     - source_hash: md5=9ec5c0249e103e83e9c79fcfa8cfc19d
     - archive_format: tar
     - tar_options: xz

@@ -3,6 +3,7 @@
 {% set proxy = salt['grains.get']('proxy', False) %}
 {% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 {% set cml = salt['grains.get']('cml', False ) %}
+{% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
 /var/cache/virl/ank:
   file.recurse:
@@ -10,7 +11,7 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    - source: "salt://ank/"
+    - source: "salt://ank/{{ venv }}"
 
 ank_init:
   file.managed:
@@ -68,7 +69,7 @@ autonetkit:
 autonetkit_cisco:
   file.managed:
     - order: 3
-    - source: salt://ank/autonetkit_cisco.so
+    - source: salt://ank/{{ env }}/autonetkit_cisco.so
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
     - require:
       - pip: autonetkit
