@@ -1,14 +1,7 @@
 {% set cml = salt['grains.get']('cml', 'False') %}
 {% set virl_type = salt['grains.get']('virl_type', 'stable') %}
 
-# download:
-#   file.absent:
-#     - order: 1
-#     - user: virl
-#     - group: virl
-#     - name: /var/www/download
-
-download2:
+download:
   file.directory:
     - order: 1
     - mode: 755
@@ -20,11 +13,7 @@ download2:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-   {% if virl_type == 'testing' %}
-    - source: "salt://vmm/qa/"
-   {% else %}
-    - source: "salt://vmm/stable/"
-   {% endif %}
+    - source: "salt://vmm/"
     - require:
-      - file: download2
+      - file: download
 
