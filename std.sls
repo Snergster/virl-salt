@@ -7,6 +7,7 @@
 {% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
 {% set uwmpass = salt['grains.get']('uwmadmin_password', 'password') %}
 {% set virl_type = salt['grains.get']('virl_type', 'stable') %}
+{% set virl_type = salt['pillar.get']('behave:environment', 'stable') %}
 {% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 /var/cache/virl/std:
@@ -100,7 +101,7 @@ std_prereq:
       - websocket_client
       - Werkzeug
       - wsgiref
-      - WTForms 
+      - WTForms
 
 
 VIRL_CORE:
@@ -167,4 +168,3 @@ virl-uwm:
     - watch:
       - pip: VIRL_CORE
       - cmd: virl init
-
