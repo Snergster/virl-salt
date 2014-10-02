@@ -11,7 +11,7 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    - source: "salt://ank/{{ venv }}"
+    - source: "salt://ank/{{ venv }}/"
 
 ank_init:
   file.managed:
@@ -69,7 +69,7 @@ autonetkit:
 autonetkit_cisco:
   file.managed:
     - order: 3
-    - source: salt://ank/{{ env }}/autonetkit_cisco.so
+    - source: salt://ank/{{ venv }}/autonetkit_cisco.so
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
     - require:
       - pip: autonetkit
