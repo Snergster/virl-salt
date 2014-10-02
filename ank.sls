@@ -10,13 +10,7 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    {% if cml == True %}
-    - source: "salt://ank/release/cml/"
-    {% elif virltype == 'stable' %}
-    - source: "salt://ank/stable/"
-    {% elif virltype == 'testing' %}
-    - source: "salt://ank/qa/"
-    {% endif %}
+    - source: "salt://ank/"
 
 ank_init:
   file.managed:
@@ -74,7 +68,7 @@ autonetkit:
 autonetkit_cisco:
   file.managed:
     - order: 3
-    - source: salt://ank/stable/autonetkit_cisco.so
+    - source: salt://ank/autonetkit_cisco.so
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
     - require:
       - pip: autonetkit
@@ -111,27 +105,3 @@ ank-webserver:
       - pip: autonetkit
 
 
-# {% if cml == True %}
-# /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so:
-#   file.managed:
-#     - order: 3
-#     - source: salt://files/ank/release/cml/autonetkit_cisco_cml.so
-#     - mode: 755
-# {% else %}
-# autonetkit_cisco:
-#   file.managed:
-#     - order: 3
-#     - source: salt://files/ank/release/stable/autonetkit_cisco.so
-#     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
-#     - require:
-#       - pip: autonetkit
-# {% endif %}
-# autonetkit_cisco:
-#   pip.installed:
-#     - order: 3
-#     - upgrade: True
-#     - use_wheel: True
-#     - no_index: True
-#     - find_links: "file:///var/cache/virl/ank"
-#     - require:
-#       - pip: autonetkit

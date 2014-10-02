@@ -16,11 +16,8 @@
     - user: virl
     - group: virl
     - file_mode: 755
-    {% if virl_type == 'testing' %}
-    - source: "salt://std/release/testing/"
-    {% else %}
-    - source: "salt://std/release/stable/"
-    {% endif %}
+    - source: "salt://std/"
+
 
 std_init:
   file.managed:
@@ -43,7 +40,7 @@ std docs:
   archive:
     - extracted
     - name: /var/www/doc/
-    - source: "salt://std/release/stable/doc/html_ext.tar.gz"
+    - source: "salt://std/doc/html_ext.tar.gz"
     - source_hash: md5=9ec5c0249e103e83e9c79fcfa8cfc19d
     - archive_format: tar
     - tar_options: xz

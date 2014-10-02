@@ -368,7 +368,7 @@ linuxbridge_neutron_agent.py:
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - file_mode: 755
     - makedirs: True
-    - source: "salt://files/mtu.linuxbridge_neutron_agent.py"
+    - source: "salt://files/linuxbridge_neutron_agent.py"
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
