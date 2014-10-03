@@ -69,7 +69,7 @@ autonetkit:
 
 {% if venv == 'qa' or venv == 'dev' %}
 
-autonetkit_cisco:
+autonetkit_cisco alt:
   pip.installed:
     - name: autonetkit_cisco
     - order: 3
@@ -80,7 +80,16 @@ autonetkit_cisco:
     - require:
       - pip: autonetkit
 
+autonetkit_cisco.so remove:
+  file.absent:
+    - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
+
 {% else %}
+
+autonetkit_cisco pip remove:
+  pip.uninstall:
+    - name: autonetkit_cisco
+    - order: 3
 
 autonetkit_cisco:
   file.managed:
@@ -89,6 +98,7 @@ autonetkit_cisco:
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
     - require:
       - pip: autonetkit
+      - pip: autonetkit_cisco pip remove
 
 {% endif %}
 
@@ -100,8 +110,7 @@ autonetkit_cisco_webui:
     - no_index: True
     - name: autonetkit_cisco_webui
     - find_links: "file:///var/cache/virl/ank"
-    - require:
-      - file: autonetkit_cisco
+
 
 /etc/init.d/ank-webserver:
   file.replace:
