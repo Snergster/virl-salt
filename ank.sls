@@ -66,6 +66,22 @@ autonetkit:
     - watch:
       - pip: autonetkit
 
+
+{% if venv == 'qa' or venv == 'dev' %}
+
+autonetkit_cisco:
+  pip.installed:
+    - name: autonetkit_cisco
+    - order: 3
+    - upgrade: True
+    - use_wheel: True
+    - no_index: True
+    - find_links: "file:///var/cache/virl/ank"
+    - require:
+      - pip: autonetkit
+
+{% else %}
+
 autonetkit_cisco:
   file.managed:
     - order: 3
@@ -74,6 +90,7 @@ autonetkit_cisco:
     - require:
       - pip: autonetkit
 
+{% endif %}
 
 autonetkit_cisco_webui:
   pip.installed:
