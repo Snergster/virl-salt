@@ -225,6 +225,8 @@ virl background:
     - section: '*'
     - parameter: 'wallpaper'
     - value: '/home/virl/.virl.jpg'
+    - require:
+      - pkg: lubuntu-desktop
 
 gedit:
   pkg.installed:
