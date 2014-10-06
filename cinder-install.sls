@@ -42,7 +42,7 @@ cinder-rabbitpass:
     - parameter: 'rabbit_password'
     - value:  '{{ rabbitpassword }}'
 
-cinder-rabbitpass:
+cinder-adminpass:
   openstack_config.present:
     - filename: /etc/cinder/cinder.conf
     - section: 'keystone_authtoken'
@@ -79,7 +79,7 @@ cinder-auth-host:
     - section: 'keystone_authtoken'
     - parameter: 'auth_host'
     - value: '{{ hostname }}'
-  
+
 cinder-verbose:
   openstack_config.present:
     - filename: /etc/cinder/cinder.conf
