@@ -14,8 +14,4 @@
     - grant: all privileges
     - database: "{{ user }}.*"
     - user: {{ user }}
-    - require:
-      - pkg: mysql-server
-      - file: /etc/mysql/my.cnf
-      - mysql_database: {{ user }}-mysql
 {% endfor %}
