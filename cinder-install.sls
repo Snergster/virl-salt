@@ -1,6 +1,7 @@
 {% set cinderpassword = salt['grains.get']('password', 'password') %}
 {% set neutronpassword = salt['grains.get']('password', 'password') %}
 {% set ospassword = salt['grains.get']('password', 'password') %}
+{% set mypassword = salt['grains.get']('mysql_password', 'password') %}
 {% set rabbitpassword = salt['grains.get']('password', 'password') %}
 {% set hostname = salt['grains.get']('hostname', 'virl') %}
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
@@ -28,16 +29,18 @@ cinder-pkgs:
     - source: "salt://files/cinder.conf"
 
 cinder-conn:
-  file.replace:
-    - name: /etc/cinder/cinder.conf
-    - pattern: '#connection = <None>'
-    - repl: 'connection = mysql://cinder:{{ cinderpassword }}@127.0.0.1/cinder'
+  openstack_config.present:
+    - filename: /etc/cinder/cinder.conf
+    - section: 'database'
+    - parameter: 'connection'
+    - value: 'connection = mysql://cinder:{{ mypassword }}@127.0.0.1/cinder'
 
 cinder-rabbitpass:
-  file.replace:
-    - name: /etc/cinder/cinder.conf
-    - pattern: 'rabbit_password = RABBIT_PASS'
-    - repl: 'rabbit_password = {{ rabbitpassword }}'
+  openstack_config.present:
+    - filename: /etc/cinder/cinder.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'rabbit_password'
+    - value:  '{{ rabbitpassword }}'
 
 {% if cinder_enabled == True %}
 cinder-rclocal:
@@ -80,5 +83,3 @@ cinder-restart:
         cinder-manage db sync
         service cinder-volume restart
         service tgt restart
-
-
