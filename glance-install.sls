@@ -59,53 +59,61 @@ glance-api-rabbitpass:
 
 
 glance-api-tenname:
-  file.replace:
-    - name: /etc/glance/glance-api.conf
-    - pattern: 'admin_tenant_name = %SERVICE_TENANT_NAME%'
-    - repl: 'admin_tenant_name = service'
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'admin_tenant_name'
+    - value: 'service'
 
 glance-reg-tenname:
-  file.replace:
-    - name: /etc/glance/glance-registry.conf
-    - pattern: 'admin_tenant_name = %SERVICE_TENANT_NAME%'
-    - repl: 'admin_tenant_name = service'
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'admin_tenant_name'
+    - value: 'service'
 
 glance-api-user:
-  file.replace:
-    - name: /etc/glance/glance-api.conf
-    - pattern: 'admin_user = %SERVICE_USER%'
-    - repl: 'admin_user = glance'
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'admin_user'
+    - value: 'glance'
 
 glance-reg-user:
-  file.replace:
-    - name: /etc/glance/glance-registry.conf
-    - pattern: 'admin_user = %SERVICE_USER%'
-    - repl: 'admin_user = glance'
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'admin_user'
+    - value: 'glance'
 
 glance-api-pass:
-  file.replace:
-    - name: /etc/glance/glance-api.conf
-    - pattern: 'admin_password = %SERVICE_PASSWORD%'
-    - repl: 'admin_password = {{ ospassword }}'
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'admin_password'
+    - value: {{ ospassword }}
+
 
 glance-reg-pass:
-  file.replace:
-    - name: /etc/glance/glance-registry.conf
-    - pattern: 'admin_password = %SERVICE_PASSWORD%'
-    - repl: 'admin_password = {{ ospassword }}'
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'admin_password'
+    - value: {{ ospassword }}
 
 glance-api-flavor:
-  file.replace:
-    - name: /etc/glance/glance-api.conf
-    - pattern: '#flavor='
-    - repl: 'flavor=keystone'
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - section: 'paste_deploy'
+    - parameter: 'flavor'
+    - value: 'keystone'
 
 glance-reg-flavor:
-  file.replace:
-    - name: /etc/glance/glance-registry.conf
-    - pattern: '#flavor='
-    - repl: 'flavor=keystone'
-
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - section: 'paste_deploy'
+    - parameter: 'flavor'
+    - value: 'keystone'
 
 glance db-sync:
   cmd.run:
