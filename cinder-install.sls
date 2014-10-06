@@ -38,7 +38,7 @@ cinder-conn:
 cinder-rabbitpass:
   openstack_config.present:
     - filename: /etc/cinder/cinder.conf
-    - section: 'keystone_authtoken'
+    - section: 'DEFAULT'
     - parameter: 'rabbit_password'
     - value:  '{{ rabbitpassword }}'
 
@@ -69,12 +69,6 @@ cinder-verbose:
     - name: /etc/cinder/cinder.conf
     - pattern: 'verbose=True'
     - repl: 'verbose=False'
-
-cinder-password:
-  file.replace:
-    - name: /etc/cinder/cinder.conf
-    - pattern: 'CINDER_PASS'
-    - repl: '{{ cinderpassword }}'
 
 
 cinder-restart:
