@@ -146,9 +146,7 @@ virl init:
   cmd:
     - run
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpass }} -U uwmadmin -P {{ uwmpass }} -T uwmadmin
-    - onlyif: "test ! -e /var/local/virl/servers.db"
-    - watch:
-      - pip: VIRL_CORE
+    - onlyif: 'test ! -e /var/local/virl/servers.db'
 
 virl-std:
   service:
