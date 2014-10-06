@@ -10,9 +10,6 @@
   mysql_database:
     - present
     - name: {{ user }}
-    - require:
-      - pkg: mysql-server
-      - file: /etc/mysql/my.cnf
   mysql_grants.present:
     - grant: all privileges
     - database: "{{ user }}.*"
