@@ -22,13 +22,18 @@ debconf-change-set:
 debconf-change-run:
   cmd.run:
     - order: 4
+    - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
+
+debconf-change-run:
+  cmd.run:
+    - order: 5
     - name: dpkg-reconfigure mysql-server-5.5
 
 
 {% for user in accounts %}
 {{ user }}-mysql:
   mysql_user.present:
-    - order: 5
+    - order: 6
     - name: {{ user }}
     - host: 'localhost'
     - password: {{ mypassword }}
