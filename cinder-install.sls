@@ -42,6 +42,13 @@ cinder-rabbitpass:
     - parameter: 'rabbit_password'
     - value:  '{{ rabbitpassword }}'
 
+cinder-rabbitpass:
+  openstack_config.present:
+    - filename: /etc/cinder/cinder.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'admin_password'
+    - value:  '{{ ospassword }}'
+
 {% if cinder_enabled == True %}
 cinder-rclocal:
   file.append:
