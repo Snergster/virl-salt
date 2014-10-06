@@ -17,7 +17,7 @@ debconf-change-replace:
 debconf-change-set:
   cmd.run:
     - order: 3
-    - name: debconf-set-selections /tmp/debconf
+    - name: debconf-set-selections /tmp/debconf-change
 
 debconf-change-run:
   cmd.run:
