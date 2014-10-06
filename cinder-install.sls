@@ -59,23 +59,33 @@ cinder-rclocal:
 
 {% endif %}
 
-cinder-hostname:
-  file.replace:
-    - name: /etc/cinder/cinder.conf
-    - pattern: 'controller'
-    - repl: '{{ hostname }}'
+cinder-rabbit-hostname:
+  openstack_config.present:
+    - filename: /etc/cinder/cinder.conf
+    - section: 'DEFAULT'
+    - parameter: 'rabbit_host'
+    - value:  '{{ hostname }}'
 
-cinder-publicip:
-  file.replace:
-    - name: /etc/cinder/cinder.conf
-    - pattern: 'PUBLICIP'
-    - repl: '{{ public_ip }}'
+cinder-auth-uri:
+  openstack_config.present:
+    - filename: /etc/cinder/cinder.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'auth_uri'
+    - value:  'http://{{ hostname }}:5000/v2.0'
 
+cinder-auth-host:
+  openstack_config.present:
+    - filename: /etc/cinder/cinder.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'auth_host'
+    - value: '{{ hostname }}'
+  
 cinder-verbose:
-  file.replace:
-    - name: /etc/cinder/cinder.conf
-    - pattern: 'verbose=True'
-    - repl: 'verbose=False'
+  openstack_config.present:
+    - filename: /etc/cinder/cinder.conf
+    - section: 'DEFAULT'
+    - parameter: 'verbose'
+    - value:  'False'
 
 
 cinder-restart:
