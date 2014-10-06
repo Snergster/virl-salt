@@ -75,6 +75,7 @@ autonetkit_cisco alt:
     - order: 3
     - upgrade: True
     - use_wheel: True
+    - pre_releases: True
     - no_index: True
     - find_links: "file:///var/cache/virl/ank"
     - require:
@@ -130,5 +131,3 @@ ank-webserver:
     - restart: True
     - watch:
       - pip: autonetkit
-
-
