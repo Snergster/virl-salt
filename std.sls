@@ -107,6 +107,7 @@ VIRL_CORE:
     - upgrade: True
     - use_wheel: True
     - no_index: True
+    - pre_releases: True
     - no_deps: True
     - find_links: "file:///var/cache/virl/std"
     {% if cml == True %}
@@ -144,7 +145,7 @@ VIRL_CORE:
 virl init:
   cmd.run:
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpass }} -U uwmadmin -P {{ uwmpass }} -T uwmadmin
-    - unless: ls /var/local/virl/servers.db
+    - unless: "ls /var/local/virl/servers.db"
     - watch:
       - pip: VIRL_CORE
 
