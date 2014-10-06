@@ -7,19 +7,12 @@
     - name: {{ user }}
     - host: 'localhost'
     - password: {{ mypassword }}
-    - require:
-      - pkg: mysql-server
-      - file: /etc/mysql/my.cnf
-    - watch:
-      - service: mysql
   mysql_database:
     - present
     - name: {{ user }}
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
-    - watch:
-      - service: mysql
   mysql_grants.present:
     - grant: all privileges
     - database: "{{ user }}.*"
@@ -28,6 +21,4 @@
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
       - mysql_database: {{ user }}-mysql
-    - watch:
-      - service: mysql
 {% endfor %}
