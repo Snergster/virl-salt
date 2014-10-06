@@ -196,6 +196,7 @@ nova-compute-libvirt-serport:
     - comment
     - name: /etc/fstab
     - regex: ^ramdisk
+    - onlyif: "grep 'ramdisk' /etc/fstab"
 {% endif %}
 
 #    - onlyif: df /var/lib/nova/instances
