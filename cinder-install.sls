@@ -33,7 +33,7 @@ cinder-conn:
     - filename: /etc/cinder/cinder.conf
     - section: 'database'
     - parameter: 'connection'
-    - value: 'connection = mysql://cinder:{{ mypassword }}@127.0.0.1/cinder'
+    - value: 'mysql://cinder:{{ mypassword }}@127.0.0.1/cinder'
 
 cinder-rabbitpass:
   openstack_config.present:
