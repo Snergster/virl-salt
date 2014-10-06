@@ -10,7 +10,7 @@
 debconf-change-replace:
   file.replace:
     - order: 2
-    - name: /tmp/debconf.change
+    - name: /tmp/debconf-change
     - pattern: 'MYPASS'
     - repl: {{ mypassword }}
 
