@@ -19,7 +19,7 @@ debconf-change-set:
     - order: 3
     - name: debconf-set-selections /tmp/debconf-change
 
-debconf-change-run:
+debconf-change-noninteractive:
   cmd.run:
     - order: 4
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
