@@ -30,3 +30,4 @@
       - mysql_database: {{ user }}-mysql
     - watch:
       - service: mysql
+{% endfor %}

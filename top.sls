@@ -5,10 +5,9 @@ base:
        - std
        - vinstall
        - vmm-download
-       - images
+       - routervms
     {% if onedev == true %}
        - onepk-install
        - vmm-local
        - eclipse
     {% endif %}
-

@@ -144,7 +144,7 @@ VIRL_CORE:
 virl init:
   cmd.wait:
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpass }} -U uwmadmin -P {{ uwmpass }} -T uwmadmin
-    - unless: ls /var/local/virl/users
+    - unless: ls /var/local/virl/servers.db
     - watch:
       - pip: VIRL_CORE
 
