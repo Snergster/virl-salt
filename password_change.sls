@@ -27,7 +27,7 @@ debconf-change-run:
 
 {% for user in accounts %}
 {{ user }}-mysql:
-  order: 5
+  - order: 5
   mysql_user.present:
     - name: {{ user }}
     - host: 'localhost'
