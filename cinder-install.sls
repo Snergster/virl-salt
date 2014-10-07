@@ -93,4 +93,5 @@ cinder-restart:
     - name: |
         cinder-manage db sync
         service cinder-volume restart
+        service cinder-api restart
         service tgt restart
