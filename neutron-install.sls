@@ -16,6 +16,7 @@
 {% set l2_port2_enabled = salt['grains.get']('l2_port2_enabled', True ) %}
 {% set jumbo_frames = salt['grains.get']('jumbo_frames', False ) %}
 {% set l3_port = salt['grains.get']('l3_port', 'eth3' ) %}
+{% set service_tenid = salt['grains.get']('service_id', ' ' ) %}
 
 neutron-pkgs:
   pkg.installed:
@@ -188,6 +189,13 @@ neutron-hostname4:
     - section: 'keystone_authtoken'
     - parameter: 'auth_host'
     - value: '{{ hostname }}'
+
+neutron-serviceid:
+  openstack_config.present:
+    - filename: /etc/neutron/neutron.conf
+    - section: 'DEFAULT'
+    - parameter: 'nova_admin_tenant_id'
+    - value: '{{ service_tenid }}'
 
 neutron-verbose:
   file.replace:
