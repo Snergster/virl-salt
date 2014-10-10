@@ -40,7 +40,7 @@ def __virtual__():
 def __get_config(key, default=None):
     """Get salt configuration using config.get, defaulting to `default`"""
     prefix = 'virl_core.'
-    return __salt__['config.get'](key, default)
+    return __salt__['grains.get'](key, default)
 
 
 class VirlCommandExecutionError(CommandExecutionError):
