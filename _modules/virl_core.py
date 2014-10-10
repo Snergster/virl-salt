@@ -91,7 +91,7 @@ def __uwm_client(command, args=(), kwargs={}):
                      args=('--quiet', '--json'),
                      kwargs={'-l': __get_config('uwm_url', uwm_url),
                              '-u': __get_config('uwm_username', uwm_username),
-                             '-p': __get_config('uwm_password', uwmadmin_password)},
+                             '-p': __get_config('uwmadmin_password', uwmadmin_password)},
                      subcommand=command,
                      subargs=args,
                      subkwargs=kwargs)
@@ -103,7 +103,7 @@ def __os_client(command, args=(), kwargs={}):
                      args=('--quiet', '--json'),
                      kwargs={'-A': __get_config('os_auth_url', OS_AUTH_URL),
                              '-U': __get_config('os_username', os_username),
-                             '-P': __get_config('os_password', password),
+                             '-P': __get_config('password', password),
                              '-T': __get_config('os_tenant', OS_TENANT)},
                      subcommand=command,
                      subargs=args,
