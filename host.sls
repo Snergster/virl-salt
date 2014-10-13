@@ -188,7 +188,7 @@ vhostname:
     - name: /etc/hostname
     - contents: {{ hostname }}
 
-/etc/init/failsafe.conf:
-  file.managed:
-    - file_mode: 644
-    - source: "salt://files/failsafe.conf"
+## /etc/init/failsafe.conf:
+##   file.managed:
+##     - file_mode: 644
+##     - source: "salt://files/failsafe.conf"
