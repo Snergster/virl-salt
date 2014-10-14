@@ -97,11 +97,9 @@ virlwebpages:
     - user: root
     - group: root
     - file_mode: 755
-    # - require:
-    #   - file: /var/www/html
 
-# base_index_pointer:
-#   file.replace:
-#     - name: /var/www/index.html
-#     - pattern: 'UWMPORT'
-#     - repl: '{{ uwmport }}'
+
+/etc/init/failsafe.conf:
+  file.managed:
+    - file_mode: 644
+    - source: "salt://files/failsafe.conf"
