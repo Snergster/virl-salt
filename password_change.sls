@@ -2,6 +2,7 @@
 
 {% set accounts = ['root','keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
 
+{% if not mypassword == 'password' %}
 /tmp/debconf-change:
   file.managed:
     - order: 1
@@ -40,3 +41,4 @@ debconf-change-noninteractive:
     - database: "{{ user }}.*"
     - user: {{ user }}
 {% endfor %}
+{% endif %}
