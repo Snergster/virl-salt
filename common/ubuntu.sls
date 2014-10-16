@@ -19,5 +19,5 @@ salt common hold:
     - name: salt-common
 
 upgrade mess:
-  pkg.upgrade:
+  pkg.uptodate:
     - refresh: True
