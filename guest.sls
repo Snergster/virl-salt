@@ -8,8 +8,8 @@ create guest account:
     - name: guest
     - description: guest project
     - require:
-      - cmd: virl-std
-      - cmd: virl-uwm
+      - cmd: virl-std start
+      - cmd: virl-uwm start
 
 
 fix guest password:
