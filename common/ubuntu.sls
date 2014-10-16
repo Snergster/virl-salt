@@ -1,22 +1,23 @@
 qemu hold:
-  pkg.hold:
+  apt-held:
     - name: qemu-kvm
 
 linuxbridge hold:
-  pkg.hold:
+  apt-held:
     - name: neutron-plugin-linuxbridge-agent
 
 salt master hold:
-  pkg.hold:
+  apt-held:
     - name: salt-master
 
 salt minion hold:
-  pkg.hold:
+  apt-held:
     - name: salt-minion
 
 salt common hold:
-  pkg.hold:
+  apt-held:
     - name: salt-common
 
 upgrade mess:
-  pkg.upgrade
+  pkg.upgrade:
+    - refresh: True
