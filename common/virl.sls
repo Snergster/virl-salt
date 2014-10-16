@@ -1,7 +1,3 @@
-squid-deb-proxy-client:
-  pkg.installed:
-    - skip_verify: True
-
 mypkgs:
   pkg.installed:
     - skip_verify: True
@@ -20,7 +16,3 @@ mypkgs:
       - curl
       - sshpass
       - emacs
-
-/proc/sys/kernel/numa_balancing:
-  file.managed:
-    - content: 0
