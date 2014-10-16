@@ -29,6 +29,4 @@ base:
 
   '.*cisco.com$':
     - match: pcre
-    - std
-    - ank
-    - routervms
+    - common.virl
