@@ -27,12 +27,10 @@ delete guest account:
     - clear_openstack: True
 {% endif %}
 
-virl-std:
+virl-std start:
   cmd.run:
     - name: service virl-std start
 
-virl-uwm:
+virl-uwm start:
   cmd.run:
     - name: service virl-uwm start
-
-
