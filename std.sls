@@ -139,6 +139,8 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_std_url http://localhost:{{ stdport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_port {{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ uwmport }}
+      - crudini --set /etc/virl/virl.cfg env virl_std_user_name uwmadmin
+      - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpass }}
     - watch:
       - pip: VIRL_CORE
 
