@@ -63,9 +63,9 @@ eth0:
 {{ int_port }}:
   cmd.run:
 {% if jumbo_frames == True %}
-    - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} dns-nameservers="{{fdns}} {{sdns}}" mtu=9100'
+    - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} mtu=9100'
 {% else %}
-    - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} dns-nameservers="{{fdns}} {{sdns}}" mtu=1500'
+    - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} mtu=1500'
 {% endif %}    
 
 
