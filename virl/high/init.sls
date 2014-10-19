@@ -1,6 +1,6 @@
 include:
-  - vinstall
-  - ank
-  - std
-  - guest
+  - virl.vinstall
+  - virl.ank
+  - virl.std
+  - virl.guest
   
