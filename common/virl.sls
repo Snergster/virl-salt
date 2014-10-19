@@ -5,6 +5,7 @@ mypkgs:
     - pkgs:
       - build-essential
       - python-dev
+      - python-dateutil
       - git
       - ntp
       - debconf-utils
