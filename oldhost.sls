@@ -50,27 +50,38 @@ system:
     - hostname: {{hostname}}.{{domain}}
     - gatewaydev: {{ publicport }}
 
-
-
 eth0:
-  cmd.run:
-    - order: last
+  network.managed:
+    - order: 2
+    - name: {{ publicport }}
+    - enabled: True
+    - type: eth
 {% if dhcp == True %}
-    - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
+    - proto: dhcp
 {% else %}
-    - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
+    - proto: static
+    - ipaddr: {{ public_ip }}
+    - netmask: {{ public_netmask }}
+    - gateway: {{ public_gateway }}
+    - dns:
+      - {{ fdns }}
+      - {{ sdns }}
 {% endif %}
 
+
 {{ int_port }}:
-  cmd.run:
+  network.managed:
+    - order: 2
+    - ipaddr: {{ int_ip }}
+    - proto: static
+    - netmask: {{ int_mask }}
+    - type: eth
+    - enabled: True
 {% if jumbo_frames == True %}
-    - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} mtu=9100'
+    - mtu: 9100
 {% else %}
-    - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} mtu=1500'
-{% endif %}    
-
-
-
+    - mtu: 1550
+{% endif %}
 
 loop0:
   network.managed:
@@ -81,12 +92,16 @@ loop0:
     - enabled: True
     - proto: loopback
 
-
 loop1:
-  cmd.run:
-    - name: 'salt-call --local ip.build_interface "lo:1" eth True address=127.0.1.1 proto=loopback netmask=255.0.0.0'
-
-
+  network.managed:
+    - order: 2
+    - enabled: True
+    - name: 'lo:1'
+    - ipaddr: 127.0.1.1
+    - netmask: 255.255.255.0
+    - type: eth
+    - enabled: True
+    - proto: loopback
 
 {{ l2_port }}:
   network.managed:
@@ -156,7 +171,7 @@ man-int-promisc:
     - pattern: {{ int_ip }}
     - repl: '{{ int_ip }}\n    post-up ip link set {{int_port}} promisc on'
     - require:
-      - cmd: {{ int_port }}
+      - network: {{ int_port }}
 
 vhost:
   host.present:
@@ -173,3 +188,7 @@ vhostname:
     - name: /etc/hostname
     - contents: {{ hostname }}
 
+## /etc/init/failsafe.conf:
+##   file.managed:
+##     - file_mode: 644
+##     - source: "salt://files/failsafe.conf"

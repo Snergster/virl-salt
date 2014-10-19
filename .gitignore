@@ -6,3 +6,4 @@ std/*
 .idea/*
 atlassian-ide-plugin.xml
 .gitignore
+*~
