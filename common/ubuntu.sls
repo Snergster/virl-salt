@@ -5,18 +5,11 @@ qemu hold:
 linuxbridge hold:
   apt.held:
     - name: neutron-plugin-linuxbridge-agent
-
-salt master hold:
-  apt.held:
-    - name: salt-master
+    - onlyif: 'test -e /usr/bin/neutron-linuxbridge-agent'
 
 salt minion hold:
   apt.held:
     - name: salt-minion
-
-salt common hold:
-  apt.held:
-    - name: salt-common
 
 upgrade mess:
   pkg.uptodate:
