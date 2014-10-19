@@ -55,9 +55,9 @@ system:
 eth0:
   cmd.run:
 {% if dhcp == True %}
-    - name: 'salt-call --local ip.build_interface {{public_port}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
+    - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
 {% else %}
-    - name: 'salt-call --local ip.build_interface {{public_port}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
+    - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
 {% endif %}
 
 {{ int_port }}:
