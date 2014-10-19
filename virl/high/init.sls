@@ -3,5 +3,4 @@ include:
   - ank
   - std
   - guest
-  - routervms
   
