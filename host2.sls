@@ -54,6 +54,7 @@ system:
 
 eth0:
   cmd.run:
+    - order: last
 {% if dhcp == True %}
     - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
 {% else %}
