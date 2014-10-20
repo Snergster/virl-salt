@@ -1,2 +1,2 @@
 include:
-  - openstack.keystone.install
+  - openstack.keystone.init
