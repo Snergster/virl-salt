@@ -5,10 +5,14 @@
     - group: virl
     - mode: 0755
 
-## /home/virl/default.virl.ini:
-##   file.managed:
-##     - source: salt://files/vsettings.ini
-##     - user: virl
-##     - group: virl
-##     - mode: 0755
+/srv/salt/host.sls:
+  file.managed:
+    - source: salt://host.sls
+    - mode: 0755
+
+/srv/salt/ntp.sls:
+  file.managed:
+    - source: salt://ntp.sls
+    - mode: 0755
+
 

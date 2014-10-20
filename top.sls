@@ -1,31 +1,27 @@
 base:
   '*':
     - common.ubuntu
-    - vinstall
+    - virl.vinstall
 
   '^.{9}virledu.info$':
     - match: pcre
-    - std
-    - ank
-    - routervms
+    - virl.std
+    - virl.ank
 
   '^.{9}virl.info$':
     - match: pcre
-    - std
-    - ank
-    - routervms
+    - virl.std
+    - virl.ank
 
   '^.{9}devnet.info$':
     - match: pcre
-    - std
-    - ank
-    - routervms
+    - virl.std
+    - virl.ank
 
   '^.*innopod.info$':
     - match: pcre
-    - std
-    - ank
-    - routervms
+    - virl.std
+    - virl.ank
 
   '.*cisco.com$':
     - match: pcre
