@@ -1,3 +1,3 @@
 upgrade mess:
-  pkg.upgrade:
+  pkg.uptodate:
     - refresh: True
