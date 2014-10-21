@@ -1,44 +1,44 @@
 install_mysql:
   salt.state:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - sls:
       - openstack.mysql
 
 install_rabbitmq:
   salt.state:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - sls:
       - openstack.rabbitmq
 
 install_keystone:
   salt.state:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - sls:
       - openstack.keystone.install
       - openstack.keystone.setup
 
 install_keystone-setup:
   salt.state:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - sls:
       - openstack.keystone.setup
 
 finish endpoints:
   salt.state:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - sls:
       - openstack.keystone.endpoint
 
 second grains in place:
   salt.function:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - name: cmd.run
     - arg:
       - /usr/local/bin/vinstall salt
 
 rest of second:
   salt.state:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - sls:
       - openstack.keystone.endpoint
       - openstack.osclients
@@ -50,14 +50,14 @@ rest of second:
 
 vinstall third:
   salt.function:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - name: cmd.run
     - arg:
       - /usr/local/bin/vinstall third
 
 virl services:
   salt.state:
-    - tgt: '*'
+    - tgt: 'ejkbootie.virl.qa'
     - sls:
       - virl.std
       - virl.guest
@@ -68,6 +68,6 @@ virl services:
 ## also needed in tightvncserver,cinder and dash
 ##virl services:
 ##  salt.state:
-##    - tgt: '*'
+##    - tgt: 'ejkbootie.virl.qa'
 ##    - sls:
 ##      - virl.desktop
