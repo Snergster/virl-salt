@@ -1,0 +1,73 @@
+install_mysql:
+  salt.state:
+    - tgt: '*'
+    - sls:
+      - openstack.mysql
+
+install_rabbitmq:
+  salt.state:
+    - tgt: '*'
+    - sls:
+      - openstack.rabbitmq
+
+install_keystone:
+  salt.state:
+    - tgt: '*'
+    - sls:
+      - openstack.keystone.install
+      - openstack.keystone.setup
+
+install_keystone-setup:
+  salt.state:
+    - tgt: '*'
+    - sls:
+      - openstack.keystone.setup
+
+finish endpoints:
+  salt.state:
+    - tgt: '*'
+    - sls:
+      - openstack.keystone.endpoint
+
+second grains in place:
+  salt.function:
+    - tgt: '*'
+    - name: cmd.run
+    - arg:
+      - /usr/local/bin/vinstall salt
+
+rest of second:
+  salt.state:
+    - tgt: '*'
+    - sls:
+      - openstack.keystone.endpoint
+      - openstack.osclients
+      - virl.openrc
+      - openstack.glance
+      - openstack.neutron.install
+      - openstack.nova.install
+      - openstack.neutron.changes
+
+vinstall third:
+  salt.function:
+    - tgt: '*'
+    - name: cmd.run
+    - arg:
+      - /usr/local/bin/vinstall third
+
+virl services:
+  salt.state:
+    - tgt: '*'
+    - sls:
+      - virl.std
+      - virl.guest
+      - virl.ank
+      - virl.routervms
+
+## we want the below once desktop has big if
+## also needed in tightvncserver,cinder and dash
+##virl services:
+##  salt.state:
+##    - tgt: '*'
+##    - sls:
+##      - virl.desktop
