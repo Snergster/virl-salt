@@ -29,7 +29,7 @@ commonpkgs:
 
 /srv/salt:
   file.directory:
-    dir_mode: 755
-    makedirs: True
+    - dir_mode: 755
+    - makedirs: True
 
     
