@@ -1,16 +1,28 @@
-qemu hold:
-  apt.held:
-    - name: qemu-kvm
+include:
+  - common.pip
+  - common.uptodate
 
-linuxbridge hold:
-  apt.held:
-    - name: neutron-plugin-linuxbridge-agent
-    - onlyif: 'test -e /usr/bin/neutron-linuxbridge-agent'
+commonpkgs:
+  pkg.installed:
+    - refresh: False
+    - pkgs:
+      - build-essential
+      - python-dev
+      - python-dateutil
+      - git
+      - ntp
+      - traceroute
+      - ntpdate
+      - zile
+      - curl
+      - sshpass
+      - emacs
+      - openssh-server
+      - crudini
 
-salt minion hold:
-  apt.held:
-    - name: salt-minion
-
-upgrade mess:
-  pkg.uptodate:
-    - refresh: True
+/usr/local/bin/openstack-config:
+  file.symlink:
+    - target: /usr/bin/crudini
+    - mode: 0755
+    - require:
+      - pkg: commonpkgs
