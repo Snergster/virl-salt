@@ -26,3 +26,10 @@ commonpkgs:
     - mode: 0755
     - require:
       - pkg: commonpkgs
+
+/srv/salt:
+  file.directory:
+    dir_mode: 755
+    makedirs: True
+
+    
