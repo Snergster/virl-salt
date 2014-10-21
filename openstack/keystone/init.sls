@@ -13,6 +13,8 @@ keystone_token:
     - section: 'DEFAULT'
     - parameter: 'admin_token'
     - value: '{{ keystone_service_token }}'
+    - require:
+      - pkg: keystone-pkgs
 
 /etc/keystone/keystone.conf:
   openstack_config.present:
@@ -20,26 +22,33 @@ keystone_token:
     - section: 'database'
     - parameter: 'connection'
     - value: ' mysql://keystone:{{ mypassword }}@localhost/keystone'
-
-
+    - require:
+      - pkg: keystone-pkgs
 
 logdir:
   file.replace:
     - name: /etc/keystone/keystone.conf
     - pattern: '#log_dir=<None>'
     - repl:  'log_dir = /var/log/keystone'
+    - require:
+      - pkg: keystone-pkgs
 
 keystone db-sync:
   cmd.run:
     - name: su -s /bin/sh -c "keystone-manage db_sync" keystone
     - require:
-      - pkg: keystone
+      - pkg: keystone-pkgs
 
 /usr/bin/keystone-manage token_flush >/var/log/keystone/keystone-tokenflush.log 2>&1:
   cron.present:
     - user: root
     - hour: 5
+    - require:
+      - cmd: keystone db-sync
 
 key-db-sync:
   cmd.run:
+    - order: last
     - name: service keystone restart
+    - require:
+      - cmd: keystone db-sync
