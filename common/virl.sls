@@ -50,10 +50,18 @@ qemu hold:
     - require:
       - pkg: mypkgs
 
-linuxbridge hold:
-  apt.held:
-    - name: neutron-plugin-linuxbridge-agent
-    - onlyif: 'test -e /usr/bin/neutron-linuxbridge-agent'
+vinstall run:
+  cmd.run:
+    - name: /usr/local/bin/vinstall salt
+    - onlyif: 'test -e /etc/virl.ini'
+    - require:
+      - file: /usr/local/bin/vinstall
+      - pip: docopt
+    
+vinstall wheels:
+  file.recurse:
+    - name: /tmp/wheels
+    - source: salt://common/wheels
 
 {% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
 {{ pyreq }}:
@@ -61,10 +69,12 @@ linuxbridge hold:
     - require:
       - pkg: pip on the box
       - file: /usr/local/bin/vinstall
-    {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http proxy', 'None') %}
-    - proxy: {{ proxy }}
-    {% endif %}
+      - file: vinstall wheels
+    - use_wheel: True
+    - no_index: True
+    - pre_releases: True
+    - no_deps: True
+    - find_links: "file:///tmp/wheels"
 {% endfor %}
 
 /usr/bin/telnet_front:

@@ -22,6 +22,10 @@ virl-group:
   group.present:
     - name: virl
 
+libvirt-group:
+  group.present:
+    - name: libvirtd
+
 virl-user:
   user.present:
     - name: virl

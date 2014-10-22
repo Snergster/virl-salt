@@ -89,14 +89,14 @@ neutron-mtu:
 ##     - watch:
 ##       - file: linuxbridge_neutron_agent.py
 
-linuxbridge_apt_add:
-  file.append:
-    - order: 3
-    - name: /etc/apt/preferences.d/cisco-openstack
-    - text: |
-        Package: neutron-plugin-linuxbridge-agent
-        Pin: release *
-        Pin-Priority: -1
+## linuxbridge_apt_add:
+##   file.append:
+##     - order: 3
+##     - name: /etc/apt/preferences.d/cisco-openstack
+##     - text: |
+##         Package: neutron-plugin-linuxbridge-agent
+##         Pin: release *
+##         Pin-Priority: -1
 
 /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
   file.managed:
@@ -383,6 +383,13 @@ linuxbridge_neutron_agent.py:
     - watch:
       - file: linuxbridge_neutron_agent.py
 
+linuxbridge hold:
+  apt.held:
+    - name: neutron-plugin-linuxbridge-agent
+    - require:
+      - file: linuxbridge_neutron_agent.py
+      
+
 
 
 ## {% for each in ["dhcp-agent","l3-agent","metadata-agent","plugin-linuxbridge-agent","server"] %}
@@ -397,6 +404,7 @@ linuxbridge_neutron_agent.py:
 
 neutron db-sync:
   cmd.run:
+    - order: last
     - name: |
         service neutron-server restart
         sysctl -p

@@ -2,6 +2,10 @@ virl-group:
   group.present:
     - name: virl
 
+libvirtd needed:
+  group.present:
+    - name: libvirtd
+
 virl-user:
   user.present:
     - name: virl
@@ -11,11 +15,21 @@ virl-user:
     - home: /home/virl
     - password: $6$SALTsalt$789PO2/UvvqTk1tGEj67KEOSPbQqqd9wEEBPqTrAuqNO1rTeNruN.IiVxXZX6w8kfEnt7q5eyz/aOFwlZow/b0
 
+/home/virl/.ssh:
+  file.directory:
+    - user: virl
+    - group: virl
+    - makedirs: True
+    - require:
+      - user: virl-user
+
 /etc/sudoers.d/virl:
   file.managed:
     - order: 3
     - mode: 0440
     - create: True
+    - require:
+      - user: virl-user
 
 sudoer-defaults:
     file.append:
