@@ -1,8 +1,6 @@
 {% set ifproxy = salt['grains.get']('proxy', 'False') %}
 
 include:
-  - common.pip
-  - common.uptodate
   - common.ubuntu
   - virl.vinstall
 
@@ -61,7 +59,7 @@ vinstall run:
 vinstall wheels:
   file.recurse:
     - name: /tmp/wheels
-    - source: salt://common/wheels
+    - source: salt://files/wheels
 
 {% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
 {{ pyreq }}:
