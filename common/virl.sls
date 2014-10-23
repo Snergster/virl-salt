@@ -122,3 +122,11 @@ virlwebpages:
   file.managed:
     - file_mode: 644
     - source: "salt://files/failsafe.conf"
+
+salt-minion hold:
+  file.append:
+    - name: /etc/apt/preferences.d/salt-minion
+    - text: |
+        Package: salt-minion
+        Pin: release *
+        Pin-Priority: -1

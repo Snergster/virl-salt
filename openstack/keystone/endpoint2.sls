@@ -6,56 +6,56 @@
 
 glance endpoint:
   keystone.endpoint_present:
-    - name: image
+    - name: glance
     - publicurl: http://{{ public_ip }}:9292
     - internalurl: http://{{ public_ip }}:9292
     - adminurl: http://{{ public_ip }}:9292
 
 keystone endpoint:
   keystone.endpoint_present:
-    - name: identity
+    - name: keystone
     - publicurl: http://{{ public_ip }}:5000/v2.0
     - internalurl: http://{{ public_ip }}:5000/v2.0
     - adminurl: http://{{ public_ip }}:35357/v2.0
 
 neutron endpoint:
   keystone.endpoint_present:
-    - name: network
+    - name: neutron
     - publicurl: http://{{ public_ip }}:9696
     - internalurl: http://{{ public_ip }}:9696
     - adminurl: http://{{ public_ip }}:9696
 
 nova endpoint:
   keystone.endpoint_present:
-    - name: compute
+    - name: nova
     - publicurl: http://{{ public_ip }}:8774/v2/$\(tenant_id\)s
     - internalurl: http://{{ public_ip }}:8774/v2/$\(tenant_id\)s
     - adminurl: http://{{ public_ip }}:8774/v2/$\(tenant_id\)s
 
 cinder endpoint:
   keystone.endpoint_present:
-    - name: volume
+    - name: cinder
     - publicurl: http://{{ public_ip }}:8776/v1/$\(tenant_id\)s
     - internalurl: http://{{ public_ip }}:8776/v1/$\(tenant_id\)s
     - adminurl: http://{{ public_ip }}:8776/v1/$\(tenant_id\)s
 
 cinderv2 endpoint:
   keystone.endpoint_present:
-    - name: volumev2
+    - name: cinderv2
     - publicurl: http://{{ public_ip }}:8776/v2/$\(tenant_id\)s
     - internalurl: http://{{ public_ip }}:8776/v2/$\(tenant_id\)s
     - adminurl: http://{{ public_ip }}:8776/v2/$\(tenant_id\)s
 
 orchestration endpoint:
   keystone.endpoint_present:
-    - name: orchestration
+    - name: heat
     - publicurl: http://{{ public_ip }}:8004/v1/$\(tenant_id\)s
     - internalurl: http://{{ public_ip }}:8004/v1/$\(tenant_id\)s
     - adminurl: http://{{ public_ip }}:8004/v1/$\(tenant_id\)s
 
 cloudformation endpoint:
   keystone.endpoint_present:
-    - name: cloudformation
+    - name: heat-cfn
     - publicurl: http://{{ public_ip }}:8000/v1
     - internalurl: http://{{ public_ip }}:8000/v1
     - adminurl: http://{{ public_ip }}:8000/v1
