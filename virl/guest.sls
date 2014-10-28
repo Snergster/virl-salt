@@ -1,5 +1,5 @@
 {% set guestaccount = salt['grains.get']('guest_account', 'True') %}
-{% set uwmpass = salt['grains.get']('uwmadmin_password', 'password') %}
+{% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
 
 {% if guestaccount == True %}
 

@@ -5,10 +5,10 @@
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'password') %}
 {% set stdport = salt['grains.get']('virl_webservices', '19399') %}
 {% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
-{% set uwmpass = salt['grains.get']('uwmadmin_password', 'password') %}
+{% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
 {% set virl_type = salt['grains.get']('virl_type', 'stable') %}
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
-{% set httpproxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
+{% set http_proxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 
 /var/cache/virl/std:
   file.recurse:
@@ -75,7 +75,7 @@ std_prereq:
   pip.installed:
     - order: 2
 {% if proxy == true %}
-    - proxy: {{  httpproxy }}
+    - proxy: {{  http_proxy }}
 {% endif %}
     - names:
       - ipaddr
@@ -140,14 +140,14 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_uwm_port {{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_std_user_name uwmadmin
-      - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpass }}
+      - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
     - watch:
       - pip: VIRL_CORE
 
 virl init:
   cmd:
     - run
-    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpass }} -U uwmadmin -P {{ uwmpass }} -T uwmadmin
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
 
 virl-std:

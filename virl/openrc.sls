@@ -1,7 +1,7 @@
-{% set ADMIN_PASS = salt['grains.get']('password', 'password') %}
-{% set controllername = salt['grains.get']('hostname', 'localhost') %}
-{% set token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set ifhorizon = salt['grains.get']('enable_horizon', 'False') %}
+{% set ospassword = salt['grains.get']('password', 'password') %}
+{% set controllerhname = salt['grains.get']('hostname', 'localhost') %}
+{% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
+{% set enable_horizon = salt['grains.get']('enable_horizon', 'False') %}
 {% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
 
 /usr/local/bin/virl-openrc.sh:
@@ -88,39 +88,39 @@ adminpass:
   file.sed:
     - name: /usr/local/bin/virl-openrc.sh
     - before: 'export OS_PASSWORD=ADMIN_PASS'
-    - after:  'export OS_PASSWORD={{ ADMIN_PASS }}'
+    - after:  'export OS_PASSWORD={{ ospassword }}'
 
 adminpass2:
   file.sed:
     - name: /home/virl/.bashrc
     - before: 'export OS_PASSWORD=ADMIN_PASS'
-    - after:  'export OS_PASSWORD={{ ADMIN_PASS }}'
+    - after:  'export OS_PASSWORD={{ ospassword }}'
 
 controllername:
   file.sed:
     - name: /usr/local/bin/virl-openrc.sh
     - before: 'controller'
-    - after:  '{{ controllername }}'
+    - after:  '{{ controllerhname }}'
 
 controllername2:
   file.sed:
     - name: /home/virl/.bashrc
     - before: 'controller'
-    - after:  '{{ controllername }}'
+    - after:  '{{ controllerhname }}'
 
 token:
   file.replace:
     - name: /usr/local/bin/virl-openrc.sh
     - pattern: OS_TOKEN
-    - repl: {{ token }}
+    - repl: {{ ks_token }}
 
 token2:
   file.replace:
     - name: /home/virl/.bashrc
     - pattern: OS_TOKEN
-    - repl: {{ token }}
+    - repl: {{ ks_token }}
 
-{% if ifhorizon == 'False' %}
+{% if enable_horizon == 'False' %}
 
 /var/www/index.html:
   file.managed:
