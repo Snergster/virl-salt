@@ -5,14 +5,16 @@
     - group: virl
     - mode: 0755
 
-/srv/salt/host.sls:
+/srv/salt/virl/host.sls:
   file.managed:
-    - source: salt://host.sls
+    - source: salt://virl/host.sls
+    - makedirs: True
     - mode: 0755
 
-/srv/salt/ntp.sls:
+/srv/salt/virl/ntp.sls:
   file.managed:
-    - source: salt://ntp.sls
+    - source: salt://virl/ntp.sls
+    - makedirs: True
     - mode: 0755
 
 
