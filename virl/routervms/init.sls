@@ -1,5 +1,4 @@
 {% set onedev = salt['grains.get']('onedev', 'False') %}
-{% set domain = salt['grains.get']('append_domain', ' ') %}
 {% set iosv = salt['pillar.get']('routervms:iosv', 'False'  ) %}
 {% set iosxrv = salt['pillar.get']('routervms:iosxrv', 'False') %}
 

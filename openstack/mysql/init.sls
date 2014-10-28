@@ -1,4 +1,4 @@
-{% set mypassword = salt['grains.get']('mysql_password', 'password') %}
+{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 
 # Copyright 2012-2013 Hewlett-Packard Development Company, L.P.
 # All Rights Reserved.

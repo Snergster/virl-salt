@@ -14,9 +14,9 @@ nova-restart:
         service glance-api restart
         service keystone restart
         service neutron-server restart
-	service neutron-l3-agent restart
-	service neutron-dhcp-agent restart
-	service neutron-metadata-agent restart
-	service apache2 restart
+        service neutron-l3-agent restart
+        service neutron-dhcp-agent restart
+        service neutron-metadata-agent restart
+        service apache2 restart
         service cinder-scheduler restart
         service cinder-api restart

@@ -1,6 +1,4 @@
-{% set ADMIN_PASS = salt['grains.get']('password', 'password') %}
-{% set controllername = salt['grains.get']('hostname', 'localhost') %}
-{% set ntp_server = salt['grains.get']('ntp_server', 'ntp.ubuntu.com') %}
+{% set ntp_server = salt['pillar.get']('virl:ntp_server', salt['grains.get']('ntp_server', 'ntp.ubuntu.com')) %}
 
 ntp:
   pkg:

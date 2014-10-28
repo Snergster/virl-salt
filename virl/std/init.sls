@@ -1,14 +1,14 @@
-{% set proxy = salt['grains.get']('proxy', False) %}
 {% set cml = salt['grains.get']('cml', False) %}
-{% set cinder_enabled = salt['grains.get']('cinder_enabled', False) %}
-{% set password = salt['grains.get']('password', 'password') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'password') %}
-{% set stdport = salt['grains.get']('virl_webservices', '19399') %}
-{% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
-{% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
 {% set virl_type = salt['grains.get']('virl_type', 'stable') %}
-{% set venv = salt['pillar.get']('behave:environment', 'stable') %}
-{% set http_proxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
+{% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
+{% set venv = salt['pillar.get']('behave:environment', 'stable')) %}
+{% set http_proxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
+{% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
+{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
+{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set stdport = salt['pillar.get']('virl:virl_webservices', salt['grains.get']('virl_webservices', '19399')) %}
+{% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 
 /var/cache/virl/std:
   file.recurse:
@@ -133,8 +133,8 @@ VIRL_CORE:
     {% endif %}
     {% endif %}
       - /usr/local/bin/virl_config update --global
-      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ password }}
-      - crudini --set /etc/virl/virl.cfg env virl_openstack_service_token {{ keystone_service_token }}
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ ospassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_service_token {{ ks_token }}
       - crudini --set /etc/virl/virl.cfg env virl_std_port {{ stdport }}
       - crudini --set /etc/virl/virl.cfg env virl_std_url http://localhost:{{ stdport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_port {{ uwmport }}

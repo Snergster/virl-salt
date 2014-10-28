@@ -1,15 +1,14 @@
-{% set novapassword = salt['grains.get']('password', 'password') %}
-{% set neutronpassword = salt['grains.get']('password', 'password') %}
-{% set ospassword = salt['grains.get']('password', 'password') %}
-{% set rabbitpassword = salt['grains.get']('password', 'password') %}
-{% set mypassword = salt['grains.get']('mysql_password', 'password') %}
-{% set hostname = salt['grains.get']('hostname', 'virl') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set serstart = salt['grains.get']('start_of_serial_port_range', '17000') %}
-{% set serend = salt['grains.get']('end_of_serial_port_range', '18000') %}
-{% set ramdisk = salt['grains.get']('ramdisk', 'True') %}
+{% set public_ip = salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )) %}
+{% set serstart = salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')) %}
+{% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
+{% set ramdisk = salt['pillar.get']('virl:ramdisk', salt['grains.get']('ramdisk', False)) %}
+{% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
+{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
+{% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
+{% set novapassword = salt['pillar.get']('virl:novapassword', salt['grains.get']('password', 'password')) %}
+
 
 nova-api:
   pkg.installed:

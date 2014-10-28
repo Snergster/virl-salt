@@ -1,22 +1,29 @@
-{% set neutronpassword = salt['grains.get']('password', 'password') %}
-{% set ospassword = salt['grains.get']('password', 'password') %}
-{% set rabbitpassword = salt['grains.get']('password', 'password') %}
-{% set mypassword = salt['grains.get']('mysql_password', 'password') %}
-{% set metapassword = salt['grains.get']('password', 'password') %}
-{% set hostname = salt['grains.get']('hostname', 'virl') %}
-{% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
-{% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
-{% set l2_port = salt['grains.get']('l2_port', 'eth1' ) %}
-{% set l2_address = salt['grains.get']('l2_address', '172.16.1.254' ) %}
-{% set l2_address2 = salt['grains.get']('l2_address2', '172.16.2.254' ) %}
-{% set l3_address = salt['grains.get']('l3_address', '172.16.3.254' ) %}
-{% set l2_port2 = salt['grains.get']('l2_port2', 'eth2' ) %}
-{% set l2_port2_enabled = salt['grains.get']('l2_port2_enabled', True ) %}
-{% set jumbo_frames = salt['grains.get']('jumbo_frames', False ) %}
-{% set l3_port = salt['grains.get']('l3_port', 'eth3' ) %}
+{% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
+{% set metapassword = salt['pillar.get']('virl:metapassword', salt['grains.get']('password', 'password')) %}
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
+{% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
+{% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
+{% set public_ip = salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )) %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP', salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
+{% set l2_port = salt['pillar.get']('virl:l2_port', salt['grains.get']('l2_port', 'eth1' )) %}
+{% set l2_network = salt['pillar.get']('virl:l2_network', salt['grains.get']('l2_network', '172.16.1.0/24' )) %}
+{% set l2_gateway = salt['pillar.get']('virl:l2_network_gateway', salt['grains.get']('l2_network_gateway', '172.16.1.1' )) %}
+{% set l2_start_address = salt['pillar.get']('virl:l2_start_address', salt['grains.get']('l2_start_address', '172.16.1.50' )) %}
+{% set l2_end_address = salt['pillar.get']('virl:l2_end_address', salt['grains.get']('l2_end_address', '172.16.1.253' )) %}
+{% set l2_address = salt['pillar.get']('virl:l2_address', salt['grains.get']('l2_address', '172.16.1.254' )) %}
+{% set l2_address2 = salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254' )) %}
+{% set l3_port = salt['pillar.get']('virl:l3_port', salt['grains.get']('l3_port', 'eth3' )) %}
+{% set l3_network = salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '172.16.3.0/24' )) %}
+{% set l3_mask = salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '255.255.255.0' )) %}
+{% set l3_network_gateway = salt['pillar.get']('virl:l3_network_gateway', salt['grains.get']('l3_network_gateway', '172.16.3.1' )) %}
+{% set l3_floating_start_address = salt['pillar.get']('virl:l3_floating_start_address', salt['grains.get']('l3_floating_start_address', '172.16.3.50' )) %}
+{% set l3_floating_end_address = salt['pillar.get']('virl:l3_floating_end_address', salt['grains.get']('l3_floating_end_address', '172.16.3.253' )) %}
+{% set l3_address = salt['pillar.get']('virl:l3_address', salt['grains.get']('l3_address', '172.16.3.254/24' )) %}
+{% set l2_port2 = salt['pillar.get']('virl:l2_port2', salt['grains.get']('l2_port2', 'eth2' )) %}
+{% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 {% set service_tenid = salt['grains.get']('service_id', ' ' ) %}
+{% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
 
 neutron-pkgs:
   pkg.installed:
@@ -74,7 +81,7 @@ neutron-mtu:
       - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
     - require:
       - pkg: neutron-pkgs
-  
+
 
 ## linuxbridge_neutron_agent.py:
 ##   file.managed:
@@ -138,7 +145,7 @@ neutron-plugin-localip:
     - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
     - section: 'vxlan'
     - parameter: 'local_ip'
-    - value: ' {{ int_ip}}'
+    - value: ' {{ controllerip }}'
 
 neutron-provider-networks:
   openstack_config.present:
@@ -388,7 +395,7 @@ linuxbridge hold:
     - name: neutron-plugin-linuxbridge-agent
     - require:
       - file: linuxbridge_neutron_agent.py
-      
+
 
 
 

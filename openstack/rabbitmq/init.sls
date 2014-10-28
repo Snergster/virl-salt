@@ -1,5 +1,5 @@
-{% set mypassword = salt['grains.get']('mysql_password', 'password') %}
-{% set ospassword = salt['grains.get']('password', 'password') %}
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 
 rabbitmq-server:
   pkg.installed:
@@ -11,4 +11,3 @@ rabbit_pass:
     - user: root
     - require:
       - pkg: rabbitmq-server
-

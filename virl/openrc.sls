@@ -1,8 +1,8 @@
-{% set ospassword = salt['grains.get']('password', 'password') %}
-{% set controllerhname = salt['grains.get']('hostname', 'localhost') %}
-{% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set enable_horizon = salt['grains.get']('enable_horizon', 'False') %}
-{% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
+{% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
+{% set enable_horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)) %}
+{% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 
 /usr/local/bin/virl-openrc.sh:
   file.managed:
@@ -100,13 +100,13 @@ controllername:
   file.sed:
     - name: /usr/local/bin/virl-openrc.sh
     - before: 'controller'
-    - after:  '{{ controllerhname }}'
+    - after:  '{{ hostname }}'
 
 controllername2:
   file.sed:
     - name: /home/virl/.bashrc
     - before: 'controller'
-    - after:  '{{ controllerhname }}'
+    - after:  '{{ hostname }}'
 
 token:
   file.replace:
