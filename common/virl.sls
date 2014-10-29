@@ -15,6 +15,7 @@ mypkgs:
       - qemu-kvm
       - gcc
       - cpu-checker
+      - curl
       - openssl
       - apt-show-versions
       - htop
