@@ -1,9 +1,9 @@
 {% set ank = salt['pillar.get']('virl:ank', salt['grains.get']('ank', '19401')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
-{% set virltype = salt['grains.get']('virl_type', 'stable'))%}
-{% set cml = salt['grains.get']('cml', False )) %}
-{% set venv = salt['pillar.get']('behave:environment', 'stable')) %}
+{% set virltype = salt['grains.get']('virl_type', 'stable') %}
+{% set cml = salt['grains.get']('cml', False ) %}
+{% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
 /var/cache/virl/ank:
   file.recurse:
