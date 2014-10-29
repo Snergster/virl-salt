@@ -88,7 +88,7 @@ autonetkit_cisco.so remove:
 {% else %}
 
 autonetkit_cisco pip remove:
-  pip.uninstall:
+  pip.removed:
     - name: autonetkit_cisco
     - order: 3
 
