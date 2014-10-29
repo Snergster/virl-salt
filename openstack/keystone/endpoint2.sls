@@ -1,8 +1,5 @@
-include:
-  - virl.settings
+{% from "virl/settings.sls" import * with context %}
 
-
-{% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
 
 testiefill:
   file.touch:
