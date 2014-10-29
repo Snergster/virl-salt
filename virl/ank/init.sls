@@ -35,7 +35,7 @@ ank_init:
 ank_prereq:
   pip.installed:
     {% if proxy == true %}
-    - proxy: {{ httpproxy }}
+    - proxy: {{ http_proxy }}
     {% endif %}
     - names:
       - lxml
