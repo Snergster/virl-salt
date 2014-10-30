@@ -1,3 +1,5 @@
+{% set ramdisk = salt['pillar.get']('virl:ramdisk', salt['grains.get']('ramdisk', False)) %}
+
 /etc/fstab:
   file:
 {% if ramdisk == True %}
