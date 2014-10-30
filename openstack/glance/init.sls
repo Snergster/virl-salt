@@ -1,9 +1,7 @@
-{% set glancepassword = salt['grains.get']('password', 'password') %}
-{% set ospassword = salt['grains.get']('password', 'password') %}
-{% set mypassword = salt['grains.get']('mysql_password', 'password') %}
-{% set rabbitpassword = salt['grains.get']('password', 'password') %}
-{% set hostname = salt['grains.get']('hostname', 'virl') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
+{% set glancepassword = salt['pillar.get']('virl:glancepassword', salt['grains.get']('password', 'password')) %}
+{% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
 
 glance-pkgs:
   pkg.installed:

@@ -1,5 +1,5 @@
-{% set mypassword = salt['grains.get']('mysql_password', 'password') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
+{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
+{% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
 
 keystone-pkgs:
   pkg.installed:
@@ -12,7 +12,7 @@ keystone_token:
     - filename: /etc/keystone/keystone.conf
     - section: 'DEFAULT'
     - parameter: 'admin_token'
-    - value: '{{ keystone_service_token }}'
+    - value: '{{ ks_token }}'
     - require:
       - pkg: keystone-pkgs
 

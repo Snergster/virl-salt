@@ -1,14 +1,7 @@
-{% set novapassword = salt['grains.get']('password', 'password') %}
-{% set heatpassword = salt['grains.get']('password', 'password') %}
-{% set ospassword = salt['grains.get']('password', 'password') %}
-{% set mypassword = salt['grains.get']('mysql_password', 'password') %}
-{% set rabbitpassword = salt['grains.get']('password', 'password') %}
-{% set hostname = salt['grains.get']('hostname', 'virl') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set serstart = salt['grains.get']('start_of_serial_port_range', '17000') %}
-{% set serend = salt['grains.get']('end_of_serial_port_range', '18000') %}
+{% set public_ip = salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )) %}
+{% set heatpassword = salt['pillar.get']('virl:heatpassword', salt['grains.get']('password', 'password')) %}
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 
 heat-pkgs:
   pkg.installed:
@@ -23,17 +16,20 @@ heat-pkgs:
   file.directory:
     - dir_mode: 755
 
+
 heat-conn:
-  file.replace:
-    - name: /etc/heat/heat.conf
-    - pattern: '#connection = <None>'
-    - repl: 'connection = mysql://heat:{{ mypassword }}@127.0.0.1/heat'
+  openstack_config.present:
+    - filename: /etc/heat/heat.conf
+    - section: 'database'
+    - parameter: 'connection'
+    - value: 'mysql://heat:{{ mypassword }}@127.0.0.1/heat'
 
 heat-rabbitpass:
-  file.replace:
-    - name: /etc/heat/heat.conf
-    - pattern: 'rabbit_password = RABBIT_PASS'
-    - repl: 'rabbit_password = {{ ospassword }}'
+  openstack_config.present:
+    - filename: /etc/heat/heat.conf
+    - section: 'DEFAULT'
+    - parameter: 'rabbit_password'
+    - value: '{{ ospassword }}'
 
 
 heat-hostname:
@@ -71,6 +67,3 @@ heat-restart:
         service heat-api restart
         service heat-api-cfn restart
         service heat-engine restart
-
-
-

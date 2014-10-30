@@ -9,6 +9,8 @@
 {% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
 {% set novapassword = salt['pillar.get']('virl:novapassword', salt['grains.get']('password', 'password')) %}
 
+include:
+  - virl.ramdisk
 
 nova-api:
   pkg.installed:

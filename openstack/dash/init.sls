@@ -1,13 +1,8 @@
-{% set neutronpassword = salt['grains.get']('password', 'password') %}
-{% set ospassword = salt['grains.get']('password', 'password') %}
-{% set rabbitpassword = salt['grains.get']('password', 'password') %}
-{% set hostname = salt['grains.get']('hostname', 'virl') %}
-{% set horizon = salt['grains.get']('enable_horizon', 'False') %}
-{% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set uwmport = salt['grains.get']('virl_user_management', '19400') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
+{% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
+{% set enable_horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)) %}
+{% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 
-{% if horizon == True %}
+{% if enable_horizon == True %}
 
 horizon-pkgs:
   pkg.installed:
@@ -81,5 +76,3 @@ uwm port replace:
     - repl: 'location.host + ":{{ uwmport }}"'
     - require:
       - file: apache overwrite
-
-#    - pattern: 'location.host + ":UWMPORT"'
