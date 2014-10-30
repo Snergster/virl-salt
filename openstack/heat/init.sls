@@ -2,6 +2,8 @@
 {% set heatpassword = salt['pillar.get']('virl:heatpassword', salt['grains.get']('password', 'password')) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
+{% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
+
 
 heat-pkgs:
   pkg.installed:
