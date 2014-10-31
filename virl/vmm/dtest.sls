@@ -11,8 +11,9 @@ download:
     - name: /var/www/download
 
 {% for each in 'mac','setup_32','setup_64','zip' %}
-/var/www/download:
+/var/www/download/{{ each }}:
   file.recurse:
+    - name: /var/www/download
     - clean: true
     - file_mode: 755
     - dir_mode: 755
