@@ -25,7 +25,7 @@ download:
       - file: download
 {% else %}
   cmd.run:
-    - name: 'rm /var/www/download/*zip'
+    - name: 'rm -f /var/www/download/*zip'
 {% endif %}
 
 
@@ -43,7 +43,7 @@ download:
       - file: download
 {% else %}
   cmd.run:
-    - name: 'rm /var/www/download/*64.exe'
+    - name: 'rm -f /var/www/download/*64.exe'
 {% endif %}
 
 
@@ -61,7 +61,7 @@ download:
       - file: download
 {% else %}
   cmd.run:
-    - name: 'rm /var/www/download/*32.exe'
+    - name: 'rm -f /var/www/download/*32.exe'
 {% endif %}
 
 
@@ -79,5 +79,5 @@ download:
       - file: download
 {% else %}
   cmd.run:
-    - name: 'rm /var/www/download/*.dmg'
+    - name: 'rm -f /var/www/download/*.dmg'
 {% endif %}
