@@ -18,7 +18,7 @@ download:
     - file_mode: 755
     - dir_mode: 755
     - include_pat: '*zip'
-    - exclude_pat: .virl*
+    - exclude_pat: E@(.*exe$)|(.*dmg$)
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
@@ -32,7 +32,7 @@ download:
     - file_mode: 755
     - dir_mode: 755
     - include_pat: '*setup_64.exe'
-    - exclude_pat: .virl*
+    - exclude_pat:  E@(.*32.exe$)|(.*dmg$)|(.*zip$)
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
@@ -46,7 +46,7 @@ download:
     - file_mode: 755
     - dir_mode: 755
     - include_pat: '*setup_32.exe'
-    - exclude_pat: .virl*
+    - exclude_pat: E@(.*64.exe$)|(.*dmg$)|(.*zip$)
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
@@ -60,7 +60,7 @@ download:
     - file_mode: 755
     - dir_mode: 755
     - include_pat: '*.dmg'
-    - exclude_pat: .virl*
+    - exclude_pat: E@(.*exe$)|(.*zip$)
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
