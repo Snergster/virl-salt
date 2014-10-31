@@ -1,6 +1,13 @@
 {% set onedev = salt['grains.get']('onedev', 'False') %}
-{% set iosv = salt['pillar.get']('routervms:iosv', 'False'  ) %}
-{% set iosxrv = salt['pillar.get']('routervms:iosxrv', 'False') %}
+{% set iosv = salt['pillar.get']('routervms:iosv', False ) %}
+{% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
+{% set iosxrv = salt['pillar.get']('routervms:iosxrv', False ) %}
+{% set iosxrv432 = salt['pillar.get']('routervms:iosxrv432', False ) %}
+{% set nxosv = salt['pillar.get']('routervms:nxosv', False) %}
+{% set csr1000v = salt['pillar.get']('routervms:csr1000v', False) %}
+{% set vpagent = salt['pillar.get']('routervms:vpagent', False) %}
+{% set server = salt['pillar.get']('routervms:UbuntuServertrusty', True) %}
+
 {% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
 {% set iosxrv432pref = salt['pillar.get']('virl:iosxrv432', salt['grains.get']('iosxrv432', True)) %}
 {% set iosxrvpref = salt['pillar.get']('virl:iosxrv', salt['grains.get']('iosxrv', True)) %}
@@ -37,7 +44,7 @@ iosv image:
 {%endif%}
 
 iosxrv image:
-{% if salt['pillar.get']( 'routervms:iosxrv' , 'False') == True %}
+{% if iosxrv and iosxrvpref %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
@@ -56,7 +63,7 @@ iosxrv image:
 {%endif%}
 
 iosxrv511 image:
-{% if salt['pillar.get']( 'routervms:iosxrv511' , 'False') == True %}
+{% if iosxrv432 and iosxrv432pref %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
@@ -75,7 +82,7 @@ iosxrv511 image:
 {%endif%}
 
 csr1000v image:
-{% if salt['pillar.get']( 'routervms:csr1000v' , 'False') == True %}
+{% if csr1000v and csr1000vpref %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
@@ -94,7 +101,7 @@ csr1000v image:
 {%endif%}
 
 vpagent image:
-{% if salt['pillar.get']( 'routervms:vpagent' , 'False') == True %}
+{% if vpagent and vpagentpref %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
@@ -113,7 +120,7 @@ vpagent image:
 {%endif%}
 
 nxosv image:
-{% if salt['pillar.get']( 'routervms:nxosv' , 'False') == True %}
+{% if nxosv and nxosvpref %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
@@ -151,7 +158,7 @@ jumphost image:
 {%endif%}
 
 UbuntuServertrusty image:
-{% if salt['pillar.get']( 'routervms:UbuntuServertrusty' , 'False') == True %}
+{% if server or serverpref %}
   file.recurse:
     - name: /home/virl/images
     - file_mode: 755
