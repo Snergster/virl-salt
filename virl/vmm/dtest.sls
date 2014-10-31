@@ -10,7 +10,7 @@ download:
     - mode: 755
     - name: /var/www/download
 
-{% for each in 'mac','setup_32','setup_64','zip'}
+{% for each in 'mac','setup_32','setup_64','zip' %}
 /var/www/download:
   file.recurse:
     - clean: true
