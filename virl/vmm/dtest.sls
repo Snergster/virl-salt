@@ -17,7 +17,7 @@ download:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-    - include_pat: *zip
+    - include_pat: '*zip'
     - exclude_pat: .virl*
     - source: "salt://vmm/{{ venv }}/"
     - require:
@@ -31,7 +31,7 @@ download:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-    - include_pat: *setup_64.exe
+    - include_pat: '*setup_64.exe'
     - exclude_pat: .virl*
     - source: "salt://vmm/{{ venv }}/"
     - require:
@@ -45,7 +45,7 @@ download:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-    - include_pat: *setup_32.exe
+    - include_pat: '*setup_32.exe'
     - exclude_pat: .virl*
     - source: "salt://vmm/{{ venv }}/"
     - require:
