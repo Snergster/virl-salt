@@ -10,8 +10,9 @@ download:
     - mode: 755
     - name: /var/www/download
 
-{% if vmm_linux %}
+
 /var/www/download/linux:
+{% if vmm_linux %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -22,10 +23,14 @@ download:
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
+{% else %}
+  cmd.run:
+    - name: 'rm /var/www/download/*zip'
 {% endif %}
 
-{% if vmm_win64 %}
+
 /var/www/download/win64:
+{% if vmm_win64 %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -36,10 +41,14 @@ download:
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
+{% else %}
+  cmd.run:
+    - name: 'rm /var/www/download/*64.exe'
 {% endif %}
 
-{% if vmm_win32 %}
+
 /var/www/download/win32:
+{% if vmm_win32 %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -50,10 +59,14 @@ download:
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
+{% else %}
+  cmd.run:
+    - name: 'rm /var/www/download/*32.exe'
 {% endif %}
 
-{% if vmm_mac %}
+
 /var/www/download/mac:
+{% if vmm_mac %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -64,4 +77,7 @@ download:
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
+{% else %}
+  cmd.run:
+    - name: 'rm /var/www/download/*.dmg'
 {% endif %}
