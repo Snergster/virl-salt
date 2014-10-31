@@ -17,7 +17,7 @@ download:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-    - include_pat: {{ each }}
+    - include_pat: '*{{ each }}*'
     - exclude_pat: .virl*
     - source: "salt://vmm/{{ venv }}/"
     - require:
