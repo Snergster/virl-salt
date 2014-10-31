@@ -59,7 +59,7 @@ download:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
-    - include_pat: *dmg
+    - include_pat: '*.dmg'
     - exclude_pat: .virl*
     - source: "salt://vmm/{{ venv }}/"
     - require:
