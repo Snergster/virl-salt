@@ -17,7 +17,7 @@
 {% set vpagentpref = salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', True)) %}
 {% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
 
-{% for each in 'iosv','iosxrv','iosxrv511','csr1000v','vpagent','nxosv','jumphost','UbuntuServertrusty' %}
+{% for each in 'iosv','iosxrv','iosv-l2','iosxrv511','csr1000v','vpagent','nxosv','jumphost','UbuntuServertrusty' %}
 {{each}}absent:
   file.absent:
     - name: /home/virl/images/{{each}}.pkg
@@ -43,6 +43,25 @@ iosv image:
     - name: /home/virl/images
 {%endif%}
 
+iosvl2 image:
+{% if iosvl2 and iosvl2pref %}
+  file.recurse:
+    - name: /home/virl/images
+    - file_mode: 755
+    - dir_mode: 755
+    - user: virl
+    - group: virl
+    - source: salt://images/salt/iosvl2
+  cmd.wait:
+    - name: /usr/local/bin/add-images-auto iosv-l2.pkg
+    - cwd: /home/virl/images
+    - watch:
+      - file: iosvl2 image
+{% else %}
+  file.exists:
+    - name: /home/virl/images
+{%endif%}
+
 iosxrv image:
 {% if iosxrv and iosxrvpref %}
   file.recurse:
@@ -62,7 +81,7 @@ iosxrv image:
     - name: /home/virl/images
 {%endif%}
 
-iosxrv511 image:
+iosxrv432 image:
 {% if iosxrv432 and iosxrv432pref %}
   file.recurse:
     - name: /home/virl/images
@@ -70,12 +89,12 @@ iosxrv511 image:
     - dir_mode: 755
     - user: virl
     - group: virl
-    - source: salt://images/salt/iosxrv511
+    - source: salt://images/salt/iosxrv432
   cmd.wait:
-    - name: /usr/local/bin/add-images-auto iosxrv511.pkg
+    - name: /usr/local/bin/add-images-auto iosxrv432.pkg
     - cwd: /home/virl/images
     - watch:
-      - file: iosxrv511 image
+      - file: iosxrv432 image
 {% else %}
   file.exists:
     - name: /home/virl/images
