@@ -24,6 +24,7 @@ mypkgs:
       - libapache2-mod-wsgi
       - mtools
       - socat
+      - lxc
 
 /etc/apt/sources.list.d/cisco-openstack-mirror_icehouse.list:
   file.managed:

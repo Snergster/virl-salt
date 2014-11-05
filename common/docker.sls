@@ -25,5 +25,5 @@ ethtool:
 /usr/local/bin/weave:
   cmd.run:
     - names:
-      - wget -O /usr/local/bin/weave https://raw.githubusercontent.com/zettio/weave/master/weaver/weave
+      - wget -O /usr/local/bin/weave https://raw.githubusercontent.com/zettio/weave/master/weave
       - chmod 0755 /usr/local/bin/weave
