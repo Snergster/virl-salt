@@ -34,7 +34,7 @@ UbuntuServertrusty image:
     - require:
       - file: UbuntuServertrustyabsent
   cmd.wait:
-    - name: /usr/local/bin/add-images-auto Ubuntu.Server.trusty.pkg
+    - name: /usr/local/bin/add-servers Ubuntu.Server.trusty.pkg
     - cwd: /home/virl/images
     - watch:
       - file: UbuntuServertrusty image

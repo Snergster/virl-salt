@@ -1,4 +1,4 @@
 include:
-  - std
-  - ank
-  - vmm-download
+  - virl.std
+  - virl.ank
+  - virl.vmm.vmmall
