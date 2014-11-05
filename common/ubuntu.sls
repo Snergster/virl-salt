@@ -19,6 +19,7 @@ commonpkgs:
       - emacs
       - openssh-server
       - crudini
+      - lxc
 
 /usr/local/bin/openstack-config:
   file.symlink:
