@@ -5,11 +5,8 @@
 {% set vmm_linux = salt['pillar.get']('virl:vmm_linux', salt['grains.get']('vmm_linux', True)) %}
 
 
-download:
-  file.directory:
-    - mode: 755
-    - name: /var/www/download
-
+include:
+  - .downdir
 
 /var/www/download/linux:
 {% if vmm_linux %}

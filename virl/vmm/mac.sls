@@ -4,12 +4,8 @@
 {% set vmm_win64 = salt['pillar.get']('virl:vmm_win64', salt['grains.get']('vmm_win64', True)) %}
 {% set vmm_linux = salt['pillar.get']('virl:vmm_linux', salt['grains.get']('vmm_linux', True)) %}
 
-
-download:
-  file.directory:
-    - mode: 755
-    - name: /var/www/download
-
+include:
+  - .downdir
 
 /var/www/download/mac:
 {% if vmm_mac %}
