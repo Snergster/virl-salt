@@ -16,6 +16,7 @@ download:
   file.recurse:
     - name: /var/www/download
     - clean: true
+    - maxdepth: 0
     - file_mode: 755
     - dir_mode: 755
     - include_pat: '*.dmg'
