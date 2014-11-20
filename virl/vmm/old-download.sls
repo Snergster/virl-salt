@@ -2,11 +2,8 @@
 {% set virl_type = salt['grains.get']('virl_type', 'stable') %}
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
-download:
-  file.directory:
-    - order: 1
-    - mode: 755
-    - name: /var/www/download
+include:
+  - .downdir
 
 /var/www/download:
   file.recurse:
@@ -18,4 +15,3 @@ download:
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download
-
