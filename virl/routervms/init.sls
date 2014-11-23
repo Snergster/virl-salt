@@ -14,7 +14,7 @@
 {% set csr1000vpref = salt['pillar.get']('virl:csr1000v', salt['grains.get']('csr1000v', True)) %}
 {% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
 {% set nxosvpref = salt['pillar.get']('virl:nxosv', salt['grains.get']('nxosv', True)) %}
-{% set vpagentpref = salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', True)) %}
+{% set vpagentpref = salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', False)) %}
 {% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
 
 {% for each in 'iosv','iosxrv','iosv-l2','iosxrv511','csr1000v','vpagent','nxosv','jumphost','UbuntuServertrusty' %}
