@@ -12,4 +12,19 @@ salt-master ramdisks:
     - text: |
       'ramdisk /etc/salt/pki tmpfs rw,relatime 0 0'
       'ramdisk /srv/pillar tmpfs rw,relatime 0 0'
+      'ramdisk /var/cache/salt/minion/files/base/pillar tmpfs rw,relatime 0 0'
       
+cache pillar:
+  file.directory:
+    - name: /var/cache/salt/minion/files/base/pillar
+    - makedirs: True
+
+srv pillar:
+  file.directory:
+    - name: /srv/pillar
+    - makedirs: True
+
+pki placeholder:
+  file.directory:
+    - name: /etc/salt/pki
+    - makedirs: True
