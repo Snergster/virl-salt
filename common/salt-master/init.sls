@@ -2,9 +2,11 @@ salt-master install:
   file.managed:
     - name: /home/ubuntu/install_salt.sh
     - mode: 0755
-    - source: "salt://files/install_salt.sh"
+    - source: "salt://install_salt.sh"
   cmd.run:
       - name: /home/ubuntu/install_salt.sh -M -X stable
+      - unless:
+        - ls /usr/bin/salt-master
 
 salt-master ramdisks:
   file.append:
