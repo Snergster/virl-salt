@@ -16,7 +16,6 @@ commonpkgs:
       - zile
       - curl
       - sshpass
-      - emacs
       - openssh-server
       - crudini
 
