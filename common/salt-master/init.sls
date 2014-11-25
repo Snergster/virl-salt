@@ -10,9 +10,9 @@ salt-master ramdisks:
   file.append:
     - name: /etc/fstab
     - text: |
-      ramdisk /etc/salt/pki tmpfs rw,relatime 0 0
-      ramdisk /srv/pillar tmpfs rw,relatime 0 0
-      ramdisk /var/cache/salt/minion/files/base/pillar tmpfs rw,relatime 0 0
+        ramdisk /etc/salt/pki tmpfs rw,relatime 0 0
+        ramdisk /srv/pillar tmpfs rw,relatime 0 0
+        ramdisk /var/cache/salt/minion/files/base/pillar tmpfs rw,relatime 0 0
       
 cache pillar:
   file.directory:
