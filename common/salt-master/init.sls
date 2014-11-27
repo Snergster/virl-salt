@@ -15,7 +15,26 @@ salt-master ramdisks:
         ramdisk /etc/salt/pki tmpfs rw,relatime 0 0
         ramdisk /srv/pillar tmpfs rw,relatime 0 0
         ramdisk /var/cache/salt/minion/files/base/pillar tmpfs rw,relatime 0 0
-      
+
+pki ramdisk mount:
+  cmd.wait:
+    - name: mount /etc/salt/pki
+    - watch:
+      - file: salt-master ramdisks
+
+pillar ramdisk mount:
+  cmd.wait:
+    - name: mount /srv/pillar
+    - watch:
+      - file: salt-master ramdisks
+
+pillar cache ramdisk mount:
+  cmd.wait:
+    - name: mount /var/cache/salt/minion/files/base/pillar
+    - watch:
+      - file: salt-master ramdisks
+
+
 cache pillar:
   file.directory:
     - name: /var/cache/salt/minion/files/base/pillar
