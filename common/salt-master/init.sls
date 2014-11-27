@@ -8,6 +8,21 @@ salt-master install:
       - unless:
         - ls /usr/bin/salt-master
 
+pki dir exists:
+  file.directory:
+    - name: /etc/salt/pki
+    - makedirs: True
+
+pillar dir exists:
+  file.directory:
+    - name: /srv/pillar
+    - makedirs: True
+
+pillar cache dir exists:
+  file.directory:
+    - name: /var/cache/salt/minion/files/base/pillar
+    - makedirs: True
+
 salt-master ramdisks:
   file.append:
     - name: /etc/fstab
@@ -19,18 +34,24 @@ salt-master ramdisks:
 pki ramdisk mount:
   cmd.wait:
     - name: mount /etc/salt/pki
+    - require:
+      - file: pki dir exists
     - watch:
       - file: salt-master ramdisks
 
 pillar ramdisk mount:
   cmd.wait:
     - name: mount /srv/pillar
+    - require:
+      - file: pillar dir exists
     - watch:
       - file: salt-master ramdisks
 
 pillar cache ramdisk mount:
   cmd.wait:
     - name: mount /var/cache/salt/minion/files/base/pillar
+    - require:
+      - file: pki cache dir exists
     - watch:
       - file: salt-master ramdisks
 
