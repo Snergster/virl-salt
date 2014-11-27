@@ -51,7 +51,7 @@ pillar cache ramdisk mount:
   cmd.wait:
     - name: mount /var/cache/salt/minion/files/base/pillar
     - require:
-      - file: pki cache dir exists
+      - file: pillar cache dir exists
     - watch:
       - file: salt-master ramdisks
 
