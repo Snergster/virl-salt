@@ -90,13 +90,6 @@ serial-start-stop:
     - repl: '{{ serstart }}:{{ serend }}'
 
 
-nova-restart:
-  cmd.run:
-    - name: |
-        su -s /bin/sh -c "nova-manage db sync" nova
-        'dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)'
-
-
 nova-compute-libvirt-serport:
   openstack_config.present:
     - filename: /etc/nova/nova-compute.conf
@@ -162,6 +155,6 @@ novncproxy_base:
 /usr/local/bin/nova:
   file.symlink:
     - require:
-      - pkg: nova-common 
+      - pkg: nova-common
     - target: /usr/bin/nova
     - mode: 0755

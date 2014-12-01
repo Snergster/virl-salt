@@ -125,39 +125,6 @@ neutron-pass:
     - pattern: 'admin_password = %SERVICE_PASSWORD%'
     - repl: 'admin_password = {{ ospassword }}'
 
-
-meta-tenname:
-  file.replace:
-    - name: /etc/neutron/metadata_agent.ini
-    - pattern: 'admin_tenant_name = %SERVICE_TENANT_NAME%'
-    - repl: 'admin_tenant_name = service'
-
-meta-user:
-  file.replace:
-    - name: /etc/neutron/metadata_agent.ini
-    - pattern: 'admin_user = %SERVICE_USER%'
-    - repl: 'admin_user = neutron'
-
-meta-pass:
-  file.replace:
-    - name: /etc/neutron/metadata_agent.ini
-    - pattern: 'admin_password = %SERVICE_PASSWORD%'
-    - repl: 'admin_password = {{ ospassword }}'
-
-meta-meta:
-  openstack_config.present:
-    - filename: /etc/neutron/metadata_agent.ini
-    - section: 'DEFAULT'
-    - parameter: 'nova_metadata_ip'
-    - value: ' {{ public_ip }}'
-
-meta-secret:
-  openstack_config.present:
-    - filename: /etc/neutron/metadata_agent.ini
-    - section: 'DEFAULT'
-    - parameter: 'nova_metadata_ip'
-    - value: ' {{ metapassword }}'
-
 l3-interface:
   openstack_config.present:
     - filename: /etc/neutron/l3_agent.ini
@@ -173,26 +140,6 @@ l3-agent:
     - value: ' neutron.agent.l3_agent.L3NATAgentWithStateReport'
 
 
-dhcp-interface:
-  openstack_config.present:
-    - filename: /etc/neutron/dhcp_agent.ini
-    - section: DEFAULT
-    - parameter: 'interface_driver'
-    - value: ' neutron.agent.linux.interface.BridgeInterfaceDriver'
-
-dhcp-namespace:
-  openstack_config.present:
-    - filename: /etc/neutron/dhcp_agent.ini
-    - section: DEFAULT
-    - parameter: 'use_namespaces'
-    - value: ' True'
-
-dhcp-driver:
-  openstack_config.present:
-    - filename: /etc/neutron/dhcp_agent.ini
-    - section: DEFAULT
-    - parameter: 'dhcp_driver'
-    - value: ' neutron.agent.linux.dhcp.Dnsmasq'
 
 l3-namespace:
   openstack_config.present:
