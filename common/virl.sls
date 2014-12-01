@@ -57,7 +57,7 @@ vinstall run:
     - require:
       - file: /usr/local/bin/vinstall
       - pip: docopt
-    
+
 vinstall wheels:
   file.recurse:
     - name: /tmp/wheels
@@ -81,6 +81,23 @@ vinstall wheels:
   file.managed:
     - source: salt://files/install_scripts/telnet_front
     - mode: 755
+
+/etc/apparmor.d/local/telnet_front:
+  file.managed:
+    - source: salt://files/install_scripts/telnet_front.aa
+    - mode: 644
+
+/etc/apparmor.d/libvirt/TEMPLATE:
+  file.managed:
+    - source: salt://files/install_scripts/libvirt.template
+    - mode: 644
+
+kvm doublecheck:
+  file.managed:
+    - name: /usr/bin/kvm
+    - onlyif: ls /usr/bin/kvm.real
+    - source: "salt://files/install_scripts/kvm"
+    - mode: 0755
 
 /etc/modprobe.d/kvm-intel.conf:
   file.managed:
