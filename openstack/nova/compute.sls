@@ -141,7 +141,8 @@ novncproxy_base:
 
 /etc/rc2.d/S98nova-serialproxy:
   file.symlink:
-    - order: 6
+    - require:
+      - file: /etc/init.d/nova-serialproxy
     - target: /etc/init.d/nova-serialproxy
     - mode: 0755
 
@@ -153,12 +154,14 @@ novncproxy_base:
 
 /usr/bin/kvm.real:
   file.symlink:
-    - order: 6
     - target: /usr/bin/qemu-system-x86_64
     - mode: 0755
+    - require:
+      - file: /usr/bin/kvm
 
 /usr/local/bin/nova:
   file.symlink:
-    - order: 7
+    - require:
+      - pkg: nova-common 
     - target: /usr/bin/nova
     - mode: 0755
