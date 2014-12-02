@@ -67,6 +67,22 @@ mysql:
     - watch:
       - file: /etc/mysql/my.cnf
 
+{% if dummy_int == True %}
+
+mysql port for dummies:
+  file.replace:
+    - name: /etc/mysql/my.cnf
+    - pattern: ^bind-address.*
+    - repl: 'bind-address = {{ controllerip }}'
+    - require:
+      - pkg: mysql
+  cmd.wait:
+    - name: 'service mysql restart'
+    - watch:
+      - file: mysql port for dummies
+
+{% endif %}
+
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
 {% for user in accounts %}
 {{ user }}-mysql:
