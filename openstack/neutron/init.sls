@@ -25,6 +25,7 @@
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 {% set service_tenid = salt['grains.get']('service_id', ' ' ) %}
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
 
 neutron-pkgs:
   pkg.installed:
@@ -125,7 +126,7 @@ neutron-conn:
     - filename: /etc/neutron/neutron.conf
     - section: 'database'
     - parameter: 'connection'
-    - value: 'mysql://neutron:{{ mypassword }}@127.0.0.1/neutron'
+    - value: 'mysql://neutron:{{ mypassword }}@{{ controllerip }}/neutron'
 
 neutron-brex:
   file.replace:
@@ -138,7 +139,7 @@ neutron-plugin-conn:
     - filename: /etc/neutron/plugins/ml2/ml2_conf.ini
     - section: 'database'
     - parameter: 'sql_connection'
-    - value: 'mysql://neutron:{{ mypassword }}@127.0.0.1/neutron'
+    - value: 'mysql://neutron:{{ mypassword }}@{{ controllerip }}/neutron'
 
 
 neutron-plugin-localip:

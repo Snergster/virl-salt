@@ -7,6 +7,7 @@
 {% set cinder_location = salt['pillar.get']('virl:cinder_location', salt['grains.get']('cinder_location', '/var/lib/cinder/cinder-volumes.lvm')) %}
 {% set enable_cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', True)) %}
 {% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
 
 cinder-pkgs:
   pkg.installed:
@@ -30,7 +31,7 @@ cinder-conn:
     - filename: /etc/cinder/cinder.conf
     - section: 'database'
     - parameter: 'connection'
-    - value: 'mysql://cinder:{{ mypassword }}@127.0.0.1/cinder'
+    - value: 'mysql://cinder:{{ mypassword }}@{{ controllerip }}/cinder'
 
 cinder-rabbitpass:
   openstack_config.present:

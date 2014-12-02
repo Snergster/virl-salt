@@ -1,15 +1,10 @@
-{% set novapassword = salt['grains.get']('password', 'password') %}
-{% set neutronpassword = salt['grains.get']('password', 'password') %}
-{% set ospassword = salt['grains.get']('password', 'password') %}
-{% set rabbitpassword = salt['grains.get']('password', 'password') %}
-{% set hostname = salt['grains.get']('hostname', 'virl') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set serstart = salt['grains.get']('start_of_serial_port_range', '17000') %}
-{% set serend = salt['grains.get']('end_of_serial_port_range', '18000') %}
-{% set controllerhname = salt['grains.get']('internalnet_controller_hostname', 'controller') %}
-{% set controllerip = salt['grains.get']('internalnet_controller_IP', '172.16.10.250') %}
+{% set serstart = salt['pillar.get']('virl:start_of_serial_port_range',salt['grains.get']('start_of_serial_port_range', '17000')) %}
+{% set serend = salt['pillar.get']('virl:end_of_serial_port_range',salt['grains.get']('end_of_serial_port_range', '18000')) %}
+{% set controllerhname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
+{% set novapassword = salt['pillar.get']('virl:novapassword', salt['grains.get']('password', 'password')) %}
+{% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
+{% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
 
 nova-common:
   pkg.installed:
@@ -41,10 +36,12 @@ controller_hostname:
     - source: "salt://files/nova.conf"
 
 nova-conn:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: '#connection = <None>'
-    - repl: 'connection = mysql://nova:{{ novapassword }}@{{ controllerip }}/nova'
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'database'
+    - parameter: 'connection'
+    - value: ' mysql://keystone:{{ novapassword }}@{{ controllerip }}/nova'
+
 
 nova-rabbitpass:
   file.replace:

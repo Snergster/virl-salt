@@ -1,6 +1,6 @@
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 {% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
-
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
 keystone-pkgs:
   pkg.installed:
     - order: 1
@@ -21,7 +21,7 @@ keystone_token:
     - filename: /etc/keystone/keystone.conf
     - section: 'database'
     - parameter: 'connection'
-    - value: ' mysql://keystone:{{ mypassword }}@localhost/keystone'
+    - value: ' mysql://keystone:{{ mypassword }}@{{ controllerip }}/keystone'
     - require:
       - pkg: keystone-pkgs
 

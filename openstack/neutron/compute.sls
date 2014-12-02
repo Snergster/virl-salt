@@ -1,4 +1,3 @@
-{% set neutronpassword = salt['grains.get']('password', 'password') %}
 {% set ospassword = salt['grains.get']('password', 'password') %}
 {% set rabbitpassword = salt['grains.get']('password', 'password') %}
 {% set metapassword = salt['grains.get']('password', 'password') %}
@@ -8,7 +7,8 @@
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
 {% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
 {% set controllerhname = salt['grains.get']('internalnet_controller_hostname', 'controller') %}
-{% set controllerip = salt['grains.get']('internalnet_controller_IP', '172.16.10.250') %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
+{% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
 
 neutron-pkgs:
   pkg.installed:
@@ -63,10 +63,12 @@ linuxbridge_apt_add:
     - source: "salt://files/ml2_conf.ini"
 
 neutron-conn:
-  file.replace:
+  openstack_config.present:
+    - section: 'database'
+    - parameter: 'sql_connection'
     - name: /etc/neutron/neutron.conf
-    - pattern: 'connection = sqlite:////var/lib/neutron/neutron.sqlite'
-    - repl: 'connection = mysql://neutron:{{ neutronpassword }}@{{ controllerip }}/neutron'
+    - value: 'mysql://neutron:{{ neutronpassword }}@{{ controllerip }}/neutron'
+
 
 neutron-brex:
   file.replace:
@@ -75,10 +77,11 @@ neutron-brex:
     - repl: 'external_network_bridge = '
 
 neutron-plugin-conn:
-  file.replace:
+  openstack_config.present:
+    - section: 'database'
+    - parameter: 'sql_connection'
     - name: /etc/neutron/plugins/ml2/ml2_conf.ini
-    - pattern: 'sql_connection = mysql://neutron:NEUTRONPASS@LOCALIP/neutron'
-    - repl: 'sql_connection = mysql://neutron:{{ neutronpassword }}@{{ controllerip }}/neutron'
+    - value: 'mysql://neutron:{{ neutronpassword }}@{{ controllerip }}/neutron'
 
 
 neutron-plugin-localip:
