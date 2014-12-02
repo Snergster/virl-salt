@@ -6,4 +6,4 @@ mysql port anycast:
     - pattern: ^bind-address.*
     - repl: 'bind-address = 0.0.0.0'
     - cmd.run:
-      - name: service mysql restart
+      - name: 'service mysql restart'
