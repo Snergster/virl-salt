@@ -90,6 +90,7 @@ vinstall wheels:
 /etc/apparmor.d/libvirt/TEMPLATE:
   file.managed:
     - source: salt://files/install_scripts/libvirt.template
+    - makedirs: true
     - mode: 644
 
 kvm doublecheck:
