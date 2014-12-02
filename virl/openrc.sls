@@ -4,6 +4,9 @@
 {% set enable_horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)) %}
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 
+include:
+  - openstack.mysql.open
+
 /usr/local/bin/virl-openrc.sh:
   file.managed:
     - order: 1

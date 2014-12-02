@@ -1,12 +1,17 @@
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 
-mysql port check:
-  openstack_config.present:
-    - filename: /etc/mysql/my.cnf
-    - section: 'mysqld'
-    - parameter: 'bind-address'
-    - value: '{{ controllerip }}'
+
+mysql port internal:
+  file.replace:
+    - name: /etc/mysql/my.cnf
+    - pattern: ^bind-address.*
+    - repl: 'bind-address = {{ controllerip }}'
+    cmd.wait:
+      - name: 'service mysql restart'
+      - watch:
+        - file: mysql port internal
+
 
 check cinder-conn:
   openstack_config.present:
