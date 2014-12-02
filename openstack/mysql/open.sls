@@ -5,5 +5,8 @@ mysql port anycast:
     - name: /etc/mysql/my.cnf
     - pattern: ^bind-address.*
     - repl: 'bind-address = 0.0.0.0'
-    - cmd.run:
-      - name: 'service mysql restart'
+  cmd.wait:
+    - name: 'service mysql restart'
+    - watch:
+      - file: mysql port anycast
+      
