@@ -221,6 +221,7 @@ lubuntu-desktop:
 
 virl background:
   openstack_config.present:
+    - order: last
     - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
     - section: '*'
     - parameter: 'wallpaper'

@@ -7,22 +7,25 @@ VMMdirpoof:
 
 VMMdircreate:
   file.directory:
-    - order: 2
     - user: virl
     - group: virl
     - name: /home/virl/VMMaestro-linux
+    - require:
+      - file: VMMdirpoof
 
 VMMlinux:
   module.run:
     - name: archive.unzip
     - zipfile: /var/www/download/*linux*
     - dest: /home/virl/VMMaestro-linux
-
+    - onlyif: ls /var/www/download/*linux.gtk.x86_64.zip
+    - require:
+      - file: VMMdircreate
+      - pkg: vmmpkgs
 
 vmmpkgs:
   pkg.installed:
-    - order: 3
-    - pkgs:
+      - pkgs:
       - openjdk-7-jre
       - libswt-webkit-gtk-3-jni
       - libwebkitgtk-3.0-0
