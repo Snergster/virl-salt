@@ -26,8 +26,8 @@ VMMlinux:
 vmmpkgs:
   pkg.installed:
       - pkgs:
-      - openjdk-7-jre
-      - libswt-webkit-gtk-3-jni
-      - libwebkitgtk-3.0-0
-      - libxml2-dev
-      - libxslt1-dev
+        - openjdk-7-jre
+        - libswt-webkit-gtk-3-jni
+        - libwebkitgtk-3.0-0
+        - libxml2-dev
+        - libxslt1-dev
