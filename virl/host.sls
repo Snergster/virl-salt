@@ -46,7 +46,7 @@ special alias up:
   file.blockreplace:
     - name: /etc/rc.local
     - marker_start: "# bits."
-    - marker_end: "# bits."
+    - marker_end: "# By default this script does nothing."
     - content: "ifup {{int_port}}"
     - append_if_not_found: True
 
