@@ -85,28 +85,6 @@ neutron-mtu:
       - pkg: neutron-pkgs
 
 
-## linuxbridge_neutron_agent.py:
-##   file.managed:
-##     - order: 3
-##     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-##     - file_mode: 755
-##     - makedirs: True
-##     - source: "salt://files/linuxbridge_neutron_agent.py"
-##   cmd.wait:
-##     - names:
-##       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-##     - watch:
-##       - file: linuxbridge_neutron_agent.py
-
-## linuxbridge_apt_add:
-##   file.append:
-##     - order: 3
-##     - name: /etc/apt/preferences.d/cisco-openstack
-##     - text: |
-##         Package: neutron-plugin-linuxbridge-agent
-##         Pin: release *
-##         Pin-Priority: -1
-
 /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
   file.managed:
     - order: 4
@@ -397,19 +375,6 @@ linuxbridge hold:
     - name: neutron-plugin-linuxbridge-agent
     - require:
       - file: linuxbridge_neutron_agent.py
-
-
-
-
-## {% for each in ["dhcp-agent","l3-agent","metadata-agent","plugin-linuxbridge-agent","server"] %}
-## /etc/init/neutron-{{ each }}.conf:
-##   file.replace:
-##     - pattern: ^start on runlevel \[2345\]$
-##     - repl: 'start on runlevel [2345] and stopped rc'
-##     - backup: ''
-##     - require:
-##       - pkg: neutron-pkgs
-## {% endfor %}
 
 neutron db-sync:
   cmd.run:

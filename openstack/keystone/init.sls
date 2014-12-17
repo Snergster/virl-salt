@@ -26,13 +26,14 @@ keystone_token:
       - pkg: keystone-pkgs
 
 logdir:
-  file.replace:
-    - name: /etc/keystone/keystone.conf
-    - pattern: '#log_dir=<None>'
-    - repl:  'log_dir = /var/log/keystone'
+  openstack_config.present:
+    - filename: /etc/keystone/keystone.conf
+    - section: 'DEFAULT'
+    - parameter: 'log_dir'
+    - value: '/var/log/keystone'
     - require:
       - pkg: keystone-pkgs
-
+      
 keystone db-sync:
   cmd.run:
     - name: su -s /bin/sh -c "keystone-manage db_sync" keystone

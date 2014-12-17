@@ -22,8 +22,10 @@ base:
     - match: pcre
     - virl.std
     - virl.ank
+    - virl.vmm.download
 
   '.*cisco.com$':
     - match: pcre
     - virl.std
     - virl.ank
+    - virl.vmm.download
