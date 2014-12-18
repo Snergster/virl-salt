@@ -31,3 +31,5 @@ vmmpkgs:
         - libwebkitgtk-3.0-0
         - libxml2-dev
         - libxslt1-dev
+        - unzip
+        
