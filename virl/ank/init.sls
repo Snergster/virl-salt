@@ -1,9 +1,13 @@
 {% set ank = salt['pillar.get']('virl:ank', salt['grains.get']('ank', '19401')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
+{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com
+:80/')) %}
 {% set virltype = salt['grains.get']('virl_type', 'stable') %}
 {% set cml = salt['grains.get']('cml', False ) %}
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
+{% set ank_ver_fixed = salt['pillar.get']('virl:ank_ver_fixed', salt['grains.get']('ank_ver_fixed', False)) %}
+{% set ank_ver = salt['pillar.get']('virl:ank_ver', salt['grains.get']('ank_ver', '0.10.8')) %}
+
 
 /var/cache/virl/ank:
   file.recurse:
@@ -19,17 +23,30 @@ ank_init:
     - name: /etc/init.d/ank-webserver
     - source: "salt://files/ank-webserver.init"
     - mode: 0755
+    - onlyif: 'test ! -e /etc/init.d/ank-webserver'
+
+/etc/init.d/ank-webserver:
+  file.replace:
+    - pattern: '.*--port.*"'
+    - repl: 'RUNNING_CMD="/usr/local/bin/ank_webserver --multi_user --port {{ ank }}"'
+    - unless: grep {{ ank }} /etc/init.d/ank-webserver
+    - require:
+      - file: ank_init
 
 /root/.autonetkit/autonetkit.cfg:
-  file.managed:
-    - order: 3
+  file.touch:
     - makedirs: True
-    - source: "salt://files/autonetkit.cfg"
     - mode: 0755
+    - onlyif: 'test ! -e /root/.autonetkit/autonetkit.cfg'
+  cmd.run:
+    - name: 'crudini --set /root/.autonetkit/autonetkit.cfg "Http post" port {{ ank }}'
+    - unless: grep {{ ank }} /root/.autonetkit/autonetkit.cfg
+
 
 /etc/rc2.d/S98ank-webserver:
   file.symlink:
     - target: /etc/init.d/ank-webserver
+    - onlyif: 'test ! -e /etc/rc2.d/S98ank-webserver'
     - mode: 0755
 
 ank_prereq:
@@ -50,10 +67,15 @@ ank_prereq:
       - PyYAML
       - tornado == 3.0.1
 
-autonetkit:
+autonetkit check:
   pip.installed:
     - order: 2
+    {% if ank_ver_fixed == false %}
+    - name: autonetkit
     - upgrade: True
+    {% else %}
+    - name: autonetkit == {{ ank_ver }}
+    {% endif %}
     - use_wheel: True
     - no_index: True
     - find_links: "file:///var/cache/virl/ank"
@@ -63,8 +85,8 @@ autonetkit:
     - names:
       - wheel install-scripts autonetkit
       - service ank-webserver start
-    - watch:
-      - pip: autonetkit
+    - onchanges:
+      - pip: autonetkit check
 
 
 {% if venv == 'qa' or venv == 'dev' %}
@@ -79,7 +101,7 @@ autonetkit_cisco alt:
     - no_index: True
     - find_links: "file:///var/cache/virl/ank"
     - require:
-      - pip: autonetkit
+      - pip: autonetkit check
 
 autonetkit_cisco.so remove:
   file.absent:
@@ -90,7 +112,7 @@ autonetkit_cisco.so remove:
 autonetkit_cisco pip remove:
   pip.removed:
     - name: autonetkit_cisco
-    - order: 3
+
 
 autonetkit_cisco:
   file.managed:
@@ -98,7 +120,7 @@ autonetkit_cisco:
     - source: salt://ank/{{ venv }}/autonetkit_cisco.so
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
     - require:
-      - pip: autonetkit
+      - pip: autonetkit check
       - pip: autonetkit_cisco pip remove
 
 {% endif %}
@@ -111,23 +133,14 @@ autonetkit_cisco_webui:
     - no_index: True
     - name: autonetkit_cisco_webui
     - find_links: "file:///var/cache/virl/ank"
+    - require:
+      - pip: autonetkit check
 
-
-/etc/init.d/ank-webserver:
-  file.replace:
-    - pattern: portnumber
-    - repl: {{ ank }}
-
-rootank:
-  file.replace:
-    - name: /root/.autonetkit/autonetkit.cfg
-    - pattern: portnumber
-    - repl: {{ ank }}
 
 ank-webserver:
   service:
     - running
     - enable: True
     - restart: True
-    - watch:
-      - pip: autonetkit
+    - onchanges:
+      - pip: autonetkit check
