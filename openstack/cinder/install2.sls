@@ -25,7 +25,7 @@ cinder-pkgs:
   file.managed:
     - file_mode: 755
     - template: jinja
-    - source: "files:///openstack/cinder/files/cinder.conf"
+    - source: "file:///srv/salt/openstack/cinder/files/cinder.conf"
 
 
 {% if cinder_enabled == True %}
