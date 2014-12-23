@@ -128,7 +128,8 @@ nova-restart:
         service nova-novncproxy restart
 
 /etc/init.d/nova-serialproxy:
-  file.managed:
+  file.copy:
+    - force: True
     - order: 4
     - source: "file:///srv/salt/openstack/nova/files/nova-serialproxy"
     - mode: 0755
@@ -142,7 +143,8 @@ nova-restart:
       - file: /etc/init.d/nova-serialproxy
 
 /usr/bin/kvm:
-  file.managed:
+  file.copy:
+    - force: True
     - order: 4
     - source: "file:///srv/salt/openstack/nova/files/kvm"
     - mode: 0755
