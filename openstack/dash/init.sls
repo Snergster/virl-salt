@@ -44,16 +44,25 @@ horizon-hosts:
 horizon-oshosts:
   file.replace:
     - name: /etc/openstack-dashboard/local_settings.py
-    - pattern: 'OPENSTACK_HOST = "127.0.0.1"'
+    - pattern: 'OPENSTACK_HOST = ".*"'
     - repl: 'OPENSTACK_HOST = "{{ hostname }}"'
 
 a2enmod-enable:
   cmd.run:
     - name: a2enmod wsgi
+    - unless: test -e /etc/apache2/mods-enabled/wsgi.load
 
 horizon-restart:
   cmd.run:
     - order: last
+    - onchanges:
+      -	cmd: a2enmod-enable
+      - file: horizon-oshosts
+      - file: horizon-hosts
+      - file: horizon-allowed
+      - file: uwm port replace
+      - file: openstack-dash
+      -	pkg: horizon-pkgs
     - name: |
         service apache2 restart
         service memcached restart
@@ -66,13 +75,12 @@ apache overwrite:
     - user: root
     - group: root
     - file_mode: 755
-    - watch:
+    - onchanges:
       - pkg: horizon-pkgs
 
 uwm port replace:
   file.replace:
     - name: /var/www/html/index.html
-    - pattern: 'UWMPORT'
-    - repl: 'location.host + ":{{ uwmport }}"'
-    - require:
-      - file: apache overwrite
+    - pattern: :\d{2,}"
+    - repl: :{{ uwmport }}"
+    - unless: grep {{ uwmport }} /var/www/html/index.html
