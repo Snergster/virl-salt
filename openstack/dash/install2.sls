@@ -62,7 +62,7 @@ horizon-restart:
 apache overwrite:
   file.recurse:
     - name: /var/www/html
-    - source: file:////srv/salt/openstack/dash/files
+    - source: salt://files/virlweb
     - user: root
     - group: root
     - file_mode: 755
@@ -72,7 +72,7 @@ apache overwrite:
 uwm port replace:
   file.replace:
     - name: /var/www/html/index.html
-    - pattern: 'UWMPORT'
-    - repl: 'location.host + ":{{ uwmport }}"'
+    - pattern: '"http://'+window\.location\.host\+\':\d{2,}">User Workspace Management</a>''
+    - repl: '"http://'+window.location.host+':{{ uwmport }}">User Workspace Management</a>''
     - require:
       - file: apache overwrite
