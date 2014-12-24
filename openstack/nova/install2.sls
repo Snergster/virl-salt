@@ -131,7 +131,7 @@ nova-restart:
   file.copy:
     - force: True
     - order: 4
-    - source: "file:///srv/salt/openstack/nova/files/nova-serialproxy"
+    - source: /srv/salt/openstack/nova/files/nova-serialproxy
     - mode: 0755
 
 /etc/rc2.d/S98nova-serialproxy:
@@ -146,7 +146,7 @@ nova-restart:
   file.copy:
     - force: True
     - order: 4
-    - source: "file:///srv/salt/openstack/nova/files/kvm"
+    - source: /srv/salt/openstack/nova/files/kvm
     - mode: 0755
 
 /usr/bin/kvm.real:
