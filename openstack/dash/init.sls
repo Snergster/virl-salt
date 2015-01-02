@@ -66,8 +66,8 @@ horizon-restart:
     - name: |
         service apache2 restart
         service memcached restart
-{% endif %}
-
+  {% endif %}
+  
 apache overwrite:
   file.recurse:
     - name: /var/www/html
