@@ -15,6 +15,7 @@ include:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
+    - maxdepth: 0
     - include_pat: '*zip'
     - exclude_pat: E@(.*exe$)|(.*dmg$)
     - source: "salt://vmm/{{ venv }}/"
@@ -33,6 +34,7 @@ include:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
+    - maxdepth: 0
     - include_pat: '*setup_64.exe'
     - exclude_pat:  E@(.*32.exe$)|(.*dmg$)|(.*zip$)
     - source: "salt://vmm/{{ venv }}/"
@@ -50,6 +52,7 @@ include:
     - name: /var/www/download
     - clean: true
     - file_mode: 755
+    - maxdepth: 0
     - dir_mode: 755
     - include_pat: '*setup_32.exe'
     - exclude_pat: E@(.*64.exe$)|(.*dmg$)|(.*zip$)
@@ -69,6 +72,7 @@ include:
     - clean: true
     - file_mode: 755
     - dir_mode: 755
+    - maxdepth: 0
     - include_pat: '*.dmg'
     - exclude_pat: E@(.*exe$)|(.*zip$)
     - source: "salt://vmm/{{ venv }}/"

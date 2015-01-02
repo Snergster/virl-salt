@@ -18,7 +18,7 @@ ntpdate:
   file.replace:
     - order: 4
     - pattern: ^server.*
-    - repl: server {{ ntp_server }}
+    - repl: server {{ ntp_server }} iburst
     - require:
       - pkg: ntp
 

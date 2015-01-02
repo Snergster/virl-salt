@@ -18,6 +18,7 @@ commonpkgs:
       - sshpass
       - openssh-server
       - crudini
+      - unzip
 
 /usr/local/bin/openstack-config:
   file.symlink:

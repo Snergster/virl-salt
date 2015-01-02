@@ -6,8 +6,10 @@
 {% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% set std_ver_fixed = salt['pillar.get']('behave:std_ver_fixed', salt['grains.get']('std_ver_fixed', False)) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set stdport = salt['pillar.get']('virl:virl_webservices', salt['grains.get']('virl_webservices', '19399')) %}
+{% set std_ver = salt['pillar.get']('behave:std_ver', salt['grains.get']('std_ver', '0.10.10.18')) %}
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set cinder_enabled = salt['pillar.get']('virl:cinder_enabled', salt['grains.get']('cinder_enabled', False)) %}
 
@@ -36,19 +38,21 @@ std_init:
   file.touch:
     - require:
       - file: /etc/virl directory
+    - onlyif: 'test ! -e /etc/virl/common.cfg'
 
 std docs:
   archive:
     - extracted
     - name: /var/www/doc/
     - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
-    - source_hash: md5=9ec5c0249e103e83e9c79fcfa8cfc19d
+    - source_hash: md5=d44c6584a80aea1af377868636ac0383
     - archive_format: tar
     - tar_options: xz
     - if_missing: /var/www/doc/index.html
 
 /etc/virl/virl.cfg:
   file.managed:
+    - replace: false
     - order: 3
     - makedirs: true
     - mode: 0644
@@ -76,7 +80,7 @@ std_prereq:
   pip.installed:
     - order: 2
 {% if proxy == true %}
-    - proxy: {{  http_proxy }}
+    - proxy: {{ http_proxy }}
 {% endif %}
     - names:
       - ipaddr
@@ -105,7 +109,6 @@ std_prereq:
 VIRL_CORE:
   pip.installed:
     - order: 5
-    - upgrade: True
     - use_wheel: True
     - no_index: True
     - pre_releases: True
@@ -114,25 +117,36 @@ VIRL_CORE:
     {% if cml == True %}
     - name: CML_CORE
     {% else %}
+    {% if std_ver_fixed == True %}
+    - name: VIRL_CORE  == {{ std_ver }}
+    {% else %}
     - name: VIRL_CORE
+    - upgrade: True
     {% endif %}
+    {% endif %}
+  service.dead:
+    - names:
+      - virl-std
+      - virl-uwm
+    - prereq:
+      - pip: VIRL_CORE
   cmd.wait:
     - names:
-    {% if cml == True %}
+     {% if cml == True %}
       - virl_config lsb-links
-    {% else %}
+     {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_custom_floating_ip True
       - crudini --set /etc/virl/common.cfg orchestration network_security_groups False
       - crudini --set /etc/virl/common.cfg orchestration network_custom_floating_ip True
-    {% if cinder_enabled == True %}
+     {% if cinder_enabled == True %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
       - crudini --set /etc/virl/common.cfg orchestration volume_service True
-    {% else %}
+     {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service False
       - crudini --set /etc/virl/common.cfg orchestration volume_service False
-    {% endif %}
-    {% endif %}
+     {% endif %}
+     {% endif %}
       - /usr/local/bin/virl_config update --global
       - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ ospassword }}
       - crudini --set /etc/virl/virl.cfg env virl_openstack_service_token {{ ks_token }}
@@ -142,7 +156,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_std_user_name uwmadmin
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
-    - watch:
+    - onchanges:
       - pip: VIRL_CORE
 
 virl init:
@@ -151,20 +165,17 @@ virl init:
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
 
+
 virl-std:
   service:
     - running
+    - order: last
     - enable: True
     - restart: True
-    - watch:
-      - pip: VIRL_CORE
-      - cmd: virl init
 
 virl-uwm:
   service:
     - running
+    - order: last
     - enable: True
     - restart: True
-    - watch:
-      - pip: VIRL_CORE
-      - cmd: virl init

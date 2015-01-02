@@ -24,28 +24,9 @@ cinder-pkgs:
 /etc/cinder/cinder.conf:
   file.managed:
     - file_mode: 755
-    - source: "salt://files/cinder.conf"
+    - template: jinja
+    - source: "file:///srv/salt/openstack/cinder/files/cinder.conf"
 
-cinder-conn:
-  openstack_config.present:
-    - filename: /etc/cinder/cinder.conf
-    - section: 'database'
-    - parameter: 'connection'
-    - value: 'mysql://cinder:{{ mypassword }}@{{ controllerip }}/cinder'
-
-cinder-rabbitpass:
-  openstack_config.present:
-    - filename: /etc/cinder/cinder.conf
-    - section: 'DEFAULT'
-    - parameter: 'rabbit_password'
-    - value:  '{{ rabbitpassword }}'
-
-cinder-adminpass:
-  openstack_config.present:
-    - filename: /etc/cinder/cinder.conf
-    - section: 'keystone_authtoken'
-    - parameter: 'admin_password'
-    - value:  '{{ ospassword }}'
 
 {% if cinder_enabled == True %}
 cinder-rclocal:
@@ -57,37 +38,10 @@ cinder-rclocal:
 
 {% endif %}
 
-cinder-rabbit-hostname:
-  openstack_config.present:
-    - filename: /etc/cinder/cinder.conf
-    - section: 'DEFAULT'
-    - parameter: 'rabbit_host'
-    - value:  '{{ hostname }}'
-
-cinder-auth-uri:
-  openstack_config.present:
-    - filename: /etc/cinder/cinder.conf
-    - section: 'keystone_authtoken'
-    - parameter: 'auth_uri'
-    - value:  'http://{{ hostname }}:5000/v2.0'
-
-cinder-auth-host:
-  openstack_config.present:
-    - filename: /etc/cinder/cinder.conf
-    - section: 'keystone_authtoken'
-    - parameter: 'auth_host'
-    - value: '{{ hostname }}'
-
-cinder-verbose:
-  openstack_config.present:
-    - filename: /etc/cinder/cinder.conf
-    - section: 'DEFAULT'
-    - parameter: 'verbose'
-    - value:  'False'
-
-
 cinder-restart:
   cmd.run:
+    - require:
+      - file: /etc/cinder/cinder.conf
     - name: |
         cinder-manage db sync
         service cinder-volume restart

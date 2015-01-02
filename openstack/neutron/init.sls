@@ -25,7 +25,7 @@
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 {% set service_tenid = salt['grains.get']('service_id', ' ' ) %}
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 
 neutron-pkgs:
   pkg.installed:
