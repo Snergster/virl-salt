@@ -50,8 +50,8 @@ horizon-oshosts:
 a2enmod-enable:
   cmd.run:
     - name: a2enmod wsgi
-    - unless: test -e /etc/apache2/mods-enabled/wsgi.load
-
+    - unless: 'test -e /etc/apache2/mods-enabled/wsgi.load'
+    
 horizon-restart:
   cmd.run:
     - order: last
