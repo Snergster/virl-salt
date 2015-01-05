@@ -65,14 +65,23 @@ apache overwrite:
     - source: salt://files/virlweb
     - user: root
     - group: root
+    - unless: 'test -e /srv/salt/virl/files/virlweb.tar'
     - file_mode: 755
-    - watch:
-      - pkg: horizon-pkgs
+
+apache tar overwrite:
+  archive:
+    - extracted
+    - name: /var/www/html
+    - source: file:///srv/salt/virl/files/virlweb.tar
+    - source_hash: md5=fda666e075a70cab391b450845b87b80
+    - archive_format: tar
+    - tar_options: xz
+    - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
 
 uwm port replace:
   file.replace:
+    - order: last
     - name: /var/www/html/index.html
     - pattern: '"http://'+window\.location\.host\+\':\d{2,}">User Workspace Management</a>''
     - repl: '"http://'+window.location.host+':{{ uwmport }}">User Workspace Management</a>''
-    - require:
-      - file: apache overwrite
+    - unless: grep {{ uwmport }} /var/www/html/index.html
