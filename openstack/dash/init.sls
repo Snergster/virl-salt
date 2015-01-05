@@ -51,7 +51,7 @@ a2enmod-enable:
   cmd.run:
     - name: a2enmod wsgi
     - unless: 'test -e /etc/apache2/mods-enabled/wsgi.load'
-    
+
 horizon-restart:
   cmd.run:
     - order: last
@@ -66,8 +66,10 @@ horizon-restart:
     - name: |
         service apache2 restart
         service memcached restart
-  {% endif %}
-  
+
+
+{% endif %}
+
 apache overwrite:
   file.recurse:
     - name: /var/www/html
@@ -75,8 +77,6 @@ apache overwrite:
     - user: root
     - group: root
     - file_mode: 755
-    - onchanges:
-      - pkg: horizon-pkgs
 
 uwm port replace:
   file.replace:
@@ -84,3 +84,6 @@ uwm port replace:
     - pattern: :\d{2,}"
     - repl: :{{ uwmport }}"
     - unless: grep {{ uwmport }} /var/www/html/index.html
+    - require:
+      - file: apache overwrite
+      
