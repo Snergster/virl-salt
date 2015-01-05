@@ -78,10 +78,20 @@ apache tar overwrite:
     - tar_options: xz
     - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
 
+##uwm port replace:
+##  file.replace:
+##    - order: last
+##    - name: /var/www/html/index.html
+##    - pattern: '"http://'+window\.location\.host\+\':\d{2,}">User Workspace Management</a>''
+##    - repl: '"http://'+window.location.host+':{{ uwmport }}">User Workspace Management</a>''
+##    - unless: grep {{ uwmport }} /var/www/html/index.html
+
 uwm port replace:
   file.replace:
-    - order: last
     - name: /var/www/html/index.html
-    - pattern: '"http://'+window\.location\.host\+\':\d{2,}">User Workspace Management</a>''
-    - repl: '"http://'+window.location.host+':{{ uwmport }}">User Workspace Management</a>''
+    - pattern: :\d{2,}"
+    - repl: :{{ uwmport }}"
     - unless: grep {{ uwmport }} /var/www/html/index.html
+    - onchanges:
+      - file: apache overwrite
+      - archive: apache tar overwrite
