@@ -1,3 +1,6 @@
+{% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
+
+
 lubuntu-desktop:
   pkg.installed:
     - skip_verify: True
@@ -218,14 +221,59 @@ lubuntu-desktop:
     - source: "salt://files/Clearlooks"
     - user: virl
     - group: virl
+    - unless: 'test -e /srv/salt/virl/files/Clearlooks'
 
+/usr/share/themes/Lubuntu-default/openbox-3/themerc:
+  file.managed:
+    - source: "file:///srv/salt/virl/files/Clearlooks/openbox-3/themerc"
+    - user: virl
+    - group: virl
+    - onlyif: 'test -e /srv/salt/virl/files/Clearlooks/openbox-3/themerc'
+    - require:
+      - pkg: lubuntu-desktop
+
+/usr/share/themes/Lubuntu-default/gtk-2.0/gtkrc:
+  file.managed:
+    - source: "file:///srv/salt/virl/files/Clearlooks/gtk-2.0/gtkrc"
+    - user: virl
+    - group: virl
+    - onlyif: 'test -e /srv/salt/virl/files/Clearlooks/gtk-2.0/gtkrc'
+    - require:
+      - pkg: lubuntu-desktop
+
+{% if cml %}
+cml background:
+  openstack_config.present:
+    - order: last
+    - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
+    - section: '*'
+    - parameter: 'wallpaper'
+    - value: '/srv/salt/virl/files/CML.jpg'
+    - onlyif: 'test -e /srv/salt/virl/files/CML.jpg'
+    - require:
+      - pkg: lubuntu-desktop
+{% else %}
 virl background:
   openstack_config.present:
     - order: last
     - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
     - section: '*'
     - parameter: 'wallpaper'
+    - value: '/srv/salt/virl/files/virl.jpg'
+    - onlyif: 'test -e /srv/salt/virl/files/virl.jpg'
+    - require:
+      - pkg: lubuntu-desktop
+{% endif %}
+
+
+old virl background:
+  openstack_config.present:
+    - order: last
+    - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
+    - section: '*'
+    - parameter: 'wallpaper'
     - value: '/home/virl/.virl.jpg'
+    - unless: 'test -e /srv/salt/virl/files/virl.jpg'
     - require:
       - pkg: lubuntu-desktop
 
