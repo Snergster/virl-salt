@@ -34,12 +34,15 @@ ank_init:
       - file: ank_init
 
 /root/.autonetkit/autonetkit.cfg:
-  file.touch:
+  file.managed:
     - makedirs: True
     - mode: 0755
     - onlyif: 'test ! -e /root/.autonetkit/autonetkit.cfg'
+    - contents:  |
+        [Http Post]
+        port={{ ank }}
   cmd.run:
-    - name: 'crudini --set /root/.autonetkit/autonetkit.cfg "Http post" port {{ ank }}'
+    - name: 'crudini --set /root/.autonetkit/autonetkit.cfg "Http Post" port {{ ank }}'
     - unless: grep {{ ank }} /root/.autonetkit/autonetkit.cfg
 
 
