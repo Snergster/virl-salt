@@ -87,7 +87,7 @@ apache tar overwrite:
     - source_hash: md5=fda666e075a70cab391b450845b87b80
     - archive_format: tar
     - tar_options: xz
-    - onlyif 'test -e /srv/salt/virl/files/virlweb.tar'
+    - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
 
 uwm port replace:
   file.replace:
