@@ -3,7 +3,7 @@
   file.recurse:
     - clean: True
     - name: /srv/salt/{{dir}}
-    - source: salt://salt/{dir}
+    - source: salt://{dir}
 {% endfor %}
 
 ## copy sls locally old:
