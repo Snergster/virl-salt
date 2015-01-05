@@ -1,9 +1,9 @@
-{% for dir in ['openstack','virl','_modules','states','common'] %}
+{% for dir in ['openstack','virl','_modules','_states','common'] %}
 {{ dir }} sls locally:
   file.recurse:
     - clean: True
     - name: /srv/salt/{{dir}}
-    - source: salt://{dir}
+    - source: salt://{{dir}}
 {% endfor %}
 
 ## copy sls locally old:
