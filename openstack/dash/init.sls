@@ -62,7 +62,7 @@ horizon-restart:
       - file: horizon-allowed
       - file: uwm port replace
       - file: openstack-dash
-      -	pkg: horizon-pkgs
+      - pkg: horizon-pkgs
     - name: |
         service apache2 restart
         service memcached restart
