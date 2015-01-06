@@ -56,7 +56,7 @@ horizon-restart:
   cmd.run:
     - order: last
     - onchanges:
-      -	cmd: a2enmod-enable
+      - cmd: a2enmod-enable
       - file: horizon-oshosts
       - file: horizon-hosts
       - file: horizon-allowed
