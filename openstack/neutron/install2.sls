@@ -495,11 +495,11 @@ final linuxbridge_neutron_agent:
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - onfail:
       - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-    cmd.wait:
-      - names:
-        - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-      - watch:
-        - file: final linuxbridge_neutron_agent
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+    - watch:
+      - file: final linuxbridge_neutron_agent
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py:
   file.patch:
