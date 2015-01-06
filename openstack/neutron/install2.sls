@@ -517,28 +517,30 @@ linuxbridge_neutron_agent patch:
   file.patch:
     - source: file:///srv/salt/openstack/neutron/files/l3.py.diff
     - hash: md5=3739e6a7463a3e2102b76d1cc3ebeff6
+    - require:
+      - pkg: neutron-pkgs
+      - file: /srv/salt/openstack/neutron/files/l3.py.diff
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
-      - require:
-        - pkg: neutron-pkgs
-        - file: /srv/salt/openstack/neutron/files/l3.py.diff
+
 
 
 /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py:
   file.patch:
     - source: file:///srv/salt/openstack/neutron/files/l3_db.diff
     - hash: md5=c99c80ba6aa209fcd046a972af51a914
+    - require:
+      - pkg: neutron-pkgs
+      - file: /srv/salt/openstack/neutron/files/l3_db.diff
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-      - require:
-        - pkg: neutron-pkgs
-        - file: /srv/salt/openstack/neutron/files/l3_db.diff
+
 
 
 
