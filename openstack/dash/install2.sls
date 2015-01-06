@@ -75,7 +75,13 @@ apache tar overwrite:
     - source: file:///srv/salt/virl/files/virlweb.tar
     - source_hash: md5=fda666e075a70cab391b450845b87b80
     - archive_format: tar
-    - tar_options: xz
+    - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
+    - require:
+      - file: apache dir remove
+
+apache dir remove:
+  file.absent:
+    - name: /var/www/html
     - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
 
 uwm port replace:
