@@ -492,6 +492,7 @@ l3-gateway:
 linuxbridge_neutron_agent:
   file.managed:
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.py
+    - source_hash: md5=36394295c3835838af8d0c63d072d513
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - onfail:
       - file: linuxbridge_neutron_agent patch
