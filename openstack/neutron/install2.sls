@@ -489,27 +489,26 @@ l3-gateway:
       - file: /srv/salt/openstack/neutron/files/ml2_rpc.diff
 
 
-final linuxbridge_neutron_agent:
+linuxbridge_neutron_agent:
   file.managed:
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.py
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - onfail:
-      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-  cmd.wait:
+      - file: linuxbridge_neutron_agent patch
+
+compile linuxbridge:
+  cmd.run:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-    - watch:
-      - file: final linuxbridge_neutron_agent
+    - onchanges:
+      - file: linuxbridge_neutron_agent patch
+      - file: linuxbridge_neutron_agent
 
-/usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py:
+linuxbridge_neutron_agent patch:
   file.patch:
+    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
     - hash: md5=36394295c3835838af8d0c63d072d513
-  cmd.wait:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-    - watch:
-      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - require:
       - pkg: neutron-pkgs
       - file: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
@@ -521,11 +520,11 @@ final linuxbridge_neutron_agent:
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
-      - watch:
-        - file: /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
-        - require:
-          - pkg: neutron-pkgs
-          - file: /srv/salt/openstack/neutron/files/l3.py.diff
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
+      - require:
+        - pkg: neutron-pkgs
+        - file: /srv/salt/openstack/neutron/files/l3.py.diff
 
 
 /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py:
@@ -535,11 +534,11 @@ final linuxbridge_neutron_agent:
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-      - watch:
-        - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-        - require:
-          - pkg: neutron-pkgs
-          - file: /srv/salt/openstack/neutron/files/l3_db.diff
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
+      - require:
+        - pkg: neutron-pkgs
+        - file: /srv/salt/openstack/neutron/files/l3_db.diff
 
 
 
