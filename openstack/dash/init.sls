@@ -66,8 +66,6 @@ horizon-restart:
     - name: |
         service apache2 restart
         service memcached restart
-
-
 {% endif %}
 
 apache overwrite:
@@ -84,17 +82,21 @@ apache tar overwrite:
     - extracted
     - name: /var/www/html
     - source: file:///srv/salt/virl/files/virlweb.tar
-    - source_hash: md5=fda666e075a70cab391b450845b87b80
+    - source_hash: md5=b1a24317d5937caeba82fbc049f5055f
     - archive_format: tar
-    - tar_options: xz
+    - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
+    - require:
+      - file: apache dir remove
+
+apache dir remove:
+  file.absent:
+    - name: /var/www/html
     - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
 
 uwm port replace:
   file.replace:
+    - order: last
     - name: /var/www/html/index.html
     - pattern: :\d{2,}"
     - repl: :{{ uwmport }}"
     - unless: grep {{ uwmport }} /var/www/html/index.html
-    - onchanges:
-      - file: apache overwrite
-      - archive: apache tar overwrite
