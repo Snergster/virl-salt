@@ -472,7 +472,7 @@ l3-gateway:
       - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py
     - require:
       - pkg: neutron-pkgs
-      - file: /srv/salt/files/neutron/lb_neutron_plugin.py.diff
+      - file: /srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff
 
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py:
@@ -486,7 +486,7 @@ l3-gateway:
       - file: /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py
     - require:
       - pkg: neutron-pkgs
-      - file: /srv/salt/files/neutron/ml2_rpc.diff
+      - file: /srv/salt/openstack/neutron/files/ml2_rpc.diff
 
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py:
@@ -500,7 +500,7 @@ l3-gateway:
       - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - require:
       - pkg: neutron-pkgs
-      - file: /srv/salt/files/neutron/linuxbridge_neutron_agent.diff
+      - file: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
 
 /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py:
   file.patch:
@@ -513,7 +513,7 @@ l3-gateway:
         - file: /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
         - require:
           - pkg: neutron-pkgs
-          - file: /srv/salt/files/neutron/l3.py.diff
+          - file: /srv/salt/openstack/neutron/files/l3.py.diff
 
 
 /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py:
@@ -527,7 +527,7 @@ l3-gateway:
         - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
         - require:
           - pkg: neutron-pkgs
-          - file: /srv/salt/files/neutron/l3_db.diff
+          - file: /srv/salt/openstack/neutron/files/l3_db.diff
 
 
 
