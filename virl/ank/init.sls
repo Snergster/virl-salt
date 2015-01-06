@@ -1,7 +1,6 @@
 {% set ank = salt['pillar.get']('virl:ank', salt['grains.get']('ank', '19401')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com
-:80/')) %}
+{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
 {% set virltype = salt['grains.get']('virl_type', 'stable') %}
 {% set cml = salt['grains.get']('cml', False ) %}
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
@@ -68,7 +67,7 @@ ank_prereq:
       - netaddr
       - networkx
       - PyYAML
-      - tornado == 3.0.1
+      - tornado == 3.2.2
 
 autonetkit check:
   pip.installed:
@@ -79,6 +78,7 @@ autonetkit check:
     {% else %}
     - name: autonetkit == {{ ank_ver }}
     {% endif %}
+    - no_deps: True
     - use_wheel: True
     - no_index: True
     - find_links: "file:///var/cache/virl/ank"
@@ -100,6 +100,7 @@ autonetkit_cisco alt:
     - order: 3
     - upgrade: True
     - use_wheel: True
+    - no_deps: True
     - pre_releases: True
     - no_index: True
     - find_links: "file:///var/cache/virl/ank"
@@ -132,6 +133,7 @@ autonetkit_cisco_webui:
   pip.installed:
     - order: 4
     - upgrade: True
+    - no_deps: True
     - use_wheel: True
     - no_index: True
     - name: autonetkit_cisco_webui

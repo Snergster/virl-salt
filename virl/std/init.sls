@@ -99,7 +99,7 @@ std_prereq:
       - pycrypto
       - simplejson
       - sqlalchemy
-      - tornado == 3.0.1
+      - tornado == 3.2.2
       - websocket_client
       - Werkzeug
       - wsgiref
