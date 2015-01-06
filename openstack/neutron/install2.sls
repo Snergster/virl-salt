@@ -512,11 +512,11 @@ linuxbridge_neutron_agent patch:
     - require:
       - pkg: neutron-pkgs
       - file: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
-    cmd.wait:
-      - names:
-        - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-      - watch:
-        - file: linuxbridge_neutron_agent patch
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+    - watch:
+      - file: linuxbridge_neutron_agent patch
 
 
 /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py:
