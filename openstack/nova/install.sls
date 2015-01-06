@@ -8,20 +8,23 @@
 {% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
 {% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
 {% set novapassword = salt['pillar.get']('virl:novapassword', salt['grains.get']('password', 'password')) %}
+{% set iscontroller = salt['pillar.get']('virl:iscontroller', salt['grains.get']('iscontroller', True)) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
+{% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
 
 include:
   - virl.ramdisk
 
 nova-api:
   pkg.installed:
-    - order: 1
     - refresh: true
 
 nova-pkgs:
   pkg.installed:
     - order: 2
     - refresh: False
+    - require:
+      - pkg: nova-api
     - names:
       - nova-cert
       - nova-conductor
@@ -40,107 +43,79 @@ nova-pkgs:
 /etc/nova/nova.conf:
   file.managed:
     - file_mode: 755
-    - source: "salt://files/nova.conf"
+    - template: jinja
+    - source: "file:///srv/salt/openstack/nova/files/nova.conf"
+    - require:
+      - pkg: nova-pkgs
 
+## if needs to go here for non controller
+{% if iscontroller == False %}
 
 nova-conn:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'database'
     - parameter: 'connection'
-    - value: 'mysql://nova:{{ mypassword }}@{{ controllerip }}/nova'
-
-nova-rabbitpass:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: 'rabbit_password = RABBIT_PASS'
-    - repl: 'rabbit_password = {{ rabbitpassword }}'
-
+    - value: 'mysql://nova:{{ mypassword }}@{{ controllerhostname }}/nova'
+    - require:
+      - file: /etc/nova/nova.conf
 
 nova-hostname1:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
     - parameter: 'neutron_url'
-    - value: 'http://{{ hostname }}:9696'
+    - value: 'http://{{ controllerhostname }}:9696'
+    - require:
+      - file: /etc/nova/nova.conf
 
 nova-hostname2:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
     - parameter: 'neutron_admin_auth_url'
-    - value: 'http://{{ hostname }}:35357/v2.0'
+    - value: 'http://{{ controllerhostname }}:35357/v2.0'
+    - require:
+      - file: /etc/nova/nova.conf
 
 nova-hostname3:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
     - parameter: 'rabbit_host'
-    - value: '{{ hostname }}'
+    - value: '{{ controllerhostname }}'
+    - require:
+      - file: /etc/nova/nova.conf
 
 nova-hostname4:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'keystone_authtoken'
     - parameter: 'auth_uri'
-    - value: 'http://{{ hostname }}:5000'
+    - value: 'http://{{ controllerhostname }}:5000'
+    - require:
+      - file: /etc/nova/nova.conf
 
 nova-hostname5:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'keystone_authtoken'
     - parameter: 'auth_host'
-    - value: '{{ hostname }}'
+    - value: '{{ controllerhostname }}'
+    - require:
+      - file: /etc/nova/nova.conf
 
-nova-publicip1:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'DEFAULT'
-    - parameter: 'my_ip'
-    - value: '{{ public_ip }}'
-
-nova-publicip2:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'DEFAULT'
-    - parameter: 'vncserver_listen'
-    - value: '{{ public_ip }}'
-
-nova-publicip3:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'DEFAULT'
-    - parameter: 'vncserver_proxyclient_address'
-    - value: '{{ public_ip }}'
-
-neut-password:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'DEFAULT'
-    - parameter: 'neutron_admin_password'
-    - value: '{{ neutronpassword }}'
-
-nova-password:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'keystone_authtoken'
-    - parameter: 'admin_password'
-    - value: '{{ novapassword }}'
-
-## nova-mtu:
-##   cmd.run:
-##     - name: /usr/bin/crudini --set /etc/nova/nova.conf network network_device_mtu 9100
-
-
-nova-verbose:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: 'verbose=True'
-    - repl: 'verbose=False'
-
+{% endif %}
 
 nova-restart:
   cmd.run:
+    - onchanges:
+      - pkg: nova-pkgs
+      - file: /etc/nova/nova.conf
+    - require:
+      - pkg: nova-pkgs
+      - file: /etc/nova/nova.conf
+      - file: /etc/init.d/nova-serialproxy
     - name: |
         su -s /bin/sh -c "glance-manage db_sync" glance
         su -s /bin/sh -c "nova-manage db sync" nova
@@ -152,17 +127,11 @@ nova-restart:
         service nova-conductor restart
         service nova-novncproxy restart
 
-nova-compute-libvirt-serport:
-  openstack_config.present:
-    - filename: /etc/nova/nova-compute.conf
-    - section: 'libvirt'
-    - parameter: 'serial_port_range'
-    - value: ' {{ serstart }}:{{ serend }}'
-
 /etc/init.d/nova-serialproxy:
-  file.managed:
+  file.copy:
+    - force: True
     - order: 4
-    - source: "salt://files/nova-serialproxy"
+    - source: /srv/salt/openstack/nova/files/nova-serialproxy
     - mode: 0755
 
 /etc/rc2.d/S98nova-serialproxy:
@@ -170,11 +139,14 @@ nova-compute-libvirt-serport:
     - order: 6
     - target: /etc/init.d/nova-serialproxy
     - mode: 0755
+    - require:
+      - file: /etc/init.d/nova-serialproxy
 
 /usr/bin/kvm:
-  file.managed:
+  file.copy:
+    - force: True
     - order: 4
-    - source: "salt://files/install_scripts/kvm"
+    - source: /srv/salt/openstack/nova/files/kvm
     - mode: 0755
 
 /usr/bin/kvm.real:
@@ -182,23 +154,11 @@ nova-compute-libvirt-serport:
     - order: 6
     - target: /usr/bin/qemu-system-x86_64
     - mode: 0755
+    - require:
+      - file: /usr/bin/kvm
 
 /usr/local/bin/nova:
   file.symlink:
     - order: 7
     - target: /usr/bin/nova
     - mode: 0755
-
-## /etc/fstab:
-##   file:
-## {% if ramdisk == True %}
-##     - append
-##     - text: 'ramdisk /var/lib/nova/instances tmpfs rw,relatime 0 0'
-## {% else %}
-##     - comment
-##     - name: /etc/fstab
-##     - regex: ^ramdisk
-##     - onlyif: "grep 'ramdisk' /etc/fstab"
-## {% endif %}
-
-#    - onlyif: df /var/lib/nova/instances

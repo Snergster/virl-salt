@@ -7,33 +7,14 @@ keystone-pkgs:
     - names:
       - keystone
 
-keystone_token:
-  openstack_config.present:
-    - filename: /etc/keystone/keystone.conf
-    - section: 'DEFAULT'
-    - parameter: 'admin_token'
-    - value: '{{ ks_token }}'
-    - require:
-      - pkg: keystone-pkgs
 
 /etc/keystone/keystone.conf:
-  openstack_config.present:
-    - filename: /etc/keystone/keystone.conf
-    - section: 'database'
-    - parameter: 'connection'
-    - value: ' mysql://keystone:{{ mypassword }}@{{ controllerip }}/keystone'
+  file.managed:
+    - source: file:///srv/salt/openstack/keystone/files/keystone.conf
+    - template: jinja
     - require:
       - pkg: keystone-pkgs
 
-logdir:
-  openstack_config.present:
-    - filename: /etc/keystone/keystone.conf
-    - section: 'DEFAULT'
-    - parameter: 'log_dir'
-    - value: '/var/log/keystone'
-    - require:
-      - pkg: keystone-pkgs
-      
 keystone db-sync:
   cmd.run:
     - name: su -s /bin/sh -c "keystone-manage db_sync" keystone
