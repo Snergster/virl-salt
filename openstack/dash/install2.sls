@@ -73,7 +73,7 @@ apache tar overwrite:
     - extracted
     - name: /var/www/html
     - source: file:///srv/salt/virl/files/virlweb.tar
-    - source_hash: md5=fda666e075a70cab391b450845b87b80
+    - source_hash: md5=b1a24317d5937caeba82fbc049f5055f
     - archive_format: tar
     - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
     - require:
