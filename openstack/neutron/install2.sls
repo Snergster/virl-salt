@@ -489,6 +489,18 @@ l3-gateway:
       - file: /srv/salt/openstack/neutron/files/ml2_rpc.diff
 
 
+final linuxbridge_neutron_agent:
+  file.managed:
+    - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.py
+    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+    - onfail:
+      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+    cmd.wait:
+      - names:
+        - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+      - watch:
+        - file: final linuxbridge_neutron_agent
+
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py:
   file.patch:
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
