@@ -71,12 +71,24 @@ neutron-pkgs:
     - require:
       - pkg: neutron-pkgs
 
-/etc/sysctl.conf:
-  file.managed:
-    - file_mode: 755
-    - source: "file:///srv/salt/openstack/neutron/files/sysctl.conf"
-    - require:
-      - pkg: neutron-pkgs
+neutron-sysctl:
+  file.replace:
+    - name: /etc/sysctl.conf
+    - pattern: '#net.ipv4.conf.default.rp_filter=1'
+    - repl: 'net.ipv4.conf.default.rp_filter=0'
+
+neutron-sysctl2:
+  file.replace:
+    - name: /etc/sysctl.conf
+    - pattern: '#net.ipv4.conf.all.rp_filter=1'
+    - repl: 'net.ipv4.conf.all.rp_filter=0'
+
+neutron-sysctlforward:
+  file.replace:
+    - name: /etc/sysctl.conf
+    - pattern: '#net.ipv4.ip_forward=1'
+    - repl: 'net.ipv4.ip_forward=1'
+
 
 {% if jumbo_frames == True %}
 neutron-mtu:
@@ -143,14 +155,14 @@ neutron-hostname4:
 
 meta-tenname:
   openstack_config.present:
-    - name: /etc/neutron/metadata_agent.ini
+    - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'admin_tenant_name'
     - value: 'service'
 
 meta-user:
   openstack_config.present:
-    - name: /etc/neutron/metadata_agent.ini
+    - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'admin_user'
     - value: 'neutron'
@@ -242,7 +254,7 @@ l3-gateway:
 
 
 
-/srv/salt/files/neutron/lb_neutron_plugin.py.diff:
+/srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff:
   file.managed:
     - makedirs: True
     - file_mode: 755
@@ -255,7 +267,7 @@ l3-gateway:
         >         LOG.info('RPC returning %s', entry)
 
 
-/srv/salt/files/neutron/l3.py.diff:
+/srv/salt/openstack/neutron/files/l3.py.diff:
   file.managed:
     - makedirs: True
     - file_mode: 755
@@ -274,7 +286,7 @@ l3-gateway:
                  'floating_network_id': {'allow_post': True, 'allow_put': False,
 
 
-/srv/salt/files/neutron/l3_db.diff:
+/srv/salt/openstack/neutron/files/l3_db.diff:
   file.managed:
     - makedirs: True
     - file_mode: 755
@@ -304,7 +316,7 @@ l3-gateway:
 
 
 
-/srv/salt/files/neutron/ml2_rpc.diff:
+/srv/salt/openstack/neutron/files/ml2_rpc.diff:
   file.managed:
     - makedirs: True
     - file_mode: 755
@@ -314,7 +326,7 @@ l3-gateway:
         >                      'device_owner': port.device_owner,
         >                      'mac_address': port.mac_address,
 
-/srv/salt/files/neutron/linuxbridge_neutron_agent.diff:
+/srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff:
   file.managed:
     - makedirs: True
     - file_mode: 755
@@ -441,8 +453,6 @@ l3-gateway:
         >                                                         owner=details.get('device_owner'),
         >                                                         state=details['admin_state_up'])
 
-
-
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
   file.append:
     - require:
@@ -453,7 +463,7 @@ l3-gateway:
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py:
   file.patch:
-    - source: file:///srv/salt/files/neutron/lb_neutron_plugin.py.diff
+    - source: file:///srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff
     - hash: md5=7560254626099a5dec158518f47b2d87
   cmd.wait:
     - names:
@@ -467,7 +477,7 @@ l3-gateway:
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py:
   file.patch:
-    - source: file:///srv/salt/files/neutron/ml2_rpc.diff
+    - source: file:///srv/salt/openstack/neutron/files/ml2_rpc.diff
     - hash: md5=23ab68a470d8b1a2223e0f495dc21837
   cmd.wait:
     - names:
@@ -481,7 +491,7 @@ l3-gateway:
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py:
   file.patch:
-    - source: file:///srv/salt/files/neutron/linuxbridge_neutron_agent.diff
+    - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
     - hash: md5=36394295c3835838af8d0c63d072d513
   cmd.wait:
     - names:
@@ -494,30 +504,30 @@ l3-gateway:
 
 /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py:
   file.patch:
-    - source: file:///srv/salt/files/neutron/l3.py.diff
+    - source: file:///srv/salt/openstack/neutron/files/l3.py.diff
     - hash: md5=3739e6a7463a3e2102b76d1cc3ebeff6
-    cmd.wait:
-      - names:
-        - python -m compileall /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
-        - watch:
-          - file: /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
-          - require:
-            - pkg: neutron-pkgs
-            - file: /srv/salt/files/neutron/l3.py.diff
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
+      - watch:
+        - file: /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
+        - require:
+          - pkg: neutron-pkgs
+          - file: /srv/salt/files/neutron/l3.py.diff
 
 
 /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py:
   file.patch:
-    - source: file:///srv/salt/files/neutron/l3_db.diff
+    - source: file:///srv/salt/openstack/neutron/files/l3_db.diff
     - hash: md5=c99c80ba6aa209fcd046a972af51a914
-    cmd.wait:
-      - names:
-        - python -m compileall /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-        - watch:
-          - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-          - require:
-            - pkg: neutron-pkgs
-            - file: /srv/salt/files/neutron/l3_db.diff
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
+      - watch:
+        - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
+        - require:
+          - pkg: neutron-pkgs
+          - file: /srv/salt/files/neutron/l3_db.diff
 
 
 
