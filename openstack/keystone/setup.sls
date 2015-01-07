@@ -1,7 +1,7 @@
-{% set ospassword = salt['grains.get']('password', 'password') %}
 {% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
+{% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+
 Keystone tenants:
   keystone.tenant_present:
     - order: 2
@@ -152,5 +152,3 @@ keystone service:
     - name: keystone
     - service_type: identity
     - description: Keystone Identity Service
-
-
