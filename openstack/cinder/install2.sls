@@ -8,6 +8,7 @@
 {% set enable_cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', True)) %}
 {% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 cinder-pkgs:
   pkg.installed:
@@ -25,8 +26,11 @@ cinder-pkgs:
   file.managed:
     - file_mode: 755
     - template: jinja
+    {% if masterless %}
     - source: "file:///srv/salt/openstack/cinder/files/cinder.conf"
-
+    {% else %}
+    - source: "salt://files/cinder.conf.jinja"
+    {% endif %}
 
 {% if cinder_enabled == True %}
 cinder-rclocal:

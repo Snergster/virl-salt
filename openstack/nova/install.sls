@@ -11,6 +11,7 @@
 {% set iscontroller = salt['pillar.get']('virl:iscontroller', salt['grains.get']('iscontroller', True)) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 include:
   - virl.ramdisk
@@ -44,7 +45,12 @@ nova-pkgs:
   file.managed:
     - file_mode: 755
     - template: jinja
+    {% if masterless %}
     - source: "file:///srv/salt/openstack/nova/files/nova.conf"
+    {% else %}
+    - source: "salt://files/nova.conf.jinja"
+    {% endif %}
+    - source: "salt"
     - require:
       - pkg: nova-pkgs
 

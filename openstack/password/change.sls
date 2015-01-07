@@ -26,7 +26,7 @@ debconf-change-set:
     - name: |
         debconf-set-selections /tmp/debconf-change
         rm /tmp/debconf-change
-      
+
 debconf-change-noninteractive:
   cmd.run:
     - order: 4
@@ -38,19 +38,19 @@ debconf-change-noninteractive:
 {{ user }}-mysql:
   mysql_user.present:
     - onchanges:
-      - cmd: /tmp/debconf-change-noninteractive
+      - cmd: debconf-change-noninteractive
     - order: 6
     - name: {{ user }}
     - host: 'localhost'
     - password: {{ mypassword }}
   mysql_database:
     - onchanges:
-      - cmd: /tmp/debconf-change-noninteractive
+      - cmd: debconf-change-noninteractive
     - present
     - name: {{ user }}
   mysql_grants.present:
     - onchanges:
-      - cmd: /tmp/debconf-change-noninteractive
+      - cmd: debconf-change-noninteractive
     - grant: all privileges
     - database: "{{ user }}.*"
     - user: {{ user }}

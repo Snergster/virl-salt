@@ -28,6 +28,7 @@
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
 {% set iscontroller = salt['pillar.get']('virl:iscontroller', salt['grains.get']('iscontroller', True)) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 neutron-pkgs:
   pkg.installed:
@@ -47,7 +48,11 @@ neutron-pkgs:
     - template: jinja
     - makedirs: True
     - file_mode: 755
+    {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/neutron.conf"
+    {% else %}
+    - source: "salt://files/neutron.conf.jinja"
+    {% endif %}
     - require:
       - pkg: neutron-pkgs
 
@@ -57,7 +62,11 @@ neutron-pkgs:
     - template: jinja
     - file_mode: 755
     - makedirs: True
+    {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/plugins/linuxbridge/linuxbridge_conf.ini"
+    {% else %}
+    - source: "salt://files/linuxbridge_conf.ini.jinja"
+    {% endif %}
     - require:
       - pkg: neutron-pkgs
 
@@ -67,7 +76,11 @@ neutron-pkgs:
     - file_mode: 755
     - template: jinja
     - makedirs: True
+    {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/plugins/ml2/ml2_conf.ini"
+    {% else %}
+    - source: "salt://files/ml2_conf.ini.jinja"
+    {% endif %}
     - require:
       - pkg: neutron-pkgs
 

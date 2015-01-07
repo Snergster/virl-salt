@@ -1,6 +1,8 @@
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 {% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+
 keystone-pkgs:
   pkg.installed:
     - order: 1
@@ -10,7 +12,11 @@ keystone-pkgs:
 
 /etc/keystone/keystone.conf:
   file.managed:
+    {% if masterless %}
     - source: file:///srv/salt/openstack/keystone/files/keystone.conf
+    {% else %}
+    - source: "salt://files/keystone.conf.jinja"
+    {% endif %}
     - template: jinja
     - require:
       - pkg: keystone-pkgs
