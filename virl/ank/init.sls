@@ -67,7 +67,7 @@ ank_prereq:
       - netaddr
       - networkx
       - PyYAML
-      - tornado == 3.2.2
+      - tornado == 3.0.1
 
 autonetkit check:
   pip.installed:
