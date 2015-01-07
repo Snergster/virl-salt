@@ -12,7 +12,9 @@
 {% set std_ver = salt['pillar.get']('behave:std_ver', salt['grains.get']('std_ver', '0.10.10.18')) %}
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set cinder_enabled = salt['pillar.get']('virl:cinder_enabled', salt['grains.get']('cinder_enabled', False)) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
+{% if not masterless %}
 /var/cache/virl/std:
   file.recurse:
     - order: 1
@@ -21,6 +23,12 @@
     - file_mode: 755
     - source: "salt://std/{{venv}}/"
 
+uwm_init:
+  file.managed:
+    - order: 4
+    - name: /etc/init.d/virl-uwm
+    - source: "salt://files/virl-uwm.init"
+    - mode: 0755
 
 std_init:
   file.managed:
@@ -28,6 +36,47 @@ std_init:
     - name: /etc/init.d/virl-std
     - source: "salt://files/virl-std.init"
     - mode: 0755
+
+std docs:
+  archive:
+    - extracted
+    - name: /var/www/doc/
+    - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
+    - source_hash: md5=d44c6584a80aea1af377868636ac0383
+    - archive_format: tar
+    - tar_options: xz
+    - if_missing: /var/www/doc/index.html
+
+{% else %}
+
+std_init local:
+  file.managed:
+    - order: 3
+    - name: /etc/init.d/virl-std
+    - source: "file:///srv/salt/virl/std/files/virl-std.init"
+    - source_hash: md5=ddc96d3ca3c9e00f5e589077e92fb782
+    - mode: 0755
+
+uwm_init local:
+  file.managed:
+    - order: 3
+    - name: /etc/init.d/virl-uwm
+    - source: "file:///srv/salt/virl/std/files/virl-uwm.init"
+    - source_hash: md5=70a05f8156cb1a9b9a7668d043558668
+    - mode: 0755
+
+std docs local:
+  archive:
+    - extracted
+    - name: /var/www/doc/
+    - source: "file:///srv/salt/virl/std/files/html_ext.tar.gz"
+    - source_hash: md5=d44c6584a80aea1af377868636ac0383
+    - archive_format: tar
+    - tar_options: xz
+    - if_missing: /var/www/doc/index.html
+
+
+{% endif %}
 
 /etc/virl directory:
   file.directory:
@@ -40,15 +89,6 @@ std_init:
       - file: /etc/virl directory
     - onlyif: 'test ! -e /etc/virl/common.cfg'
 
-std docs:
-  archive:
-    - extracted
-    - name: /var/www/doc/
-    - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
-    - source_hash: md5=d44c6584a80aea1af377868636ac0383
-    - archive_format: tar
-    - tar_options: xz
-    - if_missing: /var/www/doc/index.html
 
 /etc/virl/virl.cfg:
   file.managed:
@@ -57,12 +97,6 @@ std docs:
     - makedirs: true
     - mode: 0644
 
-uwm_init:
-  file.managed:
-    - order: 4
-    - name: /etc/init.d/virl-uwm
-    - source: "salt://files/virl-uwm.init"
-    - mode: 0755
 
 /etc/rc2.d/S98virl-std:
   file.symlink:

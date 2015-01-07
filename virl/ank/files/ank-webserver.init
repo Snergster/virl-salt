@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+
+
+RUNNING_CMD="/usr/local/bin/ank_webserver --multi_user --port portnumber"
+LOGFILE="/tmp/autonetkit/ank_webserver.log"
+SERVICE="ank_webserver"
+
+COMMAND=$1
+case $COMMAND in
+status)
+    PID=`pgrep -f "$RUNNING_CMD"`
+    if [ "$PID" ]; then
+	echo "$SERVICE running"
+	ps aux | grep "$RUNNING_CMD" | grep -v grep
+    fi
+    ;;
+start)
+    PID=`pgrep -f "$RUNNING_CMD"`
+    if [ "$PID" ]; then
+	echo "$0 already running!"
+	exit 1
+    fi
+    mkdir -p /tmp/autonetkit || true
+    echo "tmp/autonetkit created"
+    $RUNNING_CMD >> $LOGFILE 2>&1 &
+    echo "$SERVICE started"
+    ps aux | grep "$RUNNING_CMD" | grep -v grep
+    ;;
+stop)
+    PID=`pgrep -f "$RUNNING_CMD"`
+    if [ "$PID" ]; then
+	echo "$SERVICE running"
+	sudo pkill -f "$RUNNING_CMD"
+	sleep 5
+        PID=`pgrep -f "$RUNNING_CMD"`
+	if [ "$PID" ]; then
+		echo "$SERVICE still running"
+    		ps aux | grep "$RUNNING_CMD" | grep -v grep
+		exit 1
+	else
+		echo "$SERVICE stopped"
+	fi
+    else
+	echo "$0 not runninng"
+    fi
+    ;;
+restart)
+    $0 stop
+    $0 start
+    ;;
+*)
+    echo "Fatal: Unknown option ($COMMAND)"
+    echo "Usage: $0 status|start|stop|restart"
+    exit 1
+esac

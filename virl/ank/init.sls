@@ -6,7 +6,9 @@
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 {% set ank_ver_fixed = salt['pillar.get']('virl:ank_ver_fixed', salt['grains.get']('ank_ver_fixed', False)) %}
 {% set ank_ver = salt['pillar.get']('virl:ank_ver', salt['grains.get']('ank_ver', '0.10.8')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
+{% if not masterless %}
 
 /var/cache/virl/ank:
   file.recurse:
@@ -24,6 +26,20 @@ ank_init:
     - mode: 0755
     - onlyif: 'test ! -e /etc/init.d/ank-webserver'
 
+{% else %}
+
+ank_init:
+  file.managed:
+    - order: 2
+    - name: /etc/init.d/ank-webserver
+    - source: "file:///srv/salt/virl/ank/files/ank-webserver.init"
+    - source_hash: md5=e8f4af98a5f5a761414b95a9b3f28f0c
+    - mode: 0755
+    - onlyif: 'test ! -e /etc/init.d/ank-webserver'
+
+
+{% endif %}
+
 /etc/init.d/ank-webserver:
   file.replace:
     - pattern: '.*--port.*"'
@@ -36,14 +52,10 @@ ank_init:
   file.managed:
     - makedirs: True
     - mode: 0755
-    - onlyif: 'test ! -e /root/.autonetkit/autonetkit.cfg'
+    - unless: grep {{ ank }} /root/.autonetkit/autonetkit.cfg
     - contents:  |
         [Http Post]
         port={{ ank }}
-  cmd.run:
-    - name: 'crudini --set /root/.autonetkit/autonetkit.cfg "Http Post" port {{ ank }}'
-    - unless: grep {{ ank }} /root/.autonetkit/autonetkit.cfg
-
 
 /etc/rc2.d/S98ank-webserver:
   file.symlink:
