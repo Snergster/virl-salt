@@ -18,6 +18,8 @@ keystone-pkgs:
 keystone db-sync:
   cmd.run:
     - name: su -s /bin/sh -c "keystone-manage db_sync" keystone
+    - onchanges:
+      - file: /etc/keystone/keystone.conf
     - require:
       - pkg: keystone-pkgs
 
@@ -32,5 +34,5 @@ key-db-sync:
   cmd.run:
     - order: last
     - name: service keystone restart
-    - require:
+    - onchanges:
       - cmd: keystone db-sync
