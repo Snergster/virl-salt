@@ -1,0 +1,3 @@
+include:
+  - openstack.nova.install
+  
