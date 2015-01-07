@@ -1,0 +1,95 @@
+#!/bin/bash
+# VIRL STD service (team pantheon code)
+
+SERVICE="VIRL Service Topology Director"
+RUN_USER="root"
+CMD="virl_std_server"
+RUN_CMD="sudo -u $RUN_USER $CMD run"
+STOP_CMD="sudo -u $RUN_USER $CMD stop"
+STATUS_CMD="sudo -u $RUN_USER virl_std_client --quiet status"
+RUNNING_CMD_BASE="$CMD.*run"
+
+MAX_WAIT=20
+
+getpids() {
+    pgrep -u `whoami` -f "$RUNNING_CMD_BASE"
+}
+
+case "$1" in
+  start)
+    PIDS=`getpids`
+    if [ -n "$PIDS" ]; then
+        echo "$SERVICE is running."
+        exit 0
+    fi
+
+    $RUN_CMD >/dev/null 2>&1 &
+
+    WAIT=0
+    while [ $WAIT -ne $MAX_WAIT ]; do
+        ((WAIT++))
+        sleep 1
+        $STATUS_CMD >/dev/null 2>&1
+        if [ "$?" -eq 0 ]; then
+            echo "$SERVICE has been started."
+            $STATUS_CMD
+            exit 0
+        fi
+    done
+    PIDS=`getpids`
+    if [ -z "$PIDS" ]; then
+        echo "$SERVICE could not be started."
+        exit 1
+    fi
+
+    echo "$SERVICE has been started in a bad state."
+    exit 1
+    ;;
+  stop)
+    PIDS=`getpids`
+    if [ -z "$PIDS" ]; then
+        echo "$SERVICE is not running."
+        exit 0
+    fi
+
+    $STOP_CMD >/dev/null 2>&1 &
+
+    echo "Thank you for waiting, your call is very important to us"
+    WAIT=0
+    while [ $WAIT -ne $MAX_WAIT ]; do
+	((WAIT++))
+        sleep 1
+	PIDS=`getpids`
+	if [ -z "$PIDS" ]; then
+	    echo "$SERVICE was stopped."
+	    exit 0
+	fi 
+    done
+    PIDS=`getpids`
+    if [ -n "$PIDS" ]; then
+        PID_LIST=`echo $PIDS | sed -e "s/ /, /g"`
+        echo "$SERVICE is still running. Killing processes: $PID_LIST."
+        kill -9 $PIDS
+        exit 1
+    fi
+    echo "$SERVICE was stopped."
+    ;;
+  restart)
+    $0 stop
+    $0 start
+    ;;
+  status)
+    STATUS=$(pgrep -u `whoami` -lf "$RUNNING_CMD_BASE")
+    if [ -z "$STATUS" ]; then
+        echo "$SERVICE is not running."
+        exit 1
+    fi
+    echo "$STATUS"
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    exit 1
+    ;;
+esac
+exit 0
+
