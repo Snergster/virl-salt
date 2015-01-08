@@ -50,7 +50,6 @@ nova-pkgs:
     {% else %}
     - source: "salt://files/nova.conf.jinja"
     {% endif %}
-    - source: "salt"
     - require:
       - pkg: nova-pkgs
 
