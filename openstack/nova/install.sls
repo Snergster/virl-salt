@@ -136,7 +136,12 @@ nova-restart:
   file.copy:
     - force: True
     - order: 4
+    {% if masterless %}
     - source: /srv/salt/openstack/nova/files/nova-serialproxy
+    {% else %}
+    - source: "salt://files/nova-serialproxy"
+    {% endif %}
+
     - mode: 0755
 
 /etc/rc2.d/S98nova-serialproxy:
@@ -151,7 +156,11 @@ nova-restart:
   file.copy:
     - force: True
     - order: 4
+    {% if masterless %}
     - source: /srv/salt/openstack/nova/files/kvm
+    {% else %}
+    - source: "salt://files/install_scripts/kvm"
+    {% endif %}
     - mode: 0755
 
 /usr/bin/kvm.real:
