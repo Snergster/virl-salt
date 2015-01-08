@@ -112,6 +112,13 @@ nova-hostname5:
 
 {% endif %}
 
+nova-compute serial:
+  openstack_config.present:
+    - filename: /etc/nova/nova-compute.conf
+    - section: 'libvirt'
+    - parameter: 'serial_port_range'
+    - value: '{{ serstart }}:{{ serend }}'
+
 nova-restart:
   cmd.run:
     - onchanges:

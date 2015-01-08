@@ -344,17 +344,20 @@ l3-gateway:
     - makedirs: True
     - file_mode: 755
     - contents: |
-        58c58
+        49a50,51
+        > from neutron.agent.linux import utils
+        > from neutron.agent.linux import interface
+        56c58
         < BRIDGE_FS = "/sys/devices/virtual/net/"
         ---
         > BRIDGE_FS = "/sys/class/net/"
-        62a63
+        60a63
         > BRIDGE_FS_FOR_DEVICE = BRIDGE_PORT_FS_FOR_DEVICE + "/bridge"
-        63a65,67
+        61a65,67
         > # Allow forwarding of all 802.1d frames but 0 and disallowed STP, LLDP
         > BRIDGE_FWD_MASK_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/group_fwd_mask"
         > BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
-        91,106d94
+        89,104d94
         <     def device_exists(self, device):
         <         """Check if ethernet device exists."""
         <         try:
@@ -371,22 +374,15 @@ l3-gateway:
         <                 return True
         <         return False
         <
-        142a131,133
+        140a131,133
         >     def device_exists(self, device):
         >         return os.path.exists(BRIDGE_FS + device)
         >
-        166c157
+        145a139,140
+        >         else:
+        >             return []
+        162,169c157,163
         <     def get_bridge_for_tap_device(self, tap_device_name):
-        ---
-        >     def get_bridge_for_device(self, device_name):
-        168,169c159,161
-        <             br_path = os.path.join(BRIDGE_FS, tap_device_name, 'master')
-        <             return os.path.basename(os.readlink(br_path))
-        ---
-        >             bridge_link_path = BRIDGE_FS_FOR_DEVICE.replace(
-        >                 DEVICE_NAME_PLACEHOLDER, device_name)
-        >             return os.path.basename(os.readlink(bridge_link_path))
-        172,178d163
         <         bridges = self.get_all_neutron_bridges()
         <         for bridge in bridges:
         <             interfaces = self.get_interfaces_on_bridge(bridge)
@@ -394,11 +390,19 @@ l3-gateway:
         <                 return bridge
         <
         <         return None
-        311,313d295
+        ---
+        >     def get_bridge_for_device(self, device_name):
+        >         try:
+        >             bridge_link_path = BRIDGE_FS_FOR_DEVICE.replace(
+        >                 DEVICE_NAME_PLACEHOLDER, device_name)
+        >             return os.path.basename(os.readlink(bridge_link_path))
+        >         except OSError:
+        >             return None
+        302,304d295
         <             if utils.execute(['brctl', 'stp', bridge_name,
         <                               'off'], root_helper=self.root_helper):
         <                 return
-        320a303,314
+        311a303,314
         >         # Forward all available multicast frames prohibited by 802.1d
         >         bridge_mask_path = BRIDGE_FWD_MASK_FS.replace(
         >                                BRIDGE_NAME_PLACEHOLDER, bridge_name)
@@ -411,27 +415,32 @@ l3-gateway:
         >                          root_helper=self.root_helper) != BRIDGE_FWD_MASK:
         >             LOG.warning('Failed to unmask group forwarding on bridge %s',
         >                         bridge_name)
-        328c322,323
+        319c322,323
         <         if not self.interface_exists_on_bridge(bridge_name, interface):
         ---
         >         bridge = self.get_bridge_for_device(interface)
         >         if bridge != bridge_name:
-        331,332c326
+        322,323c326
         <                 if self.is_device_on_bridge(interface):
         <                     bridge = self.get_bridge_for_tap_device(interface)
         ---
         >                 if bridge is not None:
-        398,399c392,393
+        383a387,390
+        >         # fix-neutron-agent-for-mtu-config hack
+        >         LOG.debug(_("Set MTU Of %s"), tap_device_name)
+        >         utils.execute(['ip', 'link', 'set' , tap_device_name, 'mtu', cfg.CONF.network_device_mtu],
+        >                               root_helper=self.root_helper)
+        385,386c392,393
         <         tap_device_in_bridge = self.get_bridge_for_tap_device(tap_device_name)
         <         if not tap_device_in_bridge:
         ---
         >         in_bridge = self.get_bridge_for_device(tap_device_name)
         >         if in_bridge != bridge_name:
-        404a399,401
+        391a399,401
         >             if in_bridge and utils.execute(['brctl', 'delif', in_bridge, tap_device_name],
         >                                            root_helper=self.root_helper):
         >                 return False
-        511a509,528
+        498a509,528
         >     def update_device_link(self, port_id, node_id, hw_addr, owner, state):
         >         """Set link state of interface based on admin state in libvirt/kvm"""
         >         if not owner or not owner.startswith('compute:'):
@@ -452,19 +461,24 @@ l3-gateway:
         >                           port_id, node_id, hw_addr, state)
         >             return False
         >
-        689a707,712
+        676a707,712
         >             LOG.warning('Update of port %s' % port)
         >             updown = self.agent.br_mgr.update_device_link(port_id=port['id'],
         >                                                           node_id=port.get('device_id'),
         >                                                           hw_addr=port.get('mac_address'),
         >                                                           owner=port.get('device_owner'),
         >                                                           state=port['admin_state_up'])
-        930a954,958
+        917a954,958
         >                 updown = self.br_mgr.update_device_link(port_id=details['port_id'],
         >                                                         node_id=details.get('device_id'),
         >                                                         hw_addr=details.get('mac_address'),
         >                                                         owner=details.get('device_owner'),
         >                                                         state=details['admin_state_up'])
+        1016a1058,1059
+        >     # fix-neutron-agent-for-mtu-config hack
+        >     cfg.CONF.register_opts(interface.OPTS)
+        1017a1061
+        >     LOG.info(_("network_device_mtu: %s"), str(cfg.CONF.network_device_mtu))
 
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
   file.append:
