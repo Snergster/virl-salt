@@ -32,7 +32,7 @@ debconf-change-noninteractive:
     - order: 4
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
     - onchanges:
-      - cmd: /tmp/debconf-change-set
+      - cmd: debconf-change-set
 
 {% for user in accounts %}
 {{ user }}-mysql:
