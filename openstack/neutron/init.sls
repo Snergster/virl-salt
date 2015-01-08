@@ -591,8 +591,13 @@ linuxbridge hold:
 neutron restart:
   cmd.run:
     - order: last
-    - name: 'service neutron-server restart'
-
+    - name: |
+        service neutron-server restart
+        service neutron-dhcp-agent restart
+        service neutron-l3-agent restart
+        service neutron-metadata-agent restart
+        service neutron-plugin-linuxbridge-agent restart
+        
 neutron sysctl:
   cmd.run:
     - name: 'sysctl -p'
