@@ -121,9 +121,7 @@ nova-compute serial:
 
 nova-restart:
   cmd.run:
-    - onchanges:
-      - pkg: nova-pkgs
-      - file: /etc/nova/nova.conf
+    - order: last
     - require:
       - pkg: nova-pkgs
       - file: /etc/nova/nova.conf
