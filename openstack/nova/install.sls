@@ -133,15 +133,15 @@ nova-restart:
         service nova-novncproxy restart
 
 /etc/init.d/nova-serialproxy:
+  {% if masterless %}
   file.copy:
+    - source: /srv/salt/openstack/nova/files/nova-serialproxy
+  {% else %}
+  file.managed:
+    - source: "salt://files/nova-serialproxy"
+  {% endif %}
     - force: True
     - order: 4
-    {% if masterless %}
-    - source: /srv/salt/openstack/nova/files/nova-serialproxy
-    {% else %}
-    - source: "salt://files/nova-serialproxy"
-    {% endif %}
-
     - mode: 0755
 
 /etc/rc2.d/S98nova-serialproxy:
@@ -153,14 +153,15 @@ nova-restart:
       - file: /etc/init.d/nova-serialproxy
 
 /usr/bin/kvm:
+  {% if masterless %}
   file.copy:
+    - source: /srv/salt/openstack/nova/files/kvm
+  {% else %}
+  file.managed:
+    - source: "salt://files/install_scripts/kvm"
+  {% endif %}
     - force: True
     - order: 4
-    {% if masterless %}
-    - source: /srv/salt/openstack/nova/files/kvm
-    {% else %}
-    - source: "salt://files/install_scripts/kvm"
-    {% endif %}
     - mode: 0755
 
 /usr/bin/kvm.real:
