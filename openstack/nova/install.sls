@@ -135,6 +135,7 @@ nova-restart:
         service nova-consoleauth restart
         service nova-scheduler restart
         service nova-conductor restart
+        service nova-compute restart
         service nova-novncproxy restart
 
 /etc/init.d/nova-serialproxy:
