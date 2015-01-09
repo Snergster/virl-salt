@@ -3,10 +3,12 @@
 {% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
 {% set enable_horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)) %}
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 include:
   - openstack.mysql.open
 
+{% if not masterless %}
 /usr/local/bin/virl-openrc.sh:
   file.managed:
     - order: 1
@@ -87,42 +89,6 @@ include:
     - group: virl
     - mode: 755
 
-adminpass:
-  file.sed:
-    - name: /usr/local/bin/virl-openrc.sh
-    - before: 'export OS_PASSWORD=ADMIN_PASS'
-    - after:  'export OS_PASSWORD={{ ospassword }}'
-
-adminpass2:
-  file.sed:
-    - name: /home/virl/.bashrc
-    - before: 'export OS_PASSWORD=ADMIN_PASS'
-    - after:  'export OS_PASSWORD={{ ospassword }}'
-
-controllername:
-  file.sed:
-    - name: /usr/local/bin/virl-openrc.sh
-    - before: 'controller'
-    - after:  '{{ hostname }}'
-
-controllername2:
-  file.sed:
-    - name: /home/virl/.bashrc
-    - before: 'controller'
-    - after:  '{{ hostname }}'
-
-token:
-  file.replace:
-    - name: /usr/local/bin/virl-openrc.sh
-    - pattern: OS_TOKEN
-    - repl: {{ ks_token }}
-
-token2:
-  file.replace:
-    - name: /home/virl/.bashrc
-    - pattern: OS_TOKEN
-    - repl: {{ ks_token }}
-
 {% if enable_horizon == 'False' %}
 
 /var/www/index.html:
@@ -134,8 +100,47 @@ token2:
 uwmport replace:
   file.replace:
     - order: 8
+    - require:
+      - file: /var/www/index.html
     - name: /var/www/index.html
-    - pattern: UWMPORT
-    - repl: {{ uwmport }}
+    - pattern: :\d{2,}"
+    - repl: :{{ uwmport }}"
 
 {% endif %}
+{% endif %}
+
+adminpass:
+  file.replace:
+    - name: /usr/local/bin/virl-openrc.sh
+    - pattern: export OS_PASSWORD=.*
+    - repl:  export OS_PASSWORD={{ ospassword }}
+
+adminpass2:
+  file.replace:
+    - name: /home/virl/.bashrc
+    - pattern: export OS_PASSWORD=.*
+    - repl:  export OS_PASSWORD={{ ospassword }}
+
+
+controllername2:
+  cmd.run:
+    - name: salt-call file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
+    - unless: grep {{ hostname }}:35357 /home/virl/.bashrc
+
+
+controllername:
+  cmd.run:
+    - name: salt-call file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
+    - unless: grep {{ hostname }}:35357 /usr/local/bin/virl-openrc.sh
+
+token:
+  file.replace:
+    - name: /usr/local/bin/virl-openrc.sh
+    - pattern: OS_TOKEN
+    - repl: {{ ks_token }}
+
+token2:
+  file.replace:
+    - name: /home/virl/.bashrc
+    - pattern: OS_SERVICE_TOKEN=.*
+    - repl: OS_SERVICE_TOKEN={{ ks_token }}
