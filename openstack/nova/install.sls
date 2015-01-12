@@ -49,7 +49,7 @@ nova-pkgs:
     {% if masterless %}
     - source: "file:///srv/salt/openstack/nova/files/nova.conf"
     {% else %}
-    - source: "salt://files/nova.conf.jinja"
+    - source: "salt://openstack/nova/files/nova.conf"
     {% endif %}
     - require:
       - pkg: nova-pkgs
