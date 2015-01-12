@@ -71,6 +71,7 @@ mysql:
   {% if masterless %}
   file.copy:
     - source: /srv/salt/openstack/mysql/files/my.cnf
+    - force: true
   {% else %}
   file.managed:
     - source: salt://openstack/mysql/files/my.cnf
