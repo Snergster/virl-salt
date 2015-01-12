@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# script to install image binaries for all platforms into ~/images
+#
+
+# $user_home should be set to $HOME for the user that will run vmmaestro
+
+echo "Retrieving images"
+mkdir /home/virl/images || true
+#ln -sf /home/virl/virl.standalone/install_scripts/setup_images /home/virl/setup_images
+
+cd /home/virl/images
+
+wget --timestamping http://wwwin-drrc.cisco.com/virl/download/.foo/image-list
+wget --timestamping -i image-list
+chmod a+x ./install-list
+./install-list
+
+
+

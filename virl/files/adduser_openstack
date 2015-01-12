@@ -1,0 +1,48 @@
+#!/bin/bash
+source /usr/local/bin/virl-openrc.sh
+ 
+echo Argv: $#
+ 
+if [[ $# -lt 4 ]]
+  then
+  echo -e "Usage:\n${0} user password e-mail@address role [tenant=openstack]"
+else
+	user_id=`keystone user-list | grep ${1} | awk -F' ' '{print $2}'`
+	if [ ! -z ${user_id} ]
+	then
+		keystone user-delete ${user_id}
+#               echo "error! username already exists"
+#		     exit 1
+	fi
+	role_id=`keystone role-list | grep ${4} | awk -F' ' '{print $2}'`
+	if [ -z ${role_id} ]
+	then
+		echo "error! role does not exist"
+		     exit 1
+	fi
+	if [[ $# -eq 4 ]] 
+	 then
+    	    
+	    tenant_id=`keystone tenant-list | grep openstack | awk -F' ' '{print $2}'`
+	    keystone user-create --name=${1} --pass=${2} --email=${3} --tenant-id=${tenant_id}
+	 else
+	    tenant_id=`keystone tenant-list | grep ${5} | awk -F' ' '{print $2}'`
+	 if [ -z ${tenant_id} ]; then
+	   	 keystone tenant-create --name=${5} --description ${5}
+	 	tenant_id=`keystone tenant-list | grep ${5} | awk -F' ' '{print $2}'`
+		nova quota-update ${tenant_id} --instances ${6} --ram 5120000 --cores 1000
+		nova quota-update ${tenant_id} --injected-file-content-bytes 10240000 --floating-ips 25
+		keystone user-create --name=${1} --pass=${2} --email=${3} --tenant-id=${tenant_id}
+		user_id=`keystone user-list | grep $1 | awk -F' ' '{print $2}'`
+		keystone user-role-add --user_id ${user_id} --tenant_id ${tenant_id} --role_id ${role_id}
+		/usr/bin/nova --os-username ${1} --os-password ${2} --os-tenant-name ${5} secgroup-create virl 'VIRL router ports'
+		/usr/bin/nova --os-username ${1} --os-password ${2} --os-tenant-name ${5} secgroup-add-rule virl icmp -1 -1 0/0
+		/usr/bin/nova --os-username ${1} --os-password ${2} --os-tenant-name ${5} secgroup-add-rule virl tcp 1 65535 0/0
+		/usr/local/bin/nova --os-username ${1} --os-password ${2} --os-tenant-name ${5} secgroup-add-rule virl udp 1 65535 0/0
+		exit 0
+	 fi
+	 keystone user-create --name=${1} --pass=${2} --email=${3} --tenant-id=${tenant_id}
+         user_id=`keystone user-list | grep $1 | awk -F' ' '{print $2}'`
+	 keystone user-role-add --user_id ${user_id} --tenant_id ${tenant_id} --role_id ${role_id}
+	fi
+fi

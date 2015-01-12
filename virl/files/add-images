@@ -1,0 +1,148 @@
+#!/bin/bash
+
+# Given one or more standardised router image description files, this populates the local machine with them.
+# Most of it is function definitions - the populator loop is at the bottom.
+# Example description file in fillers/
+
+. /usr/local/bin/virl-openrc.sh
+
+
+#
+# check that there is not already an image of this name registered
+# Cleans up or aborts depending on user input
+#
+check_images() {
+	name="$1"
+	check=`glance image-list | grep -w "$name " | cut -d"|" -f 2`
+	if [ "$check" ]; then
+		glance image-list | grep -w "$name "
+		echo "There are already $name images registered"
+		echo -e "Do you want to remove them ? Y/N : \c"
+		read answer
+		if [ $answer == "Y" ] || [ $answer == "y" ]; then
+			for image in $check; do
+				echo "Removing image $image from glance"
+				glance -f delete $image
+			done
+		else
+			echo "Aborting..."
+			exit 1
+		fi
+	fi
+}
+
+#removing interactive for script use
+remove_images() {
+	name="$1"
+	check=`glance image-list | grep -w "$name " | cut -d"|" -f 2`
+	if [ "$check" ]; then
+#		glance image-list | grep -w "$name "
+#		echo "There are already $name images registered"
+#		echo -e "Do you want to remove them ? Y/N : \c"
+#		read answer
+#		if [ $answer == "Y" ] || [ $answer == "y" ]; then
+			for image in $check; do
+				echo "Removing image $image from glance"
+				glance -f delete $image
+			done
+#		else
+#			echo "Aborting..."
+#			exit 1
+#		fi
+	fi
+}
+
+#
+# check that there is not already a flavour of this name registered
+# Cleans up or aborts depending on user input
+#
+check_flavors() {
+	name="$1"
+	check=`nova flavor-list | grep -w "$name " | cut -d"|" -f 2`
+	if [ "$check" ]; then
+		nova flavor-list | grep -w "$name "
+		echo "There are already $name flavours registered"
+		echo -e "Do you want to remove them ? Y/N : \c"
+		read answer
+		if [ $answer == "Y" ] || [ $answer == "y" ]; then
+			for flavor in $check; do
+				echo "Removing flavor $image "
+				nova flavor-delete $flavor
+			done
+		else
+			echo "Aborting..."
+			exit 1
+		fi
+	fi
+}
+
+#not interactive for script
+remove_flavors() {
+	name="$1"
+	check=`nova flavor-list | grep -w "$name " | cut -d"|" -f 2`
+	if [ "$check" ]; then
+		nova flavor-list | grep -w "$name "
+		echo "There are already $name flavours registered"
+		echo -e "Do you want to remove them ? Y/N : \c"
+		read answer
+		if [ $answer == "Y" ] || [ $answer == "y" ]; then
+			for flavor in $check; do
+				echo "Removing flavor $image "
+				nova flavor-delete $flavor
+			done
+		else
+			echo "Aborting..."
+			exit 1
+		fi
+	fi
+}
+
+register_qcow() {
+    qcow_image_name=$1
+    name="$2"
+    subtype="$3"
+    driver=$4
+    serials=$5
+    config_disk_type=$6
+    disk_bus=$7
+    Release="$8"
+    echo "Registering image $name $subtype"
+    glance image-create --disk-format=qcow2 --container-format=bare \
+       --property serial=$serials --is-public=true --property subtype="$subtype" \
+       --property hw_disk_bus=${disk_bus:-ide} --property hw_cdrom_type=ide  \
+       --property hw_vif_model=$driver \
+       --property config_disk_type=$config_disk_type --name "$name" < $qcow_image_name \
+       --property Release="$Release"
+}
+
+register_vmdk() {
+    vmdk_image_name="$1"
+    shift
+    echo "Converting $vmdk_image_name to qcow2"
+    of=`mktemp /tmp/XXXX.qcow2`
+    qemu-img convert -f vmdk -O qcow2 $vmdk_image_name $of
+    register_qcow $of "$@"
+    rm "$of"
+}
+
+register_flavor() {
+    name="$1"
+    cpus=$2
+    memory=$3
+
+    echo "Registering flavour $name"
+    nova flavor-create "$name" '' $memory 0 $cpus
+# --memory $memory --name "$name" --root_gb 0 --ephemeral_gb 0 --swap 0 
+}
+
+ 
+for f in "$@"; do
+    # This stops us accidentally running incorrect files as shell scripts
+    if head -1 $f | fgrep '# pop-image' >/dev/null  ; then
+	echo filler_script=$f
+	. $f
+    else
+	echo "Image description file $f has wrong format"
+	exit 1
+    fi
+done
