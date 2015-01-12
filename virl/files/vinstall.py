@@ -312,7 +312,7 @@ def alter_virlcfg():
 
 def building_salt_extra():
     with open(("/tmp/extra"), "w") as extra:
-        if not salt_master == 'none' or not masterless or vagrant_pre_fourth:
+        if not salt_master == 'masterless' or vagrant_pre_fourth:
             extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
             # for each in salt_master.split(','):
             #     extra.write("""  - {each}\n""".format(each=each))
@@ -394,7 +394,10 @@ mysql.pass: {mypass}\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=
             grains.write("""  neutron_extnet_id: {neutid}\n""".format(neutid=neutron_extnet_id))
         subprocess.call(['sudo', 'cp', '-f', ('/tmp/grains'), '/etc/salt'])
     subprocess.call(['sudo', 'cp', '-f', ('/tmp/openstack'), '/etc/salt/minion.d/openstack.conf'])
-    subprocess.call(['sudo', 'service', 'salt-minion', 'restart'])
+    if not masterless:
+        subprocess.call(['sudo', 'service', 'salt-minion', 'restart'])
+    else:
+        subprocess.call(['sudo', 'service', 'salt-minion', 'stop'])
 
 
 def create_basic_networks():
