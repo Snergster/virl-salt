@@ -44,7 +44,7 @@ vinstall run:
       - file: /usr/local/bin/vinstall
       - pip: docopt
 
-{% if masterless %}
+{% if not masterless %}
 vinstall wheels:
   file.recurse:
     - name: /tmp/wheels
