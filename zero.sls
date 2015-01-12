@@ -121,8 +121,3 @@ first-vinstall:
     - force: true
     - onlyif: 'test -e /srv/salt/virl/files/vinstall.py'
 {% endif %}
-
-  file.managed:
-    - name: /usr/local/bin/vinstall
-    - source: 'salt://files/vinstall.py'
-    - mode: 0755
