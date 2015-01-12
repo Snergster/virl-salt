@@ -19,8 +19,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 #
-/tmp/debconf:
+/tmp/debconf creation:
   file.managed:
+    - name: /tmp/debconf
     - order: 1
     - contents: |
         mysql-server mysql-server/root_password password MYPASS
@@ -36,7 +37,7 @@ debconf-replace:
     - pattern: 'MYPASS'
     - repl: {{ mypassword }}
     - require:
-      - file: /tmp/debconf
+      - file: /tmp/debconf creation
 
 debconf-run:
   cmd.run:
