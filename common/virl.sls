@@ -1,8 +1,11 @@
 {% set ifproxy = salt['grains.get']('proxy', 'False') %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 include:
   - common.ubuntu
   - virl.vinstall
+  - openstack.repo
+  - common.kvm
 
 mypkgs:
   pkg.installed:
@@ -26,23 +29,6 @@ mypkgs:
       - socat
       - lxc
 
-/etc/apt/sources.list.d/cisco-openstack-mirror_icehouse.list:
-  file.managed:
-    - source: salt://files/cisco-openstack-mirror_icehouse.list
-
-
-/etc/apt/preferences.d/cisco-openstack:
-  file.managed:
-    - source: salt://files/cisco-openstack-preferences
-
-/tmp/cisco-openstack.key:
-  file.managed:
-    - source: salt://files/cisco-openstack.key
-  cmd.wait:
-    - name: apt-key add /tmp/cisco-openstack.key
-    - cwd: /tmp
-    - watch:
-      - file: /tmp/cisco-openstack.key
 
 qemu hold:
   apt.held:
@@ -58,10 +44,12 @@ vinstall run:
       - file: /usr/local/bin/vinstall
       - pip: docopt
 
+{% if masterless %}
 vinstall wheels:
   file.recurse:
     - name: /tmp/wheels
     - source: salt://files/wheels
+{% endif %}
 
 {% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
 {{ pyreq }}:
@@ -69,54 +57,95 @@ vinstall wheels:
     - require:
       - pkg: pip on the box
       - file: /usr/local/bin/vinstall
+      {% if not masterless %}
       - file: vinstall wheels
+      {% endif %}
     - use_wheel: True
-    - no_index: True
     - pre_releases: True
     - no_deps: True
+    {% if not masterless %}
+    - no_index: True
     - find_links: "file:///tmp/wheels"
+    {% endif %}
 {% endfor %}
 
 /usr/bin/telnet_front:
+  {% if not masterless %}
   file.managed:
-    - source: salt://files/install_scripts/telnet_front
+    - source: salt://virl/files/telnet_front
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/telnet_front
+    - force: true
+  {% endif %}
     - mode: 755
 
 /etc/apparmor.d/local/telnet_front:
+  {% if not masterless %}
   file.managed:
-    - source: salt://files/install_scripts/telnet_front.aa
+    - source: salt://virl/files/telnet_front.aa
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/telnet_front.aa
+    - force: true
+  {% endif %}
     - mode: 644
 
 /etc/apparmor.d/libvirt/TEMPLATE:
+  {% if not masterless %}
   file.managed:
-    - source: salt://files/install_scripts/libvirt.template
+    - source: salt://virl/files/libvirt.template
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/libvirt.template
+    - force: true
+  {% endif %}
     - makedirs: true
     - mode: 644
 
-kvm doublecheck:
-  file.managed:
-    - name: /usr/bin/kvm
-    - onlyif: ls /usr/bin/kvm.real
-    - source: "salt://files/install_scripts/kvm"
-    - mode: 0755
 
 /etc/modprobe.d/kvm-intel.conf:
+  {% if not masterless %}
   file.managed:
-    - source: salt://files/kvm-intel.conf
+    - source: salt://virl/files/kvm-intel.conf
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/kvm-intel.conf
+    - force: true
+  {% endif %}
     - mode: 755
 
 /home/virl/.virl.jpg:
+  {% if not masterless %}
   file.managed:
-    - source: salt://files/virl.jpg
+    - source: salt://virl/files/virl.jpg
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/virl.jpg
+    - force: true
+  {% endif %}
     - user: virl
     - group: virl
 
+{% if not masterless %}
 /etc/orig.virl.ini:
   file.managed:
     - source: salt://files/vsettings.ini
     - user: virl
     - group: virl
     - mode: 755
+{% endif %}
+
+/etc/init/failsafe.conf:
+  {% if not masterless %}
+  file.managed:
+    - source: salt://virl/files/failsafe.conf
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/failsafe.conf
+    - force: true
+  {% endif %}
+    - file_mode: 644
 
 /var/www/download:
   file.directory:
@@ -130,18 +159,6 @@ kvm doublecheck:
     - mode: 755
     - makedirs: True
 
-virlwebpages:
-  file.recurse:
-    - name: /var/www/html
-    - source: salt://files/virlweb
-    - user: root
-    - group: root
-    - file_mode: 755
-
-/etc/init/failsafe.conf:
-  file.managed:
-    - file_mode: 644
-    - source: "salt://files/failsafe.conf"
 
 salt-minion nohold:
   file.absent:
