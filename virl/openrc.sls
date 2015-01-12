@@ -205,13 +205,13 @@ adminpass2:
 
 controllername2:
   cmd.run:
-    - name: salt-call file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
+    - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
     - unless: grep {{ hostname }}:35357 /home/virl/.bashrc
 
 
 controllername:
   cmd.run:
-    - name: salt-call file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
+    - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
     - unless: grep {{ hostname }}:35357 /usr/local/bin/virl-openrc.sh
 
 token:

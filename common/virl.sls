@@ -75,7 +75,7 @@ vinstall wheels:
     - source: salt://virl/files/telnet_front
   {% else %}
   file.copy:
-    - source: /srv/salt/virl/telnet_front
+    - source: /srv/salt/virl/files/telnet_front
     - force: true
   {% endif %}
     - mode: 755
@@ -86,7 +86,7 @@ vinstall wheels:
     - source: salt://virl/files/telnet_front.aa
   {% else %}
   file.copy:
-    - source: /srv/salt/virl/telnet_front.aa
+    - source: /srv/salt/virl/files/telnet_front.aa
     - force: true
   {% endif %}
     - mode: 644
@@ -97,7 +97,7 @@ vinstall wheels:
     - source: salt://virl/files/libvirt.template
   {% else %}
   file.copy:
-    - source: /srv/salt/virl/libvirt.template
+    - source: /srv/salt/virl/files/libvirt.template
     - force: true
   {% endif %}
     - makedirs: true
@@ -110,7 +110,7 @@ vinstall wheels:
     - source: salt://virl/files/kvm-intel.conf
   {% else %}
   file.copy:
-    - source: /srv/salt/virl/kvm-intel.conf
+    - source: /srv/salt/virl/files/kvm-intel.conf
     - force: true
   {% endif %}
     - mode: 755
@@ -121,7 +121,7 @@ vinstall wheels:
     - source: salt://virl/files/virl.jpg
   {% else %}
   file.copy:
-    - source: /srv/salt/virl/virl.jpg
+    - source: /srv/salt/virl/files/virl.jpg
     - force: true
   {% endif %}
     - user: virl
@@ -142,7 +142,7 @@ vinstall wheels:
     - source: salt://virl/files/failsafe.conf
   {% else %}
   file.copy:
-    - source: /srv/salt/virl/failsafe.conf
+    - source: /srv/salt/virl/files/failsafe.conf
     - force: true
   {% endif %}
     - file_mode: 644
