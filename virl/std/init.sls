@@ -148,10 +148,14 @@ VIRL_CORE:
     - pre_releases: True
     - no_deps: True
     - find_links: "file:///var/cache/virl/std"
-    {% if cml == True %}
+    {% if cml %}
+     {% if std_ver_fixed %}
+    - name: CML_CORE  == {{ std_ver }}
+     {% else %}
     - name: CML_CORE
+     {% endif %}
     {% else %}
-    {% if std_ver_fixed == True %}
+    {% if std_ver_fixed %}
     - name: VIRL_CORE  == {{ std_ver }}
     {% else %}
     - name: VIRL_CORE
@@ -166,7 +170,7 @@ VIRL_CORE:
       - pip: VIRL_CORE
   cmd.wait:
     - names:
-     {% if cml == True %}
+     {% if cml %}
       - virl_config lsb-links
      {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
