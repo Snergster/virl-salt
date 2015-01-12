@@ -1,6 +1,7 @@
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 {% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 # Copyright 2012-2013 Hewlett-Packard Development Company, L.P.
 # All Rights Reserved.
@@ -21,7 +22,12 @@
 /tmp/debconf:
   file.managed:
     - order: 1
-    - source: salt://files/debconf
+    - contents: |
+        mysql-server mysql-server/root_password password MYPASS
+        mysql-server mysql-server/root_password_again password MYPASS
+        mysql-server-5.5 mysql-server/root_password password MYPASS
+        mysql-server-5.5 mysql-server/root_password_again password MYPASS
+
 
 debconf-replace:
   file.replace:
@@ -29,11 +35,17 @@ debconf-replace:
     - name: /tmp/debconf
     - pattern: 'MYPASS'
     - repl: {{ mypassword }}
+    - require:
+      - file: /tmp/debconf
 
 debconf-run:
   cmd.run:
     - order: 3
-    - name: debconf-set-selections /tmp/debconf
+    - require:
+      - file: debconf-replace
+    - name: |
+        debconf-set-selections /tmp/debconf
+        rm /tmp/debconf
 
 
 mysql-client-5.5:
@@ -55,9 +67,14 @@ mysql:
   pkg:
     - installed
     - name: mysql-server
+  {% if masterless %}
+  file.copy:
+    - source: /srv/salt/openstack/mysql/files/my.cnf
+  {% else %}
   file.managed:
+    - source: salt://openstack/mysql/files/my.cnf
+  {% endif %}
     - name: /etc/mysql/my.cnf
-    - source: salt://files/my.cnf
     - require:
       - pkg: mysql-server
   service:
