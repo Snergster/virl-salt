@@ -1,0 +1,3 @@
+# cisco-openstack-mirror_icehouse
+deb http://openstack-repo.cisco.com/openstack/virl-ed icehouse-proposed main
+deb-src http://openstack-repo.cisco.com/openstack/virl-ed icehouse-proposed main

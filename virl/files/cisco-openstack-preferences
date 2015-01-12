@@ -1,0 +1,9 @@
+Package: nova*
+Pin: release o=Virl-ed,a=icehouse-proposed
+Pin-Priority:900
+
+Package: python-nova*
+Pin: release o=Virl-ed,a=icehouse-proposed
+Pin-Priority:900
+
+

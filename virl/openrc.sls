@@ -12,13 +12,13 @@ include:
 /usr/local/bin/virl-openrc.sh:
   file.managed:
     - order: 1
-    - source: salt://files/virl-openrc.sh
+    - source: salt://virl/files/virl-openrc.sh
     - mode: 755
 
 /home/virl/.bashrc:
   file.managed:
     - order: 1
-    - source: salt://files/bashrc
+    - source: salt://virl/files/bashrc
     - user: virl
     - group: virl
     - mode: 755
@@ -26,7 +26,7 @@ include:
 /home/virl/.bash_profile:
   file.managed:
     - order: 1
-    - source: salt://files/bash_profile
+    - source: salt://virl/files/bash_profile
     - user: virl
     - group: virl
     - mode: 755
@@ -34,7 +34,7 @@ include:
 /usr/local/bin/update-images:
   file.managed:
     - order: 1
-    - source: salt://files/update_images
+    - source: salt://virl/files/update_images
     - user: virl
     - group: virl
     - mode: 755
@@ -42,7 +42,7 @@ include:
 /usr/local/bin/add-images:
   file.managed:
     - order: 1
-    - source: salt://files/add-images
+    - source: salt://virl/files/add-images
     - user: virl
     - group: virl
     - mode: 755
@@ -50,7 +50,7 @@ include:
 /usr/local/bin/add-images-auto:
   file.managed:
     - order: 1
-    - source: salt://files/add-images-auto
+    - source: salt://virl/files/add-images-auto
     - user: virl
     - group: virl
     - mode: 755
@@ -58,7 +58,7 @@ include:
 /usr/local/bin/add-servers:
   file.managed:
     - order: 1
-    - source: salt://files/add-servers
+    - source: salt://virl/files/add-servers
     - user: virl
     - group: virl
     - mode: 755
@@ -66,7 +66,7 @@ include:
 /usr/local/bin/adduser_openstack:
   file.managed:
     - order: 1
-    - source: salt://files/adduser_openstack
+    - source: salt://virl/files/adduser_openstack
     - user: virl
     - group: virl
     - mode: 755

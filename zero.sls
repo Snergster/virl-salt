@@ -1,22 +1,44 @@
 {% set ifproxy = salt['grains.get']('proxy', 'False') %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+
+{% if masterless %}
+/etc/apt/sources.list.d/cisco-openstack-mirror_icehouse.list:
+  file.copy:
+    - source: /srv/salt/virl/files/cisco-openstack-mirror_icehouse.list
+
+
+/etc/apt/preferences.d/cisco-openstack:
+  file.copy:
+    - source: /srv/salt/virl/files/cisco-openstack-preferences
+    - force: true
+
+
+/tmp/cisco-openstack.key:
+  cmd.run:
+    - name: apt-key add /srv/salt/virl/files/cisco-openstack.key
+
+
+{% else %}
 
 /etc/apt/sources.list.d/cisco-openstack-mirror_icehouse.list:
   file.managed:
-    - source: salt://files/cisco-openstack-mirror_icehouse.list
+    - source: salt://virl/files/cisco-openstack-mirror_icehouse.list
 
 
 /etc/apt/preferences.d/cisco-openstack:
   file.managed:
-    - source: salt://files/cisco-openstack-preferences
+    - source: salt://virl/files/cisco-openstack-preferences
 
 /tmp/cisco-openstack.key:
   file.managed:
-    - source: salt://files/cisco-openstack.key
+    - source: salt://virl/files/cisco-openstack.key
   cmd.wait:
     - name: apt-key add /tmp/cisco-openstack.key
     - cwd: /tmp
     - watch:
       - file: /tmp/cisco-openstack.key
+
+{% endif %}
 
 virl-group:
   group.present:
@@ -84,9 +106,23 @@ crudini:
       - pkg: crudini
 
 first-vinstall:
+{% if not masterless %}
+  file.managed:
+    - name: /usr/local/bin/vinstall
+    - source: salt://virl/files/vinstall.py
+    - user: virl
+    - group: virl
+    - mode: 0755
+{% else %}
+  file.symlink:
+    - name: /usr/local/bin/vinstall
+    - target: /srv/salt/virl/files/vinstall.py
+    - mode: 0755
+    - force: true
+    - onlyif: 'test -e /srv/salt/virl/files/vinstall.py'
+{% endif %}
+
   file.managed:
     - name: /usr/local/bin/vinstall
     - source: 'salt://files/vinstall.py'
     - mode: 0755
-
-
