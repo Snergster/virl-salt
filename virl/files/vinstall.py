@@ -312,7 +312,7 @@ def alter_virlcfg():
 
 def building_salt_extra():
     with open(("/tmp/extra"), "w") as extra:
-        if not salt_master == 'none' or vagrant_pre_fourth:
+        if not salt_master == 'none' or not masterless or vagrant_pre_fourth:
             extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
             # for each in salt_master.split(','):
             #     extra.write("""  - {each}\n""".format(each=each))
