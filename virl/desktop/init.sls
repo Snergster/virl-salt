@@ -1,5 +1,5 @@
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
-
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 lubuntu-desktop:
   pkg.installed:
@@ -224,20 +224,28 @@ lubuntu-desktop:
     - unless: 'test -e /srv/salt/virl/files/Clearlooks'
 
 /usr/share/themes/Lubuntu-default/openbox-3/themerc:
+  {% if not masterless %}
   file.managed:
-    - source: "file:///srv/salt/virl/files/Clearlooks/openbox-3/themerc"
+    - source: "salt://virl/files/Clearlooks/openbox-3/themerc"
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/files/Clearlooks/openbox-3/themerc
+  {% endif %}
     - user: virl
     - group: virl
-    - onlyif: 'test -e /srv/salt/virl/files/Clearlooks/openbox-3/themerc'
     - require:
       - pkg: lubuntu-desktop
 
 /usr/share/themes/Lubuntu-default/gtk-2.0/gtkrc:
+  {% if not masterless %}
   file.managed:
-    - source: "file:///srv/salt/virl/files/Clearlooks/gtk-2.0/gtkrc"
+    - source: "salt://virl/files/Clearlooks/gtk-2.0/gtkrc"
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/files/Clearlooks/gtk-2.0/gtkrc
+  {% endif %}
     - user: virl
     - group: virl
-    - onlyif: 'test -e /srv/salt/virl/files/Clearlooks/gtk-2.0/gtkrc'
     - require:
       - pkg: lubuntu-desktop
 
