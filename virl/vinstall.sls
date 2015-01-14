@@ -30,4 +30,10 @@
     - makedirs: True
     - mode: 0755
 
+/srv/salt/virl/files/virl.jpg:
+  file.managed:
+    - source: salt://virl/files/virl.jpg
+    - makedirs: True
+    - mode: 0755
+
 {% endif %}
