@@ -912,7 +912,7 @@ if __name__ == "__main__":
 
         for _keach in k_delete_list:
             subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
-        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'host'])
+        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.host'])
         building_salt_all()
         sleep(5)
         call_salt('virl.openrc')
@@ -940,7 +940,7 @@ if __name__ == "__main__":
         print ('You need to restart now')
         sleep(30)
     if varg['host']:
-        call_salt('host')
+        call_salt('virl.host')
     if varg['routervms']:
         call_salt('virl.routervms')
     if varg['images']:
