@@ -30,6 +30,12 @@
     - makedirs: True
     - mode: 0755
 
+/srv/salt/host.sls:
+  file.managed:
+    - source: salt://host.sls
+    - makedirs: True
+    - mode: 0755
+
 /srv/salt/virl/files/virl.jpg:
   file.managed:
     - source: salt://virl/files/virl.jpg
