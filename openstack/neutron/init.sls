@@ -525,11 +525,23 @@ l3-gateway:
       - pkg: neutron-pkgs
       - file: /srv/salt/openstack/neutron/files/ml2_rpc.diff
 
-/etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
+/etc/neutron/rootwrap.d/linuxbridge-plugin.filters patch:
   file.patch:
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge-plugin.filters.diff
     - hash: md5=b9f6aad4180460c4cb1a9c5b177b1495
 
+/etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
+  {% if masterless %}
+  file.copy:
+    - force: true
+    - source: file:///srv/salt/openstack/neutron/files/linuxbridge-plugin.filters
+    {% else %}
+  file.managed:
+    - source: "salt://openstack/neutron/files/linuxbridge-plugin-filters"
+    {% endif %}
+    - onfail:
+      - file: /etc/neutron/rootwrap.d/linuxbridge-plugin.filters patch
+      
 linuxbridge_neutron_agent:
   file.managed:
     {% if masterless %}
