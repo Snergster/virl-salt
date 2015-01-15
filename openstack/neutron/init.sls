@@ -497,13 +497,6 @@ l3-gateway:
         >     LOG.info(_("network_device_mtu: %s"), str(cfg.CONF.network_device_mtu))
 
 
-/etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
-  file.append:
-    - require:
-      - pkg: neutron-pkgs
-    - text: |
-        virsh: CommandFilter, virsh, root
-        tee: CommandFilter, tee, root
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py:
   file.patch:
