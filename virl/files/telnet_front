@@ -14,7 +14,7 @@ if [ -z "$PRIVATE" -o -z "$OUTSIDE" -o -z "$PORT" -o -z "$SPID" -o -z "$IDENT" ]
     exit 1
 fi
 
-NODATATIME=15
+NODATATIME=900
 CONNECTIME=10
 EOFRSTTIME=5
 
@@ -37,7 +37,7 @@ DEBUG=""
 
 # Only accept one connection, and timeout accept(2) call after 900 secs
 # struct timespec in hex (2 little-endian long ints - secs and nsecs)
-ACCEPT_SECS="0f00000000000000"
+ACCEPT_SECS="8403000000000000"
 ACCEPT_NSEC="0000000000000000"
 
 # 1 = SO_SOCKET level, 20 = SO_RCVTIMEO receive timeout option
