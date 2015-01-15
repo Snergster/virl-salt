@@ -1,0 +1,142 @@
+49a50,51
+> from neutron.agent.linux import utils
+> from neutron.agent.linux import interface
+56c58
+< BRIDGE_FS = "/sys/devices/virtual/net/"
+---
+> BRIDGE_FS = "/sys/class/net/"
+60a63
+> BRIDGE_FS_FOR_DEVICE = BRIDGE_PORT_FS_FOR_DEVICE + "/bridge"
+61a65,69
+> # Allow forwarding of all 802.1d reserved frames but 0 and disallowed STP, LLDP
+> BRIDGE_FWD_MASK_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/group_fwd_mask"
+> BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
+> # Check that instance exists before trying to execute virsh on it
+> NOVA_INSTANCE_DIR = '/var/lib/nova/instances/%s'
+89,104d96
+<     def device_exists(self, device):
+<         """Check if ethernet device exists."""
+<         try:
+<             utils.execute(['ip', 'link', 'show', 'dev', device],
+<                           root_helper=self.root_helper)
+<         except RuntimeError:
+<             return False
+<         return True
+< 
+<     def interface_exists_on_bridge(self, bridge, interface):
+<         directory = '/sys/class/net/%s/brif' % bridge
+<         for filename in os.listdir(directory):
+<             if filename == interface:
+<                 return True
+<         return False
+< 
+140a133,135
+>     def device_exists(self, device):
+>         return os.path.exists(BRIDGE_FS + device)
+> 
+145a141,142
+>         else:
+>             return []
+162,169c159,165
+<     def get_bridge_for_tap_device(self, tap_device_name):
+<         bridges = self.get_all_neutron_bridges()
+<         for bridge in bridges:
+<             interfaces = self.get_interfaces_on_bridge(bridge)
+<             if tap_device_name in interfaces:
+<                 return bridge
+< 
+<         return None
+---
+>     def get_bridge_for_device(self, device_name):
+>         try:
+>             bridge_link_path = BRIDGE_FS_FOR_DEVICE.replace(
+>                 DEVICE_NAME_PLACEHOLDER, device_name)
+>             return os.path.basename(os.readlink(bridge_link_path))
+>         except OSError:
+>             return None
+302,304c298,300
+<             if utils.execute(['brctl', 'stp', bridge_name,
+<                               'off'], root_helper=self.root_helper):
+<                 return
+---
+>             if utils.execute(['brctl', 'stp', bridge_name, 'off'],
+>                              root_helper=self.root_helper):
+>                 LOG.warning('Failed to disable STP on bridge %s', bridge_name)
+311a308,316
+>         # Forward all available multicast frames prohibited by 802.1d
+>         bridge_mask_path = BRIDGE_FWD_MASK_FS.replace( 
+>                                BRIDGE_NAME_PLACEHOLDER, bridge_name)
+>         if utils.execute(['tee', bridge_mask_path],
+>                          process_input=BRIDGE_FWD_MASK,
+>                          root_helper=self.root_helper) != BRIDGE_FWD_MASK:
+>             LOG.warning('Failed to unmask group forwarding on bridge %s',
+>                         bridge_name)
+> 
+319c324,325
+<         if not self.interface_exists_on_bridge(bridge_name, interface):
+---
+>         bridge = self.get_bridge_for_device(interface)
+>         if bridge != bridge_name:
+322,323c328
+<                 if self.is_device_on_bridge(interface):
+<                     bridge = self.get_bridge_for_tap_device(interface)
+---
+>                 if bridge is not None:
+383a389,392
+>         # fix-neutron-agent-for-mtu-config hack
+>         LOG.debug(_("Set MTU Of %s"), tap_device_name)
+>         utils.execute(['ip', 'link', 'set' , tap_device_name, 'mtu', cfg.CONF.network_device_mtu],
+>                               root_helper=self.root_helper)
+385,386c394,395
+<         tap_device_in_bridge = self.get_bridge_for_tap_device(tap_device_name)
+<         if not tap_device_in_bridge:
+---
+>         in_bridge = self.get_bridge_for_device(tap_device_name)
+>         if in_bridge != bridge_name:
+391a401,403
+>             if in_bridge and utils.execute(['brctl', 'delif', in_bridge, tap_device_name],
+>                                            root_helper=self.root_helper):
+>                 return False
+498a511,534
+>     def update_device_link(self, port_id, dom_id, hw_addr, owner, state):
+>         """Set link state of interface based on admin state in libvirt/kvm"""
+>         if not owner or not owner.startswith('compute:'):
+>             return None
+>         if not hw_addr or not dom_id:
+>             return False
+>         if not os.path.isdir(NOVA_INSTANCE_DIR % dom_id):
+>             LOG.warning('Cannot update device %s link %s on missing domain %s',
+>                         port_id, hw_addr, dom_id)
+>             return None
+> 
+>         state = 'up' if state else 'down'
+>         LOG.debug('Bringing port %s with %s of domain %s %s',
+>                   port_id, hw_addr, dom_id, state)
+>         try:
+>             utils.execute(['virsh', 'domif-setlink', '--domain', dom_id,
+>                            '--interface', hw_addr, '--state', state],
+>                           root_helper=self.root_helper)
+>             return True
+>         except RuntimeError:
+>             LOG.exception('Failed to update port %s of domain %s mac %s to %s',
+>                           port_id, dom_id, hw_addr, state)
+>             return False
+> 
+676a713,718
+>             LOG.debug('Update of port %s' % port)
+>             updown = self.agent.br_mgr.update_device_link(port_id=port['id'],
+>                                                           dom_id=port.get('device_id'),
+>                                                           hw_addr=port.get('mac_address'),
+>                                                           owner=port.get('device_owner'), 
+>                                                           state=port['admin_state_up'])
+917a960,964
+>                 updown = self.br_mgr.update_device_link(port_id=details['port_id'],
+>                                                         dom_id=details.get('device_id'),
+>                                                         hw_addr=details.get('mac_address'),
+>                                                         owner=details.get('device_owner'),
+>                                                         state=details['admin_state_up'])
+1016a1064,1065
+>     # fix-neutron-agent-for-mtu-config hack
+>     cfg.CONF.register_opts(interface.OPTS)
+1017a1067
+>     LOG.info(_("network_device_mtu: %s"), str(cfg.CONF.network_device_mtu))
