@@ -46,6 +46,8 @@ ank_init:
     - source: /srv/salt/virl/ank/files/ank-cisco-webserver.init
   {% endif %}
     - mode: 0755
+    - unless:
+      - grep {{ ank }} /etc/init.d/ank-cisco-webserver
 
 /etc/init.d/virl-vis:
   {% if not masterless %}
