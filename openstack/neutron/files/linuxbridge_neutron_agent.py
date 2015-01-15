@@ -62,9 +62,11 @@ DEVICE_NAME_PLACEHOLDER = "device_name"
 BRIDGE_PORT_FS_FOR_DEVICE = BRIDGE_FS + DEVICE_NAME_PLACEHOLDER + "/brport"
 BRIDGE_FS_FOR_DEVICE = BRIDGE_PORT_FS_FOR_DEVICE + "/bridge"
 VXLAN_INTERFACE_PREFIX = "vxlan-"
-# Allow forwarding of all 802.1d frames but 0 and disallowed STP, LLDP
+# Allow forwarding of all 802.1d reserved frames but 0 and disallowed STP, LLDP
 BRIDGE_FWD_MASK_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/group_fwd_mask"
 BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
+# Check that instance exists before trying to execute virsh on it
+NOVA_INSTANCE_DIR = '/var/lib/nova/instances/%s'
 
 
 class NetworkSegment:
@@ -293,6 +295,9 @@ class LinuxBridgeManager:
             if utils.execute(['brctl', 'setfd', bridge_name,
                               str(0)], root_helper=self.root_helper):
                 return
+            if utils.execute(['brctl', 'stp', bridge_name, 'off'],
+                             root_helper=self.root_helper):
+                LOG.warning('Failed to disable STP on bridge %s', bridge_name)
             if utils.execute(['ip', 'link', 'set', bridge_name,
                               'up'], root_helper=self.root_helper):
                 return
@@ -303,15 +308,12 @@ class LinuxBridgeManager:
         # Forward all available multicast frames prohibited by 802.1d
         bridge_mask_path = BRIDGE_FWD_MASK_FS.replace( 
                                BRIDGE_NAME_PLACEHOLDER, bridge_name)
-        # Do not turn off STP for maximum transparency
-        if utils.execute(['brctl', 'stp', bridge_name,
-                          'on'], root_helper=self.root_helper):
-            LOG.warning('Failed to enable STP on bridge %s', bridge_name)
         if utils.execute(['tee', bridge_mask_path],
                          process_input=BRIDGE_FWD_MASK,
                          root_helper=self.root_helper) != BRIDGE_FWD_MASK:
             LOG.warning('Failed to unmask group forwarding on bridge %s',
                         bridge_name)
+
         if not interface:
             return bridge_name
 
@@ -506,24 +508,28 @@ class LinuxBridgeManager:
             int_vxlan.link.delete()
             LOG.debug(_("Done deleting vxlan interface %s"), interface)
 
-    def update_device_link(self, port_id, node_id, hw_addr, owner, state):
+    def update_device_link(self, port_id, dom_id, hw_addr, owner, state):
         """Set link state of interface based on admin state in libvirt/kvm"""
         if not owner or not owner.startswith('compute:'):
             return None
-        if not hw_addr or not node_id:
+        if not hw_addr or not dom_id:
             return False
+        if not os.path.isdir(NOVA_INSTANCE_DIR % dom_id):
+            LOG.warning('Cannot update device %s link %s on missing domain %s',
+                        port_id, hw_addr, dom_id)
+            return None
 
         state = 'up' if state else 'down'
-        LOG.debug('Bringing port %s with %s of node %s %s',
-                  port_id, hw_addr, node_id, state)
+        LOG.debug('Bringing port %s with %s of domain %s %s',
+                  port_id, hw_addr, dom_id, state)
         try:
-            utils.execute(['virsh', 'domif-setlink', '--domain', node_id,
+            utils.execute(['virsh', 'domif-setlink', '--domain', dom_id,
                            '--interface', hw_addr, '--state', state],
                           root_helper=self.root_helper)
             return True
         except RuntimeError:
-            LOG.exception('Failed to update port %s of node %s mac %s to %s',
-                          port_id, node_id, hw_addr, state)
+            LOG.exception('Failed to update port %s of domain %s mac %s to %s',
+                          port_id, dom_id, hw_addr, state)
             return False
 
     def update_devices(self, registered_devices):
@@ -704,9 +710,9 @@ class LinuxBridgeRpcCallbacks(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         if 'security_groups' in port:
             self.sg_agent.refresh_firewall()
         try:
-            LOG.warning('Update of port %s' % port)
+            LOG.debug('Update of port %s' % port)
             updown = self.agent.br_mgr.update_device_link(port_id=port['id'],
-                                                          node_id=port.get('device_id'),
+                                                          dom_id=port.get('device_id'),
                                                           hw_addr=port.get('mac_address'),
                                                           owner=port.get('device_owner'), 
                                                           state=port['admin_state_up'])
@@ -952,7 +958,7 @@ class LinuxBridgeNeutronAgentRPC(sg_rpc.SecurityGroupAgentRpcMixin):
                 LOG.info(_("Port %(device)s updated. Details: %(details)s"),
                          {'device': device, 'details': details})
                 updown = self.br_mgr.update_device_link(port_id=details['port_id'],
-                                                        node_id=details.get('device_id'),
+                                                        dom_id=details.get('device_id'),
                                                         hw_addr=details.get('mac_address'),
                                                         owner=details.get('device_owner'),
                                                         state=details['admin_state_up'])
