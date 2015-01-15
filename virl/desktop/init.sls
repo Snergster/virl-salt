@@ -249,6 +249,19 @@ lubuntu-desktop:
     - require:
       - pkg: lubuntu-desktop
 
+/home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf:
+  {% if not masterless %}
+  file.managed:
+    - source: "salt://virl/desktop/files/desktop-items-0.conf"
+  {% else %}
+  file.copy:
+    - source: /srv/salt/virl/desktop/files/desktop-items-0.conf
+  {% endif %}
+    - user: virl
+    - group: virl
+    - require:
+      - pkg: lubuntu-desktop
+
 {% if cml %}
 cml background:
   openstack_config.present:
@@ -259,7 +272,7 @@ cml background:
     - value: '/srv/salt/virl/files/CML.jpg'
     - onlyif: 'test -e /srv/salt/virl/files/CML.jpg'
     - require:
-      - pkg: lubuntu-desktop
+      - file: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
 {% else %}
 virl background:
   openstack_config.present:
@@ -270,20 +283,8 @@ virl background:
     - value: '/srv/salt/virl/files/virl.jpg'
     - onlyif: 'test -e /srv/salt/virl/files/virl.jpg'
     - require:
-      - pkg: lubuntu-desktop
+      - file: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
 {% endif %}
-
-
-old virl background:
-  openstack_config.present:
-    - order: last
-    - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
-    - section: '*'
-    - parameter: 'wallpaper'
-    - value: '/home/virl/.virl.jpg'
-    - unless: 'test -e /srv/salt/virl/files/virl.jpg'
-    - require:
-      - pkg: lubuntu-desktop
 
 gedit:
   pkg.installed:
