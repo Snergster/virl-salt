@@ -527,6 +527,7 @@ l3-gateway:
 
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters patch:
   file.patch:
+    - name: /etc/neutron/rootwrap.d/linuxbridge-plugin.filters
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge-plugin.filters.diff
     - hash: md5=b9f6aad4180460c4cb1a9c5b177b1495
 
@@ -537,11 +538,11 @@ l3-gateway:
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge-plugin.filters
     {% else %}
   file.managed:
-    - source: "salt://openstack/neutron/files/linuxbridge-plugin-filters"
+    - source: "salt://openstack/neutron/files/linuxbridge-plugin.filters"
     {% endif %}
     - onfail:
       - file: /etc/neutron/rootwrap.d/linuxbridge-plugin.filters patch
-      
+
 linuxbridge_neutron_agent:
   file.managed:
     {% if masterless %}
