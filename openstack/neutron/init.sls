@@ -279,6 +279,15 @@ l3-gateway:
         112a116
         >         LOG.info('RPC returning %s', entry)
 
+/srv/salt/openstack/neutron/files/linuxbridge-plugin.filters.diff:
+  file.managed:
+    - makedirs: True
+    - file_mode: 755
+    - contents: |
+        15a16,17
+        > virsh: CommandFilter, virsh, root
+        > tee: CommandFilter, tee, root
+
 
 /srv/salt/openstack/neutron/files/l3.py.diff:
   file.managed:
@@ -353,11 +362,13 @@ l3-gateway:
         > BRIDGE_FS = "/sys/class/net/"
         60a63
         > BRIDGE_FS_FOR_DEVICE = BRIDGE_PORT_FS_FOR_DEVICE + "/bridge"
-        61a65,67
-        > # Allow forwarding of all 802.1d frames but 0 and disallowed STP, LLDP
+        61a65,69
+        > # Allow forwarding of all 802.1d reserved frames but 0 and disallowed STP, LLDP
         > BRIDGE_FWD_MASK_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/group_fwd_mask"
         > BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
-        89,104d94
+        > # Check that instance exists before trying to execute virsh on it
+        > NOVA_INSTANCE_DIR = '/var/lib/nova/instances/%s'
+        89,104d96
         <     def device_exists(self, device):
         <         """Check if ethernet device exists."""
         <         try:
@@ -374,14 +385,14 @@ l3-gateway:
         <                 return True
         <         return False
         <
-        140a131,133
+        140a133,135
         >     def device_exists(self, device):
         >         return os.path.exists(BRIDGE_FS + device)
         >
-        145a139,140
+        145a141,142
         >         else:
         >             return []
-        162,169c157,163
+        162,169c159,165
         <     def get_bridge_for_tap_device(self, tap_device_name):
         <         bridges = self.get_all_neutron_bridges()
         <         for bridge in bridges:
@@ -398,87 +409,93 @@ l3-gateway:
         >             return os.path.basename(os.readlink(bridge_link_path))
         >         except OSError:
         >             return None
-        302,304d295
+        302,304c298,300
         <             if utils.execute(['brctl', 'stp', bridge_name,
         <                               'off'], root_helper=self.root_helper):
         <                 return
-        311a303,314
+        ---
+        >             if utils.execute(['brctl', 'stp', bridge_name, 'off'],
+        >                              root_helper=self.root_helper):
+        >                 LOG.warning('Failed to disable STP on bridge %s', bridge_name)
+        311a308,316
         >         # Forward all available multicast frames prohibited by 802.1d
         >         bridge_mask_path = BRIDGE_FWD_MASK_FS.replace(
         >                                BRIDGE_NAME_PLACEHOLDER, bridge_name)
-        >         # Do not turn off STP for maximum transparency
-        >         if utils.execute(['brctl', 'stp', bridge_name,
-        >                           'on'], root_helper=self.root_helper):
-        >             LOG.warning('Failed to enable STP on bridge %s', bridge_name)
         >         if utils.execute(['tee', bridge_mask_path],
         >                          process_input=BRIDGE_FWD_MASK,
         >                          root_helper=self.root_helper) != BRIDGE_FWD_MASK:
         >             LOG.warning('Failed to unmask group forwarding on bridge %s',
         >                         bridge_name)
-        319c322,323
+        >
+        319c324,325
         <         if not self.interface_exists_on_bridge(bridge_name, interface):
         ---
         >         bridge = self.get_bridge_for_device(interface)
         >         if bridge != bridge_name:
-        322,323c326
+        322,323c328
         <                 if self.is_device_on_bridge(interface):
         <                     bridge = self.get_bridge_for_tap_device(interface)
         ---
         >                 if bridge is not None:
-        383a387,390
+        383a389,392
         >         # fix-neutron-agent-for-mtu-config hack
         >         LOG.debug(_("Set MTU Of %s"), tap_device_name)
         >         utils.execute(['ip', 'link', 'set' , tap_device_name, 'mtu', cfg.CONF.network_device_mtu],
         >                               root_helper=self.root_helper)
-        385,386c392,393
+        385,386c394,395
         <         tap_device_in_bridge = self.get_bridge_for_tap_device(tap_device_name)
         <         if not tap_device_in_bridge:
         ---
         >         in_bridge = self.get_bridge_for_device(tap_device_name)
         >         if in_bridge != bridge_name:
-        391a399,401
+        391a401,403
         >             if in_bridge and utils.execute(['brctl', 'delif', in_bridge, tap_device_name],
         >                                            root_helper=self.root_helper):
         >                 return False
-        498a509,528
-        >     def update_device_link(self, port_id, node_id, hw_addr, owner, state):
+        498a511,534
+        >     def update_device_link(self, port_id, dom_id, hw_addr, owner, state):
         >         """Set link state of interface based on admin state in libvirt/kvm"""
         >         if not owner or not owner.startswith('compute:'):
         >             return None
-        >         if not hw_addr or not node_id:
+        >         if not hw_addr or not dom_id:
         >             return False
+        >         if not os.path.isdir(NOVA_INSTANCE_DIR % dom_id):
+        >             LOG.warning('Cannot update device %s link %s on missing domain %s',
+        >                         port_id, hw_addr, dom_id)
+        >             return None
         >
         >         state = 'up' if state else 'down'
-        >         LOG.debug('Bringing port %s with %s of node %s %s',
-        >                   port_id, hw_addr, node_id, state)
+        >         LOG.debug('Bringing port %s with %s of domain %s %s',
+        >                   port_id, hw_addr, dom_id, state)
         >         try:
-        >             utils.execute(['virsh', 'domif-setlink', '--domain', node_id,
+        >             utils.execute(['virsh', 'domif-setlink', '--domain', dom_id,
         >                            '--interface', hw_addr, '--state', state],
         >                           root_helper=self.root_helper)
         >             return True
         >         except RuntimeError:
-        >             LOG.exception('Failed to update port %s of node %s mac %s to %s',
-        >                           port_id, node_id, hw_addr, state)
+        >             LOG.exception('Failed to update port %s of domain %s mac %s to %s',
+        >                           port_id, dom_id, hw_addr, state)
         >             return False
         >
-        676a707,712
-        >             LOG.warning('Update of port %s' % port)
+        676a713,718
+        >             LOG.debug('Update of port %s' % port)
         >             updown = self.agent.br_mgr.update_device_link(port_id=port['id'],
-        >                                                           node_id=port.get('device_id'),
+        >                                                           dom_id=port.get('device_id'),
         >                                                           hw_addr=port.get('mac_address'),
         >                                                           owner=port.get('device_owner'),
         >                                                           state=port['admin_state_up'])
-        917a954,958
+        917a960,964
         >                 updown = self.br_mgr.update_device_link(port_id=details['port_id'],
-        >                                                         node_id=details.get('device_id'),
+        >                                                         dom_id=details.get('device_id'),
         >                                                         hw_addr=details.get('mac_address'),
         >                                                         owner=details.get('device_owner'),
         >                                                         state=details['admin_state_up'])
-        1016a1058,1059
+        1016a1064,1065
         >     # fix-neutron-agent-for-mtu-config hack
         >     cfg.CONF.register_opts(interface.OPTS)
-        1017a1061
+        1017a1067
         >     LOG.info(_("network_device_mtu: %s"), str(cfg.CONF.network_device_mtu))
+
 
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
   file.append:
@@ -515,16 +532,19 @@ l3-gateway:
       - pkg: neutron-pkgs
       - file: /srv/salt/openstack/neutron/files/ml2_rpc.diff
 
+/etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
+  file.patch:
+    - source: file:///srv/salt/openstack/neutron/files/linuxbridge-plugin.filters.diff
+    - hash: md5=b9f6aad4180460c4cb1a9c5b177b1495
 
 linuxbridge_neutron_agent:
   file.managed:
     {% if masterless %}
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.py
-    - source_hash: md5=36394295c3835838af8d0c63d072d513
+    - source_hash: md5=e5c8f4898103ed7c152066064fdec92c
     {% else %}
-    - source: "salt://files/linuxbridge_neutron_agent.py"
+    - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.py"
     {% endif %}
-
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - onfail:
       - file: linuxbridge_neutron_agent patch
@@ -540,7 +560,7 @@ linuxbridge_neutron_agent patch:
   file.patch:
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
-    - hash: md5=36394295c3835838af8d0c63d072d513
+    - hash: md5=e5c8f4898103ed7c152066064fdec92c
     - require:
       - pkg: neutron-pkgs
       - file: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
@@ -597,7 +617,7 @@ neutron restart:
         service neutron-l3-agent restart
         service neutron-metadata-agent restart
         service neutron-plugin-linuxbridge-agent restart
-        
+
 neutron sysctl:
   cmd.run:
     - name: 'sysctl -p'
