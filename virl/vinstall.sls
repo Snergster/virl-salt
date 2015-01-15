@@ -10,8 +10,8 @@
     - group: virl
     - mode: 0755
 {% else %}
-  file.symlink:
-    - target: /srv/salt/virl/files/vinstall.py
+  file.copy:
+    - source: /srv/salt/virl/files/vinstall.py
     - mode: 0755
     - force: true
     - onlyif: 'test -e /srv/salt/virl/files/vinstall.py'
