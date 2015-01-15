@@ -7,17 +7,26 @@
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 {% set ank_ver_fixed = salt['pillar.get']('virl:ank_ver_fixed', salt['grains.get']('ank_ver_fixed', False)) %}
 {% set ank_ver = salt['pillar.get']('virl:ank_ver', salt['grains.get']('ank_ver', '0.10.8')) %}
+{% set ank_cisco_ver = salt['pillar.get']('virl:ank_cisco_ver', salt['grains.get']('ank_cisco_ver', '0.10.8')) %}
+{% set ank_webui = salt['pillar.get']('virl:ank_webui', salt['grains.get']('ank_webui', '0.10.8')) %}
+{% set ank_collector = salt['pillar.get']('virl:ank_collector', salt['grains.get']('ank_collector', '0.10.8')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 {% if not masterless %}
 
-/var/cache/virl/ank:
+/var/cache/virl/ank files:
   file.recurse:
+    {% if ank_ver_fixed %}
+    - source: "salt://fixed/ank"
+    - name: /var/cache/virl/fixed/ank
+    {% else %}
+    - name: /var/cache/virl/ank
+    - source: "salt://ank/{{ venv }}/"
+    {% endif %}
     - order: 1
     - user: virl
     - group: virl
     - file_mode: 755
-    - source: "salt://ank/{{ venv }}/"
 
 {% endif %}
 
@@ -170,13 +179,15 @@ autonetkit check:
     {% if ank_ver_fixed == false %}
     - name: autonetkit
     - upgrade: True
+    - find_links: "file:///var/cache/virl/ank"
     {% else %}
     - name: autonetkit == {{ ank_ver }}
+    - find_links: "file:///var/cache/virl/fixed/ank"
     {% endif %}
     - no_deps: True
     - use_wheel: True
     - no_index: True
-    - find_links: "file:///var/cache/virl/ank"
+
     - require:
       - pip: ank_prereq
   cmd.wait:
@@ -191,14 +202,19 @@ autonetkit check:
 
 autonetkit_cisco alt:
   pip.installed:
+    {% if ank_ver_fixed %}
+    - name: autonet_cisco == {{ ank_cisco }}
+    - find_links: "file:///var/cache/virl/fixed/ank"
+    {% else %}
     - name: autonetkit_cisco
-    - order: 3
     - upgrade: True
+    - find_links: "file:///var/cache/virl/ank"
+    {% endif %}
+    - order: 3
     - use_wheel: True
     - no_deps: True
     - pre_releases: True
     - no_index: True
-    - find_links: "file:///var/cache/virl/ank"
     - require:
       - pip: autonetkit check
 
@@ -228,14 +244,20 @@ autonetkit_cisco:
 
 autonetkit_cisco_webui:
   pip.installed:
-    - order: 4
-    - upgrade: True
-    - no_deps: True
-    - use_wheel: True
-    - no_index: True
+    {% if ank_ver_fixed %}
+    - name: autonetkit_cisco_webui == {{ ank_webui }}
+    - find_links: "file:///var/cache/virl/fixed/ank"
+    - onlyif: ls /var/cache/virl/fixed/ank/autonetkit_cisco_webui*
+    {% else %}
     - name: autonetkit_cisco_webui
     - find_links: "file:///var/cache/virl/ank"
     - onlyif: ls /var/cache/virl/ank/autonetkit_cisco_webui*
+    - upgrade: True
+    {% endif %}
+    - order: 4
+    - no_deps: True
+    - use_wheel: True
+    - no_index: True
     - require:
       - pip: autonetkit check
   cmd.wait:
@@ -248,14 +270,20 @@ autonetkit_cisco_webui:
 
 virl_collection:
   pip.installed:
-    - order: 4
+    {% if ank_ver_fixed %}
+    - name: virl_collection == {{ ank_collector }}
+    - find_links: "file:///var/cache/virl/fixed/ank"
+    - onlyif: ls /var/cache/virl/fixed/ank/virl_collection*
+    {% else %}
+    - name: virl_collection
+    - find_links: "file:///var/cache/virl/ank"
+    - onlyif: ls /var/cache/virl/ank/virl_collection*
     - upgrade: True
+    {% endif %}
     - no_deps: True
     - use_wheel: True
     - no_index: True
-    - name: virl_collections
-    - find_links: "file:///var/cache/virl/ank"
-    - onlyif: ls /var/cache/virl/ank/virl_collection*
+    - order: 4
     - require:
       - pip: autonetkit check
   cmd.wait:
@@ -265,8 +293,6 @@ virl_collection:
       - rm -f /etc/init.d/ank-webserver
     - onchanges:
       - pip: virl_collections
-
-
 
 ank-cisco-webserver:
   service:

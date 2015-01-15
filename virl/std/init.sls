@@ -17,11 +17,18 @@
 {% if not masterless %}
 /var/cache/virl/std:
   file.recurse:
+    {% if std_ver_fixed %}
+    - name: /var/cache/virl/fixed/std
+    - source: "salt://fixed/std"
+    {% else %}
+    - source: "salt://std/{{venv}}/"
+    - name: /var/cache/virl/std
+    {% endif %}
     - order: 1
     - user: virl
     - group: virl
     - file_mode: 755
-    - source: "salt://std/{{venv}}/"
+
 
 uwm_init:
   file.managed:
@@ -147,18 +154,21 @@ VIRL_CORE:
     - no_index: True
     - pre_releases: True
     - no_deps: True
-    - find_links: "file:///var/cache/virl/std"
     {% if cml %}
      {% if std_ver_fixed %}
     - name: CML_CORE  == {{ std_ver }}
+    - find_links: "file:///var/cache/virl/fixed/std"
      {% else %}
+    - find_links: "file:///var/cache/virl/std"
     - name: CML_CORE
      {% endif %}
     {% else %}
     {% if std_ver_fixed %}
     - name: VIRL_CORE  == {{ std_ver }}
+    - find_links: "file:///var/cache/virl/fixed/std"
     {% else %}
     - name: VIRL_CORE
+    - find_links: "file:///var/cache/virl/std"
     - upgrade: True
     {% endif %}
     {% endif %}

@@ -257,6 +257,7 @@ lubuntu-desktop:
   file.copy:
     - source: /srv/salt/virl/desktop/files/desktop-items-0.conf
   {% endif %}
+    - makedirs: true
     - user: virl
     - group: virl
     - require:
