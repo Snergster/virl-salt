@@ -71,6 +71,7 @@ ank_init:
 
 /etc/init.d/ank-webserver port change:
   file.replace:
+    - name: /etc/init.d/ank-webserver
     - pattern: '.*--port.*"'
     - repl: 'RUNNING_CMD="/usr/local/bin/ank_webserver --multi_user --port {{ ank }}"'
     - unless: grep {{ ank }} /etc/init.d/ank-webserver
@@ -79,21 +80,24 @@ ank_init:
 
 /etc/init.d/ank-cisco-webserver port change:
   file.replace:
+    - order: last
     - name: /etc/init.d/ank-cisco-webserver
     - pattern: '.*--port.*"'
     - repl: 'RUNNING_CMD="/usr/local/bin/ank_cisco_webserver --multi_user --port {{ ank }}"'
-    - unless: grep {{ ank }} /etc/init.d/ank-cisco-webserver
-    - require:
-      - file: /etc/init.d/ank-cisco-webserver
+    - unless:
+      - grep {{ ank }} /etc/init.d/ank-cisco-webserver
+      - 'test ! -e /etc/init.d/ank-cisco-webserver'
+
 
 live-vis port change:
   file.replace:
+    - order: last
     - name: /etc/init.d/live-vis-webserver
     - pattern: '.*--port.*"'
     - repl: 'RUNNING_CMD="/usr/local/bin/live_vis_webserver --multi_user --port {{ ank_live }}"'
-    - unless: grep {{ ank }} /etc/init.d/live-vis-webserver
-    - require:
-      - file: /etc/init.d/ank-cisco-webserver
+    - unless:
+      - grep {{ ank }} /etc/init.d/live-vis-webserver
+      - 'test ! -e  /etc/init.d/live-vis-webserver'
 
 /root/.autonetkit/autonetkit.cfg:
   file.managed:
@@ -133,9 +137,9 @@ live-vis port change:
 
 /etc/rc2.d/S98live-vis-webserver:
   file.symlink:
+    - order: last
     - target: /etc/init.d/live-vis-webserver
-    - require:
-      - file: /etc/init.d/live-vis-webserver
+    - onlyif: 'test -e /etc/init.d/live-vis-webserver'
     - mode: 0755
 
 
