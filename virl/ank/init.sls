@@ -105,7 +105,7 @@ live-vis port change:
     - order: last
     - name: /etc/init.d/live-vis-webserver
     - pattern: '.*--port.*"'
-    - repl: 'RUNNING_CMD="/usr/local/bin/live_vis_webserver --multi_user --port {{ ank_live }}"'
+    - repl: 'RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver --port {{ ank_live }}"'
     - unless:
       - grep {{ ank }} /etc/init.d/live-vis-webserver
       - 'test ! -e  /etc/init.d/live-vis-webserver'
