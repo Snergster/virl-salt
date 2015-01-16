@@ -290,7 +290,10 @@ virl_collection:
     - names:
       - wheel install-scripts virl-collection
       - service ank-cisco-webserver restart
+      - service live-vis-webserver restart
+      - service virl-vis restart
       - rm -f /etc/init.d/ank-webserver
+      - rm -f /etc/rc2.d/S98ank-webserver
     - onchanges:
       - pip: virl_collection
 
