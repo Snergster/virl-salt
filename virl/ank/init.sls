@@ -301,6 +301,7 @@ ank-cisco-webserver:
     - restart: True
     - onchanges:
       - pip: autonetkit_cisco_webui
+      - file: /etc/init.d/ank-cisco-webserver port change
 
 live-vis-webserver:
   service:
@@ -309,6 +310,7 @@ live-vis-webserver:
     - restart: True
     - onchanges:
       - pip: virl_collection
+      - file: live-vis port change
 
 virl-vis:
   service:
