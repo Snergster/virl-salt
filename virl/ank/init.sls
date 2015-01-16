@@ -289,9 +289,9 @@ virl_collection:
   cmd.wait:
     - names:
       - wheel install-scripts virl-collection
-      - service ank-cisco-webserver restart
-      - service live-vis-webserver restart
-      - service virl-vis restart
+      - service ank-cisco-webserver start
+      - service live-vis-webserver start
+      - service virl-vis start
       - rm -f /etc/init.d/ank-webserver
       - rm -f /etc/rc2.d/S98ank-webserver
     - onchanges:
