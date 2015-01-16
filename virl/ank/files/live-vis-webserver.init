@@ -2,9 +2,9 @@
 #
 
 
-RUNNING_CMD="/usr/local/bin/live_vis_webserver --multi_user --port 19402"
-LOGFILE="/tmp/live_vis/live_vis_webserver.log"
-SERVICE="live_vis_webserver"
+RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver --port 19402"
+LOGFILE="/tmp/live_vis/virl_live_vis_webserver.log"
+SERVICE="virl_live_vis_webserver"
 
 COMMAND=$1
 case $COMMAND in
