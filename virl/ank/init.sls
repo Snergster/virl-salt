@@ -292,7 +292,7 @@ virl_collection:
       - service ank-cisco-webserver restart
       - rm -f /etc/init.d/ank-webserver
     - onchanges:
-      - pip: virl_collections
+      - pip: virl_collection
 
 ank-cisco-webserver:
   service:
@@ -308,7 +308,7 @@ live-vis-webserver:
     - enable: True
     - restart: True
     - onchanges:
-      - pip: virl_collections
+      - pip: virl_collection
 
 virl-vis:
   service:
@@ -316,7 +316,7 @@ virl-vis:
     - enable: True
     - restart: True
     - onchanges:
-      - pip: virl_collections
+      - pip: virl_collection
 
 {% endif %}
 
