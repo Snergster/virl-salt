@@ -355,7 +355,7 @@ l3-gateway:
     - file_mode: 755
   {% else %}
   file.exists:
-    - name: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.dff
+    - name: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
   {% endif %}
 
 
