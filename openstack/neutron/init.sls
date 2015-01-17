@@ -388,7 +388,7 @@ l3-gateway:
   {% if masterless %}
   file.copy:
     - force: true
-    - source: file:///srv/salt/openstack/neutron/files/linuxbridge-plugin.filters
+    - source: /srv/salt/openstack/neutron/files/linuxbridge-plugin.filters
     {% else %}
   file.managed:
     - source: "salt://openstack/neutron/files/linuxbridge-plugin.filters"
@@ -399,7 +399,7 @@ l3-gateway:
 linuxbridge_neutron_agent:
       {% if masterless %}
   file.copy:
-    - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.py
+    - source: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.py
     - force: true
     {% else %}
   file.managed:
