@@ -350,6 +350,7 @@ l3-gateway:
 {% if not masterless %}
 /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff:
   file.managed:
+    - order: 2
     - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.diff"
     - makedirs: True
     - file_mode: 755
@@ -418,12 +419,13 @@ compile linuxbridge:
 
 linuxbridge_neutron_agent patch:
   file.patch:
+    - order: 3
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
     - hash: md5=e5c8f4898103ed7c152066064fdec92c
     - require:
       - pkg: neutron-pkgs
-      - file: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
+    -onlyif: 'test -e /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff'
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
