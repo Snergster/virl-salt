@@ -278,10 +278,6 @@ textfsm:
     - no_deps: True
     - use_wheel: True
     - no_index: True
-    - require:
-      - pip: autonetkit check
-    - onchanges:
-      - pip: autonetkit_cisco_webui
 
 virl_collection:
   pip.installed:
