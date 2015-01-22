@@ -1,9 +1,10 @@
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
-
+{% set int_ip = salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' )) %}
 {% set accounts = ['root','keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
 
-/tmp/debconf-change:
+debconf-change:
   file.managed:
+    - name: /tmp/debconf-change
     - unless: mysql -u root -p{{ mypassword }} -e 'quit'
     - contents: |
         mysql-server mysql-server/root_password password MYPASS
@@ -17,7 +18,8 @@ debconf-change-replace:
     - name: /tmp/debconf-change
     - pattern: 'MYPASS'
     - repl: {{ mypassword }}
-    - onlyif: ls /tmp/debconf-change
+    - onchanges:
+      - file: debconf-change
 
 debconf-change-set:
   cmd.run:
@@ -54,4 +56,11 @@ debconf-change-noninteractive:
     - grant: all privileges
     - database: "{{ user }}.*"
     - user: {{ user }}
+
+{{ user }}-mysql-nonlocal:
+  mysql_user.present:
+    - order: 6
+    - name: {{ user }}
+    - host: {{ int_ip }}
+    - password: {{ mypassword }}
 {% endfor %}
