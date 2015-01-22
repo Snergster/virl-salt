@@ -268,6 +268,21 @@ autonetkit_cisco_webui:
     - onchanges:
       - pip: autonetkit_cisco_webui
 
+textfsm:
+  pip.installed:
+    - name: textfsm
+    - find_links: "file:///var/cache/virl/ank"
+    - onlyif: ls /var/cache/virl/ank/textfsm*
+    - upgrade: True
+    - order: 4
+    - no_deps: True
+    - use_wheel: True
+    - no_index: True
+    - require:
+      - pip: autonetkit check
+    - onchanges:
+      - pip: autonetkit_cisco_webui
+
 virl_collection:
   pip.installed:
     {% if ank_ver_fixed %}

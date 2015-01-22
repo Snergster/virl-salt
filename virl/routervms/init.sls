@@ -10,7 +10,7 @@
 {% set server = salt['pillar.get']('routervms:UbuntuServertrusty', True) %}
 {% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
 {% set iosxrv432pref = salt['pillar.get']('virl:iosxrv432', salt['grains.get']('iosxrv432', True)) %}
-{% set iosxrv52pref = salt['pillar.get']('virl:iosxrv52', salt['grains.get']('iosxrv52', True)) %}
+{% set iosxrv52pref = salt['pillar.get']('virl:iosxrv52', salt['grains.get']('iosxrv52', False)) %}
 {% set iosxrvpref = salt['pillar.get']('virl:iosxrv', salt['grains.get']('iosxrv', True)) %}
 {% set csr1000vpref = salt['pillar.get']('virl:csr1000v', salt['grains.get']('csr1000v', True)) %}
 {% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
