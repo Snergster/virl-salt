@@ -91,8 +91,7 @@ vinstall wheels:
   {% endif %}
     - mode: 644
   cmd.wait:
-    - names:
-      - service apparmor reload
+    - name: service apparmor reload
     - watch:
       file: /etc/apparmor.d/local/telnet_front
 
@@ -109,8 +108,7 @@ vinstall wheels:
     - makedirs: true
     - mode: 644
   cmd.wait:
-    - names:
-      - service apparmor reload
+    - name: service apparmor reload
     - watch:
       file: /etc/apparmor.d/libvirt/TEMPLATE
 
