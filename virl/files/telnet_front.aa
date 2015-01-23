@@ -1,3 +1,4 @@
+
   # allow fronting telnet consoles for kvm
   /bin/bash rmix,
   /bin/sed rmix,
@@ -8,7 +9,10 @@
   /usr/bin/telnet_front rmix,
   /usr/bin/socat rmix,
   /bin/sleep rmix,
-  /proc/[0-9]*/cmdline r,
-  /proc/[0-9]*/net/dev r,
-  /proc/net/route r,
+
+  @{PROC}/[0-9]*/cmdline r,
+  @{PROC}/@{pid}/net/dev r,
+  @{PROC}/@{pid}/fd/* r,
+  @{PROC}/@{pid}/fd/ r,
+  @{PROC}/net/route r,
   network inet dgram,

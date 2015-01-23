@@ -4,6 +4,7 @@
 
 ##set -x
 ##exec 2>&1 >>/tmp/tf$3.$5.log
+APP=$0
 PRIVATE=$1
 OUTSIDE=$2
 PORT=$3
@@ -18,13 +19,26 @@ NODATATIME=900
 CONNECTIME=10
 EOFRSTTIME=5
 
-# Avoid respawning endlessly by; negative number to not limit this
+# Avoid respawning endlessly; negative number to not limit this
 declare -i LOOPS=-100
+
+# All file descriptors of the KVM launching this get inherited and would linger
+echo "$APP running for port $PORT" >&2
+for fd in /proc/$$/fd/* ; do
+    fd=${fd/*\/}
+    case "$fd" in
+    0|1|2|255) continue ;;
+    [0-9]*)
+        eval "exec $fd<&-"
+        echo "$APP closing fd/$fd" >&2
+    ;;
+    esac
+done
 
 # Check that the kvm process is running and has IDENT in commandline
 function running_parent() {
     local cmdline=""
-    read cmdline </proc/$SPID/cmdline
+    read cmdline </proc/$SPID/cmdline 2>/dev/null
     case "$cmdline" in
         *$IDENT*) return 0 ;;
     esac
