@@ -93,7 +93,7 @@ vinstall wheels:
   cmd.wait:
     - name: service apparmor reload
     - watch:
-      file: /etc/apparmor.d/local/telnet_front
+      - file: /etc/apparmor.d/local/telnet_front
 
 
 /etc/apparmor.d/libvirt/TEMPLATE:
@@ -110,7 +110,7 @@ vinstall wheels:
   cmd.wait:
     - name: service apparmor reload
     - watch:
-      file: /etc/apparmor.d/libvirt/TEMPLATE
+      - file: /etc/apparmor.d/libvirt/TEMPLATE
 
 
 /etc/modprobe.d/kvm-intel.conf:
