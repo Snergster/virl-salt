@@ -21,8 +21,13 @@
     - name: /var/cache/virl/fixed/std
     - source: "salt://fixed/std"
     {% else %}
+      {% if cml %}
+    - source: "salt://cml/std/{{venv}}/"
+    - name: /var/cache/virl/std
+      {% else %}
     - source: "salt://std/{{venv}}/"
     - name: /var/cache/virl/std
+      {% endif %}
     {% endif %}
     - order: 1
     - user: virl

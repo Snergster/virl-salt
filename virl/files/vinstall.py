@@ -857,17 +857,6 @@ if __name__ == "__main__":
         if onedev:
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'onepk-external'])
             sleep(5)
-    # if varg['rehost1']:
-    #     '''rehost resets ip addresses of the host itself, resets the clock to deal with drift
-    #
-    #     '''
-    #     building_salt_all()
-    #     sleep(5)
-    #     print "please wait - this may take 30 minutes to complete"
-    #     #call_salt('host')
-    #     #call_salt('ntp')
-    #     subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'host'])
-    #     subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'ntp'])
     if varg['rehost']:
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
                  'password', '--os-auth-url=http://localhost:5000/v2.0']
@@ -925,6 +914,7 @@ if __name__ == "__main__":
                       'openstack.keystone.endpoint','openstack.osclients']:
             call_salt(_each)
         building_salt_all()
+        sleep(5)
         for _next in ['openstack.glance','openstack.neutron.install','openstack.cinder.install',
                       'openstack.dash','openstack.nova.install','openstack.neutron.changes','virl.std','virl.ank']:
             call_salt(_next)
