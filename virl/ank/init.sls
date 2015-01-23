@@ -281,7 +281,7 @@ textfsm:
 
 mgmt_lxc patch:
   file.patch:
-    - name: /usr/lib/python2.7/dist-packages/virl_pkg_data/low_level/lxc/mgmt.lxc
+    - name: /usr/local/lib/python2.7/dist-packages/virl_pkg_data/low_level/lxc/mgmt.lxc
     {% if masterless %}
     - source: file:///srv/salt/virl/ank/files/mgmt_lxc.diff
     {% else %}
