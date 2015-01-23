@@ -21,7 +21,7 @@
 
 iosxrvabsent:
   file.absent:
-    - name: /home/virl/images/iosxrv.pkg
+    - name: /home/virl/images/iosxrv52.pkg
 
 iosxrv52 image:
 {% if iosxrv52 and iosxrv52pref %}
@@ -38,7 +38,7 @@ iosxrv52 image:
     - name: /usr/local/bin/add-images-auto iosxrv52.pkg
     - cwd: /home/virl/images
     - watch:
-      - file: iosxrv image
+      - file: iosxrv52 image
 {% else %}
   file.exists:
     - name: /home/virl/images
