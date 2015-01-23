@@ -279,6 +279,16 @@ textfsm:
     - use_wheel: True
     - no_index: True
 
+mgmt_lxc patch:
+  file.patch:
+    - name: /usr/lib/python2.7/dist-packages/virl_pkg_data/low_level/lxc/mgmt.lxc
+    {% if masterless %}
+    - source: file:///srv/salt/virl/ank/files/mgmt_lxc.diff
+    {% else %}
+    - source: "salt://virl/ank/files/mgmt_lxc.diff"
+    {% endif %}
+    - hash: md5=8be38d7d71ff0e0b4fa7d6ebf7e42b97
+
 virl_collection:
   pip.installed:
     {% if ank_ver_fixed %}
