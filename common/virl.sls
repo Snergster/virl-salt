@@ -90,6 +90,12 @@ vinstall wheels:
     - force: true
   {% endif %}
     - mode: 644
+  cmd.wait:
+    - names:
+      - service apparmor reload
+    - watch:
+      file: /etc/apparmor.d/local/telnet_front
+
 
 /etc/apparmor.d/libvirt/TEMPLATE:
   {% if not masterless %}
@@ -102,6 +108,11 @@ vinstall wheels:
   {% endif %}
     - makedirs: true
     - mode: 644
+  cmd.wait:
+    - names:
+      - service apparmor reload
+    - watch:
+      file: /etc/apparmor.d/libvirt/TEMPLATE
 
 
 /etc/modprobe.d/kvm-intel.conf:
