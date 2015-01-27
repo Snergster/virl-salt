@@ -157,6 +157,13 @@ live-vis port change:
       - file: /etc/init.d/virl-vis
     - mode: 0755
 
+/etc/rc2.d/S98virl-vis-mux:
+  file.symlink:
+    - target: /etc/init.d/virl-vis-mux
+    - require:
+      - file: /etc/init.d/virl-vis-mux
+    - mode: 0755
+
 /etc/rc2.d/S98live-vis-webserver:
   file.symlink:
     - order: last
