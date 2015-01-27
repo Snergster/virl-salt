@@ -5,7 +5,7 @@
 """virl install.
 
 Usage:
-  foo.py zero | first | second | third | fourth | salt | test | iso | wrap | desktop | rehost | renumber | compute | all | images | password | vmm | routervms | users | vinstall | host | mini
+  foo.py zero | first | second | third | fourth | salt | test | test1 | iso | wrap | desktop | rehost | renumber | compute | all | images | password | vmm | routervms | users | vinstall | host | mini
 
 Options:
   --version             shows program's version number and exit
@@ -355,10 +355,9 @@ keystone.password: {ospassword}
 keystone.tenant: admin
 keystone.tenant_id: {tenid}
 keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
-keystone.token: {kstoken}
 mysql.user: root
 mysql.pass: {mypass}\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=admin_tenid, mypass=mypassword))
-
+#removed keystone.token: {kstoken} from above
     if path.exists('/usr/bin/salt-call'):
         with open(("/tmp/foo"), "w") as salt_grain:
             salt_grain.write("""{""")
@@ -845,6 +844,42 @@ if __name__ == "__main__":
         User_Creator(user_list, user_list_limited)
         print ('You need to restart now')
     if varg['test']:
+        subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
+        subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
+        for _each in ['openstack.renum1']:
+            call_salt(_each)
+        building_salt_all()
+        sleep(5)
+        for _next in ['openstack.renum2']:
+            call_salt(_next)
+        create_basic_networks()
+        if guest_account:
+            call_salt('virl.guest')
+        User_Creator(user_list, user_list_limited)
+        subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+        print ('You need to restart now')
+        print 'testing'
+    if varg['test1']:
+        subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
+        subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
+        for _each in ['openstack.renum3']:
+            call_salt(_each)
+        building_salt_all()
+        sleep(5)
+        create_basic_networks()
+        if guest_account:
+            call_salt('virl.guest')
+        User_Creator(user_list, user_list_limited)
+        subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+        print ('You need to restart now')
         print 'testing'
     if varg['compute']:
         if not controller:

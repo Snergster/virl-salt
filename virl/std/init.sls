@@ -29,6 +29,7 @@
     - name: /var/cache/virl/std
       {% endif %}
     {% endif %}
+    - clean: true
     - order: 1
     - user: virl
     - group: virl
