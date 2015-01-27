@@ -258,6 +258,29 @@ autonetkit_cisco:
 
 {% endif %}
 
+{% if venv == 'stable' %}
+
+autonetkit_cisco_webui stable:
+  pip.installed:
+    {% if ank_ver_fixed %}
+    - name: autonetkit_cisco_webui == {{ ank_webui }}
+    - find_links: "file:///var/cache/virl/fixed/ank"
+    - onlyif: ls /var/cache/virl/fixed/ank/autonetkit_cisco_webui*
+    {% else %}
+    - name: autonetkit_cisco_webui
+    - find_links: "file:///var/cache/virl/ank"
+    - onlyif: ls /var/cache/virl/ank/autonetkit_cisco_webui*
+    - upgrade: True
+    {% endif %}
+    - order: 4
+    - no_deps: True
+    - use_wheel: True
+    - no_index: True
+    - require:
+      - pip: autonetkit check
+
+{% endif %}
+
 {% if venv == 'qa' or venv == 'dev' %}
 
 autonetkit_cisco_webui:
@@ -296,16 +319,6 @@ textfsm:
     - no_deps: True
     - use_wheel: True
     - no_index: True
-
-mgmt_lxc patch:
-  file.patch:
-    - name: /usr/local/lib/python2.7/dist-packages/virl_pkg_data/low_level/lxc/mgmt.lxc
-    {% if masterless %}
-    - source: file:///srv/salt/virl/ank/files/mgmt_lxc.diff
-    {% else %}
-    - source: "salt://virl/ank/files/mgmt_lxc.diff"
-    {% endif %}
-    - hash: md5=8be38d7d71ff0e0b4fa7d6ebf7e42b97
 
 virl_collection:
   pip.installed:
