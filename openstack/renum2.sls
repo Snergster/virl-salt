@@ -4,7 +4,5 @@ include:
   - openstack.cinder.install
   - openstack.dash
   - openstack.nova.install
-  - openstack.neutron.changes
   - virl.std
   - virl.ank
-  

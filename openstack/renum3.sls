@@ -1,0 +1,14 @@
+include:
+  - openstack.password.change
+  - openstack.rabbitmq
+  - openstack.keystone.install
+  - openstack.keystone.setup
+  - openstack.keystone.endpoint
+  - openstack.osclients
+  - openstack.glance
+  - openstack.neutron.install
+  - openstack.cinder.install
+  - openstack.dash
+  - openstack.nova.install
+  - virl.std
+  - virl.ank
