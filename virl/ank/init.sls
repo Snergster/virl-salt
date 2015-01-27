@@ -69,6 +69,17 @@ ank_init:
   {% endif %}
     - mode: 0755
 
+/etc/init.d/virl-vis-mux:
+  {% if not masterless %}
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-mux.init"
+  {% else %}
+  file.copy:
+    - force: true
+    - source: /srv/salt/virl/ank/files/virl-vis-mux.init
+  {% endif %}
+    - mode: 0755
+
 /etc/init.d/live-vis-webserver:
   {% if not masterless %}
   file.managed:
@@ -313,6 +324,7 @@ virl_collection:
       - service ank-cisco-webserver start
       - service live-vis-webserver start
       - service virl-vis start
+      - service virl-vis-mux start
       - rm -f /etc/init.d/ank-webserver
       - rm -f /etc/rc2.d/S98ank-webserver
     - onchanges:
@@ -337,6 +349,14 @@ live-vis-webserver:
       - file: live-vis port change
 
 virl-vis:
+  service:
+    - running
+    - enable: True
+    - restart: True
+    - onchanges:
+      - pip: virl_collection
+
+virl-vis-mux:
   service:
     - running
     - enable: True
