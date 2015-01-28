@@ -3,7 +3,7 @@
 {% set vmm_win32 = salt['pillar.get']('virl:vmm_win32', salt['grains.get']('vmm_win32', True)) %}
 {% set vmm_win64 = salt['pillar.get']('virl:vmm_win64', salt['grains.get']('vmm_win64', True)) %}
 {% set vmm_linux = salt['pillar.get']('virl:vmm_linux', salt['grains.get']('vmm_linux', True)) %}
-
+{% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
 
 include:
   - .downdir
@@ -18,7 +18,11 @@ include:
     - maxdepth: 0
     - include_pat: '*zip'
     - exclude_pat: E@(.*exe$)|(.*dmg$)
+    {% if cml %}
+    - source: "salt://cml/vmm/{{ venv }}/"
+    {% else %}
     - source: "salt://vmm/{{ venv }}/"
+    {% endif %}
     - require:
       - file: download
 {% else %}
@@ -37,7 +41,11 @@ include:
     - maxdepth: 0
     - include_pat: '*setup_64.exe'
     - exclude_pat:  E@(.*32.exe$)|(.*dmg$)|(.*zip$)
+    {% if cml %}
+    - source: "salt://cml/vmm/{{ venv }}/"
+    {% else %}
     - source: "salt://vmm/{{ venv }}/"
+    {% endif %}
     - require:
       - file: download
 {% else %}
@@ -56,7 +64,11 @@ include:
     - dir_mode: 755
     - include_pat: '*setup_32.exe'
     - exclude_pat: E@(.*64.exe$)|(.*dmg$)|(.*zip$)
+    {% if cml %}
+    - source: "salt://cml/vmm/{{ venv }}/"
+    {% else %}
     - source: "salt://vmm/{{ venv }}/"
+    {% endif %}
     - require:
       - file: download
 {% else %}
@@ -75,7 +87,11 @@ include:
     - maxdepth: 0
     - include_pat: '*.dmg'
     - exclude_pat: E@(.*exe$)|(.*zip$)
+    {% if cml %}
+    - source: "salt://cml/vmm/{{ venv }}/"
+    {% else %}
     - source: "salt://vmm/{{ venv }}/"
+    {% endif %}
     - require:
       - file: download
 {% else %}

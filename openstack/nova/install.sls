@@ -152,12 +152,7 @@ nova-restart:
     - mode: 0755
 
 /etc/rc2.d/S98nova-serialproxy:
-  file.symlink:
-    - order: 6
-    - target: /etc/init.d/nova-serialproxy
-    - mode: 0755
-    - require:
-      - file: /etc/init.d/nova-serialproxy
+  file.absent
 
 
 /usr/local/bin/nova:
