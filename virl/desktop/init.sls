@@ -46,6 +46,24 @@ lubuntu-desktop:
          Type=Application
          Categories=Utility;Application;
 
+{% if cml %}
+/home/virl/Desktop/CML.desktop:
+  file.managed:
+    - mode: 0755
+    - user: virl
+    - group: virl
+    - makedirs: True
+    - contents: |
+         [Desktop Entry]
+         Version=1.0
+         Name=CML
+         Comment=CML for folks
+         Exec=/home/virl/VMMaestro-linux/CML
+         Icon=/home/virl/VMMaestro-linux/icon.xpm
+         Terminal=false
+         Type=Application
+         Categories=Utility;Application;
+{% else %}
 /home/virl/Desktop/VMMaestro.desktop:
   file.managed:
     - mode: 0755
@@ -62,6 +80,8 @@ lubuntu-desktop:
          Terminal=false
          Type=Application
          Categories=Utility;Application;
+
+{% endif %}
 
 /home/virl/Desktop/VIRL-rehost.desktop:
   file.managed:
