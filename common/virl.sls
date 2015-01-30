@@ -28,7 +28,7 @@ mypkgs:
       - mtools
       - socat
       - lxc
-
+      - python-dulwich
 
 qemu hold:
   apt.held:
