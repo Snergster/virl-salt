@@ -323,7 +323,17 @@ def building_salt_extra():
             extra.write("""master_shuffle: True \n""")
             extra.write("""master_alive_interval: 180 \n""")
         else:
-            extra.write("""file_client: local\n""")
+            extra.write("""file_client: local
+
+fileserver_backend:
+  - git
+  - roots
+
+gitfs_provider: Dulwich
+
+gitfs_remotes:
+  - https://github.com/Snergster/virl-salt.git\n""")
+
         extra.write("""id: {salt_id}\n""".format(salt_id=salt_id))
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
     subprocess.call(['sudo', 'cp', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
