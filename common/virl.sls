@@ -172,3 +172,8 @@ vinstall wheels:
 salt-minion nohold:
   file.absent:
     - name: /etc/apt/preferences.d/salt-minion
+
+/proc/sys/kernel/numa_balancing:
+  cmd.run:
+    - name: echo 0 > /proc/sys/kernel/numa_balancing
+    - onlyif: grep 1 /proc/sys/kernel/numa_balancing
