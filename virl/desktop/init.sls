@@ -236,6 +236,22 @@ lubuntu-desktop:
          X-GNOME-Autostart-enabled=true
          Type=Application
 
+/home/virl/.config/autostart/screensaver-settings.desktop:
+  file.managed:
+    - mode: 0755
+    - user: virl
+    - group: virl
+    - makedirs: True
+    - contents: |
+         [Desktop Entry]
+         Name=Screensaver
+         Comment=killing energystar and screen blanker
+         Exec=/usr/bin/xset -dpms s noblank s off
+         Hidden=false
+         NoDisplay=false
+         X-GNOME-Autostart-enabled=true
+         Type=Application
+
 /usr/share/themes/Lubuntu-default:
   file.recurse:
     - source: "salt://files/Clearlooks"
