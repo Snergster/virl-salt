@@ -51,6 +51,7 @@ def image_present(name,
                   protected=False,
                   checksum=None,
                   copy_from=None,
+                  file=None,
                   store=None,
                   properties=None,
                   profile=None,
@@ -78,6 +79,7 @@ def image_present(name,
                                             protected=protected,
                                             checksum=checksum,
                                             copy_from=copy_from,
+                                            file=file,
                                             store=store,
                                             properties=properties)
     LOG.debug('running state glance.image_present with arguments {0}'.format(
@@ -95,7 +97,7 @@ def image_present(name,
     # iterate over all given arguments
     # if anything is different delete and recreate
     for key in non_null_arguments:
-        if key == 'copy_from':
+        if key in ('copy_from', 'file'):
             continue
         if existing_image[name].get(key, None) != non_null_arguments[key]:
             LOG.debug('{0} has changed to {1}'.format(

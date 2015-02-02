@@ -111,7 +111,14 @@ def image_create(profile=None, **connection_args):
         if properties:
             fields['properties'] = properties
 
-    image = nt_ks.images.create(**fields)
+    img_path = connection_args.pop('file', None)
+
+    if img_path:
+        with open(img_path) as img_data:
+            fields['data'] = img_data
+            image = nt_ks.images.create(**fields)
+    else:
+        image = nt_ks.images.create(**fields)
     return image_show(id=str(image.id), profile=profile, **connection_args)
 
 
