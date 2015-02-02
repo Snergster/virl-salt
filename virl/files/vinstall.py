@@ -946,6 +946,11 @@ if __name__ == "__main__":
 
         for _keach in k_delete_list:
             subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
+        #BS for really old systems
+        if not (path.exists('/srv/salt/virl/host.sls')) and (path.exists('/srv/salt/host.sls')):
+            subprocess.call(['sudo', 'cp', '/srv/salt/host.sls', '/srv/salt/virl/host.sls'])
+        if not (path.exists('/srv/salt/virl/ntp.sls')) and (path.exists('/srv/salt/ntp.sls')):
+            subprocess.call(['sudo', 'cp', '/srv/salt/ntp.sls', '/srv/salt/virl/ntp.sls'])
         subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.host'])
         building_salt_all()
         sleep(5)
