@@ -15,6 +15,8 @@ Management of Glance images
                         trusty-server-cloudimg-amd64-disk1.img'
         - container_format: bare
         - disk_format: qcow2
+        - properties:
+            release: 14.04
         - connection_user: admin
         - connection_password: admin_pass
         - connection_tenant: admin
@@ -50,6 +52,7 @@ def image_present(name,
                   checksum=None,
                   copy_from=None,
                   store=None,
+                  properties=None,
                   profile=None,
                   **connection_args):
     '''
@@ -75,7 +78,8 @@ def image_present(name,
                                             protected=protected,
                                             checksum=checksum,
                                             copy_from=copy_from,
-                                            store=store)
+                                            store=store,
+                                            properties=properties)
     LOG.debug('running state glance.image_present with arguments {0}'.format(
         str(non_null_arguments)))
     if 'Error' in existing_image:

@@ -96,6 +96,20 @@ def image_create(profile=None, **connection_args):
             connection_args.items()
         )
     )
+    if 'properties' in glanceclient.v1.images.CREATE_PARAMS:
+        properties = fields.get('properties')
+        if not isinstance(properties, dict):
+            properties = {}
+        prefix = 'property_'
+        prefix_alt = 'property-'
+        add_props = {
+            key[len(prefix):]: value
+            for key, value in connection_args.items()
+            if key.startswith(prefix) or key.startswith(prefix_alt)
+        }
+        properties.update(add_props)
+        if properties:
+            fields['properties'] = properties
 
     image = nt_ks.images.create(**fields)
     return image_show(id=str(image.id), profile=profile, **connection_args)
@@ -159,6 +173,7 @@ def image_show(id=None, name=None, profile=None, **connection_args):  # pylint: 
                        'min_disk': image.min_disk,
                        'min_ram': image.min_ram,
                        'owner': image.owner,
+                       'properties': image.properties,
                        'protected': image.protected,
                        'size': image.size,
                        'status': image.status,
@@ -190,6 +205,7 @@ def image_list(profile=None, **connection_args):  # pylint: disable=C0103
                            'min_disk': image.min_disk,
                            'min_ram': image.min_ram,
                            'owner': image.owner,
+                           'properties': image.properties,
                            'protected': image.protected,
                            'size': image.size,
                            'status': image.status,
