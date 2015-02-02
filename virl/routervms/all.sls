@@ -25,3 +25,5 @@ include:
   - .iosxrv432
   - .server
   - .vpagent
+  - .nxosv
+  

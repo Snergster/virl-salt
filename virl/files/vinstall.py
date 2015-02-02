@@ -336,7 +336,7 @@ gitfs_remotes:
 
         extra.write("""id: {salt_id}\n""".format(salt_id=salt_id))
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
-    subprocess.call(['sudo', 'cp', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
+    subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
 
 def building_salt_all():
     if not path.exists('/etc/salt/virl'):
