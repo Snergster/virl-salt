@@ -184,7 +184,7 @@ VIRL_CORE:
       - virl-uwm
     - prereq:
       - pip: VIRL_CORE
-  cmd.wait:
+  cmd.run:
     - names:
      {% if cml %}
       - echo /usr/local/bin/virl_config lsb-links | at now + 1 min
@@ -210,8 +210,6 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_std_user_name uwmadmin
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
-    - onchanges:
-      - pip: VIRL_CORE
 
 virl init:
   cmd:
