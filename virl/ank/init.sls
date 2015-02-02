@@ -80,14 +80,19 @@ ank_init:
   {% endif %}
     - mode: 0755
 
-/etc/init.d/live-vis-webserver:
+/etc/init.d/live-vis-webserver remove:
+  file.missing:
+    - target: /etc/init.d/live-vis-webserver
+    - onlyif: ls /etc/init.d/live-vis-webserver
+
+/etc/init.d/virl-vis-webserver:
   {% if not masterless %}
   file.managed:
-    - source: "salt://virl/ank/files/live-vis-webserver.init"
+    - source: "salt://virl/ank/files/virl-vis-webserver.init"
   {% else %}
   file.copy:
     - force: true
-    - source: /srv/salt/virl/ank/files/live-vis-webserver.init
+    - source: /srv/salt/virl/ank/files/virl-vis-webserver.init
   {% endif %}
     - mode: 0755
 
@@ -111,15 +116,15 @@ ank_init:
       - 'test ! -e /etc/init.d/ank-cisco-webserver'
 
 
-live-vis port change:
+virl-vis-webserver port change:
   file.replace:
     - order: last
-    - name: /etc/init.d/live-vis-webserver
+    - name: /etc/init.d/virl-vis-webserver
     - pattern: '.*--port.*"'
     - repl: 'RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver --port {{ ank_live }}"'
     - unless:
-      - grep {{ ank }} /etc/init.d/live-vis-webserver
-      - 'test ! -e  /etc/init.d/live-vis-webserver'
+      - grep {{ ank }} /etc/init.d/virl-vis-webserver
+      - 'test ! -e  /etc/init.d/virl-vis-webserver'
 
 /root/.autonetkit/autonetkit.cfg:
   file.managed:
@@ -150,6 +155,12 @@ live-vis port change:
     - onlyif: ls /usr/local/bin/ank_cisco_webserver
     - mode: 0755
 
+/etc/rc2.d/S98live-vis-webserver missing:
+  file.missing:
+    - target: /etc/init.d/live-vis-webserver
+    - onlyif: ls /usr/local/bin/live-vis_webserver
+    - mode: 0755
+
 /etc/rc2.d/S98virl-vis:
   file.symlink:
     - target: /etc/init.d/virl-vis
@@ -164,11 +175,11 @@ live-vis port change:
       - file: /etc/init.d/virl-vis-mux
     - mode: 0755
 
-/etc/rc2.d/S98live-vis-webserver:
+/etc/rc2.d/S98virl-vis-webserver:
   file.symlink:
     - order: last
-    - target: /etc/init.d/live-vis-webserver
-    - onlyif: 'test -e /etc/init.d/live-vis-webserver'
+    - target: /etc/init.d/virl-vis-webserver
+    - onlyif: 'test -e /etc/init.d/virl-vis-webserver'
     - mode: 0755
 
 
@@ -342,7 +353,7 @@ virl_collection:
     - names:
       - wheel install-scripts virl-collection
       - service ank-cisco-webserver start
-      - service live-vis-webserver start
+      - service virl-vis-webserver start
       - service virl-vis start
       - service virl-vis-mux start
       - rm -f /etc/init.d/ank-webserver
@@ -359,14 +370,14 @@ ank-cisco-webserver:
       - pip: autonetkit_cisco_webui
       - file: /etc/init.d/ank-cisco-webserver port change
 
-live-vis-webserver:
+virl-vis-webserver:
   service:
     - running
     - enable: True
     - restart: True
     - onchanges:
       - pip: virl_collection
-      - file: live-vis port change
+      - file: virl-vis port change
 
 virl-vis:
   service:
