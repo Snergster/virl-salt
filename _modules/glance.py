@@ -38,6 +38,11 @@ Module for handling openstack glance calls.
         salt '*' glance.image_list profile=openstack1
 '''
 
+import logging
+
+log = logging.getLogger(__name__)
+
+
 # Import third party libs
 HAS_GLANCE = False
 try:
@@ -96,8 +101,39 @@ def image_create(profile=None, **connection_args):
             connection_args.items()
         )
     )
+    if 'properties' in glanceclient.v1.images.CREATE_PARAMS:
+        properties = fields.get('properties')
+        if not isinstance(properties, dict):
+            properties = {}
+        prefix = 'property_'
+        prefix_alt = 'property-'
+        add_props = {
+            key[len(prefix):]: value
+            for key, value in connection_args.items()
+            if key.startswith(prefix) or key.startswith(prefix_alt)
+        }
+        properties.update(add_props)
+        if properties:
+            fields['properties'] = properties
 
-    image = nt_ks.images.create(**fields)
+    img_path = connection_args.pop('file', None)
+    copy_from = fields.get('copy_from')
+    if copy_from and copy_from.startswith('salt://'):
+        fields.pop('copy_from')
+        if img_path:
+            log.warning('Ignoring copy_from=%s, using local file' % copy_from)
+        else:
+            # Store to cache and get path
+            img_path = __salt__['cp.get_file'](copy_from, None)
+            if not img_path:
+                raise Exception('Could not find %s' % copy_from)
+
+    if img_path:
+        with open(img_path) as img_data:
+            fields['data'] = img_data
+            image = nt_ks.images.create(**fields)
+    else:
+        image = nt_ks.images.create(**fields)
     return image_show(id=str(image.id), profile=profile, **connection_args)
 
 
@@ -159,6 +195,7 @@ def image_show(id=None, name=None, profile=None, **connection_args):  # pylint: 
                        'min_disk': image.min_disk,
                        'min_ram': image.min_ram,
                        'owner': image.owner,
+                       'properties': image.properties,
                        'protected': image.protected,
                        'size': image.size,
                        'status': image.status,
@@ -190,6 +227,7 @@ def image_list(profile=None, **connection_args):  # pylint: disable=C0103
                            'min_disk': image.min_disk,
                            'min_ram': image.min_ram,
                            'owner': image.owner,
+                           'properties': image.properties,
                            'protected': image.protected,
                            'size': image.size,
                            'status': image.status,

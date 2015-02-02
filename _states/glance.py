@@ -15,6 +15,8 @@ Management of Glance images
                         trusty-server-cloudimg-amd64-disk1.img'
         - container_format: bare
         - disk_format: qcow2
+        - properties:
+            release: 14.04
         - connection_user: admin
         - connection_password: admin_pass
         - connection_tenant: admin
@@ -49,7 +51,9 @@ def image_present(name,
                   protected=False,
                   checksum=None,
                   copy_from=None,
+                  file=None,
                   store=None,
+                  properties=None,
                   profile=None,
                   **connection_args):
     '''
@@ -75,7 +79,9 @@ def image_present(name,
                                             protected=protected,
                                             checksum=checksum,
                                             copy_from=copy_from,
-                                            store=store)
+                                            file=file,
+                                            store=store,
+                                            properties=properties)
     LOG.debug('running state glance.image_present with arguments {0}'.format(
         str(non_null_arguments)))
     if 'Error' in existing_image:
@@ -91,7 +97,7 @@ def image_present(name,
     # iterate over all given arguments
     # if anything is different delete and recreate
     for key in non_null_arguments:
-        if key == 'copy_from':
+        if key in ('copy_from', 'file'):
             continue
         if existing_image[name].get(key, None) != non_null_arguments[key]:
             LOG.debug('{0} has changed to {1}'.format(
