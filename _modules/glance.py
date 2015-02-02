@@ -38,6 +38,11 @@ Module for handling openstack glance calls.
         salt '*' glance.image_list profile=openstack1
 '''
 
+import logging
+
+log = logging.getLogger(__name__)
+
+
 # Import third party libs
 HAS_GLANCE = False
 try:
@@ -112,6 +117,16 @@ def image_create(profile=None, **connection_args):
             fields['properties'] = properties
 
     img_path = connection_args.pop('file', None)
+    copy_from = fields.get('copy_from')
+    if copy_from and copy_from.startswith('salt://'):
+        fields.pop('copy_from')
+        if img_path:
+            log.warning('Ignoring copy_from=%s, using local file' % copy_from)
+        else:
+            # Store to cache and get path
+            img_path = __salt__['cp.get_file'](copy_from, None)
+            if not img_path:
+                raise Exception('Could not find %s' % copy_from)
 
     if img_path:
         with open(img_path) as img_data:
