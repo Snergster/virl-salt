@@ -63,7 +63,13 @@ lubuntu-desktop:
          Terminal=false
          Type=Application
          Categories=Utility;Application;
+
+/home/virl/Desktop/VMMaestro.desktop absent:
+  file.absent:
+    - name: /home/virl/Desktop/VMMaestro.desktop
+
 {% else %}
+
 /home/virl/Desktop/VMMaestro.desktop:
   file.managed:
     - mode: 0755
