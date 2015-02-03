@@ -57,7 +57,6 @@ std docs:
     - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
     - source_hash: md5=d44c6584a80aea1af377868636ac0383
     - archive_format: tar
-    - tar_options: xz
     - if_missing: /var/www/doc/index.html
 
 {% else %}
