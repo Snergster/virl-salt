@@ -19,6 +19,7 @@ commonpkgs:
       - openssh-server
       - crudini
       - unzip
+      - at
 
 /usr/local/bin/openstack-config:
   file.symlink:
@@ -31,5 +32,3 @@ commonpkgs:
   file.directory:
     - dir_mode: 755
     - makedirs: True
-
-    

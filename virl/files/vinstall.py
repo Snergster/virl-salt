@@ -334,7 +334,7 @@ gitfs_provider: Dulwich
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
 
-        extra.write("""id: {salt_id}\n""".format(salt_id=salt_id))
+        extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id))
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
 
