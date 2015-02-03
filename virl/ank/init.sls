@@ -361,7 +361,7 @@ virl_collection:
       - wheel install-scripts virl-collection
       - service ank-cisco-webserver start
       - service virl-vis-webserver start
-      - service virl-vis start
+      - service virl-vis-processor start
       - service virl-vis-mux start
       - rm -f /etc/init.d/ank-webserver
       - rm -f /etc/rc2.d/S98ank-webserver
@@ -384,9 +384,9 @@ virl-vis-webserver:
     - restart: True
     - onchanges:
       - pip: virl_collection
-      - file: virl-vis port change
+      - file: virl-vis-webserver port change
 
-virl-vis:
+virl-vis-processor:
   service:
     - running
     - enable: True
