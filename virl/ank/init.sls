@@ -59,13 +59,16 @@ ank_init:
       - grep {{ ank }} /etc/init.d/ank-cisco-webserver
 
 /etc/init.d/virl-vis:
+  file.absent
+
+/etc/init.d/virl-vis-processor:
   {% if not masterless %}
   file.managed:
-    - source: "salt://virl/ank/files/virl-vis.init"
+    - source: "salt://virl/ank/files/virl-vis-processor.init"
   {% else %}
   file.copy:
     - force: true
-    - source: /srv/salt/virl/ank/files/virl-vis.init
+    - source: /srv/salt/virl/ank/files/virl-vis-processor.init
   {% endif %}
     - mode: 0755
 
@@ -81,7 +84,7 @@ ank_init:
     - mode: 0755
 
 /etc/init.d/live-vis-webserver remove:
-  file.missing:
+  file.absent:
     - target: /etc/init.d/live-vis-webserver
     - onlyif: ls /etc/init.d/live-vis-webserver
 
@@ -149,23 +152,27 @@ virl-vis-webserver port change:
     - require:
       - pip: autonetkit_cisco
 
-/etc/rc2.d/S98ank-webserver missing:
-  file.missing:
-    - target: /etc/init.d/ank-webserver
+/etc/rc2.d/S98ank-webserver absent:
+  file.absent:
+    - name: /etc/init.d/ank-webserver
     - onlyif: ls /usr/local/bin/ank_cisco_webserver
-    - mode: 0755
 
-/etc/rc2.d/S98live-vis-webserver missing:
-  file.missing:
-    - target: /etc/init.d/live-vis-webserver
+
+/etc/rc2.d/S98live-vis-webserver absent:
+  file.absent:
+    - name: /etc/init.d/live-vis-webserver
     - onlyif: ls /usr/local/bin/live-vis_webserver
-    - mode: 0755
 
-/etc/rc2.d/S98virl-vis:
+
+/etc/rc2.d/S98virl-vis absent:
+  file.absent:
+    - name: /etc/rc2.d/S98virl-vis
+
+/etc/rc2.d/S98virl-vis-processor:
   file.symlink:
-    - target: /etc/init.d/virl-vis
+    - target: /etc/init.d/virl-vis-processor
     - require:
-      - file: /etc/init.d/virl-vis
+      - file: /etc/init.d/virl-vis-processor
     - mode: 0755
 
 /etc/rc2.d/S98virl-vis-mux:
