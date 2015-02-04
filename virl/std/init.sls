@@ -125,7 +125,7 @@ std docs local:
 {% if venv == 'qa' or venv == 'dev' %}
 tornado special:
   pip.installed:
-    - name: tornado >= 3.2.2, <= 4.0.0
+    - name: tornado >= 3.2.2, < 4.0.0
 
 requests special:
   pip.installed:
