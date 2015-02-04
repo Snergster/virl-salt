@@ -121,6 +121,44 @@ std docs local:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
 
+{% if venv == 'qa' or venv == 'dev' %}
+tornado special:
+  pip.installed:
+    - name: tornado >= 3.2.2, <= 4.0.0
+
+requests special:
+  pip installed:
+    - name: requests < 2.4.0
+
+std_prereq:
+  pip.installed:
+    - order: 2
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - upgrade: True
+    - names:
+      - ipaddr
+      - flask-sqlalchemy
+      - Flask
+      - Flask_Login
+      - Flask_RESTful
+      - Flask_WTF
+      - itsdangerous
+      - Jinja2
+      - lxml
+      - MarkupSafe
+      - mock
+      - paramiko
+      - pycrypto
+      - simplejson
+      - sqlalchemy
+      - websocket_client
+      - Werkzeug
+      - wsgiref
+      - WTForms
+
+{% else %}
 
 std_prereq:
   pip.installed:
@@ -151,6 +189,7 @@ std_prereq:
       - wsgiref
       - WTForms
 
+{% endif %}
 
 VIRL_CORE:
   pip.installed:

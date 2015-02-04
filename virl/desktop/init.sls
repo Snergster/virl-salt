@@ -265,6 +265,18 @@ lubuntu-desktop:
     - group: virl
     - unless: 'test -e /srv/salt/virl/files/Clearlooks'
 
+/home/virl/.README:
+  file.managed:
+  {% if cml %}
+    - source: "salt://virl/desktop/files/cmlREADME"
+  {% else %}
+    - source: "salt:///srv/salt/virl/desktop/files/vREADME"
+  {% endif %}
+    - user: virl
+    - group: virl
+    - require:
+      - pkg: lubuntu-desktop
+
 /usr/share/themes/Lubuntu-default/openbox-3/themerc:
   {% if not masterless %}
   file.managed:
