@@ -3,13 +3,13 @@ If installing from the OVA, you can use the system’s defaults settings now.
 
 If installing from .OVA, AND you need system configuration changes such as Hostname, IP addressing, L2 or L3 subnet:
   0. make necessary changes to /etc/virl.ini
-  1. Double-click “Rehost networking” and reboot
+  1. Double-click “Install networking” and reboot
   2. Reboot
-  3. Double-click “Network changes” and reboot again before use
+  3. Double-click “Install changes” and reboot again before use
   4. Reboot
 
 If using the cli:
-  0. make necessary changes to /home/virl.ini
+  0. make necessary changes to /etc/virl.ini
   1. execute /usr/local/bin/vinstall rehost
   2. Reboot
   3. execute /usr/local/bin/vinstall renumber
@@ -17,5 +17,5 @@ If using the cli:
 
 
 IF you have changed salt master you may need to open an xterm
-and type  'sudo rm /etc/salt/pki/minion/minion_master.pub' after
-networking but before changes.
+and type 'sudo rm /etc/salt/pki/minion/minion_master.pub' after
+'Install networking' but before 'Install changes'.
