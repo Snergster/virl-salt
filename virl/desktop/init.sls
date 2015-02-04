@@ -270,7 +270,7 @@ lubuntu-desktop:
   {% if cml %}
     - source: "salt://virl/desktop/files/cmlREADME"
   {% else %}
-    - source: "salt:///srv/salt/virl/desktop/files/vREADME"
+    - source: "salt://virl/desktop/files/vREADME"
   {% endif %}
     - user: virl
     - group: virl

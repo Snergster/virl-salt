@@ -13,6 +13,7 @@
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set cinder_enabled = salt['pillar.get']('virl:cinder_enabled', salt['grains.get']('cinder_enabled', False)) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
 {% if not masterless %}
 /var/cache/virl/std:
