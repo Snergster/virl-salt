@@ -41,14 +41,14 @@ uwm_init:
   file.managed:
     - order: 4
     - name: /etc/init.d/virl-uwm
-    - source: "salt://files/virl-uwm.init"
+    - source: "salt://virl/std/files/virl-uwm.init"
     - mode: 0755
 
 std_init:
   file.managed:
     - order: 3
     - name: /etc/init.d/virl-std
-    - source: "salt://files/virl-std.init"
+    - source: "salt://virl/std/files/virl-std.init"
     - mode: 0755
 
 std docs:
@@ -123,14 +123,6 @@ std docs local:
     - mode: 0755
 
 {% if venv == 'qa' or venv == 'dev' %}
-tornado special:
-  pip.installed:
-    - name: tornado >= 3.2.2, < 4.0.0
-
-requests special:
-  pip.installed:
-    - name: requests < 2.4.0
-
 std_prereq:
   pip.installed:
     - order: 2
@@ -147,13 +139,15 @@ std_prereq:
       - Flask_WTF
       - itsdangerous
       - Jinja2
-      - lxml
+      - lxml <= 3.3.3
       - MarkupSafe
       - mock
       - paramiko
       - pycrypto
+      - requests < 2.4.0
       - simplejson
       - sqlalchemy
+      - tornado >= 3.2.2, < 4.0.0
       - websocket_client
       - Werkzeug
       - wsgiref
