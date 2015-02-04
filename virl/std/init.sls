@@ -128,7 +128,7 @@ tornado special:
     - name: tornado >= 3.2.2, <= 4.0.0
 
 requests special:
-  pip installed:
+  pip.installed:
     - name: requests < 2.4.0
 
 std_prereq:
