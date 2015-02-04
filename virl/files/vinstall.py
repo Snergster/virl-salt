@@ -312,7 +312,7 @@ def alter_virlcfg():
 
 def building_salt_extra():
     with open(("/tmp/extra"), "w") as extra:
-        if not salt_master == 'masterless' or vagrant_pre_fourth:
+        if not masterless or vagrant_pre_fourth:
             extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
             # for each in salt_master.split(','):
             #     extra.write("""  - {each}\n""".format(each=each))
@@ -933,7 +933,10 @@ if __name__ == "__main__":
                         '--execute=delete from compute_nodes'])
         subprocess.call(['sudo', 'mysql', '-uroot', '-ppassword', 'nova',
                          '--execute=delete from services'])
-        subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
+        if masterless:
+            subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
+        else:
+            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
