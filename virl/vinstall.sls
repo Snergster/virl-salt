@@ -5,7 +5,7 @@
 /usr/local/bin/vinstall:
 {% if not masterless %}
   file.managed:
-    - source: salt://files/vinstall.py
+    - source: salt://virl/files/vinstall.py
     - user: virl
     - group: virl
     - mode: 0755
