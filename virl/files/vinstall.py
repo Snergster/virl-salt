@@ -401,8 +401,8 @@ mysql.pass: {mypass}\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=
             for name, value in safeparser.items('DEFAULT'):
                 grains.write("""  {name}: {value}\n""".format(name=name, value=value))
             grains.write("""  neutron_extnet_id: {neutid}\n""".format(neutid=neutron_extnet_id))
-        subprocess.call(['sudo', 'cp', '-f', ('/tmp/grains'), '/etc/salt'])
-    subprocess.call(['sudo', 'cp', '-f', ('/tmp/openstack'), '/etc/salt/minion.d/openstack.conf'])
+        subprocess.call(['sudo', 'mv', '-f', ('/tmp/grains'), '/etc/salt'])
+    subprocess.call(['sudo', 'mv', '-f', ('/tmp/openstack'), '/etc/salt/minion.d/openstack.conf'])
     if not masterless:
         subprocess.call(['sudo', 'service', 'salt-minion', 'restart'])
     else:
