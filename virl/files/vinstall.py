@@ -366,15 +366,18 @@ keystone.tenant: admin
 keystone.tenant_id: {tenid}
 keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
 keystone.token: {kstoken}
+keystone.region_name: 'RegionOne'
 
 mysql.user: root
 mysql.pass: {mypass}
 
 virl:
+  keystone.user: admin
   keystone.password: {ospassword}
   keystone.tenant: admin
   keystone.tenant_id: {tenid}
-  keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=admin_tenid, mypass=mypassword))
+  keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
+  keystone.region_name: 'RegionOne'\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=admin_tenid, mypass=mypassword))
     if path.exists('/usr/bin/salt-call'):
         with open(("/tmp/foo"), "w") as salt_grain:
             salt_grain.write("""{""")
