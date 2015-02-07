@@ -6,6 +6,7 @@ include:
   - virl.vinstall
   - openstack.repo
   - common.kvm
+  - virl.scripts
 
 mypkgs:
   pkg.installed:

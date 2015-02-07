@@ -7,6 +7,7 @@
 
 include:
   - openstack.mysql.open
+  - virl.scripts
 
 {% if not masterless %}
 /usr/local/bin/virl-openrc.sh:
@@ -27,46 +28,6 @@ include:
   file.managed:
     - order: 1
     - source: salt://virl/files/bash_profile
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/update-images:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/update_images
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-images:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/add-images
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-images-auto:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/add-images-auto
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-servers:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/add-servers
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/adduser_openstack:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/adduser_openstack
     - user: virl
     - group: virl
     - mode: 755
@@ -119,76 +80,8 @@ uwmport replace:
     - group: virl
     - mode: 755
 
-/usr/local/bin/update-images:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/update_images
-    - onlyif: 'test -e /srv/salt/virl/files/update_images'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-images:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/add-images
-    - onlyif: 'test -e /srv/salt/virl/files/add-images'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-images-auto:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/add-images-auto
-    - onlyif: 'test -e /srv/salt/virl/files/add-images-auto'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-servers:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/add-servers
-    - onlyif: 'test -e /srv/salt/virl/files/add-servers'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/adduser_openstack:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/adduser_openstack
-    - onlyif: 'test -e /srv/salt/virl/files/adduser_openstack'
-    - user: virl
-    - group: virl
-    - mode: 755
-
 
 {% endif %}
-
-/opt/support/add-images:
-  file.symlink:
-    - target: /usr/local/bin/add-images
-    - makedirs: true
-    - mode: 0755
-
-/opt/support/add-images-auto:
-  file.symlink:
-    - target: /usr/local/bin/add-images-auto
-    - makedirs: true
-    - mode: 0755
-
-/opt/support/add-servers:
-  file.symlink:
-    - target: /usr/local/bin/add-servers
-    - makedirs: true
-    - mode: 0755
 
 adminpass:
   file.replace:

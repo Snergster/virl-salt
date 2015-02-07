@@ -22,7 +22,7 @@ check_images() {
 #		if [ $answer == "Y" ] || [ $answer == "y" ]; then
 		for image in $check; do
 			echo "Removing image $image from glance"
-			glance -f delete $image
+			glance -f image-delete $image
 		done
 #	else
 #			echo "Aborting..."
@@ -43,7 +43,7 @@ remove_images() {
 #		if [ $answer == "Y" ] || [ $answer == "y" ]; then
 			for image in $check; do
 				echo "Removing image $image from glance"
-				glance -f delete $image
+				glance -f image-delete $image
 			done
 #		else
 #			echo "Aborting..."
@@ -131,10 +131,10 @@ register_flavor() {
     memory=$3
 
     echo "Registering flavour $name"
-    nova-manage flavor create --cpu $cpus --memory $memory --name "$name" --root_gb 0 --ephemeral_gb 0 --swap 0 
+    nova-manage flavor create --cpu $cpus --memory $memory --name "$name" --root_gb 0 --ephemeral_gb 0 --swap 0
 }
 
- 
+
 for f in "$@"; do
     # This stops us accidentally running incorrect files as shell scripts
     if head -1 $f | fgrep '# pop-image' >/dev/null  ; then
