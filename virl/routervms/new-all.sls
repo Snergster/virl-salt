@@ -25,3 +25,4 @@ include:
   - .new-vpagent
   - .new-nxosv
   - .new-iosvl2
+  - .new-iosxrv52
