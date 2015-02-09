@@ -1,6 +1,6 @@
 base:
   '*':
-    - common.virl
+    - common.ubuntu
 
   '^.{9}virledu.info$':
     - match: pcre
