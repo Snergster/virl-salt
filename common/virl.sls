@@ -44,6 +44,9 @@ vinstall run:
     - require:
       - file: /usr/local/bin/vinstall
       - pip: docopt
+      - pip: envoy
+      - pip: sh
+      - pip: configparser
 
 {% if not masterless %}
 vinstall wheels:
