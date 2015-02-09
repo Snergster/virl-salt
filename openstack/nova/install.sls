@@ -159,4 +159,5 @@ nova-restart:
   file.symlink:
     - order: 7
     - target: /usr/bin/nova
+    - unless: ls /usr/local/bin/nova
     - mode: 0755

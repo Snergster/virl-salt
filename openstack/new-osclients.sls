@@ -15,6 +15,7 @@ pip clients:
       - python-keystoneclient == 1.0.0
       - python-neutronclient == 2.3.4
       - oslo.rootwrap == 1.5.0
+      - oslo.messaging == 1.6.0
     - require:
       - pip: nova client
 
