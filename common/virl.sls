@@ -46,7 +46,7 @@ vinstall run:
       - pip: docopt
       - pip: envoy
       - pip: sh
-      - pip: configparser
+      - pip: 'configparser>=3.3.0r2'
 
 {% if not masterless %}
 vinstall wheels:
