@@ -16,3 +16,18 @@ M2Crypto:
     - require:
       - pkg: libssl-dev
       - pkg: swig
+
+salt-master unhold:
+  module.run:
+    - name: pkg.unhold
+    - m_name: salt-master
+
+salt-minion unhold:
+  module.run:
+    - name: pkg.unhold
+    - m_name: salt-master
+
+salt-common unhold:
+  module.run:
+    - name: pkg.unhold
+    - m_name: salt-master
