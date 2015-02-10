@@ -17,6 +17,16 @@ M2Crypto:
       - pkg: libssl-dev
       - pkg: swig
 
+msgpack-python:
+  pip.installed:
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - upgrade: True
+    - require:
+      - pkg: libssl-dev
+      - pkg: swig
+
 salt-master unhold:
   module.run:
     - name: pkg.unhold

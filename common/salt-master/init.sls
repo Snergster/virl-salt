@@ -1,3 +1,6 @@
+{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
+
 salt-master install:
   file.managed:
     - name: /home/ubuntu/install_salt.sh
@@ -30,6 +33,7 @@ salt-master ramdisks:
         ramdisk /etc/salt/pki tmpfs rw,relatime 0 0
         ramdisk /srv/pillar tmpfs rw,relatime 0 0
         ramdisk /var/cache/salt/minion/files/base/pillar tmpfs rw,relatime 0 0
+        ramdisk /var/cache/salt/master tmpfs rw,relatime 0 0
 
 pki ramdisk mount:
   cmd.wait:
@@ -70,3 +74,30 @@ pki placeholder:
   file.directory:
     - name: /etc/salt/pki
     - makedirs: True
+
+
+libssl-dev:
+  pkg.installed
+
+swig:
+  pkg.installed
+
+M2Crypto:
+  pip.installed:
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - upgrade: True
+    - require:
+      - pkg: libssl-dev
+      - pkg: swig
+
+msgpack-python:
+  pip.installed:
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - upgrade: True
+    - require:
+      - pkg: libssl-dev
+      - pkg: swig
