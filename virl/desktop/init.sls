@@ -100,7 +100,7 @@ lubuntu-desktop:
          Version=1.0
          Name=1. Install networking
          Comment=To finish install
-         Exec=xterm -e "/usr/local/bin/vinstall rehost | tee /tmp/virl-rehost-log"
+         Exec=xterm -e "/usr/local/bin/vinstall rehost | tee /var/tmp/virl-rehost-log"
          Icon=/usr/share/icons/gnome/48x48/status/network-wired-disconnected.png
          Terminal=True
          Type=Application
@@ -117,7 +117,7 @@ lubuntu-desktop:
          Version=1.0
          Name=3. Install changes
          Comment=Only after virl.ini changes
-         Exec=xterm -e "/usr/local/bin/vinstall renumber | tee /tmp/virl-renumber-log"
+         Exec=xterm -e "/usr/local/bin/vinstall renumber | tee /var/tmp/virl-renumber-log"
          Icon=/usr/share/icons/Humanity/apps/48/gconf-editor.svg
          Terminal=True
          Type=Application
