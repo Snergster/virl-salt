@@ -2,9 +2,8 @@
 {% set virl_type = salt['grains.get']('virl_type', 'stable') %}
 {% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
-{% set http_proxy = salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/') %}
 {% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
+{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set std_ver_fixed = salt['pillar.get']('behave:std_ver_fixed', salt['grains.get']('std_ver_fixed', False)) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}

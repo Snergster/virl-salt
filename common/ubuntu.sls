@@ -20,6 +20,8 @@ commonpkgs:
       - crudini
       - unzip
       - at
+      - swig
+
 
 /usr/local/bin/openstack-config:
   file.symlink:
