@@ -124,7 +124,7 @@ def image_create(profile=None, **connection_args):
             log.warning('Ignoring copy_from=%s, using local file' % copy_from)
         else:
             # Store to cache and get path
-            img_path = __salt__['cp.cache_file'](copy_from, None)
+            img_path = __salt__['cp.cache_file'](copy_from)
             if not img_path:
                 raise Exception('Could not find %s' % copy_from)
 
