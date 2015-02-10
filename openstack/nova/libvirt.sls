@@ -40,4 +40,4 @@
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
     - require:
-      - file: /srv/salt/openstack/nova/patch/libvirt.diff
+      - file: /srv/salt/openstack/nova/patch/driver.diff
