@@ -32,7 +32,7 @@
 
 /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py:
   file.patch:
-    - source: file:///srv/salt/openstack/nova/patch/libvirt.diff
+    - source: file:///srv/salt/openstack/nova/patch/driver.diff
     - hash: md5=7163850e833c811470fc1f2d46fbb5ea
   cmd.wait:
     - names:
