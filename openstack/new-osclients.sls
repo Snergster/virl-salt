@@ -58,6 +58,3 @@ pip clients:
   apt.held:
     - name: {{ holdies }}
 {% endfor %}
-
-nova cachedir permissions set:
-  cmd.run:
