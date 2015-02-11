@@ -70,7 +70,12 @@ case "$1" in
         PID_LIST=`echo $PIDS | sed -e "s/ /, /g"`
         echo "$SERVICE is still running. Killing processes: $PID_LIST."
         kill -9 $PIDS
-        exit 1
+        sleep 0.1
+        PIDS=`getpids`
+        if [ -n "$PIDS" ]; then
+            echo "$SERVICE could not be killed."
+            exit 1
+        fi
     fi
     echo "$SERVICE was stopped."
     ;;
