@@ -66,7 +66,7 @@ std_init local:
     - order: 3
     - name: /etc/init.d/virl-std
     - source: "file:///srv/salt/virl/std/files/virl-std.init"
-    - source_hash: md5=ddc96d3ca3c9e00f5e589077e92fb782
+    - source_hash: md5=a143c518d8a7942c96bce306e83e8fb8
     - mode: 0755
 
 uwm_init local:
@@ -74,7 +74,7 @@ uwm_init local:
     - order: 3
     - name: /etc/init.d/virl-uwm
     - source: "file:///srv/salt/virl/std/files/virl-uwm.init"
-    - source_hash: md5=70a05f8156cb1a9b9a7668d043558668
+    - source_hash: md5=97697ed887ccdd534e46fa4cabf16877
     - mode: 0755
 
 std docs local:
