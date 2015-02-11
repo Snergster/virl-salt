@@ -1,6 +1,6 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-
+{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 
 nova client:
   pip.installed:
@@ -28,6 +28,17 @@ pip clients:
       - oslo.messaging == 1.6.0
     - require:
       - pip: nova client
+    - cmd.wait:
+      - name: nova service-list
+      - cwd: /home/virl
+      - user: virl
+      - group: virl
+      - env:
+        - OS_AUTH_URL: 'http://127.0.0.1:35357/v2.0'
+        - OS_USERNAME: admin
+        - OS_PASSWORD: {{ ospassword }}
+      - watch:
+        - pip: pip clients
 
 {% for symlink in ['pip','keystone','neutron','glance','nova']%}
 /usr/bin/{{ symlink }}:
@@ -47,3 +58,6 @@ pip clients:
   apt.held:
     - name: {{ holdies }}
 {% endfor %}
+
+nova cachedir permissions set:
+  cmd.run:
