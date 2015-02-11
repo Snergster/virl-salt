@@ -29,20 +29,23 @@ case "$1" in
     while [ $WAIT -ne $MAX_WAIT ]; do
         ((WAIT++))
         sleep 1
-        $STATUS_CMD >/dev/null 2>&1
+        STATUS=$($STATUS_CMD)
         if [ "$?" -eq 0 ]; then
             echo "$SERVICE has been started."
-            $STATUS_CMD
+            echo "$STATUS"
             exit 0
         fi
     done
+
     PIDS=`getpids`
     if [ -z "$PIDS" ]; then
         echo "$SERVICE could not be started."
-        exit 1
+    else
+        echo "$SERVICE has been started in a bad state."
     fi
-
-    echo "$SERVICE has been started in a bad state."
+    echo "$STATUS"
+    STD_DIR=$($CMD env | grep 'VIRL_STD_DIR' | tail -1 | sed 's/.\+= \?//')
+    echo "For more details see $STD_DIR/logs/uwm_server.log"
     exit 1
     ;;
   stop)
