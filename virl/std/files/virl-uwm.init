@@ -25,9 +25,8 @@ case "$1" in
 
     $RUN_CMD >/dev/null 2>&1 &
 
-    WAIT=0
-    while [ $WAIT -ne $MAX_WAIT ]; do
-        ((WAIT++))
+    WAIT_TIMEOUT=$(($(date +%s) + $MAX_WAIT))
+    while [ $(date +%s) -lt $WAIT_TIMEOUT ]; do
         sleep 1
         STATUS=$($STATUS_CMD)
         if [ "$?" -eq 0 ]; then
