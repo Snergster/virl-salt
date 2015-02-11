@@ -243,12 +243,13 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_std_user_name uwmadmin
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
 
+{% if not cml %}
 virl init:
   cmd:
     - run
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
-
+{% endif %}
 
 virl-std:
   service:
