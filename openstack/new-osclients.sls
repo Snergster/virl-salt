@@ -48,16 +48,3 @@ pip clients:
   apt.held:
     - name: {{ holdies }}
 {% endfor %}
-
-novalcient set crud:
-  cmd.run:
-    - name: '/usr/local/bin/nova service-list'
-    - cwd: /home/virl
-    - user: virl
-    - group: virl
-    - env:
-      - OS_AUTH_URL: 'http://127.0.0.1:35357/v2.0'
-      - OS_USERNAME: admin
-      - OS_PASSWORD: {{ ospassword }}
-    - require:
-      - pip: pip clients
