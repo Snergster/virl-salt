@@ -34,7 +34,7 @@ NX-OSv flavor create:
   module.run:
     - name: nova.flavor_create
     - m_name: 'NX-OSv'
-    - ram: 512
+    - ram: 2048
     - disk: 0
     - vcpus: 1
     - onchanges:
