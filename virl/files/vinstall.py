@@ -396,7 +396,8 @@ virl:
             salt_grain.write(""" 'service_id': '{serviceid}'""".format(serviceid=service_tenid))
             salt_grain.write("""}""")
         with open(("/tmp/foo"), "r") as salt_grain_read:
-          subprocess.call(['sudo', 'salt-call', '--local','grains.setvals', salt_grain_read.read() ])
+            subprocess.call(['sudo', 'salt-call', '--local','grains.setvals', salt_grain_read.read() ])
+        subprocess.call(['sudo', 'rm', '-f', '/tmp/foo'])
     else:
         with open(("/tmp/grains"), "w") as grains:
             # for section_name in safeparser.sections():
