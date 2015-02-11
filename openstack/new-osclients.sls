@@ -28,7 +28,7 @@ pip clients:
       - oslo.messaging == 1.6.0
     - require:
       - pip: nova client
-    - cmd.wait:
+    - cmd.run:
       - name: nova service-list
       - cwd: /home/virl
       - user: virl
@@ -37,8 +37,7 @@ pip clients:
         - OS_AUTH_URL: 'http://127.0.0.1:35357/v2.0'
         - OS_USERNAME: admin
         - OS_PASSWORD: {{ ospassword }}
-      - watch:
-        - pip: pip clients
+
 
 {% for symlink in ['pip','keystone','neutron','glance','nova']%}
 /usr/bin/{{ symlink }}:
