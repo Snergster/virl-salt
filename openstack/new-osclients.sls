@@ -36,6 +36,17 @@ python-pip:
     - require:
       - pip: pip clients
 
+python-pip ugly hold:
+  file.managed:
+    - name: /etc/apt/preferences.d/python-pip
+    - require:
+      - pkg: python-pip
+    - contents: |
+        Package: python-pip
+        Pin: release *
+        Pin-Priority: -1
+
+
 {% for symlink in ['pip','keystone','neutron','glance','nova']%}
 /usr/bin/{{ symlink }}:
   file.symlink:
@@ -43,6 +54,7 @@ python-pip:
     - mode: 0755
     - require:
       - pip: pip clients
+      - pkg: python-pip
     - onlyif:
       - 'test -e /usr/local/bin/{{ symlink }}'
       - 'test ! -e /usr/bin/{{ symlink }}'
