@@ -35,6 +35,7 @@ python-pip:
     - hold: True
     - require:
       - pip: pip clients
+      - module: python-pip unhold
 
 python-pip ugly hold:
   file.managed:
@@ -61,7 +62,12 @@ python-pip ugly hold:
 
 {% endfor %}
 
-{% for holdies in ['python-glanceclient','python-novaclient','python-neutronclient','python-keystoneclient','python-pip']%}
+python-pip unhold:
+  module.run:
+    - name: pkg.unhold
+    - m_name: python-pip
+
+{% for holdies in ['python-glanceclient','python-novaclient','python-neutronclient','python-keystoneclient']%}
 {{ holdies }} hold:
   apt.held:
     - name: {{ holdies }}
