@@ -69,7 +69,7 @@ debconf-change-noninteractive:
 uwmadmin change:
   cmd.run:
     - name:
-      - /usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}
+      - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}'
       - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
     - onlyif: 'test -e /var/local/virl/servers.db'
