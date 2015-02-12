@@ -29,6 +29,12 @@ pip clients:
     - require:
       - pip: nova client
 
+python-pip:
+  pkg.removed:
+    - name: python-pip
+    - hold: True
+    - require:
+      - pip: pip clients
 
 {% for symlink in ['pip','keystone','neutron','glance','nova']%}
 /usr/bin/{{ symlink }}:
