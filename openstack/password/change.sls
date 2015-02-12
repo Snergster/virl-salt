@@ -1,6 +1,7 @@
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 {% set int_ip = salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' )) %}
 {% set accounts = ['root','keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
+{% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
 
 debconf-change:
   file.managed:
@@ -64,3 +65,11 @@ debconf-change-noninteractive:
     - host: {{ int_ip }}
     - password: {{ mypassword }}
 {% endfor %}
+
+uwmadmin change:
+  cmd.run:
+    - name:
+      - /usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
+    - onlyif: 'test -e /var/local/virl/servers.db'
