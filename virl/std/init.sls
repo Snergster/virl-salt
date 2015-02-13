@@ -14,10 +14,9 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
-{% if venv == 'qa' or venv == 'dev' %}
+
 include:
-    - openstack.new-osclients
-{% endif %}
+    - openstack.osclients
 
 {% if not masterless %}
 /var/cache/virl/std:
@@ -126,7 +125,6 @@ std docs local:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
 
-{% if venv == 'qa' or venv == 'dev' %}
 std_prereq:
   pip.installed:
     - order: 2
@@ -156,39 +154,6 @@ std_prereq:
       - Werkzeug
       - wsgiref
       - WTForms
-
-{% else %}
-
-std_prereq:
-  pip.installed:
-    - order: 2
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - names:
-      - ipaddr
-      - flask-sqlalchemy
-      - Flask
-      - Flask_Login
-      - Flask_RESTful
-      - Flask_WTF
-      - itsdangerous
-      - Jinja2
-      - lxml
-      - MarkupSafe
-      - mock
-      - requests
-      - paramiko
-      - pycrypto
-      - simplejson
-      - sqlalchemy
-      - tornado == 3.0.1
-      - websocket_client
-      - Werkzeug
-      - wsgiref
-      - WTForms
-
-{% endif %}
 
 VIRL_CORE:
   pip.installed:

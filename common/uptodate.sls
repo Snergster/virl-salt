@@ -1,3 +1,3 @@
-upgrade mess:
+upgrade host:
   pkg.uptodate:
     - refresh: True

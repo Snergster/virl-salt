@@ -30,21 +30,6 @@
 
 {% endif %}
 
-ank_init:
-  {% if masterless %}
-  file.copy:
-    - force: true
-    - source: /srv/salt/virl/ank/files/ank-webserver.init
-  {% else %}
-  file.managed:
-    - source: "salt://virl/ank/files/ank-webserver.init"
-  {% endif %}
-    - order: 2
-    - name: /etc/init.d/ank-webserver
-    - mode: 0755
-    - onlyif: 'test ! -e /etc/init.d/ank-webserver'
-
-
 /etc/init.d/ank-cisco-webserver:
   {% if not masterless %}
   file.managed:
@@ -59,6 +44,21 @@ ank_init:
       - grep {{ ank }} /etc/init.d/ank-cisco-webserver
 
 /etc/init.d/virl-vis:
+  file.absent
+
+/etc/rc2.d/S98virl-vis:
+  file.absent
+
+/etc/rc2.d/S98ank-webserver:
+  file.absent
+
+/etc/init.d/ank-webserver:
+  file.absent
+
+/etc/rc2.d/S98live-vis-webserver:
+  file.absent
+
+/etc/init.d/live-vis-webserver:
   file.absent
 
 /etc/init.d/virl-vis-processor:
@@ -83,10 +83,6 @@ ank_init:
   {% endif %}
     - mode: 0755
 
-/etc/init.d/live-vis-webserver remove:
-  file.absent:
-    - target: /etc/init.d/live-vis-webserver
-    - onlyif: ls /etc/init.d/live-vis-webserver
 
 /etc/init.d/virl-vis-webserver:
   {% if not masterless %}
@@ -99,14 +95,6 @@ ank_init:
   {% endif %}
     - mode: 0755
 
-/etc/init.d/ank-webserver port change:
-  file.replace:
-    - name: /etc/init.d/ank-webserver
-    - pattern: '.*--port.*"'
-    - repl: 'RUNNING_CMD="/usr/local/bin/ank_webserver --multi_user --port {{ ank }}"'
-    - unless: grep {{ ank }} /etc/init.d/ank-webserver
-    - require:
-      - file: ank_init
 
 /etc/init.d/ank-cisco-webserver port change:
   file.replace:
@@ -138,11 +126,6 @@ virl-vis-webserver port change:
         [Http Post]
         port={{ ank }}
 
-/etc/rc2.d/S98ank-webserver:
-  file.symlink:
-    - target: /etc/init.d/ank-webserver
-    - unless: ls /usr/local/bin/ank_cisco_webserver
-    - mode: 0755
 
 /etc/rc2.d/S98ank-cisco-webserver:
   file.symlink:
@@ -158,15 +141,6 @@ virl-vis-webserver port change:
     - onlyif: ls /usr/local/bin/ank_cisco_webserver
 
 
-/etc/rc2.d/S98live-vis-webserver absent:
-  file.absent:
-    - name: /etc/init.d/live-vis-webserver
-    - onlyif: ls /usr/local/bin/live-vis_webserver
-
-
-/etc/rc2.d/S98virl-vis absent:
-  file.absent:
-    - name: /etc/rc2.d/S98virl-vis
 
 /etc/rc2.d/S98virl-vis-processor:
   file.symlink:
@@ -189,8 +163,6 @@ virl-vis-webserver port change:
     - onlyif: 'test -e /etc/init.d/virl-vis-webserver'
     - mode: 0755
 
-
-
 ank_prereq:
   pip.installed:
     {% if proxy == true %}
@@ -207,7 +179,7 @@ ank_prereq:
       - netaddr
       - networkx
       - PyYAML
-      - tornado == 3.0.1
+      - tornado >= 3.2.2, < 4.0.0
 
 autonetkit check:
   pip.installed:
@@ -223,7 +195,6 @@ autonetkit check:
     - no_deps: True
     - use_wheel: True
     - no_index: True
-
     - require:
       - pip: ank_prereq
   cmd.wait:
@@ -234,9 +205,8 @@ autonetkit check:
       - pip: autonetkit check
 
 
-{% if venv == 'qa' or venv == 'dev' %}
 
-autonetkit_cisco alt:
+autonetkit_cisco:
   pip.installed:
     {% if ank_ver_fixed %}
     - name: autonet_cisco == {{ ank_cisco }}
@@ -258,48 +228,6 @@ autonetkit_cisco.so remove:
   file.absent:
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
 
-{% else %}
-
-autonetkit_cisco pip remove:
-  pip.removed:
-    - name: autonetkit_cisco
-
-
-autonetkit_cisco:
-  file.managed:
-    - order: 3
-    - source: salt://ank/{{ venv }}/autonetkit_cisco.so
-    - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
-    - require:
-      - pip: autonetkit check
-      - pip: autonetkit_cisco pip remove
-
-{% endif %}
-
-{% if venv == 'stable' %}
-
-autonetkit_cisco_webui stable:
-  pip.installed:
-    {% if ank_ver_fixed %}
-    - name: autonetkit_cisco_webui == {{ ank_webui }}
-    - find_links: "file:///var/cache/virl/fixed/ank"
-    - onlyif: ls /var/cache/virl/fixed/ank/autonetkit_cisco_webui*
-    {% else %}
-    - name: autonetkit_cisco_webui
-    - find_links: "file:///var/cache/virl/ank"
-    - onlyif: ls /var/cache/virl/ank/autonetkit_cisco_webui*
-    - upgrade: True
-    {% endif %}
-    - order: 4
-    - no_deps: True
-    - use_wheel: True
-    - no_index: True
-    - require:
-      - pip: autonetkit check
-
-{% endif %}
-
-{% if venv == 'qa' or venv == 'dev' %}
 
 autonetkit_cisco_webui:
   pip.installed:
@@ -313,12 +241,12 @@ autonetkit_cisco_webui:
     - onlyif: ls /var/cache/virl/ank/autonetkit_cisco_webui*
     - upgrade: True
     {% endif %}
-    - order: 4
     - no_deps: True
     - use_wheel: True
     - no_index: True
     - require:
       - pip: autonetkit check
+      - pip: autonetkit_cisco
   cmd.wait:
     - names:
       - wheel install-scripts autonetkit-cisco
@@ -401,13 +329,3 @@ virl-vis-mux:
     - restart: True
     - onchanges:
       - pip: virl_collection
-
-{% endif %}
-
-ank-webserver:
-  service:
-    - running
-    - enable: True
-    - restart: True
-    - onchanges:
-      - pip: autonetkit check
