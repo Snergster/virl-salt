@@ -14,6 +14,11 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
+{% if venv == 'qa' or venv == 'dev' %}
+include:
+    - openstack.new-osclients
+{% endif %}
+
 {% if not masterless %}
 /var/cache/virl/std:
   file.recurse:
