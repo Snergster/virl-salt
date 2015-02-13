@@ -16,7 +16,6 @@ UbuntuServertrusty:
   - disk_format: qcow2
   - copy_from: salt://images/salt/trusty-server-cloudimg-amd64-disk1.img
   - property-config_disk_type: cdrom
-  - property-hw_cdrom_type: ide
   - property-hw_disk_bus: virtio
   - property-hw_vif_model: virtio
   - property-release: 14.04
