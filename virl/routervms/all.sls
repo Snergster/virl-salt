@@ -18,12 +18,11 @@
 {% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
 
 include:
-  - .csr1000v
-  - .iosv
-  - .iosvl2
-  - .iosxrv
-  - .iosxrv432
-  - .server
-  - .vpagent
-  - .nxosv
-  
+  - .new-csr1000v
+  - .new-iosv
+  - .new-iosxrv
+  - .new-server
+  - .new-vpagent
+  - .new-nxosv
+  - .new-iosvl2
+  - .new-iosxrv52

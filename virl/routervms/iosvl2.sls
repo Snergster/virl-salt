@@ -1,43 +1,56 @@
-{% set onedev = salt['grains.get']('onedev', 'False') %}
-{% set iosv = salt['pillar.get']('routervms:iosv', False ) %}
+
 {% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
-{% set iosxrv = salt['pillar.get']('routervms:iosxrv', False ) %}
-{% set iosxrv432 = salt['pillar.get']('routervms:iosxrv432', False ) %}
-{% set nxosv = salt['pillar.get']('routervms:nxosv', False) %}
-{% set csr1000v = salt['pillar.get']('routervms:csr1000v', False) %}
-{% set vpagent = salt['pillar.get']('routervms:vpagent', False) %}
-{% set server = salt['pillar.get']('routervms:UbuntuServertrusty', True) %}
-
-{% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
-{% set iosxrv432pref = salt['pillar.get']('virl:iosxrv432', salt['grains.get']('iosxrv432', True)) %}
-{% set iosxrvpref = salt['pillar.get']('virl:iosxrv', salt['grains.get']('iosxrv', True)) %}
-{% set csr1000vpref = salt['pillar.get']('virl:csr1000v', salt['grains.get']('csr1000v', True)) %}
 {% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
-{% set nxosvpref = salt['pillar.get']('virl:nxosv', salt['grains.get']('nxosv', True)) %}
-{% set vpagentpref = salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', True)) %}
-{% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
-
-
-iosvl2absent:
-  file.absent:
-    - name: /home/virl/images/iosv-l2.pkg
-
-
-iosvl2 image:
 {% if iosvl2 and iosvl2pref %}
-  file.recurse:
-    - name: /home/virl/images
-    - file_mode: 755
-    - dir_mode: 755
-    - user: virl
-    - group: virl
-    - source: salt://images/salt/iosvl2
-  cmd.wait:
-    - name: /usr/local/bin/add-images-auto iosv-l2.pkg
-    - cwd: /home/virl/images
-    - watch:
-      - file: iosvl2 image
+
+IOSvl2:
+  glance.image_present:
+    - profile: virl
+    - name: 'IOSvl2'
+    - container_format: bare
+    - min_disk: 0
+    - min_ram: 0
+    - is_public: True
+    - checksum: cc24763225f7cbab7b3cef997558ecab
+    - protected: False
+    - disk_format: qcow2
+    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.qcow2
+    - property-config_disk_type: disk
+    - property-hw_cdrom_type: ide
+    - property-hw_disk_bus: virtio
+    - property-hw_vif_model: e1000
+    - property-release: 15.4.3.M
+    - property-serial: 2
+    - property-subtype: IOSv
+
+iosvl2 flavor delete:
+  cmd.run:
+    - name: 'nova flavor-delete "IOSvl2"'
+    - onlyif: nova flavor-list | grep -w "IOSvl2"
+    - onchanges:
+      - glance: IOSvl2
+
+IOSvl2 flavor create:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'IOSvl2'
+    - ram: 512
+    - disk: 0
+    - vcpus: 1
+    - onchanges:
+      - glance: IOSvl2
+    - require:
+      - cmd: IOSvl2 flavor delete
+
 {% else %}
-  file.exists:
-    - name: /home/virl/images
-{%endif%}
+
+IOSvl2 gone:
+  glance.image_absent:
+  - profile: virl
+  - name: 'IOSvl2'
+
+IOSvl2 flavor absent:
+  cmd.run:
+    - name: 'nova flavor-delete "IOSvl2"'
+    - onlyif: nova flavor-list | grep -w "IOSvl2"
+{% endif %}

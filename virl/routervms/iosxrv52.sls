@@ -1,45 +1,56 @@
-{% set onedev = salt['grains.get']('onedev', 'False') %}
-{% set iosv = salt['pillar.get']('routervms:iosv', False ) %}
-{% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
-{% set iosxrv = salt['pillar.get']('routervms:iosxrv', False ) %}
-{% set iosxrv432 = salt['pillar.get']('routervms:iosxrv432', False ) %}
-{% set nxosv = salt['pillar.get']('routervms:nxosv', False) %}
-{% set csr1000v = salt['pillar.get']('routervms:csr1000v', False) %}
-{% set vpagent = salt['pillar.get']('routervms:vpagent', False) %}
-{% set server = salt['pillar.get']('routervms:UbuntuServertrusty', True) %}
 {% set iosxrv52 = salt['pillar.get']('routervms:iosxrv52', False ) %}
 {% set iosxrv52pref = salt['pillar.get']('virl:iosxrv52', salt['grains.get']('iosxrv52', False)) %}
-{% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
-{% set iosxrv432pref = salt['pillar.get']('virl:iosxrv432', salt['grains.get']('iosxrv432', True)) %}
-{% set iosxrvpref = salt['pillar.get']('virl:iosxrv', salt['grains.get']('iosxrv', True)) %}
-{% set csr1000vpref = salt['pillar.get']('virl:csr1000v', salt['grains.get']('csr1000v', True)) %}
-{% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
-{% set nxosvpref = salt['pillar.get']('virl:nxosv', salt['grains.get']('nxosv', True)) %}
-{% set vpagentpref = salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', True)) %}
-{% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
 
-
-iosxrvabsent:
-  file.absent:
-    - name: /home/virl/images/iosxrv52.pkg
-
-iosxrv52 image:
 {% if iosxrv52 and iosxrv52pref %}
-  file.recurse:
-    - name: /home/virl/images
-    - file_mode: 755
-    - dir_mode: 755
-    - user: virl
-    - group: virl
-    - source: salt://images/salt/iosxrv52
+iosxrv52:
+  glance.image_present:
+  - profile: virl
+  - name: 'IOS XRv52'
+  - container_format: bare
+  - min_disk: 0
+  - min_ram: 0
+  - is_public: True
+  - checksum: dbbd206a25ac19ba5b4a1b1f65aed911
+  - protected: False
+  - disk_format: qcow2
+  - copy_from: salt://images/salt/iosxrv-k9-demo-5.2.2.qcow2
+  - property-config_disk_type: cdrom
+  - property-hw_cdrom_type: id
+  - property-hw_disk_bus: ide
+  - property-hw_vif_model: virtio
+  - property-release: 5.2.2
+  - property-serial: 3
+  - property-subtype: 'IOS XRv'
+
+
+iosxrv52 flavor delete:
+  cmd.run:
+    - name: 'nova flavor-delete "IOS XRv52"'
+    - onlyif: nova flavor-list | grep -w "IOS XRv52"
+    - onchanges:
+      - glance: iosxrv52
+
+iosxrv52 flavor create:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'IOS XRv52'
+    - ram: 3096
+    - disk: 0
+    - vcpus: 1
+    - onchanges:
+      - glance: iosxrv52
     - require:
-      - file: iosxrvabsent
-  cmd.wait:
-    - name: /usr/local/bin/add-images-auto iosxrv52.pkg
-    - cwd: /home/virl/images
-    - watch:
-      - file: iosxrv52 image
+      - cmd: iosxrv52 flavor delete
+
 {% else %}
-  file.exists:
-    - name: /home/virl/images
-{%endif%}
+
+iosxrv52 gone:
+  glance.image_absent:
+  - profile: virl
+  - name: 'IOS XRv52'
+
+iosxrv52 flavor absent:
+  cmd.run:
+    - name: 'nova flavor-delete "IOS XRv52"'
+    - onlyif: nova flavor-list | grep -w "IOS XRv52"
+{% endif %}
