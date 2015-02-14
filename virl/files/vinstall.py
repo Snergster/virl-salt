@@ -5,7 +5,7 @@
 """virl install.
 
 Usage:
-  foo.py zero | first | second | third | fourth | salt | test | test1 | iso | wrap | desktop | rehost | renumber | compute | all | images | password | vmm | routervms | users | vinstall | host | mini
+  foo.py zero | first | second | third | fourth | salt | test | test1 | iso | wrap | desktop | rehost | renumber | compute | all | images | password | vmm | routervms | users | vinstall | host | mini | highstate
 
 Options:
   --version             shows program's version number and exit
@@ -1001,7 +1001,11 @@ if __name__ == "__main__":
         call_salt('virl.routervms')
     if varg['vmm']:
         call_salt('virl.vmm.download')
-
+    if varg['highstate']:
+        if masterless:
+            subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.highstate'])
+        else:
+            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
     if varg['salt']:
         building_salt_all()
     if varg['users']:
