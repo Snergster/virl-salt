@@ -1006,6 +1006,7 @@ if __name__ == "__main__":
         call_salt('virl.routervms')
     if varg['vmm']:
         call_salt('virl.vmm.download')
+        call_salt('virl.vmm.local')
     if varg['highstate']:
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.highstate'])
