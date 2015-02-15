@@ -781,7 +781,7 @@ if __name__ == "__main__":
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.highstate'])
         else:
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
+            subprocess.call(['sudo', 'salt-call', 'state.highstate'])
         sleep(10)
 
     if varg['vinstall'] or varg['upgrade']:
