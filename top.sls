@@ -4,27 +4,22 @@ base:
 
   '^.{9}virledu.info$':
     - match: pcre
-    - virl.std
-    - virl.ank
+    - common.virl
 
   '^.{9}virl.info$':
     - match: pcre
-    - virl.std
-    - virl.ank
+    - common.virl
 
   '^.{9}devnet.info$':
     - match: pcre
-    - virl.std
-    - virl.ank
+    - common.virl
+
 
   '^.*innopod.info$':
     - match: pcre
-    - virl.std
-    - virl.ank
-    - virl.vmm.download
+    - common.virl
+
 
   '.*cisco.com$':
     - match: pcre
-    - virl.std
-    - virl.ank
-    - virl.vmm.download
+    - common.virl
