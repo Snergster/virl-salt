@@ -54,7 +54,7 @@
 
 /etc/init.d/ank-webserver:
   file.absent:
-    -name: /etc/init.d/ank-webserver
+    - name: /etc/init.d/ank-webserver
   service.dead:
     - names:
       - ank-webserver
