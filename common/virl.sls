@@ -31,7 +31,7 @@ mypkgs:
       - lxc
       - python-dulwich
 
-qemu hold:
+qemu common virl hold:
   apt.held:
     - name: qemu-kvm
     - require:
