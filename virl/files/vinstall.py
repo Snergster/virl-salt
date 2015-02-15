@@ -804,6 +804,9 @@ if __name__ == "__main__":
         building_salt_all()
         sleep(8)
         call_salt('openstack.neutron')
+        novaclient = '/home/virl/.novaclient'
+        if path.exists(novaclient):
+            subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
 
     if varg['third'] or varg['all']:
         if cinder:
@@ -985,6 +988,8 @@ if __name__ == "__main__":
         create_basic_networks()
         if guest_account:
             call_salt('virl.guest')
+        if path.exists(novaclient):
+            subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
         User_Creator(user_list, user_list_limited)
         subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
