@@ -1015,6 +1015,9 @@ if __name__ == "__main__":
         sleep(30)
     if varg['host']:
         call_salt('virl.host')
+    if varg['upgrade']:
+        call_salt('openstack.restart')
+        sleep(15)
     if varg['routervms'] or varg['upgrade']:
         call_salt('virl.routervms')
     if varg['vmm'] or varg['upgrade']:
