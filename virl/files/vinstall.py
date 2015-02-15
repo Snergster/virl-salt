@@ -1017,8 +1017,10 @@ if __name__ == "__main__":
         call_salt('virl.host')
     if varg['upgrade']:
         call_salt('openstack.restart')
+        if path.exists(novaclient):
+            subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
         sleep(15)
-    if varg['routervms'] or varg['upgrade']:
+    if varg['routervms']:
         call_salt('virl.routervms')
     if varg['vmm'] or varg['upgrade']:
         call_salt('virl.vmm.download')
