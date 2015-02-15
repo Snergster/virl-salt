@@ -53,7 +53,13 @@
   file.absent
 
 /etc/init.d/ank-webserver:
-  file.absent
+  file.absent:
+    -name: /etc/init.d/ank-webserver
+  service.dead:
+    - names:
+      - ank-webserver
+    - prereq:
+      - file: /etc/init.d/ank-webserver
 
 /etc/rc2.d/S98live-vis-webserver:
   file.absent
@@ -134,12 +140,6 @@ virl-vis-webserver port change:
     - mode: 0755
     - require:
       - pip: autonetkit_cisco
-
-/etc/rc2.d/S98ank-webserver absent:
-  file.absent:
-    - name: /etc/init.d/ank-webserver
-    - onlyif: ls /usr/local/bin/ank_cisco_webserver
-
 
 
 /etc/rc2.d/S98virl-vis-processor:
