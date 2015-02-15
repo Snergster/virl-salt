@@ -5,7 +5,7 @@
 """virl install.
 
 Usage:
-  foo.py zero | first | second | third | fourth | salt | test | test1 | iso | wrap | desktop | rehost | renumber | compute | all | images | password | vmm | routervms | users | vinstall | host | mini | highstate
+  foo.py zero | first | second | third | fourth | salt | test | test1 | iso | wrap | desktop | rehost | renumber | compute | all | upgrade | password | vmm | routervms | users | vinstall | host | mini | highstate
 
 Options:
   --version             shows program's version number and exit
@@ -777,6 +777,21 @@ if __name__ == "__main__":
         print ' Your salt key needs to be accepted by salt master before continuing\n'
         print ' You can test with salt-call test.ping for ok result'
 
+    if varg['highstate'] or varg['upgrade']:
+        if masterless:
+            subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.highstate'])
+        else:
+            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
+        sleep(10)
+
+    if varg['vinstall'] or varg['upgrade']:
+        call_salt('virl.vinstall')
+        sleep(2)
+
+    if varg['upgrade']:
+        building_salt_all()
+        sleep(10)
+
     if varg['first']:
         for _each in ['common.virl', 'virl.basics']:
             call_salt(_each)
@@ -786,7 +801,7 @@ if __name__ == "__main__":
         call_salt('virl.openrc')
         print 'Please validate the contents of /etc/network/interfaces before rebooting!'
 
-    if varg['second'] or varg['all']:
+    if varg['second'] or varg['all'] or varg['upgrade']:
         for _each in ['openstack.mysql', 'openstack.rabbitmq', 'openstack.keystone.install', 'openstack.keystone.setup',
                       'openstack.keystone.endpoint', 'openstack.osclients', 'virl.openrc', 'openstack.glance']:
             call_salt(_each)
@@ -808,7 +823,7 @@ if __name__ == "__main__":
         if path.exists(novaclient):
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
 
-    if varg['third'] or varg['all']:
+    if varg['third'] or varg['all'] or varg['upgrade']:
         if cinder:
             call_salt('openstack.cinder.install')
             if cinder_file:
@@ -848,13 +863,13 @@ if __name__ == "__main__":
         if heat:
             call_salt('openstack.heat')
 
-    if varg['fourth'] or varg['mini'] or varg['all']:
+    if varg['fourth'] or varg['mini'] or varg['all'] or varg['upgrade']:
         call_salt('openstack.nova.install')
         building_salt_all()
         sleep(5)
         call_salt('openstack.neutron.changes')
 
-    if varg['fourth'] or varg['all']:
+    if varg['fourth'] or varg['all'] or varg['upgrade']:
         if masterless:
             call_salt('virl.std')
             call_salt('virl.ank')
@@ -1000,24 +1015,17 @@ if __name__ == "__main__":
         sleep(30)
     if varg['host']:
         call_salt('virl.host')
-    if varg['routervms']:
+    if varg['routervms'] or varg['upgrade']:
         call_salt('virl.routervms')
-    if varg['images']:
-        call_salt('virl.routervms')
-    if varg['vmm']:
+    if varg['vmm'] or varg['upgrade']:
         call_salt('virl.vmm.download')
         call_salt('virl.vmm.local')
-    if varg['highstate']:
-        if masterless:
-            subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.highstate'])
-        else:
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
+
     if varg['salt']:
         building_salt_all()
     if varg['users']:
         User_Creator(user_list, user_list_limited)
-    if varg['vinstall']:
-        call_salt('virl.vinstall')
+
     if varg['wrap']:
         sshdir = '/home/virl/.ssh'
         if not path.exists(sshdir):
