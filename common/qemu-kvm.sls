@@ -1,7 +1,7 @@
 qemu_kvm unhold:
   module.run:
     - name: pkg.unhold
-    - m_name: qemu_kvm
+    - m_name: qemu-kvm
 
 manual qemu-kvm:
   pkg.uptodate:

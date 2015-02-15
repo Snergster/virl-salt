@@ -251,7 +251,6 @@ autonetkit_cisco_webui:
     - names:
       - wheel install-scripts autonetkit-cisco
       - service ank-cisco-webserver start
-      - rm -f /etc/init.d/ank-webserver
     - onchanges:
       - pip: autonetkit_cisco_webui
 
@@ -291,8 +290,6 @@ virl_collection:
       - service virl-vis-webserver start
       - service virl-vis-processor start
       - service virl-vis-mux start
-      - rm -f /etc/init.d/ank-webserver
-      - rm -f /etc/rc2.d/S98ank-webserver
     - onchanges:
       - pip: virl_collection
 
