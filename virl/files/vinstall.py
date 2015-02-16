@@ -1003,6 +1003,7 @@ if __name__ == "__main__":
         create_basic_networks()
         if guest_account:
             call_salt('virl.guest')
+        novaclient = '/home/virl/.novaclient'
         if path.exists(novaclient):
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
         User_Creator(user_list, user_list_limited)
@@ -1016,6 +1017,7 @@ if __name__ == "__main__":
     if varg['host']:
         call_salt('virl.host')
     if varg['upgrade']:
+        novaclient = '/home/virl/.novaclient'
         call_salt('openstack.restart')
         if path.exists(novaclient):
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
