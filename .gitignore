@@ -4,6 +4,7 @@ images/*
 vmm/*
 std/*
 .idea/*
+/virl/files/.idea/*
 atlassian-ide-plugin.xml
 .gitignore
 *~

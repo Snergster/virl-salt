@@ -23,6 +23,12 @@ VMMlinux:
       - file: VMMdircreate
       - pkg: vmmpkgs
 
+VMMdir virl owned:
+  cmd.run:
+    - name: 'chown -R virl:virl /home/virl/VMMaestro-linux'
+    - require:
+      - module: VMMlinux
+      
 vmmpkgs:
   pkg.installed:
       - pkgs:
@@ -32,4 +38,3 @@ vmmpkgs:
         - libxml2-dev
         - libxslt1-dev
         - unzip
-        
