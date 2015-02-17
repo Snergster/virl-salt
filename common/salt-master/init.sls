@@ -11,6 +11,30 @@ salt-master install:
       - unless:
         - ls /usr/bin/salt-master
 
+pip backup only:
+  pkg.installed:
+    - name: python-pip
+    - unless: ls /usr/bin/pip
+
+M2Crypto:
+  pip.installed:
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - upgrade: True
+    - require:
+      - pkg: pip backup only
+
+
+msgpack-python:
+  pip.installed:
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - upgrade: True
+    - require:
+      - pkg: pip backup only
+
 pki dir exists:
   file.directory:
     - name: /etc/salt/pki
