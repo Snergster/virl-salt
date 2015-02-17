@@ -12,6 +12,9 @@ nova client:
     - refresh: False
     - name: python-novaclient
 
+libffi-dev for rackspace:
+  pkg.installed:
+    - name: libffi-dev
 
 pip clients:
   pip.installed:
@@ -28,6 +31,7 @@ pip clients:
       - oslo.messaging == 1.6.0
     - require:
       - pip: nova client
+      - pkg: libffi-dev for rackspace
 
 python-pip:
   pkg.removed:
