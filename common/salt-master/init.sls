@@ -16,21 +16,23 @@ pip backup only:
     - name: python-pip
     - unless: ls /usr/bin/pip
 
-M2Crypto:
+M2Crypto backup:
   pip.installed:
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
     - upgrade: True
+    - name: M2Crypto
     - require:
       - pkg: pip backup only
 
 
-msgpack-python:
+msgpack-python backup:
   pip.installed:
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
+    - name: msgpack-python
     - upgrade: True
     - require:
       - pkg: pip backup only
