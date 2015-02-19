@@ -9,7 +9,7 @@ nova client:
     - proxy: {{ http_proxy }}
 {% endif %}
     - refresh: False
-    - name: python-novaclient == 0.20.0
+    - name: python-novaclient == 2.20.0
 
 libffi-dev for rackspace:
   pkg.installed:
