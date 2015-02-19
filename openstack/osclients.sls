@@ -8,7 +8,6 @@ nova client:
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - upgrade: True
     - refresh: False
     - name: python-novaclient == 0.20.0
 
