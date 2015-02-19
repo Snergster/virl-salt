@@ -2,6 +2,64 @@
 {% set enable_horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)) %}
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
+
+{% if cml %}
+/srv/salt/virl/files/cmlweb.tar:
+  file.managed:
+    - source: 'salt://virl/files/cmlweb.tar'
+    - mode: 755
+    - user: virl
+    - group: virl
+    - require:
+      - pkg: horizon-pkgs
+      
+
+apache overwrite:
+  archive:
+    - extracted
+    - name: /var/www/html
+    - source: file:///srv/salt/virl/files/cmlweb.tar
+    - source_hash: md5=d67f85b69bc80bb1ac4e2592d20a4c83
+    - archive_format: tar
+    - onchanges:
+      - file: apache dir remove
+
+apache dir remove:
+  file.absent:
+    - name: /var/www/html
+    - onchanges:
+      - file: /srv/salt/virl/files/cmlweb.tar
+
+{% else %}
+
+/srv/salt/virl/files/virlweb.tar:
+  file.managed:
+    - source: 'salt://virl/files/virlweb.tar'
+    - mode: 755
+    - user: virl
+    - group: virl
+    - require:
+      - pkg: horizon-pkgs
+
+
+apache overwrite:
+  archive:
+    - extracted
+    - name: /var/www/html
+    - source: file:///srv/salt/virl/files/virlweb.tar
+    - source_hash: md5=b1a24317d5937caeba82fbc049f5055f
+    - archive_format: tar
+    - onchanges:
+      - file: apache dir remove
+
+
+apache dir remove:
+  file.absent:
+    - name: /var/www/html
+    - onchanges:
+      - file: /srv/salt/virl/files/virlweb.tar
+{% endif %}
 
 {% if enable_horizon == True %}
 
@@ -69,30 +127,6 @@ horizon-restart:
         service memcached restart
 {% endif %}
 
-apache overwrite:
-  file.recurse:
-    - name: /var/www/html
-    - source: salt://files/virlweb
-    - user: root
-    - group: root
-    - unless: 'test -e /srv/salt/virl/files/virlweb.tar'
-    - file_mode: 755
-
-apache tar overwrite:
-  archive:
-    - extracted
-    - name: /var/www/html
-    - source: file:///srv/salt/virl/files/virlweb.tar
-    - source_hash: md5=b1a24317d5937caeba82fbc049f5055f
-    - archive_format: tar
-    - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
-    - require:
-      - file: apache dir remove
-
-apache dir remove:
-  file.absent:
-    - name: /var/www/html
-    - onlyif: 'test -e /srv/salt/virl/files/virlweb.tar'
 
 uwm port replace:
   file.replace:

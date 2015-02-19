@@ -10,7 +10,7 @@ nova client:
 {% endif %}
     - upgrade: True
     - refresh: False
-    - name: python-novaclient
+    - name: python-novaclient == 0.20.0
 
 libffi-dev for rackspace:
   pkg.installed:
