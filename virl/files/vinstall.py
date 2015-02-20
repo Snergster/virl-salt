@@ -789,6 +789,7 @@ if __name__ == "__main__":
         sleep(2)
 
     if varg['upgrade']:
+        call_salt('common.pip')
         building_salt_all()
         sleep(10)
 
