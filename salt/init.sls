@@ -1,4 +1,4 @@
-/usr/local/lib/python2.7/dist-packages/salt/utils/openstack/nova.py:
+/usr/lib/python2.7/dist-packages/salt/utils/openstack/nova.py:
   file.managed:
     - source: 'salt://salt/files/nova.py'
     - mode: 0644
@@ -9,7 +9,7 @@
     - watch:
       - file: /usr/local/lib/python2.7/dist-packages/salt/utils/openstack/nova.py
 
-/usr/local/lib/python2.7/dist-packages/salt/utils/openstack/neutron.py:
+/usr/lib/python2.7/dist-packages/salt/utils/openstack/neutron.py:
   file.managed:
     - source: 'salt://salt/files/neutron.py'
     - mode: 0644
