@@ -3,6 +3,7 @@
 
 include:
   - openstack.repo
+  - common.pip
 
 virl-group:
   group.present:
@@ -38,10 +39,6 @@ sudoer-defaults:
           - Defaults:virl secure_path=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/opt:/opt/bin:/opt/support
           - Defaults env_keep += "http_proxy https_proxy HTTP_PROXY HTTPS_PROXY OS_TENANT_NAME OS_USERNAME OS_PASSWORD OS_AUTH_URL"
 
-python-pip:
-  pkg.installed:
-   - refresh: True
-
 openssh-server:
   pkg.installed:
    - refresh: False
@@ -54,7 +51,6 @@ crudini:
 {{ pyreq }}:
   pip.installed:
     - require:
-      - pkg: python-pip
       - file: first-vinstall
     {% if ifproxy == True %}
     {% set proxy = salt['grains.get']('http proxy', 'None') %}
