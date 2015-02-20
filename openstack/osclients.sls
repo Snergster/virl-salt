@@ -15,6 +15,14 @@ libffi-dev for rackspace:
   pkg.installed:
     - name: libffi-dev
 
+pip hard up:
+  pip.installed:
+    - name: pip
+    {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+    {% endif %}
+    - upgrade: True
+
 pip clients:
   pip.installed:
     - skip_verify: True
@@ -39,6 +47,7 @@ python-pip:
     - require:
       - pip: pip clients
       - module: python-pip unhold
+      - pip: pip hard up
 
 python-pip ugly hold:
   file.managed:
