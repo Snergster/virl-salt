@@ -51,6 +51,13 @@ pip clients:
 
 {% for holdies in ['python-glanceclient','python-novaclient','python-neutronclient','python-keystoneclient']%}
 {{ holdies }} hold:
-  apt.held:
-    - name: {{ holdies }}
+  file.managed:
+    - name: /etc/apt/preferences.d/{{holdies}}
+    - require:
+      - pip: pip clients
+    - contents: |
+        Package: {{holdies}}
+        Pin: release *
+        Pin-Priority: -1
+
 {% endfor %}
