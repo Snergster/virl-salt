@@ -49,7 +49,7 @@ python-pip ugly hold:
     - name: /etc/apt/preferences.d/python-pip
     - require:
       - pkg: python-pip
-      - contents: |
-      Package: python-pip
-      Pin: release *
-      Pin-Priority: -1
+    - contents: |
+        Package: python-pip
+        Pin: release *
+        Pin-Priority: -1
