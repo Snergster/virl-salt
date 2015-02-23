@@ -11,6 +11,7 @@ all-restart:
         service nova-conductor restart
         service nova-compute restart
         service nova-novncproxy restart
+        service nova-serialproxy restart
         service neutron-server restart
         service neutron-dhcp-agent restart
         service neutron-l3-agent restart
