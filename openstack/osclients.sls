@@ -1,6 +1,7 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 nova client:
   pip.installed:
@@ -48,6 +49,7 @@ pip clients:
 
 {% endfor %}
 
+{% if not masterless %}
 
 {% for holdies in ['python-glanceclient','python-novaclient','python-neutronclient','python-keystoneclient']%}
 {{ holdies }} hold:
@@ -61,3 +63,5 @@ pip clients:
         Pin-Priority: -1
 
 {% endfor %}
+{% endif %}
+
