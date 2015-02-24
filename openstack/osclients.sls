@@ -28,6 +28,7 @@ pip clients:
       - python-glanceclient == 0.15.0
       - python-keystoneclient == 1.0.0
       - python-neutronclient == 2.3.4
+      - oslo.config == 1.60
       - oslo.rootwrap == 1.5.0
       - oslo.messaging == 1.6.0
     - require:
