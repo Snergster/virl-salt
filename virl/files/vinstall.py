@@ -901,6 +901,7 @@ if __name__ == "__main__":
         subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/Reboot4.desktop'])
         print ('You need to restart now')
         print 'testing'
     if varg['test1']:
@@ -919,6 +920,7 @@ if __name__ == "__main__":
         subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/Reboot4.desktop'])
         print ('You need to restart now')
         print 'testing'
     if varg['compute']:
@@ -1013,6 +1015,7 @@ if __name__ == "__main__":
         subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/Reboot4.desktop'])
         print ('You need to restart now')
         sleep(30)
     if varg['host']:
