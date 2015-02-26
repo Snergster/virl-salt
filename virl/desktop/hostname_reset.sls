@@ -7,10 +7,10 @@
     - contents: |
          [Desktop Entry]
          Version=1.0
-         Name=Hostname
+         Name=Hostname-reset
          Comment=Hostname reset
-         Exec=/usr/bin/salt-call state.sls virl.hostname
+         Exec=/usr/bin/sudo /usr/bin/salt-call --local state.sls virl.hostname
          Icon=/usr/share/icons/gnome/48x48/status/computer-fail.png
-         Terminal=false
+         Terminal=true
          Type=Application
          Categories=Utility;Application;
