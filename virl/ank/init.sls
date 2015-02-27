@@ -34,12 +34,13 @@
   {% if not masterless %}
   file.managed:
     - source: "salt://virl/ank/files/ank-cisco-webserver.init"
+    - mode: 0755
   {% else %}
   file.copy:
     - force: true
     - source: /srv/salt/virl/ank/files/ank-cisco-webserver.init
+    - mode: 755
   {% endif %}
-    - mode: 0755
     - unless:
       - grep {{ ank }} /etc/init.d/ank-cisco-webserver
 
@@ -71,35 +72,39 @@
   {% if not masterless %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-processor.init"
+    - mode: 0755
   {% else %}
   file.copy:
     - force: true
     - source: /srv/salt/virl/ank/files/virl-vis-processor.init
+    - mode: 755
   {% endif %}
-    - mode: 0755
 
 /etc/init.d/virl-vis-mux:
   {% if not masterless %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-mux.init"
+    - mode: 0755
   {% else %}
   file.copy:
     - force: true
-    - source: /srv/salt/virl/ank/files/virl-vis-mux.init
+    - source: /srv/salt/virl/ank/files/virl-vis-mux.init    
+    - mode: 755
   {% endif %}
-    - mode: 0755
+
 
 
 /etc/init.d/virl-vis-webserver:
   {% if not masterless %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-webserver.init"
+    - mode: 0755
   {% else %}
   file.copy:
     - force: true
     - source: /srv/salt/virl/ank/files/virl-vis-webserver.init
+    - mode: 755
   {% endif %}
-    - mode: 0755
 
 
 /etc/init.d/ank-cisco-webserver port change:
