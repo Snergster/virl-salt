@@ -5,7 +5,7 @@
 asav:
   glance.image_present:
     - profile: virl
-    - name: 'asav'
+    - name: 'ASAv'
     - container_format: bare
     - min_disk: 0
     - min_ram: 0
@@ -46,7 +46,7 @@ asav flavor create:
 asav gone:
   glance.image_absent:
   - profile: virl
-  - name: 'asav'
+  - name: 'ASAv'
 
 asav flavor absent:
   cmd.run:
