@@ -24,15 +24,15 @@ asav:
 
 asav flavor delete:
   cmd.run:
-    - name: 'nova flavor-delete "asav"'
-    - onlyif: nova flavor-list | grep -w "asav"
+    - name: 'nova flavor-delete "ASAv"'
+    - onlyif: nova flavor-list | grep -w "ASAv"
     - onchanges:
       - glance: asav
 
 asav flavor create:
   module.run:
     - name: nova.flavor_create
-    - m_name: 'asav'
+    - m_name: 'ASAv'
     - ram: 2048
     - disk: 0
     - vcpus: 1
@@ -50,6 +50,6 @@ asav gone:
 
 asav flavor absent:
   cmd.run:
-    - name: 'nova flavor-delete "asav"'
-    - onlyif: nova flavor-list | grep -w "asav"
+    - name: 'nova flavor-delete "ASAv"'
+    - onlyif: nova flavor-list | grep -w "ASAv"
 {% endif %}
