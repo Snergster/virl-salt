@@ -3,7 +3,9 @@
 {% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
 
-
+import:
+  - openstack.keystone.install
+  
 glance endpoint:
   keystone.endpoint_present:
     - name: glance
@@ -21,7 +23,7 @@ keystone endpoint:
     - adminurl: http://{{ public_ip }}:35357/v2.0
     - require:
       - keystone: key-db-sync
-      
+
 neutron endpoint:
   keystone.endpoint_present:
     - name: neutron

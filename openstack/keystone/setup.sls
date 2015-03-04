@@ -2,6 +2,12 @@
 {% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 
+
+import:
+  - openstack.keystone.install
+
+
+
 Keystone tenants:
   keystone.tenant_present:
     - require:
