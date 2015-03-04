@@ -3,6 +3,11 @@
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
+include:
+  - openstack.neutron
+  - openstack.nova.install
+  - openstack.keystone
+
 nova client:
   pip.installed:
     - skip_verify: True
@@ -65,4 +70,3 @@ pip clients:
 
 {% endfor %}
 {% endif %}
-
