@@ -4,9 +4,9 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 include:
-  - openstack.neutron
-  - openstack.nova.install
   - openstack.keystone
+  - openstack.nova.install
+  - openstack.neutron
 
 nova client:
   pip.installed:
