@@ -37,4 +37,6 @@ keystone db-sync:
 
 key-db-sync:
   cmd.run:
-    - name: service keystone restart
+    - names:
+    - 'service keystone restart'
+    - 'sleep 15'
