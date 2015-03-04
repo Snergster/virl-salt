@@ -15,9 +15,6 @@
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
 
-include:
-    - openstack.osclients
-
 {% if not masterless %}
 /var/cache/virl/std:
   file.recurse:
@@ -34,7 +31,6 @@ include:
       {% endif %}
     {% endif %}
     - clean: true
-    - order: 1
     - user: virl
     - group: virl
     - file_mode: 755
@@ -42,14 +38,12 @@ include:
 
 uwm_init:
   file.managed:
-    - order: 4
     - name: /etc/init.d/virl-uwm
     - source: "salt://virl/std/files/virl-uwm.init"
     - mode: 0755
 
 std_init:
   file.managed:
-    - order: 3
     - name: /etc/init.d/virl-std
     - source: "salt://virl/std/files/virl-std.init"
     - mode: 0755
@@ -67,7 +61,6 @@ std docs:
 
 std_init local:
   file.managed:
-    - order: 3
     - name: /etc/init.d/virl-std
     - source: "file:///srv/salt/virl/std/files/virl-std.init"
     - source_hash: md5=a143c518d8a7942c96bce306e83e8fb8
@@ -75,7 +68,6 @@ std_init local:
 
 uwm_init local:
   file.managed:
-    - order: 3
     - name: /etc/init.d/virl-uwm
     - source: "file:///srv/salt/virl/std/files/virl-uwm.init"
     - source_hash: md5=97697ed887ccdd534e46fa4cabf16877
@@ -93,37 +85,6 @@ std docs local:
 
 
 {% endif %}
-
-/etc/virl directory:
-  file.directory:
-    - name: /etc/virl
-    - dir_mode: 755
-
-/etc/virl/common.cfg:
-  file.touch:
-    - require:
-      - file: /etc/virl directory
-    - onlyif: 'test ! -e /etc/virl/common.cfg'
-
-
-/etc/virl/virl.cfg:
-  file.managed:
-    - replace: false
-    - order: 3
-    - makedirs: true
-    - mode: 0644
-
-
-/etc/rc2.d/S98virl-std:
-  file.symlink:
-    - order: 6
-    - target: /etc/init.d/virl-std
-    - mode: 0755
-
-/etc/rc2.d/S98virl-uwm:
-  file.symlink:
-    - target: /etc/init.d/virl-uwm
-    - mode: 0755
 
 std_prereq:
   pip.installed:
@@ -218,6 +179,36 @@ virl init:
     - run
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
+
+/etc/virl directory:
+  file.directory:
+    - name: /etc/virl
+    - dir_mode: 755
+
+/etc/virl/common.cfg:
+  file.touch:
+    - require:
+      - file: /etc/virl directory
+    - onlyif: 'test ! -e /etc/virl/common.cfg'
+
+
+/etc/virl/virl.cfg:
+  file.managed:
+    - replace: false
+    - makedirs: true
+    - mode: 0644
+
+
+/etc/rc2.d/S98virl-std:
+  file.symlink:
+    - target: /etc/init.d/virl-std
+    - mode: 0755
+
+/etc/rc2.d/S98virl-uwm:
+  file.symlink:
+    - target: /etc/init.d/virl-uwm
+    - mode: 0755
+
 
 virl-std:
   service:
