@@ -37,7 +37,4 @@ keystone db-sync:
 
 key-db-sync:
   cmd.run:
-    - order: last
     - name: service keystone restart
-    - onchanges:
-      - cmd: keystone db-sync
