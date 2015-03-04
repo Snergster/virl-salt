@@ -260,7 +260,7 @@ lubuntu-desktop:
 
 /usr/share/themes/Lubuntu-default:
   file.recurse:
-    - source: "salt://files/Clearlooks"
+    - source: "salt://virl/files/Clearlooks"
     - user: virl
     - group: virl
     - unless: 'test -e /srv/salt/virl/files/Clearlooks'
