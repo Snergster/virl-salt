@@ -3,9 +3,9 @@
 {% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
 
-import:
+include:
   - openstack.keystone.install
-  
+
 glance endpoint:
   keystone.endpoint_present:
     - name: glance

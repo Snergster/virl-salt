@@ -3,7 +3,7 @@
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 
 
-import:
+include:
   - openstack.keystone.install
 
 
