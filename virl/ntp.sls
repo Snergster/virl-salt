@@ -3,7 +3,6 @@
 ntp:
   pkg:
     - installed
-    - order: 1
   service:
     - running
     - enable: True
@@ -11,30 +10,24 @@ ntp:
 
 ntpdate:
   pkg:
-    - order: 2
     - installed
 
 /etc/ntp.conf:
   file.replace:
-    - order: 4
     - pattern: ^server.*
     - repl: server {{ ntp_server }} iburst
-    - require:
-      - pkg: ntp
+    - onlyif: ls /usr/sbin/ntpd
 
 ntp stop:
     cmd.run:
-      - order: 5
       - name: service ntp stop
 
 ntpdate sync:
     cmd.run:
-      - order: 6
       - name: ntpdate {{ ntp_server }}
 
 ntp start:
     cmd.run:
-      - order: 7
       - name: service ntp start
 
 /etc/init/ntpd.conf:
