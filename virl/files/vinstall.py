@@ -5,7 +5,7 @@
 """virl install.
 
 Usage:
-  foo.py zero | first | second | third | fourth | salt | test | test1 | iso | wrap | desktop | rehost | renumber | compute | all | upgrade | password | vmm | routervms | users | vinstall | host | mini | highstate
+  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | wrap | desktop | rehost | renumber | compute | all | upgrade | password | vmm | routervms | users | vinstall | host | mini | highstate
 
 Options:
   --version             shows program's version number and exit
@@ -356,8 +356,14 @@ def building_salt_all():
                                            .format(ospassword=ospassword)], shell=True)[1:33])
     else:
         admin_tenid = ''
-        neutron_extnet_id = ''
         service_tenid = ''
+    if path.exists('/usr/local/bin/neutron') or path.exists('/usr/bin/neutron'):
+        neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
+                                            ' net-list | grep -w "ext-net" | cut -d "|" -f2'
+                                           .format(ospassword=ospassword)], shell=True)[1:33])
+    else:
+        neutron_extnet_id = ''
     building_salt_extra()
     with open(("/tmp/openstack"), "w") as openstack:
         openstack.write("""keystone.user: admin
