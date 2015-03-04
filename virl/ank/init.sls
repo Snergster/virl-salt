@@ -30,6 +30,100 @@
 
 {% endif %}
 
+ank_prereq:
+  pip.installed:
+    {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+    {% endif %}
+    - names:
+      - lxml
+      - configobj
+      - six
+      - Mako
+      - MarkupSafe
+      - certifi
+      - backports.ssl_match_hostname
+      - netaddr
+      - networkx
+      - PyYAML
+      - tornado >= 3.2.2, < 4.0.0
+
+autonetkit check:
+  pip.installed:
+    {% if ank_ver_fixed == false %}
+    - name: autonetkit
+    - upgrade: True
+    - find_links: "file:///var/cache/virl/ank"
+    {% else %}
+    - name: autonetkit == {{ ank_ver }}
+    - find_links: "file:///var/cache/virl/fixed/ank"
+    {% endif %}
+    - no_deps: True
+    - use_wheel: True
+    - no_index: True
+    - require:
+      - pip: ank_prereq
+  cmd.wait:
+    - names:
+      - wheel install-scripts autonetkit
+      - service ank-webserver start
+    - onchanges:
+      - pip: autonetkit check
+
+autonetkit_cisco:
+  pip.installed:
+    {% if ank_ver_fixed %}
+    - name: autonet_cisco == {{ ank_cisco }}
+    - find_links: "file:///var/cache/virl/fixed/ank"
+    {% else %}
+    - name: autonetkit_cisco
+    - upgrade: True
+    - find_links: "file:///var/cache/virl/ank"
+    {% endif %}
+    - use_wheel: True
+    - no_deps: True
+    - pre_releases: True
+    - no_index: True
+    - require:
+      - pip: autonetkit check
+
+textfsm:
+  pip.installed:
+    - name: textfsm
+    - find_links: "file:///var/cache/virl/ank"
+    - onlyif: ls /var/cache/virl/ank/textfsm*
+    - upgrade: True
+    - no_deps: True
+    - use_wheel: True
+    - no_index: True
+
+virl_collection:
+  pip.installed:
+    {% if ank_ver_fixed %}
+    - name: virl_collection == {{ ank_collector }}
+    - find_links: "file:///var/cache/virl/fixed/ank"
+    - onlyif: ls /var/cache/virl/fixed/ank/virl_collection*
+    {% else %}
+    - name: virl_collection
+    - find_links: "file:///var/cache/virl/ank"
+    - onlyif: ls /var/cache/virl/ank/virl_collection*
+    - upgrade: True
+    {% endif %}
+    - no_deps: True
+    - use_wheel: True
+    - no_index: True
+    - require:
+      - pip: autonetkit check
+  cmd.wait:
+    - names:
+      - wheel install-scripts virl-collection
+      - service ank-cisco-webserver start
+      - service virl-vis-webserver start
+      - service virl-vis-processor start
+      - service virl-vis-mux start
+    - onchanges:
+      - pip: virl_collection
+
 /etc/init.d/ank-cisco-webserver:
   {% if not masterless %}
   file.managed:
@@ -88,7 +182,7 @@
   {% else %}
   file.copy:
     - force: true
-    - source: /srv/salt/virl/ank/files/virl-vis-mux.init    
+    - source: /srv/salt/virl/ank/files/virl-vis-mux.init
     - mode: 755
   {% endif %}
 
@@ -168,66 +262,8 @@ virl-vis-webserver port change:
     - onlyif: 'test -e /etc/init.d/virl-vis-webserver'
     - mode: 0755
 
-ank_prereq:
-  pip.installed:
-    {% if proxy == true %}
-    - proxy: {{ http_proxy }}
-    {% endif %}
-    - names:
-      - lxml
-      - configobj
-      - six
-      - Mako
-      - MarkupSafe
-      - certifi
-      - backports.ssl_match_hostname
-      - netaddr
-      - networkx
-      - PyYAML
-      - tornado >= 3.2.2, < 4.0.0
-
-autonetkit check:
-  pip.installed:
-    - order: 2
-    {% if ank_ver_fixed == false %}
-    - name: autonetkit
-    - upgrade: True
-    - find_links: "file:///var/cache/virl/ank"
-    {% else %}
-    - name: autonetkit == {{ ank_ver }}
-    - find_links: "file:///var/cache/virl/fixed/ank"
-    {% endif %}
-    - no_deps: True
-    - use_wheel: True
-    - no_index: True
-    - require:
-      - pip: ank_prereq
-  cmd.wait:
-    - names:
-      - wheel install-scripts autonetkit
-      - service ank-webserver start
-    - onchanges:
-      - pip: autonetkit check
 
 
-
-autonetkit_cisco:
-  pip.installed:
-    {% if ank_ver_fixed %}
-    - name: autonet_cisco == {{ ank_cisco }}
-    - find_links: "file:///var/cache/virl/fixed/ank"
-    {% else %}
-    - name: autonetkit_cisco
-    - upgrade: True
-    - find_links: "file:///var/cache/virl/ank"
-    {% endif %}
-    - order: 3
-    - use_wheel: True
-    - no_deps: True
-    - pre_releases: True
-    - no_index: True
-    - require:
-      - pip: autonetkit check
 
 autonetkit_cisco.so remove:
   file.absent:
@@ -259,44 +295,6 @@ autonetkit_cisco_webui:
     - onchanges:
       - pip: autonetkit_cisco_webui
 
-textfsm:
-  pip.installed:
-    - name: textfsm
-    - find_links: "file:///var/cache/virl/ank"
-    - onlyif: ls /var/cache/virl/ank/textfsm*
-    - upgrade: True
-    - order: 4
-    - no_deps: True
-    - use_wheel: True
-    - no_index: True
-
-virl_collection:
-  pip.installed:
-    {% if ank_ver_fixed %}
-    - name: virl_collection == {{ ank_collector }}
-    - find_links: "file:///var/cache/virl/fixed/ank"
-    - onlyif: ls /var/cache/virl/fixed/ank/virl_collection*
-    {% else %}
-    - name: virl_collection
-    - find_links: "file:///var/cache/virl/ank"
-    - onlyif: ls /var/cache/virl/ank/virl_collection*
-    - upgrade: True
-    {% endif %}
-    - no_deps: True
-    - use_wheel: True
-    - no_index: True
-    - order: 4
-    - require:
-      - pip: autonetkit check
-  cmd.wait:
-    - names:
-      - wheel install-scripts virl-collection
-      - service ank-cisco-webserver start
-      - service virl-vis-webserver start
-      - service virl-vis-processor start
-      - service virl-vis-mux start
-    - onchanges:
-      - pip: virl_collection
 
 ank-cisco-webserver:
   service:

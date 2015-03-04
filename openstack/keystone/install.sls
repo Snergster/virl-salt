@@ -5,7 +5,6 @@
 
 keystone-pkgs:
   pkg.installed:
-    - order: 1
     - names:
       - keystone
 

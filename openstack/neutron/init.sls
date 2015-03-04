@@ -32,7 +32,6 @@
 
 neutron-pkgs:
   pkg.installed:
-    - order: 1
     - refresh: False
     - names:
       - neutron-server
@@ -44,7 +43,6 @@ neutron-pkgs:
 
 /etc/neutron/neutron.conf:
   file.managed:
-    - order: 2
     - template: jinja
     - makedirs: True
     - file_mode: 755
@@ -58,7 +56,6 @@ neutron-pkgs:
 
 /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
   file.managed:
-    - order: 4
     - template: jinja
     - file_mode: 755
     - makedirs: True
@@ -72,7 +69,6 @@ neutron-pkgs:
 
 /etc/neutron/plugins/ml2/ml2_conf.ini:
   file.managed:
-    - order: 4
     - file_mode: 755
     - template: jinja
     - makedirs: True

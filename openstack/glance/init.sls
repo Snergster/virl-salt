@@ -6,7 +6,6 @@
 
 glance-pkgs:
   pkg.installed:
-    - order: 1
     - refresh: False
     - names:
       - glance
