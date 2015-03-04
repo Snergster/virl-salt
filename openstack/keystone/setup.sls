@@ -11,7 +11,7 @@ include:
 Keystone tenants:
   keystone.tenant_present:
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
     - names:
       - admin
       - service

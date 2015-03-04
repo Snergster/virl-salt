@@ -13,7 +13,7 @@ glance endpoint:
     - internalurl: http://{{ public_ip }}:9292
     - adminurl: http://{{ public_ip }}:9292
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
 
 keystone endpoint:
   keystone.endpoint_present:
@@ -22,7 +22,7 @@ keystone endpoint:
     - internalurl: http://{{ public_ip }}:5000/v2.0
     - adminurl: http://{{ public_ip }}:35357/v2.0
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
 
 neutron endpoint:
   keystone.endpoint_present:
@@ -31,7 +31,7 @@ neutron endpoint:
     - internalurl: http://{{ public_ip }}:9696
     - adminurl: http://{{ public_ip }}:9696
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
 
 nova endpoint:
   keystone.endpoint_present:
@@ -40,7 +40,7 @@ nova endpoint:
     - internalurl: http://{{ public_ip }}:8774/v2/$(tenant_id)s
     - adminurl: http://{{ public_ip }}:8774/v2/$(tenant_id)s
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
 
 cinder endpoint:
   keystone.endpoint_present:
@@ -49,7 +49,7 @@ cinder endpoint:
     - internalurl: http://{{ public_ip }}:8776/v1/$(tenant_id)s
     - adminurl: http://{{ public_ip }}:8776/v1/$(tenant_id)s
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
 
 cinderv2 endpoint:
   keystone.endpoint_present:
@@ -58,7 +58,7 @@ cinderv2 endpoint:
     - internalurl: http://{{ public_ip }}:8776/v2/$(tenant_id)s
     - adminurl: http://{{ public_ip }}:8776/v2/$(tenant_id)s
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
 
 orchestration endpoint:
   keystone.endpoint_present:
@@ -67,7 +67,7 @@ orchestration endpoint:
     - internalurl: http://{{ public_ip }}:8004/v1/$(tenant_id)s
     - adminurl: http://{{ public_ip }}:8004/v1/$(tenant_id)s
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
 
 cloudformation endpoint:
   keystone.endpoint_present:
@@ -76,4 +76,4 @@ cloudformation endpoint:
     - internalurl: http://{{ public_ip }}:8000/v1
     - adminurl: http://{{ public_ip }}:8000/v1
     - require:
-      - keystone: key-db-sync
+      - cmd: key-db-sync
