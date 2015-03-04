@@ -1,8 +1,8 @@
-{% for dir in ['openstack','virl','_modules','_states','common'] %}
-{{ dir }} sls locally:
-  file.recurse:
-    - clean: True
-    - name: /srv/salt/{{dir}}
-    - source: salt://{{dir}}
-{% endfor %}
-
+include:
+  - openstack.mysql
+  - openstack.rabbitmq
+  - openstack.keystone
+  - openstack.osclients
+  - openstack.glance
+  - openstack.neutron
+  - openstack.nova
