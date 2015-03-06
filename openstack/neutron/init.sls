@@ -23,7 +23,7 @@
 {% set l3_address = salt['pillar.get']('virl:l3_address', salt['grains.get']('l3_address', '172.16.3.254/24' )) %}
 {% set l2_port2 = salt['pillar.get']('virl:l2_port2', salt['grains.get']('l2_port2', 'eth2' )) %}
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
-{% set service_tenid = salt['keystone.tenant_get'](name='service', ' ') %}
+{% set service_tenid = salt['keystone.tenant_get'(name='service')](service.id, ' ') %}
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
