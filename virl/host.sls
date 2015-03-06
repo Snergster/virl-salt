@@ -26,6 +26,9 @@
 {% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 
+include:
+  - virl.hostname
+
 blank what is there:
   cmd.run:
     - order: 1
@@ -167,22 +170,3 @@ man-int-promisc:
     - repl: '{{ int_ip }}\n    post-up ip link set {{int_port}} promisc on'
     - require:
       - cmd: {{ int_port }}
-
-vhost:
-  host.present:
-    - name: {{ hostname }}.{{domain}}
-    - ip:
-      - {{ public_ip }}
-      - ::1
-      
-vhostloop:
-  host.present:
-    - name: {{ hostname }}
-    - ip:
-      - 127.0.1.1
-      - ::1
-      
-vhostname:
-  file.managed:
-    - name: /etc/hostname
-    - contents: {{ hostname }}

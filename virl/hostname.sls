@@ -8,15 +8,19 @@ vhost:
     - ip:
       - {{ public_ip }}
       - ::1
-      
+
 vhostloop:
   host.present:
     - name: {{ hostname }}
     - ip:
       - 127.0.1.1
       - ::1
-      
+
 vhostname:
   file.managed:
     - name: /etc/hostname
     - contents: {{ hostname }}
+  cmd.wait:
+    - name: /usr/bin/hostnamectl set-hostname {{ hostname }}
+    - onchanges:
+      - file: vhostname

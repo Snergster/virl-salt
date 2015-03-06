@@ -23,7 +23,6 @@
     - name: /var/cache/virl/ank
     - source: "salt://ank/{{ venv }}/"
     {% endif %}
-    - order: 1
     - user: virl
     - group: virl
     - file_mode: 755
@@ -66,7 +65,6 @@ autonetkit check:
   cmd.wait:
     - names:
       - wheel install-scripts autonetkit
-      - service ank-webserver start
     - onchanges:
       - pip: autonetkit check
 
@@ -117,10 +115,10 @@ virl_collection:
   cmd.wait:
     - names:
       - wheel install-scripts virl-collection
-      - service ank-cisco-webserver start
-      - service virl-vis-webserver start
-      - service virl-vis-processor start
-      - service virl-vis-mux start
+      - service ank-cisco-webserver start | at now + 1 min
+      - service virl-vis-webserver start | at now + 1 min
+      - service virl-vis-processor start | at now + 1 min
+      - service virl-vis-mux start | at now + 1 min
     - onchanges:
       - pip: virl_collection
 
@@ -291,7 +289,7 @@ autonetkit_cisco_webui:
   cmd.wait:
     - names:
       - wheel install-scripts autonetkit-cisco
-      - service ank-cisco-webserver start
+      - service ank-cisco-webserver start | at now + 1 min
     - onchanges:
       - pip: autonetkit_cisco_webui
 

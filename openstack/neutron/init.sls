@@ -49,7 +49,7 @@ neutron-pkgs:
     {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/neutron.conf"
     {% else %}
-    - source: "salt://files/neutron.conf.jinja"
+    - source: "salt://openstack/neutron/files/neutron.conf"
     {% endif %}
     - require:
       - pkg: neutron-pkgs
@@ -62,7 +62,7 @@ neutron-pkgs:
     {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/plugins/linuxbridge/linuxbridge_conf.ini"
     {% else %}
-    - source: "salt://files/linuxbridge_conf.ini.jinja"
+    - source: "salt://openstack/neutron/files/plugins/linuxbridge/linuxbridge_conf.ini"
     {% endif %}
     - require:
       - pkg: neutron-pkgs
@@ -75,7 +75,7 @@ neutron-pkgs:
     {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/plugins/ml2/ml2_conf.ini"
     {% else %}
-    - source: "salt://files/ml2_conf.ini.jinja"
+    - source: "salt://openstack/neutron/files/plugins/ml2/ml2_conf.ini"
     {% endif %}
     - require:
       - pkg: neutron-pkgs

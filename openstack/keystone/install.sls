@@ -14,7 +14,7 @@ keystone-pkgs:
     {% if masterless %}
     - source: file:///srv/salt/openstack/keystone/files/keystone.conf
     {% else %}
-    - source: "salt://files/keystone.conf.jinja"
+    - source: "salt://openstack/keystone/files/keystone.conf.jinja"
     {% endif %}
     - template: jinja
     - require:
