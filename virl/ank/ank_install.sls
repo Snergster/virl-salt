@@ -94,19 +94,20 @@ autonetkit_cisco:
     - no_index: True
     - require:
       - pip: autonetkit check
+  file:
   {% if not masterless %}
-  file.managed:
+    - managed
     - name: /etc/init.d/ank-cisco-webserver
     - source: "salt://virl/ank/files/ank-cisco-webserver.init"
     - mode: 0755
   {% else %}
-  file.copy:
+    - copy
     - name: /etc/init.d/ank-cisco-webserver
     - force: true
     - source: /srv/salt/virl/ank/files/ank-cisco-webserver.init
     - mode: 755
   {% endif %}
-  file.replace:
+    - replace
     - order: last
     - name: /etc/init.d/ank-cisco-webserver
     - pattern: '.*--port.*"'
@@ -114,7 +115,7 @@ autonetkit_cisco:
     - unless:
       - grep {{ ank }} /etc/init.d/ank-cisco-webserver
       - 'test ! -e /etc/init.d/ank-cisco-webserver'
-  file.symlink:
+    - symlink
     - name: /etc/rc2.d/S98ank-cisco-webserver
     - target: /etc/init.d/ank-cisco-webserver
     - onlyif: ls /usr/local/bin/ank_cisco_webserver

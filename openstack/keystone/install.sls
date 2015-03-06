@@ -23,10 +23,9 @@ keystone-pkgs:
 keystone db-sync:
   cmd.run:
     - name: su -s /bin/sh -c "keystone-manage db_sync" keystone
-    - onchanges:
-      - file: /etc/keystone/keystone.conf
     - require:
       - pkg: keystone-pkgs
+      - file: /etc/keystone/keystone.conf
 
 /usr/bin/keystone-manage token_flush >/var/log/keystone/keystone-tokenflush.log 2>&1:
   cron.present:
