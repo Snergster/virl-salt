@@ -809,6 +809,8 @@ if __name__ == "__main__":
         print 'Please validate the contents of /etc/network/interfaces before rebooting!'
 
     if varg['second'] or varg['all'] or varg['upgrade']:
+        building_salt_all()
+        sleep(10)
         # for _each in ['openstack.mysql', 'openstack.rabbitmq', 'openstack.keystone.install', 'openstack.keystone.setup',
         #               'openstack.keystone.endpoint', 'openstack.osclients', 'virl.openrc', 'openstack.glance']:
         #     call_salt(_each)
@@ -875,14 +877,14 @@ if __name__ == "__main__":
     #     call_salt('openstack.nova.install')
     #     building_salt_all()
     #     sleep(5)
-    #     call_salt('openstack.neutron.changes')
+    #    call_salt('openstack.neutron.changes')
 
     if varg['fourth'] or varg['all'] or varg['upgrade']:
         if masterless:
-            call_salt('virl.std,virl.ank')
+            call_salt('openstack.neutron.changes,virl.std,virl.ank')
             # call_salt('virl.ank')
         else:
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.std,virl.ank'])
+            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.neutron.changes,virl.std,virl.ank'])
             # sleep(5)
             # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.ank'])
         if guest_account:
@@ -996,17 +998,15 @@ if __name__ == "__main__":
         sleep(5)
         call_salt('virl.openrc')
         subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.ntp'])
-        print ('You need to restart now')
-    if varg['renumber']:
+    #     print ('You need to restart now')
+    # if varg['renumber']:
         subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
         subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
-        for _each in ['openstack.password.change','openstack.rabbitmq','openstack.keystone.install','openstack.keystone.setup','openstack.keystone.setup',
-                      'openstack.keystone.endpoint','openstack.osclients']:
+        for _each in ['openstack.password.change','openstack']:
             call_salt(_each)
         building_salt_all()
         sleep(5)
-        for _next in ['openstack.glance','openstack.neutron.install','openstack.cinder.install',
-                      'openstack.dash','openstack.nova.install','openstack.neutron.changes','virl.std','virl.ank']:
+        for _next in ['openstack.neutron.changes','virl.std','virl.ank']:
             call_salt(_next)
         create_basic_networks()
         if guest_account:
