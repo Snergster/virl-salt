@@ -191,7 +191,7 @@ nova-restart:
     - source: /srv/salt/openstack/nova/files/nova-serialproxy
   {% else %}
   file.managed:
-    - source: "salt://opensack/nova/files/nova-serialproxy"
+    - source: "salt://openstack/nova/files/nova-serialproxy"
   {% endif %}
     - force: True
     - order: 4
