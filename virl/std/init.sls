@@ -88,7 +88,6 @@ std docs local:
 
 std_prereq:
   pip.installed:
-    - order: 2
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
@@ -118,7 +117,6 @@ std_prereq:
 
 VIRL_CORE:
   pip.installed:
-    - order: 5
     - use_wheel: True
     - no_index: True
     - pre_releases: True
