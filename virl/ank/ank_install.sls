@@ -53,7 +53,6 @@ textfsm:
     - find_links: "file:///var/cache/virl/ank"
     - onlyif: ls /var/cache/virl/ank/textfsm*
     - upgrade: True
-    - order: 4
     - no_deps: True
     - use_wheel: True
     - no_index: True
