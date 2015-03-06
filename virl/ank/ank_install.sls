@@ -46,7 +46,19 @@ ank_prereq:
       - networkx
       - PyYAML
       - tornado >= 3.2.2, < 4.0.0
-      - textfsm
+
+textfsm:
+  pip.installed:
+    - name: textfsm
+    - find_links: "file:///var/cache/virl/ank"
+    - onlyif: ls /var/cache/virl/ank/textfsm*
+    - upgrade: True
+    - order: 4
+    - no_deps: True
+    - use_wheel: True
+    - no_index: True
+
+
 
 /root/.autonetkit/autonetkit.cfg:
   file.managed:
@@ -95,7 +107,7 @@ autonetkit_cisco:
     - require:
       - pip: autonetkit check
 
-ank init script:      
+ank init script:
   file:
   {% if not masterless %}
     - managed
