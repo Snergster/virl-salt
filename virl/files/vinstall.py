@@ -800,7 +800,7 @@ if __name__ == "__main__":
         sleep(10)
 
     if varg['first']:
-        for _each in ['common.virl', 'virl.basics']:
+        for _each in ['common.virl,virl.basics']:
             call_salt(_each)
         if not masterless:
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'saltutil.sync_all'])
@@ -809,9 +809,10 @@ if __name__ == "__main__":
         print 'Please validate the contents of /etc/network/interfaces before rebooting!'
 
     if varg['second'] or varg['all'] or varg['upgrade']:
-        for _each in ['openstack.mysql', 'openstack.rabbitmq', 'openstack.keystone.install', 'openstack.keystone.setup',
-                      'openstack.keystone.endpoint', 'openstack.osclients', 'virl.openrc', 'openstack.glance']:
-            call_salt(_each)
+        # for _each in ['openstack.mysql', 'openstack.rabbitmq', 'openstack.keystone.install', 'openstack.keystone.setup',
+        #               'openstack.keystone.endpoint', 'openstack.osclients', 'virl.openrc', 'openstack.glance']:
+        #     call_salt(_each)
+        call_salt('openstack')
 
         admin_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
@@ -825,14 +826,14 @@ if __name__ == "__main__":
                          'keystone.tenant_id', (' ' + admin_tenid)])
         building_salt_all()
         sleep(8)
-        call_salt('openstack.neutron')
+        # call_salt('openstack.neutron')
         novaclient = '/home/virl/.novaclient'
         if path.exists(novaclient):
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
 
     if varg['third'] or varg['all'] or varg['upgrade']:
         if cinder:
-            call_salt('openstack.cinder.install')
+            # call_salt('openstack.cinder.install')
             if cinder_file:
                 subprocess.call(['sudo', '/bin/dd', 'if=/dev/zero', 'of={0}'.format(cinder_loc), 'bs=1M',
                                  'count={0}'.format(cinder_size)])
@@ -845,10 +846,10 @@ if __name__ == "__main__":
             else:
                 print 'No cinder file or drive created'
 
-
-        if horizon:
-            call_salt('openstack.dash')
-
+        #
+        # if horizon:
+        #     call_salt('openstack.dash')
+        #
 
         admin_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
@@ -867,25 +868,25 @@ if __name__ == "__main__":
             if not vnc_passwd == 'letmein':
                 set_vnc_password(vnc_passwd)
             sleep(5)
-        if heat:
-            call_salt('openstack.heat')
+        # if heat:
+        #     call_salt('openstack.heat')
 
-    if varg['fourth'] or varg['mini'] or varg['all'] or varg['upgrade']:
-        call_salt('openstack.nova.install')
-        building_salt_all()
-        sleep(5)
-        call_salt('openstack.neutron.changes')
+    # if varg['fourth'] or varg['mini'] or varg['all'] or varg['upgrade']:
+    #     call_salt('openstack.nova.install')
+    #     building_salt_all()
+    #     sleep(5)
+    #     call_salt('openstack.neutron.changes')
 
     if varg['fourth'] or varg['all'] or varg['upgrade']:
         if masterless:
-            call_salt('virl.std')
-            call_salt('virl.ank')
+            call_salt('virl.std,virl.ank')
+            # call_salt('virl.ank')
         else:
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.std'])
-            sleep(5)
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.ank'])
+            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.std,virl.ank'])
+            # sleep(5)
+            # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.ank'])
         if guest_account:
-            call_salt('guest')
+            call_salt('virl.guest')
         # std_install()
         User_Creator(user_list, user_list_limited)
         print ('You need to restart now')
