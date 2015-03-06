@@ -20,7 +20,5 @@ vhostname:
   file.managed:
     - name: /etc/hostname
     - contents: {{ hostname }}
-  cmd.wait:
+  cmd.run:
     - name: /usr/bin/hostnamectl set-hostname {{ hostname }}
-    - onchanges:
-      - file: vhostname
