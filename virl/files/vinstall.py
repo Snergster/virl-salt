@@ -993,11 +993,11 @@ if __name__ == "__main__":
             subprocess.call(['sudo', 'cp', '/srv/salt/host.sls', '/srv/salt/virl/host.sls'])
         if not (path.exists('/srv/salt/virl/ntp.sls')) and (path.exists('/srv/salt/ntp.sls')):
             subprocess.call(['sudo', 'cp', '/srv/salt/ntp.sls', '/srv/salt/virl/ntp.sls'])
-        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.host'])
+        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'openstack.rabbitmq,virl.host'])
         building_salt_all()
         sleep(5)
-        call_salt('virl.openrc')
-        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.ntp'])
+        call_salt('virl.openrc,virl.ntp')
+        # subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.ntp'])
     #     print ('You need to restart now')
     # if varg['renumber']:
         subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
@@ -1006,7 +1006,7 @@ if __name__ == "__main__":
             call_salt(_each)
         building_salt_all()
         sleep(5)
-        for _next in ['openstack.neutron.changes','virl.std','virl.ank']:
+        for _next in ['openstack.neutron.changes','virl.std,virl.ank']:
             call_salt(_next)
         create_basic_networks()
         if guest_account:

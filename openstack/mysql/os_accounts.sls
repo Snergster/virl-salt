@@ -5,7 +5,7 @@
 
 include:
   - openstack.mysql.install
-  
+
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
 {% for user in accounts %}
 {{ user }}-mysql:
@@ -16,16 +16,12 @@ include:
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
-    - watch:
-      - service: mysql
   mysql_database:
     - present
     - name: {{ user }}
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
-    - watch:
-      - service: mysql
   mysql_grants.present:
     - grant: all privileges
     - database: "{{ user }}.*"
@@ -34,8 +30,7 @@ include:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
       - mysql_database: {{ user }}-mysql
-    - watch:
-      - service: mysql
+
 
 {{ user }}-grant-wildcard:
   cmd.run:
