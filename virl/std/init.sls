@@ -86,6 +86,37 @@ std docs local:
 
 {% endif %}
 
+/etc/virl directory:
+  file.directory:
+    - name: /etc/virl
+    - dir_mode: 755
+
+/etc/virl/common.cfg:
+  file.touch:
+    - require:
+      - file: /etc/virl directory
+    - onlyif: 'test ! -e /etc/virl/common.cfg'
+
+
+/etc/virl/virl.cfg:
+  file.managed:
+    - replace: false
+    - makedirs: true
+    - mode: 0644
+
+
+/etc/rc2.d/S98virl-std:
+  file.symlink:
+    - target: /etc/init.d/virl-std
+    - mode: 0755
+
+/etc/rc2.d/S98virl-uwm:
+  file.symlink:
+    - target: /etc/init.d/virl-uwm
+    - mode: 0755
+
+
+
 std_prereq:
   pip.installed:
 {% if proxy == true %}
@@ -178,34 +209,6 @@ virl init:
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
 
-/etc/virl directory:
-  file.directory:
-    - name: /etc/virl
-    - dir_mode: 755
-
-/etc/virl/common.cfg:
-  file.touch:
-    - require:
-      - file: /etc/virl directory
-    - onlyif: 'test ! -e /etc/virl/common.cfg'
-
-
-/etc/virl/virl.cfg:
-  file.managed:
-    - replace: false
-    - makedirs: true
-    - mode: 0644
-
-
-/etc/rc2.d/S98virl-std:
-  file.symlink:
-    - target: /etc/init.d/virl-std
-    - mode: 0755
-
-/etc/rc2.d/S98virl-uwm:
-  file.symlink:
-    - target: /etc/init.d/virl-uwm
-    - mode: 0755
 
 
 virl-std:
