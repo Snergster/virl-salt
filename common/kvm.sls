@@ -27,7 +27,7 @@ qemu_kvm unhold:
       - file: /usr/bin/kvm
 
 manual qemu-kvm:
-  pkg.uptodate:
+  pkg.installed:
     - name: qemu-kvm
     - refresh: True
     - require:
@@ -47,4 +47,3 @@ qemu hold:
     - name: qemu-kvm
     - require:
       - pkg: manual qemu-kvm
-      
