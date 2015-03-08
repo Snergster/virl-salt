@@ -59,32 +59,6 @@ msgpack-python:
     - require:
       - pkg: commonpkgs
 
-libnacl:
-  pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - upgrade: True
-    - require:
-      - pkg: commonpkgs
-
-ioflo:
-  pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - upgrade: True
-    - require:
-      - pkg: commonpkgs
-
-RAET:
-  pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - upgrade: True
-    - require:
-      - pkg: commonpkgs
 
 salt-master unhold:
   module.run:

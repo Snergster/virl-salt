@@ -19,3 +19,5 @@ include:
 {% if heat %}
   - openstack.heat
 {% endif %}
+  - openstack.restart
+  
