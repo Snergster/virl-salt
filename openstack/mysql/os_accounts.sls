@@ -31,7 +31,12 @@ include:
       - file: /etc/mysql/my.cnf
       - mysql_database: {{ user }}-mysql
 
-
+{{ user }}-mysql-nonlocal:
+  mysql_user.present:
+    - name: {{ user }}
+    - host: {{ int_ip }}
+    - password: {{ mypassword }}
+    
 {{ user }}-grant-wildcard:
   cmd.run:
     - name: mysql --user=root --password={{ mypassword }} -e "GRANT ALL ON {{ user }}.* TO '{{ user }}'@'%' IDENTIFIED BY '{{ mypassword }}';"
