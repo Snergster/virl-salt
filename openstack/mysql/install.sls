@@ -19,6 +19,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 #
+# 8/3/15  Note: This state has changed HEAVILY since yazz's original but im leaving the
+# above to show proper inspiration credit
+
 /tmp/debconf creation:
   file.managed:
     - name: /tmp/debconf
@@ -31,7 +34,6 @@
 
 debconf-replace:
   file.replace:
-    - order: 2
     - name: /tmp/debconf
     - pattern: 'MYPASS'
     - repl: {{ mypassword }}
