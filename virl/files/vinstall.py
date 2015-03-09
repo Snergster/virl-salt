@@ -962,7 +962,7 @@ if __name__ == "__main__":
         #                                                ' --os-auth-url=http://localhost:5000/v2.0 endpoint-list'
         #                                                ' | grep -w "regionOne" | cut -d "|" -f2'],
         #                                              shell=True)).split()
-        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | cut -d "|" -f2'.format(publicip=publicip,ospassword=ospassword)],shell=True)).split()
+        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
         # building_salt_extra()
         # zip_hosts = zip(host_sls,host_sls_values)
         # with open(("/tmp/hostgrain"), "w") as salt_host_grain:
@@ -986,7 +986,7 @@ if __name__ == "__main__":
                          '--execute=delete from services'])
 
         # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.host'])
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" | cut -d "|" -f2'.format(ospassword,hostname)], shell=True)).split()
+        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
 
