@@ -160,4 +160,4 @@ man-int-promisc:
     - require:
       - cmd: {{ int_port }}
   cmd.run:
-    - name: ifup {{ int_ip }}
+    - name: ifup {{ int_port }}
