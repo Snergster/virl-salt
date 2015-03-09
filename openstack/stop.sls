@@ -25,3 +25,5 @@ all-stop:
         service heat-api-cfn stop
         service heat-engine stop
         {% endif %}
+        service rabbitmq-server stop
+        

@@ -814,7 +814,8 @@ if __name__ == "__main__":
         # for _each in ['openstack.mysql', 'openstack.rabbitmq', 'openstack.keystone.install', 'openstack.keystone.setup',
         #               'openstack.keystone.endpoint', 'openstack.osclients', 'virl.openrc', 'openstack.glance']:
         #     call_salt(_each)
-        call_salt('openstack,virl.openrc')
+        call_salt('openstack')
+        call_salt('virl.openrc')
 
         admin_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
@@ -942,14 +943,26 @@ if __name__ == "__main__":
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'onepk-external'])
             sleep(5)
     if varg['rehost']:
+        if masterless:
+            subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
+        else:
+            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 'password', '--os-auth-url=http://localhost:5000/v2.0']
+                 '{ospassword}'.format(ospassword=ospassword), '--os-auth-url=http://localhost:5000/v2.0']
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 'password', '--os-auth-url=http://localhost:5000/v2.0']
-        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password password'
+                 '{ospassword}'.format(ospassword=ospassword), '--os-auth-url=http://localhost:5000/v2.0']
+        subprocess.call(qcall + ['subnet-delete', 'flat'])
+        subprocess.call(qcall + ['subnet-delete', 'flat1'])
+        subprocess.call(qcall + ['subnet-delete', 'ext-net'])
+        # k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password password'
+        #                                                ' --os-tenant-name admin'
+        #                                                ' --os-auth-url=http://localhost:5000/v2.0 endpoint-list'
+        #                                                ' | grep -w "regionOne" | cut -d "|" -f2'],
+        #                                              shell=True)).split()
+        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword}'.format(ospassword=ospassword)
                                                        ' --os-tenant-name admin'
                                                        ' --os-auth-url=http://localhost:5000/v2.0 endpoint-list'
-                                                       ' | grep -w "regionOne" | cut -d "|" -f2'],
+                                                       ' | grep -v "{publicip}" | cut -d "|" -f2'.format(publicip=publicip)],
                                                      shell=True)).split()
         building_salt_extra()
         zip_hosts = zip(host_sls,host_sls_values)
@@ -972,17 +985,12 @@ if __name__ == "__main__":
                         '--execute=delete from compute_nodes'])
         subprocess.call(['sudo', 'mysql', '-uroot', '-ppassword', 'nova',
                          '--execute=delete from services'])
-        if masterless:
-            subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
-        else:
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
-        subprocess.call(qcall + ['subnet-delete', 'flat'])
-        subprocess.call(qcall + ['subnet-delete', 'flat1'])
-        subprocess.call(qcall + ['subnet-delete', 'ext-net'])
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password password'
+
+
+        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword}'.format(ospassword=ospassword)
                                                    ' --os-tenant-name admin'
                                                    ' --os-auth-url=http://localhost:5000/v2.0 agent-list'
-                                                   ' | grep -w "virl" | cut -d "|" -f2'], shell=True)).split()
+                                                   ' | grep -v "{hostname}" | cut -d "|" -f2'.format(hostname)], shell=True)).split()
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
 
@@ -993,14 +1001,15 @@ if __name__ == "__main__":
             subprocess.call(['sudo', 'cp', '/srv/salt/host.sls', '/srv/salt/virl/host.sls'])
         if not (path.exists('/srv/salt/virl/ntp.sls')) and (path.exists('/srv/salt/ntp.sls')):
             subprocess.call(['sudo', 'cp', '/srv/salt/ntp.sls', '/srv/salt/virl/ntp.sls'])
-        subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.rabbitmq'])
-        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.host'])
-        building_salt_all()
-        sleep(5)
-        call_salt('virl.openrc,virl.ntp')
+        subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.restart'])
+        # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.rabbitmq'])
+        # subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.host'])
+        # building_salt_all()
+        # sleep(5)
+        # call_salt('virl.openrc,virl.ntp')
         # subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.ntp'])
     #     print ('You need to restart now')
-    # if varg['renumber']:
+    if varg['renumber']:
         subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
         subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
         for _each in ['openstack','openstack.password.change']:
