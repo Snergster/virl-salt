@@ -944,6 +944,8 @@ if __name__ == "__main__":
             sleep(5)
     if varg['rehost']:
         building_salt_all()
+        call_salt('openstack')
+        call_salt('virl.openrc,virl.std')
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         else:
