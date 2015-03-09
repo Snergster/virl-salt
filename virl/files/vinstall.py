@@ -945,6 +945,11 @@ if __name__ == "__main__":
     if varg['rehost']:
         building_salt_all()
         call_salt('openstack')
+        call_salt('openstack.stop')
+        call_salt('openstack.rabbitmq')
+        subprocess.call(['sudo', 'service','rabbitmq-server','stop'])
+        call_salt('virl.host')
+        subprocess.call(['sudo', 'service','rabbitmq-server','start'])
         call_salt('virl.openrc,virl.std')
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
