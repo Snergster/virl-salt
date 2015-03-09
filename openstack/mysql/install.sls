@@ -22,7 +22,6 @@
 /tmp/debconf creation:
   file.managed:
     - name: /tmp/debconf
-    - order: 1
     - contents: |
         mysql-server mysql-server/root_password password MYPASS
         mysql-server mysql-server/root_password_again password MYPASS
@@ -41,7 +40,6 @@ debconf-replace:
 
 debconf-run:
   cmd.run:
-    - order: 3
     - require:
       - file: debconf-replace
     - name: |
@@ -57,6 +55,31 @@ mysql-server-5.5:
 
 python-mysqldb:
   pkg.installed
+
+debconf-change:
+  file.managed:
+    - name: /tmp/debconf-change
+    - unless: mysql -u root -p{{ mypassword }} -e 'quit'
+    - contents: |
+        mysql-server mysql-server/root_password password {{ mypassword }}
+        mysql-server mysql-server/root_password_again password {{ mypassword }}
+        mysql-server-5.5 mysql-server/root_password password {{ mypassword }}
+        mysql-server-5.5 mysql-server/root_password_again password {{ mypassword }}
+
+debconf-change-set:
+  cmd.run:
+    - onchanges:
+      - file: debconf-change
+    - name: |
+        debconf-set-selections /tmp/debconf-change
+        rm /tmp/debconf-change
+
+debconf-change-noninteractive:
+  cmd.run:
+    - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
+    - onchanges:
+      - cmd: debconf-change
+
 
 verify symlink:
   file.symlink:
