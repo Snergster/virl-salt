@@ -31,14 +31,12 @@ include:
 
 blank what is there:
   cmd.run:
-    - order: 1
     - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
 
 
 {% if dummy_int == True %}
 add dummy right now:
   cmd.run:
-    - order: 1
     - name: modprobe dummy numdummies=5
 
 dummy modprobe:
@@ -86,7 +84,6 @@ eth0:
 
 loop0:
   network.managed:
-    - order: 2
     - enabled: True
     - name: 'lo'
     - type: eth
@@ -96,14 +93,12 @@ loop0:
 
 loop1:
   cmd.run:
-    - order: 2
     - name: 'salt-call --local ip.build_interface "lo:1" eth True address=127.0.1.1 proto=loopback netmask=255.0.0.0'
 
 
 
 {{ l2_port }}:
   network.managed:
-    - order: 2
     - enabled: True
     - proto: static
     - type: eth
@@ -114,7 +109,6 @@ loop1:
 {% if l2_port2_enabled == True %}
 {{ l2_port2 }}:
   network.managed:
-    - order: 2
     - enabled: True
     - proto: static
     - type: eth
@@ -124,7 +118,6 @@ loop1:
 
 man-flat2-address:
   file.replace:
-    - order: 3
     - name: /etc/network/interfaces
     - pattern: {{ l2_address2 }}
     - repl: '{{ l2_address2 }}\n    post-up ip link set {{l2_port2}} promisc on'
@@ -135,7 +128,6 @@ man-flat2-address:
 
 {{ l3_port }}:
   network.managed:
-    - order: 2
     - name: {{ l3_port }}
     - enabled: True
     - proto: static
@@ -146,7 +138,6 @@ man-flat2-address:
 
 man-flat-promisc:
   file.replace:
-    - order: 3
     - name: /etc/network/interfaces
     - pattern: {{ l2_address }}
     - repl: '{{ l2_address }}\n    post-up ip link set {{l2_port}} promisc on'
@@ -155,7 +146,6 @@ man-flat-promisc:
 
 man-snat-promisc:
   file.replace:
-    - order: 3
     - name: /etc/network/interfaces
     - pattern: {{ l3_address }}
     - repl: '{{ l3_address }}\n    post-up ip link set {{l3_port}} promisc on'
@@ -164,9 +154,10 @@ man-snat-promisc:
 
 man-int-promisc:
   file.replace:
-    - order: 3
     - name: /etc/network/interfaces
     - pattern: {{ int_ip }}
     - repl: '{{ int_ip }}\n    post-up ip link set {{int_port}} promisc on'
     - require:
       - cmd: {{ int_port }}
+  cmd.run:
+    - name: ifup {{ int_ip }}
