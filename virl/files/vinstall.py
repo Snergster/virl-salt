@@ -948,16 +948,17 @@ if __name__ == "__main__":
         call_salt('openstack.stop')
         call_salt('virl.host')
         call_salt('openstack.rabbitmq')
-        subprocess.call(['sudo', 'service','rabbitmq-server','start'])
+        call_salt('openstack.start')
         call_salt('virl.openrc,virl.std')
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         else:
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
+
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 '{ospassword}'.format(ospassword=ospassword), '--os-auth-url=http://localhost:5000/v2.0']
+                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 '{ospassword}'.format(ospassword=ospassword), '--os-auth-url=http://localhost:5000/v2.0']
+                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
@@ -985,9 +986,10 @@ if __name__ == "__main__":
         nova_services_hosts = ["'ubuntu'"]
         nova_service_list = ["nova-compute","nova-cert","nova-consoleauth","nova-scheduler","nova-conductor"]
         print ('Deleting Nova services for old hostnames')
-        subprocess.call(['sudo', 'mysql', '-uroot', '-p{mypassword}'.format(mypassword=mypassword), 'nova',
+        pmypassword = '-p' + mypassword
+        subprocess.call(['sudo', 'mysql', '-uroot', pmypassword , 'nova',
                         '--execute=delete from compute_nodes'])
-        subprocess.call(['sudo', 'mysql', '-uroot', '-p{mypassword}'.format(mypassword=mypassword), 'nova',
+        subprocess.call(['sudo', 'mysql', '-uroot', pmypassword , 'nova',
                          '--execute=delete from services'])
 
         # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.host'])
