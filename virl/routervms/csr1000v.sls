@@ -17,7 +17,7 @@ CSR1000v:
   - property-config_disk_type: cdrom
   - property-hw_cdrom_type: ide
   - property-hw_disk_bus: virtio
-  - property-hw_vif_model: virtio
+  - property-hw_vif_model: e1000
   - property-release: 3.14
   - property-serial: 2
   - property-subtype: CSR1000v

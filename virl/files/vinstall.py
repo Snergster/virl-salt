@@ -993,7 +993,8 @@ if __name__ == "__main__":
             subprocess.call(['sudo', 'cp', '/srv/salt/host.sls', '/srv/salt/virl/host.sls'])
         if not (path.exists('/srv/salt/virl/ntp.sls')) and (path.exists('/srv/salt/ntp.sls')):
             subprocess.call(['sudo', 'cp', '/srv/salt/ntp.sls', '/srv/salt/virl/ntp.sls'])
-        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'openstack.rabbitmq,virl.host'])
+        subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.rabbitmq'])
+        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.host'])
         building_salt_all()
         sleep(5)
         call_salt('virl.openrc,virl.ntp')
@@ -1002,7 +1003,7 @@ if __name__ == "__main__":
     # if varg['renumber']:
         subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
         subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
-        for _each in ['openstack.password.change','openstack']:
+        for _each in ['openstack','openstack.password.change']:
             call_salt(_each)
         building_salt_all()
         sleep(5)

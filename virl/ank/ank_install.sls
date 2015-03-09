@@ -29,6 +29,114 @@
 
 {% endif %}
 
+
+/etc/init.d/virl-vis-processor:
+  {% if not masterless %}
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-processor.init"
+    - mode: 0755
+  {% else %}
+  file.copy:
+    - force: true
+    - source: /srv/salt/virl/ank/files/virl-vis-processor.init
+    - mode: 755
+  {% endif %}
+
+/etc/init.d/virl-vis-mux:
+  {% if not masterless %}
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-mux.init"
+    - mode: 0755
+  {% else %}
+  file.copy:
+    - force: true
+    - source: /srv/salt/virl/ank/files/virl-vis-mux.init
+    - mode: 755
+  {% endif %}
+
+
+
+/etc/init.d/virl-vis-webserver:
+  {% if not masterless %}
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-webserver.init"
+    - mode: 0755
+  {% else %}
+  file.copy:
+    - force: true
+    - source: /srv/salt/virl/ank/files/virl-vis-webserver.init
+    - mode: 755
+  {% endif %}
+
+
+
+virl-vis-webserver port change:
+  file.replace:
+    - order: last
+    - name: /etc/init.d/virl-vis-webserver
+    - pattern: '.*--port.*"'
+    - repl: 'RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver --port {{ ank_live }}"'
+    - unless:
+      - grep {{ ank }} /etc/init.d/virl-vis-webserver
+      - 'test ! -e  /etc/init.d/virl-vis-webserver'
+
+/etc/rc2.d/S98virl-vis-processor:
+  file.symlink:
+    - target: /etc/init.d/virl-vis-processor
+    - require:
+      - file: /etc/init.d/virl-vis-processor
+    - mode: 0755
+
+/etc/rc2.d/S98virl-vis-mux:
+  file.symlink:
+    - target: /etc/init.d/virl-vis-mux
+    - require:
+      - file: /etc/init.d/virl-vis-mux
+    - mode: 0755
+
+/etc/rc2.d/S98virl-vis-webserver:
+  file.symlink:
+    - order: last
+    - target: /etc/init.d/virl-vis-webserver
+    - onlyif: 'test -e /etc/init.d/virl-vis-webserver'
+    - mode: 0755
+
+
+ank init script:
+  file:
+  {% if not masterless %}
+    - managed
+    - name: /etc/init.d/ank-cisco-webserver
+    - source: "salt://virl/ank/files/ank-cisco-webserver.init"
+    - mode: 0755
+  {% else %}
+    - copy
+    - name: /etc/init.d/ank-cisco-webserver
+    - force: true
+    - source: /srv/salt/virl/ank/files/ank-cisco-webserver.init
+    - mode: 755
+  {% endif %}
+
+substitute ank port:
+  file.replace:
+    - order: last
+    - name: /etc/init.d/ank-cisco-webserver
+    - pattern: '.*--port.*"'
+    - repl: 'RUNNING_CMD="/usr/local/bin/ank_cisco_webserver --multi_user --port {{ ank }}"'
+    - unless:
+      - grep {{ ank }} /etc/init.d/ank-cisco-webserver
+      - 'test ! -e /etc/init.d/ank-cisco-webserver'
+
+ank symlink:
+  file.symlink:
+    - name: /etc/rc2.d/S98ank-cisco-webserver
+    - target: /etc/init.d/ank-cisco-webserver
+    - onlyif: ls /usr/local/bin/ank_cisco_webserver
+    - mode: 0755
+    - require:
+      - pip: autonetkit_cisco
+
+
 ank_prereq:
   pip.installed:
     {% if proxy == true %}
@@ -106,40 +214,6 @@ autonetkit_cisco:
     - require:
       - pip: autonetkit check
 
-ank init script:
-  file:
-  {% if not masterless %}
-    - managed
-    - name: /etc/init.d/ank-cisco-webserver
-    - source: "salt://virl/ank/files/ank-cisco-webserver.init"
-    - mode: 0755
-  {% else %}
-    - copy
-    - name: /etc/init.d/ank-cisco-webserver
-    - force: true
-    - source: /srv/salt/virl/ank/files/ank-cisco-webserver.init
-    - mode: 755
-  {% endif %}
-
-substitute ank port:
-  file.replace:
-    - order: last
-    - name: /etc/init.d/ank-cisco-webserver
-    - pattern: '.*--port.*"'
-    - repl: 'RUNNING_CMD="/usr/local/bin/ank_cisco_webserver --multi_user --port {{ ank }}"'
-    - unless:
-      - grep {{ ank }} /etc/init.d/ank-cisco-webserver
-      - 'test ! -e /etc/init.d/ank-cisco-webserver'
-
-ank symlink:
-  file.symlink:
-    - name: /etc/rc2.d/S98ank-cisco-webserver
-    - target: /etc/init.d/ank-cisco-webserver
-    - onlyif: ls /usr/local/bin/ank_cisco_webserver
-    - mode: 0755
-    - require:
-      - pip: autonetkit_cisco
-
 autonetkit_cisco_webui:
   pip.installed:
     {% if ank_ver_fixed %}
@@ -216,77 +290,6 @@ virl_collection:
 
 /etc/init.d/live-vis-webserver:
   file.absent
-
-/etc/init.d/virl-vis-processor:
-  {% if not masterless %}
-  file.managed:
-    - source: "salt://virl/ank/files/virl-vis-processor.init"
-    - mode: 0755
-  {% else %}
-  file.copy:
-    - force: true
-    - source: /srv/salt/virl/ank/files/virl-vis-processor.init
-    - mode: 755
-  {% endif %}
-
-/etc/init.d/virl-vis-mux:
-  {% if not masterless %}
-  file.managed:
-    - source: "salt://virl/ank/files/virl-vis-mux.init"
-    - mode: 0755
-  {% else %}
-  file.copy:
-    - force: true
-    - source: /srv/salt/virl/ank/files/virl-vis-mux.init
-    - mode: 755
-  {% endif %}
-
-
-
-/etc/init.d/virl-vis-webserver:
-  {% if not masterless %}
-  file.managed:
-    - source: "salt://virl/ank/files/virl-vis-webserver.init"
-    - mode: 0755
-  {% else %}
-  file.copy:
-    - force: true
-    - source: /srv/salt/virl/ank/files/virl-vis-webserver.init
-    - mode: 755
-  {% endif %}
-
-
-
-virl-vis-webserver port change:
-  file.replace:
-    - order: last
-    - name: /etc/init.d/virl-vis-webserver
-    - pattern: '.*--port.*"'
-    - repl: 'RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver --port {{ ank_live }}"'
-    - unless:
-      - grep {{ ank }} /etc/init.d/virl-vis-webserver
-      - 'test ! -e  /etc/init.d/virl-vis-webserver'
-
-/etc/rc2.d/S98virl-vis-processor:
-  file.symlink:
-    - target: /etc/init.d/virl-vis-processor
-    - require:
-      - file: /etc/init.d/virl-vis-processor
-    - mode: 0755
-
-/etc/rc2.d/S98virl-vis-mux:
-  file.symlink:
-    - target: /etc/init.d/virl-vis-mux
-    - require:
-      - file: /etc/init.d/virl-vis-mux
-    - mode: 0755
-
-/etc/rc2.d/S98virl-vis-webserver:
-  file.symlink:
-    - order: last
-    - target: /etc/init.d/virl-vis-webserver
-    - onlyif: 'test -e /etc/init.d/virl-vis-webserver'
-    - mode: 0755
 
 autonetkit_cisco.so remove:
   file.absent:

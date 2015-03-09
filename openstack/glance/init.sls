@@ -121,7 +121,7 @@ glance db-restart:
   cmd.run:
     - order: last
     - names:
-      - service glance-registry restart | at now + 1 min
-      - service glance-api restart | at now + 1 min
+      - /usr/sbin/service glance-registry restart | at now + 2 min
+      - /usr/sbin/service glance-api restart | at now + 2 min
     - require:
       - pkg: glance
