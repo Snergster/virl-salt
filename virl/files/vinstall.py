@@ -963,6 +963,7 @@ if __name__ == "__main__":
         #                                                ' | grep -w "regionOne" | cut -d "|" -f2'],
         #                                              shell=True)).split()
         k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
+        print k_delete_list
         # building_salt_extra()
         # zip_hosts = zip(host_sls,host_sls_values)
         # with open(("/tmp/hostgrain"), "w") as salt_host_grain:
@@ -980,13 +981,14 @@ if __name__ == "__main__":
         nova_services_hosts = ["'ubuntu'"]
         nova_service_list = ["nova-compute","nova-cert","nova-consoleauth","nova-scheduler","nova-conductor"]
         print ('Deleting Nova services for old hostnames')
-        subprocess.call(['sudo', 'mysql', '-uroot', '-ppassword', 'nova',
+        subprocess.call(['sudo', 'mysql', '-uroot', '-p{mypassword}'.format(mypassword=mypassword), 'nova',
                         '--execute=delete from compute_nodes'])
-        subprocess.call(['sudo', 'mysql', '-uroot', '-ppassword', 'nova',
+        subprocess.call(['sudo', 'mysql', '-uroot', '-p{mypassword}'.format(mypassword=mypassword), 'nova',
                          '--execute=delete from services'])
 
         # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.host'])
         q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
+        print q_delete_list
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
 
