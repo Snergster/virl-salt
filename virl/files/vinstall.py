@@ -1013,13 +1013,13 @@ if __name__ == "__main__":
         # call_salt('virl.openrc,virl.ntp')
         # subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.ntp'])
     #     print ('You need to restart now')
-    if varg['renumber']:
-        subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
-        subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
-        for _each in ['openstack','openstack.password.change']:
-            call_salt(_each)
-        building_salt_all()
-        sleep(5)
+    # if varg['renumber']:
+    #     subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
+    #     subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
+    #     for _each in ['openstack','openstack.password.change']:
+    #         call_salt(_each)
+    #     building_salt_all()
+    #     sleep(5)
         for _next in ['openstack.neutron.changes','virl.std,virl.ank']:
             call_salt(_next)
         create_basic_networks()
