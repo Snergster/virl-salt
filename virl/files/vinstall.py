@@ -967,19 +967,19 @@ if __name__ == "__main__":
                                                        ' --os-auth-url=http://localhost:5000/v2.0 endpoint-list'
                                                        ' | grep -v "{publicip}" | cut -d "|" -f2'.format(publicip=publicip)],
                                                      shell=True)).split()
-        building_salt_extra()
-        zip_hosts = zip(host_sls,host_sls_values)
-        with open(("/tmp/hostgrain"), "w") as salt_host_grain:
-            salt_host_grain.write("""{""")
-            for each in zip_hosts:
-                key,value = each[0],each[1]
-                if type(value) == bool or value.lower() == 'true' or value.lower() == 'false':
-                    salt_host_grain.write(""" '{key}': {value} ,""".format(key=key,value=value))
-                else:
-                    salt_host_grain.write(""" '{key}': '{value}',""".format(key=key,value=value))
-            salt_host_grain.write("""}""")
-        with open(("/tmp/hostgrain"), "r") as salt_grain_read:
-          subprocess.call(['sudo', 'salt-call', '--local','grains.setvals', salt_grain_read.read() ])
+        # building_salt_extra()
+        # zip_hosts = zip(host_sls,host_sls_values)
+        # with open(("/tmp/hostgrain"), "w") as salt_host_grain:
+        #     salt_host_grain.write("""{""")
+        #     for each in zip_hosts:
+        #         key,value = each[0],each[1]
+        #         if type(value) == bool or value.lower() == 'true' or value.lower() == 'false':
+        #             salt_host_grain.write(""" '{key}': {value} ,""".format(key=key,value=value))
+        #         else:
+        #             salt_host_grain.write(""" '{key}': '{value}',""".format(key=key,value=value))
+        #     salt_host_grain.write("""}""")
+        # with open(("/tmp/hostgrain"), "r") as salt_grain_read:
+        #   subprocess.call(['sudo', 'salt-call', '--local','grains.setvals', salt_grain_read.read() ])
 
         nova_services_hosts = ["'ubuntu'"]
         nova_service_list = ["nova-compute","nova-cert","nova-consoleauth","nova-scheduler","nova-conductor"]
@@ -989,7 +989,7 @@ if __name__ == "__main__":
         subprocess.call(['sudo', 'mysql', '-uroot', '-ppassword', 'nova',
                          '--execute=delete from services'])
 
-
+        # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.host'])
         q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword}'.format(ospassword=ospassword)
                                                    ' --os-tenant-name admin'
                                                    ' --os-auth-url=http://localhost:5000/v2.0 agent-list'
