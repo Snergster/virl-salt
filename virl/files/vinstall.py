@@ -946,9 +946,8 @@ if __name__ == "__main__":
         building_salt_all()
         call_salt('openstack')
         call_salt('openstack.stop')
-        call_salt('openstack.rabbitmq')
-        subprocess.call(['sudo', 'service','rabbitmq-server','stop'])
         call_salt('virl.host')
+        call_salt('openstack.rabbitmq')
         subprocess.call(['sudo', 'service','rabbitmq-server','start'])
         call_salt('virl.openrc,virl.std')
         if masterless:
