@@ -78,7 +78,7 @@ debconf-change-noninteractive:
   cmd.run:
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
     - onchanges:
-      - cmd: debconf-change
+      - file: debconf-change
 
 
 verify symlink:
