@@ -35,6 +35,13 @@
     - group: virl
     - file_mode: 755
 
+uwmadmin change:
+  cmd.run:
+    - names:
+      - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}'
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
+    - onlyif: 'test -e /var/local/virl/servers.db'
 
 uwm_init:
   file.managed:
