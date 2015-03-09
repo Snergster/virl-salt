@@ -962,11 +962,7 @@ if __name__ == "__main__":
         #                                                ' --os-auth-url=http://localhost:5000/v2.0 endpoint-list'
         #                                                ' | grep -w "regionOne" | cut -d "|" -f2'],
         #                                              shell=True)).split()
-        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword}'.format(ospassword=ospassword)
-                                                       ' --os-tenant-name admin'
-                                                       ' --os-auth-url=http://localhost:5000/v2.0 endpoint-list'
-                                                       ' | grep -v "{publicip}" | cut -d "|" -f2'.format(publicip=publicip)],
-                                                     shell=True)).split()
+        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | cut -d "|" -f2'.format(publicip=publicip,ospassword=ospassword)],shell=True)).split()
         # building_salt_extra()
         # zip_hosts = zip(host_sls,host_sls_values)
         # with open(("/tmp/hostgrain"), "w") as salt_host_grain:
