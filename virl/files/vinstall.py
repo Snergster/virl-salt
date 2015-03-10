@@ -973,8 +973,8 @@ if __name__ == "__main__":
         # subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.ntp'])
     #     print ('You need to restart now')
     # if varg['renumber']:
-        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | grep -v "region" | grep -v "+-" |cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
-        print k_delete_list
+        # k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | grep -v "region" | grep -v "+-" |cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
+        # print k_delete_list
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
                  ospassword, '--os-auth-url=http://localhost:5000/v2.0']
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
@@ -986,8 +986,8 @@ if __name__ == "__main__":
         print q_delete_list
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
-        for _keach in k_delete_list:
-            subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
+        # for _keach in k_delete_list:
+        #     subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
         create_basic_networks()
         if guest_account:
             call_salt('virl.guest')
