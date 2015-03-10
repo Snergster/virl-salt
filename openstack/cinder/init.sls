@@ -29,7 +29,7 @@ cinder-pkgs:
     {% if masterless %}
     - source: "file:///srv/salt/openstack/cinder/files/cinder.conf"
     {% else %}
-    - source: "salt://openstack/cinder/files/cinder.conf.jinja"
+    - source: "salt://openstack/cinder/files/cinder.conf"
     {% endif %}
 
 {% if cinder_enabled == True %}
