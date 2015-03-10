@@ -894,6 +894,8 @@ if __name__ == "__main__":
         User_Creator(user_list, user_list_limited)
         print ('You need to restart now')
     if varg['test']:
+        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
+        print k_delete_list
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
                  ospassword, '--os-auth-url=http://localhost:5000/v2.0']
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
