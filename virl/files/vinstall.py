@@ -931,6 +931,8 @@ if __name__ == "__main__":
         call_salt('virl.host')
         call_salt('openstack.rabbitmq')
         call_salt('openstack.start')
+        call_salt('openstack.rabbitmq')
+        call_salt('openstack.restart')
         call_salt('virl.openrc,virl.std')
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
