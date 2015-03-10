@@ -96,17 +96,30 @@ def image_present(name,
         return ret
     # iterate over all given arguments
     # if anything is different delete and recreate
+    different = False
     for key in non_null_arguments:
-        if key in ('copy_from', 'file'):
+        if key in ('copy_from', 'file', 'properties'):
             continue
         if existing_image[name].get(key, None) != non_null_arguments[key]:
             LOG.debug('{0} has changed to {1}'.format(
                 key, non_null_arguments[key]))
-            __salt__['glance.image_delete'](
-                name=name, profile=profile, **connection_args)
-            non_null_arguments.update({'profile': profile})
-            non_null_arguments.update(connection_args)
-            return image_present(**non_null_arguments)
+            different = True
+            break
+    existing_props = existing_image[name].get('properties', {})
+    new_props = __salt__['glance.image_resolve_properties'](properties or {},
+                                                            connection_args)
+    for prop, value in new_props.iteritems():
+        if existing_props.get(prop, None) != value:
+            LOG.debug('Property {0} has changed to {1}'.format(prop, value))
+            # NOTE: properties will be resolved once more by image_create
+            different = True
+            break
+    if different:
+        __salt__['glance.image_delete'](
+            name=name, profile=profile, **connection_args)
+        non_null_arguments.update({'profile': profile})
+        non_null_arguments.update(connection_args)
+        return image_present(**non_null_arguments)
     ret['changes'] = {}
     ret['comment'] = 'Image "{0}" present in correct state'.format(name)
     return ret

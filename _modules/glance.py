@@ -79,6 +79,27 @@ def _auth(profile=None, **connection_args):
     return client.Client('1', endpoint, token=token)
 
 
+def image_resolve_properties(properties, kwargs):
+    '''
+    Merge dict properties argument with additional properties defined in kwargs
+    in the form "property_foo" or "property-bar".
+
+    '''
+    if not isinstance(properties, dict):
+        properties = {}
+    else:
+        properties = dict(properties)  # copy
+    prefix = 'property_'
+    prefix_alt = 'property-'
+    add_props = {
+        key[len(prefix):]: value
+        for key, value in kwargs.items()
+        if key.startswith(prefix) or key.startswith(prefix_alt)
+    }
+    properties.update(add_props)
+    return properties
+
+
 def image_create(profile=None, **connection_args):
     '''
     Create an image (glance image-create)
@@ -102,17 +123,8 @@ def image_create(profile=None, **connection_args):
         )
     )
     if 'properties' in glanceclient.v1.images.CREATE_PARAMS:
-        properties = fields.get('properties')
-        if not isinstance(properties, dict):
-            properties = {}
-        prefix = 'property_'
-        prefix_alt = 'property-'
-        add_props = {
-            key[len(prefix):]: value
-            for key, value in connection_args.items()
-            if key.startswith(prefix) or key.startswith(prefix_alt)
-        }
-        properties.update(add_props)
+        properties = image_resolve_properties(fields.get('properties'),
+                                              connection_args)
         if properties:
             fields['properties'] = properties
 
