@@ -23,7 +23,6 @@ nova-api:
 
 nova-pkgs:
   pkg.installed:
-    - order: 2
     - refresh: False
     - require:
       - pkg: nova-api
@@ -166,6 +165,43 @@ nova-compute serial:
     - parameter: 'serial_port_range'
     - value: '{{ serstart }}:{{ serend }}'
 
+
+/etc/init.d/nova-serialproxy:
+  {% if masterless %}
+  file.copy:
+    - source: /srv/salt/openstack/nova/files/nova-serialproxy
+  {% else %}
+  file.managed:
+    - source: "salt://openstack/nova/files/nova-serialproxy"
+  {% endif %}
+    - force: True
+    - mode: 0755
+
+/etc/nova/policy.json:
+  {% if masterless %}
+  file.copy:
+    - source: /srv/salt/openstack/nova/files/policy.json
+    - force: True
+  {% else %}
+  file.managed:
+    - source: "salt://openstack/nova/files/policy.json"
+  {% endif %}
+    - user: nova
+    - group: nova
+    - mode: 0640
+
+/etc/rc2.d/S98nova-serialproxy:
+  file.absent
+
+
+/home/virl/.novaclient:
+  file.directory:
+    - user: virl
+    - group: virl
+    - recurse:
+      - user
+      - group
+
 nova-restart:
   cmd.run:
     - order: last
@@ -184,28 +220,3 @@ nova-restart:
         service nova-conductor restart
         service nova-compute restart
         service nova-novncproxy restart
-
-/etc/init.d/nova-serialproxy:
-  {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/nova/files/nova-serialproxy
-  {% else %}
-  file.managed:
-    - source: "salt://openstack/nova/files/nova-serialproxy"
-  {% endif %}
-    - force: True
-    - order: 4
-    - mode: 0755
-
-/etc/rc2.d/S98nova-serialproxy:
-  file.absent
-
-
-/home/virl/.novaclient:
-  file.directory:
-    - user: virl
-    - group: virl
-    - recurse:
-      - user
-      - group
-      
