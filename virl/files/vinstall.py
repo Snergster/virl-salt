@@ -894,7 +894,7 @@ if __name__ == "__main__":
         User_Creator(user_list, user_list_limited)
         print ('You need to restart now')
     if varg['test']:
-        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
+        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | grep -v "region" | grep -v "+-" |cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
         print k_delete_list
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
                  ospassword, '--os-auth-url=http://localhost:5000/v2.0']
@@ -903,32 +903,26 @@ if __name__ == "__main__":
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
+        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
         print q_delete_list
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
         for _keach in k_delete_list:
             subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
         create_basic_networks()
-
+        if guest_account:
+            call_salt('virl.guest')
+        novaclient = '/home/virl/.novaclient'
+        if path.exists(novaclient):
+            subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
+        User_Creator(user_list, user_list_limited)
+        subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
+        subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+        print ('You need to restart now')
     if varg['test1']:
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
-        print q_delete_list
-        for _qeach in q_delete_list:
-            subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
-
-        for _keach in k_delete_list:
-            subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
-    if varg['compute']:
-        if not controller:
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.nova.compute'])
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.neutron.compute'])
-    if desktop:
-        if varg['desktop']:
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.desktop'])
-            sleep(5)
-        if onedev:
-            subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'onepk-external'])
             sleep(5)
     if varg['rehost']:
         building_salt_all()
@@ -942,21 +936,21 @@ if __name__ == "__main__":
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         else:
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
-
-        qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
-        nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
-        subprocess.call(qcall + ['subnet-delete', 'flat'])
-        subprocess.call(qcall + ['subnet-delete', 'flat1'])
-        subprocess.call(qcall + ['subnet-delete', 'ext-net'])
+        #
+        # qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
+        #          ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+        # nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
+        #          ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+        # subprocess.call(qcall + ['subnet-delete', 'flat'])
+        # subprocess.call(qcall + ['subnet-delete', 'flat1'])
+        # subprocess.call(qcall + ['subnet-delete', 'ext-net'])
         # k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password password'
         #                                                ' --os-tenant-name admin'
         #                                                ' --os-auth-url=http://localhost:5000/v2.0 endpoint-list'
         #                                                ' | grep -w "regionOne" | cut -d "|" -f2'],
         #                                              shell=True)).split()
-        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
-        print k_delete_list
+        # k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
+        # print k_delete_list
         # building_salt_extra()
         # zip_hosts = zip(host_sls,host_sls_values)
         # with open(("/tmp/hostgrain"), "w") as salt_host_grain:
@@ -981,13 +975,13 @@ if __name__ == "__main__":
                          '--execute=delete from services'])
 
         # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.host'])
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
-        print q_delete_list
-        for _qeach in q_delete_list:
-            subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
-
-        for _keach in k_delete_list:
-            subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
+        # q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
+        # print q_delete_list
+        # for _qeach in q_delete_list:
+        #     subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
+        #
+        # for _keach in k_delete_list:
+        #     subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
         #BS for really old systems
         if not (path.exists('/srv/salt/virl/host.sls')) and (path.exists('/srv/salt/host.sls')):
             subprocess.call(['sudo', 'cp', '/srv/salt/host.sls', '/srv/salt/virl/host.sls'])
@@ -1001,15 +995,22 @@ if __name__ == "__main__":
         # call_salt('virl.openrc,virl.ntp')
         # subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.ntp'])
     #     print ('You need to restart now')
-    # if varg['renumber']:
-    #     subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
-    #     subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
-    #     for _each in ['openstack','openstack.password.change']:
-    #         call_salt(_each)
-    #     building_salt_all()
-    #     sleep(5)
-        for _next in ['openstack.neutron.changes','virl.std,virl.ank']:
-            call_salt(_next)
+    if varg['renumber']:
+        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | grep -v "region" | grep -v "+-" |cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
+        print k_delete_list
+        qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
+                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+        nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
+                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+        subprocess.call(qcall + ['subnet-delete', 'flat'])
+        subprocess.call(qcall + ['subnet-delete', 'flat1'])
+        subprocess.call(qcall + ['subnet-delete', 'ext-net'])
+        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
+        print q_delete_list
+        for _qeach in q_delete_list:
+            subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
+        for _keach in k_delete_list:
+            subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
         create_basic_networks()
         if guest_account:
             call_salt('virl.guest')
@@ -1023,7 +1024,28 @@ if __name__ == "__main__":
         subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
         print ('You need to restart now')
-        sleep(30)
+    #     subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
+    #     subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
+    #     for _each in ['openstack','openstack.password.change']:
+    #         call_salt(_each)
+    #     building_salt_all()
+    #     sleep(5)
+        # for _next in ['openstack.neutron.changes','virl.std,virl.ank']:
+        #     call_salt(_next)
+        # create_basic_networks()
+        # if guest_account:
+        #     call_salt('virl.guest')
+        # novaclient = '/home/virl/.novaclient'
+        # if path.exists(novaclient):
+        #     subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
+        # User_Creator(user_list, user_list_limited)
+        # subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
+        # subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
+        # subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
+        # subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
+        # subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+        # print ('You need to restart now')
+        # sleep(30)
     if varg['host']:
         call_salt('virl.host')
     if varg['upgrade']:
