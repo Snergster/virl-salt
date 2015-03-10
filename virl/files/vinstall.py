@@ -894,46 +894,21 @@ if __name__ == "__main__":
         User_Creator(user_list, user_list_limited)
         print ('You need to restart now')
     if varg['test']:
-        k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | grep -v "region" | grep -v "+-" |cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
-        print k_delete_list
-        qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
-        nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
-        subprocess.call(qcall + ['subnet-delete', 'flat'])
-        subprocess.call(qcall + ['subnet-delete', 'flat1'])
-        subprocess.call(qcall + ['subnet-delete', 'ext-net'])
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
-        print q_delete_list
-        for _qeach in q_delete_list:
-            subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
-        for _keach in k_delete_list:
-            subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
-        create_basic_networks()
-        if guest_account:
-            call_salt('virl.guest')
-        novaclient = '/home/virl/.novaclient'
-        if path.exists(novaclient):
-            subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
-        User_Creator(user_list, user_list_limited)
-        subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
-        subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
-        subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
-        subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
-        subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+
         print ('You need to restart now')
     if varg['test1']:
             sleep(5)
     if varg['rehost']:
         building_salt_all()
         call_salt('openstack')
+        call_salt('openstack.neutron.changes')
         call_salt('openstack.stop')
         call_salt('virl.host')
         call_salt('openstack.rabbitmq')
         call_salt('openstack.start')
         call_salt('openstack.rabbitmq')
         call_salt('openstack.restart')
-        call_salt('virl.openrc,virl.std')
+        call_salt('virl.openrc,virl.std,virl.ank')
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         else:
