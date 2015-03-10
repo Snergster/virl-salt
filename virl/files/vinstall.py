@@ -808,7 +808,7 @@ if __name__ == "__main__":
         call_salt('virl.openrc')
         print 'Please validate the contents of /etc/network/interfaces before rebooting!'
 
-    if varg['second'] or varg['all'] or varg['upgrade']:
+    if varg['second'] or varg['all'] :
         building_salt_all()
         sleep(10)
         # for _each in ['openstack.mysql', 'openstack.rabbitmq', 'openstack.keystone.install', 'openstack.keystone.setup',
@@ -834,7 +834,7 @@ if __name__ == "__main__":
         if path.exists(novaclient):
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
 
-    if varg['third'] or varg['all'] or varg['upgrade']:
+    if varg['third'] or varg['all'] :
         if cinder:
             # call_salt('openstack.cinder.install')
             if cinder_file:
@@ -880,7 +880,7 @@ if __name__ == "__main__":
     #     sleep(5)
     #    call_salt('openstack.neutron.changes')
 
-    if varg['fourth'] or varg['all'] or varg['upgrade']:
+    if varg['fourth'] or varg['all'] :
         if masterless:
             call_salt('openstack.neutron.changes,virl.std,virl.ank')
             # call_salt('virl.ank')
@@ -898,7 +898,7 @@ if __name__ == "__main__":
         print ('You need to restart now')
     if varg['test1']:
             sleep(5)
-    if varg['rehost']:
+    if varg['rehost'] or varg['upgrade']:
         building_salt_all()
         call_salt('openstack')
         call_salt('openstack.neutron.changes')
@@ -1025,12 +1025,6 @@ if __name__ == "__main__":
         # sleep(30)
     if varg['host']:
         call_salt('virl.host')
-    if varg['upgrade']:
-        novaclient = '/home/virl/.novaclient'
-        call_salt('openstack.restart')
-        if path.exists(novaclient):
-            subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
-        sleep(15)
     if varg['routervms']:
         call_salt('virl.routervms')
     if varg['vmm'] or varg['upgrade']:
