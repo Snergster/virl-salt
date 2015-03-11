@@ -119,7 +119,6 @@ glance db-sync:
 
 glance db-restart:
   cmd.run:
-    - order: last
     - names:
       - /usr/sbin/service glance-registry restart | at now + 2 min
       - /usr/sbin/service glance-api restart | at now + 2 min

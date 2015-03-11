@@ -12,7 +12,6 @@
 
 cinder-pkgs:
   pkg.installed:
-    - order: 1
     - refresh: False
     - names:
       - cinder-api
