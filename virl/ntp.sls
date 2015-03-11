@@ -32,6 +32,7 @@ ntpdate:
 {% if not dhcp %}
 ntp.conf interface lock:
   file.replace:
+    - name: /etc/ntp.conf
     - pattern: ^#interface
     - repl: interface
     - onlyif: ls /etc/ntp.conf
