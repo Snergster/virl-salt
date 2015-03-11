@@ -1,6 +1,9 @@
-cmake install:
+libgit2 prereqs:
   pkg.installed:
-    - name: cmake
+    - pkgs:
+      - cmake
+      - python-dev
+      - libffi-dev
 
 
 libgit2 pull:
@@ -27,4 +30,3 @@ cmake libgit2:
 pygit2 install:
   pip.installed:
     - name: pygit2
-
