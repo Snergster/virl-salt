@@ -59,9 +59,8 @@ add libvirt-qemu to nova:
     - addusers:
       - libvirt-qemu
 
-serialproxy patchfile:
+/srv/salt/openstack/nova/patch/serialproxy.diff:
   file.managed:
-    - name: /tmp/serialproxypatch
     - contents: |
         62,64d61
         <     cfg.StrOpt('serial_port_host',
@@ -96,7 +95,7 @@ serialproxy patchfile:
 serialproxy patch:
   file.patch:
     - name: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
-    - source: /tmp/serialproxypatch
+    - source: file:///srv/salt/openstack/nova/patch/serialproxy.diff
     - hash: md5=561d6cee861ac3bb159f695c08583da7
   cmd.run:
     - name: python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
@@ -112,7 +111,7 @@ serialproxy patch:
     - file_mode: 755
     - contents: |
         --- driver.py	2014-07-10 13:22:21.000000000 +0000
-        +++ driver.py	2015-02-10 22:26:30.465829748 +0000
+        +++ driver_new.py	2015-03-11 08:21:52.874891547 +0000
         @@ -56,7 +56,6 @@
          from eventlet import greenthread
          from eventlet import patcher
@@ -136,11 +135,20 @@ serialproxy patch:
                      csock.connect(('localhost', sock.getsockname()[1]))
                      nsock, addr = sock.accept()
                      self._event_notify_send = nsock.makefile('wb', 0)
+        @@ -2448,6 +2445,8 @@
+                     return None
+
+                 host = CONF.serial_port_proxyclient_address
+        +        if host == '0.0.0.0':
+        +            host = utils.get_my_ipv4_address()
+
+                 # Return a descriptor for a raw TCP socket
+                 return {'host': host, 'port': tcp_port, 'internal_access_path': None}
 
 /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py:
   file.patch:
     - source: file:///srv/salt/openstack/nova/patch/driver.diff
-    - hash: md5=7163850e833c811470fc1f2d46fbb5ea
+    - hash: md5=50933b52bf4b2f928b3ac2b3163162ed
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virl/libvirt/driver.py
