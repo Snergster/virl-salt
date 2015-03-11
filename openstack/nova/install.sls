@@ -79,7 +79,7 @@ add libvirt-qemu to nova:
         <         if routes:
         <             routes.sort(key=lambda metr_iface: int(metr_iface[0]))
         <             selected_iface = routes[0][1]
-        < 
+        <
         <             command = "ifconfig %s" % selected_iface
         <             prc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
         <             out, _ = prc.communicate()
@@ -148,7 +148,7 @@ serialproxy patch:
 /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py:
   file.patch:
     - source: file:///srv/salt/openstack/nova/patch/driver.diff
-    - hash: md5=f097bb34e6ea5c9e47a553bfa43eb1ea
+    - hash: md5=df19fdc44c86233f098e5b44d64e21bb
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virl/libvirt/driver.py
