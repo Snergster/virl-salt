@@ -1,4 +1,6 @@
 {% set ntp_server = salt['pillar.get']('virl:ntp_server', salt['grains.get']('ntp_server', 'pool.ntp.org')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set dhcp = salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )) %}
 
 ntp:
   pkg:
@@ -12,11 +14,29 @@ ntpdate:
   pkg:
     - installed
 
+{% if masterless %}
 /etc/ntp.conf:
   file.replace:
     - pattern: ^server.*
     - repl: server {{ ntp_server }} iburst
     - onlyif: ls /usr/sbin/ntpd
+
+{% else %}
+/etc/ntp.conf jinja:
+  file.managed:
+    - name: /etc/ntp.conf
+    - source: salt://virl/files/ntp.conf
+    - template: jinja
+{% endif %}
+
+{% if not dhcp %}
+ntp.conf interface lock:
+  file.replace:
+    - pattern: ^#interface
+    - repl: interface
+    - onlyif: ls /etc/ntp.conf
+{% endif %}
+
 
 ntp stop:
     cmd.run:
