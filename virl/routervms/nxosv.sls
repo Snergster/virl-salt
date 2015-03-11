@@ -27,7 +27,7 @@ NX-OSv flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "NX-OSv"'
     - onlyif: nova flavor-list | grep -w "NX-OSv"
-    - onchanges:
+    - require:
       - glance: NX-OSv
 
 NX-OSv flavor create:
@@ -37,8 +37,6 @@ NX-OSv flavor create:
     - ram: 3072
     - disk: 0
     - vcpus: 1
-    - onchanges:
-      - glance: NX-OSv
     - require:
       - cmd: NX-OSv flavor delete
 
