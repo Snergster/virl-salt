@@ -1021,8 +1021,10 @@ if __name__ == "__main__":
         # subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
         # subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
         # subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
-        # print ('You need to restart now')
-        # sleep(30)
+
+    if varg['renumber']:
+        print ('This command no longer required.')
+        sleep(30)
     if varg['host']:
         call_salt('virl.host')
     if varg['routervms']:
