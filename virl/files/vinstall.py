@@ -12,16 +12,14 @@ Options:
   -h, --help            show this help message and exit
 """
 
-#from configparser import ConfigParser
 import configparser
 import subprocess
 import logging
 import envoy
 from time import sleep
 from tempfile import mkstemp
-from shutil import move, copy, copystat, rmtree
-#from os import remove, close, unsetenv, chdir, mkdir, system, path
-from os import remove, close, mkdir, system, path, makedirs
+from shutil import move, copy, copystat
+from os import remove, close, mkdir, path
 from docopt import docopt
 
 
@@ -224,15 +222,6 @@ vmm_linux = safeparser.getboolean('DEFAULT', 'vmm_linux', fallback=True)
 if dhcp_public or packer_calls:
     public_ip = '127.0.1.1'
 
-if cisco_internal and cml:
-    std_loc = 'http://wwwin-drrc.cisco.com/virl/std/cml/stable/'
-    ank_loc = 'http://wwwin-drrc.cisco.com/ank/release/stable/'
-elif cisco_internal and not cml:
-    std_loc = 'http://wwwin-drrc.cisco.com/virl/std/release/stable/'
-    ank_loc = 'http://wwwin-drrc.cisco.com/ank/release/stable/'
-else:
-    std_loc = 'bins/std'
-    ank_loc = 'bins/ank/'
 
 host_sls = ['hostname','domain','public_port','using_dhcp_on_the_public_port','static_ip','public_gateway','public_netmask',
             'l2_port','l2_address','l2_address2','l3_address','l2_port2','l2_port2_enabled','l3_port','first_nameserver',
@@ -274,41 +263,6 @@ def replace(file_path, pattern, subst):
     move(abs_path, file_path)
 
 
-def setup_salt():
-    if not path.exists('/usr/bin/salt-minion'):
-        subprocess.call(['sudo', '-s', (BASEDIR + 'install_scripts/setup_salt')])
-    if not salt_master == 'none':
-        subprocess.call(['sudo', 'sed', '-i', 's/#master: salt/master: {master}/g'.format(master=salt_master),
-                         '/etc/salt/minion'])
-
-def alter_virlcfg():
-
-    if not uwm_port == '19399':
-        subprocess.call(['sudo', '/usr/local/bin/virl_config', 'update', '--global', '--uwm-port', uwm_port])
-    if not wsgi_port == '19400':
-        subprocess.call(['sudo', '/usr/local/bin/virl_config', 'update', '--global', '--std-port', wsgi_port])
-        subprocess.call(['sudo', 'sed', '-i', ('s/:19399/:{0}/g'.format(uwm_port)),
-                         ('/var/www/html/index.html')])
-    if not dhcp_public:
-        subprocess.call(['sudo', '/usr/local/bin/virl_config', 'update', '--global', '--openstack-auth-url',
-                         'http://{0}:5000/v2.0'.format(public_ip)])
-    if not ospassword == 'password':
-        subprocess.call(['sudo', '/usr/local/bin/virl_config', 'update', '--global',
-                         '--openstack-password', ospassword])
-    subprocess.call(['sudo', 'crudini', '--set','/etc/virl/virl.cfg', 'env',
-                         'virl_openstack_password', (' ' + ospassword)])
-    subprocess.call(['sudo', 'crudini', '--set','/etc/virl/virl.cfg', 'env',
-                         'virl_openstack_service_token', (' ' + ks_token)])
-    subprocess.call(['sudo', 'crudini', '--set','/etc/virl/virl.cfg', 'env',
-                         'virl_std_port', (' ' + wsgi_port)])
-    subprocess.call(['sudo', 'crudini', '--set','/etc/virl/virl.cfg', 'env',
-                         'virl_std_url', (' ' + 'http://localhost:{0}'.format(wsgi_port))])
-    subprocess.call(['sudo', 'crudini', '--set','/etc/virl/virl.cfg', 'env',
-                         'virl_uwm_url', (' ' + 'http://localhost:{0}'.format(uwm_port))])
-    subprocess.call(['sudo', 'crudini', '--set','/etc/virl/virl.cfg', 'env',
-                         'virl_uwm_port', (' ' + uwm_port)])
-    subprocess.call(['sudo', 'crudini', '--set','/usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg',
-                     'orchestration', 'network_security_groups', ' False'])
 
 def building_salt_extra():
     with open(("/tmp/extra"), "w") as extra:
@@ -341,23 +295,23 @@ gitfs_remotes:
 def building_salt_all():
     if not path.exists('/etc/salt/virl'):
         subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt/virl'])
-    if path.exists('/usr/local/bin/keystone') or path.exists('/usr/bin/keystone'):
+    if path.exists('/usr/bin/keystone-manage') or path.exists('/usr/bin/neutron-server'):
         admin_tenid = (subprocess.check_output(['keystone --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
                                             ' tenant-list | grep -w "admin" | cut -d "|" -f2'
-                                           .format(ospassword=ospassword)], shell=True)[1:33])
-        neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
-                                            ' net-list | grep -w "ext-net" | cut -d "|" -f2'
                                            .format(ospassword=ospassword)], shell=True)[1:33])
         service_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
                                             ' tenant-list | grep -w "service" | cut -d "|" -f2'
                                            .format(ospassword=ospassword)], shell=True)[1:33])
+        neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
+                                            ' net-list | grep -w "ext-net" | cut -d "|" -f2'
+                                           .format(ospassword=ospassword)], shell=True)[1:33])
     else:
         admin_tenid = ''
         service_tenid = ''
-    if path.exists('/usr/local/bin/neutron') or path.exists('/usr/bin/neutron'):
+    if path.exists('/usr/bin/neutron-server'):
         neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
                                             ' net-list | grep -w "ext-net" | cut -d "|" -f2'
@@ -482,93 +436,6 @@ def set_hostname(hostname, fqdn, public_ip):
 netdir = (BASEDIR + 'install_scripts/etc/network/')
 
 
-def set_addresses(pport, ppaddress, public_network, public_gateway, l2port, l2bridge, l3port, l3bridge, l2_address,
-                  l3_address):
-    if not dhcp_public and not packer_calls:
-
-        copy((netdir + 'interfaces.orig'), (netdir + 'interfaces'))
-        replace((netdir + 'interfaces'), 'primary-port', pport)
-        replace((netdir + 'interfaces'), 'primary-address', ppaddress)
-        replace((netdir + 'interfaces'), 'primary-mask', public_netmask)
-        replace((netdir + 'interfaces'), 'primary-gateway', public_gateway)
-        replace((netdir + 'interfaces'), 'pdns', dns1)
-        replace((netdir + 'interfaces'), 'sdns', dns2)
-        replace((netdir + 'interfaces'), 'fqdn', fqdn)
-    else:
-        copy((netdir + 'interfaces.dhcp.orig'), (netdir + 'interfaces'))
-        replace((netdir + 'interfaces'), 'primary-port', pport)
-    replace((netdir + 'interfaces'), 'flatint', l2port)
-    #replace((netdir +'interfaces'), 'flat-bridge', l2bridge)
-    replace((netdir + 'interfaces'), 'natint', l3port)
-    if address_l2_port:
-        with open((netdir + '/' + 'interfaces'), 'a') as interfaces:
-            interfaces.write('auto ' + l2_bridge_port + '\n')
-            interfaces.write('iface ' + l2_bridge_port + ' ' + 'inet static\n')
-            interfaces.write('\taddress ' + l2_address + '\n')
-            interfaces.write('\tnetmask ' + l2_mask + '\n')
-    if packer_calls and vagrant_calls:
-        copy((netdir + 'interfaces.vagrant.orig'), (netdir + 'interfaces'))
-        replace((netdir + 'interfaces'), 'primary-port', pport)
-        if address_l2_port:
-            with open((netdir + '/' + 'interfaces'), 'a') as interfaces:
-                interfaces.write('auto ' + l2_bridge_port + '\n')
-                interfaces.write('iface ' + l2_bridge_port + ' ' + 'inet static\n')
-                interfaces.write('\taddress ' + l2_address + '\n')
-                interfaces.write('\tnetmask ' + l2_mask + '\n')
-        subprocess.call(['sudo', 'cp', '-f', (BASEDIR + 'install_scripts/etc/network/interfaces'),
-                         '/etc/network/interfaces'])
-
-def create_ovs_networks():
-    subprocess.call(['sudo', 'ovs-vsctl', 'add-br', '{0}'.format(l2_bridge_port)])
-    subprocess.call(['sudo', 'ovs-vsctl', 'set', 'bridge','{0}'.format(l2_bridge_port),
-                     'other-config:forward-bpdu=true'])
-    subprocess.call(['sudo', 'ovs-vsctl', 'add-br', '{0}'.format(l2_bridge_port2)])
-    subprocess.call(['sudo', 'ovs-vsctl', 'set', 'bridge','{0}'.format(l2_bridge_port2),
-                     'other-config:forward-bpdu=true'])
-    subprocess.call(['sudo', 'ovs-vsctl', 'add-br', '{0}'.format(l3_bridge_port)])
-
-    subprocess.call(['sudo', 'ovs-vsctl', 'add-port', '{0}'.format(l2_bridge_port), '{0}'.format(l2_port)])
-    subprocess.call(['sudo', 'ovs-vsctl', 'add-port', '{0}'.format(l2_bridge_port2), '{0}'.format(l2_port2)])
-    subprocess.call(['sudo', 'ovs-vsctl', 'add-port', '{0}'.format(l3_bridge_port), '{0}'.format(l3_port)])
-    # if cariden:
-    #     subprocess.call(['sudo', 'ovs-vsctl', 'add-br', 'cariden'])
-    #     subprocess.call(['sudo', 'ovs-vsctl', 'set', 'bridge', 'cariden', 'other-config:hwaddr=12:24:48:96:36:14'])
-
-def set_sysctl():
-    print ('sysctl')
-    subprocess.call(['sudo', 'sed', '-i', 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g', '/etc/sysctl.conf'])
-    if 'net.ipv4.tcp_keepalive_probes=20' in open('/etc/sysctl.conf').read():
-        print ('tcp present')
-    else:
-        copy('/etc/sysctl.conf', '/tmp/sysctl.conf')
-        with open('/tmp/sysctl.conf', 'a') as sysfile:
-            sysfile.write('''#TCP keepalives
-net.ipv4.tcp_keepalive_probes=20
-net.ipv4.tcp_keepalive_time=300
-net.ipv4.tcp_keepalive_intvl=60
-''')
-        system(cpstr % {'from': '/tmp/sysctl.conf', 'to': '/etc/sysctl.conf'})
-    print ('added keepalive')
-
-
-
-def setup_vmm():
-    subprocess.call(['sudo', '-s', (BASEDIR + 'install_scripts/setup_vmmaestro')])
-
-
-def fix_ntp():
-    subprocess.call(['sudo', 'service', 'ntp', 'stop'])
-    subprocess.call(['sudo', 'ntpdate', ntp_server])
-    if ntp_server == 'ntp.esl.cisco.com':
-        subprocess.call(['sudo', 'cp', '-f', (BASEDIR + 'install_scripts/etc/cisco.ntp.conf'), '/etc/ntp.conf'])
-    elif ntp_server == 'ntp.ubuntu.com':
-        subprocess.call(['sudo', 'cp', '-f', (BASEDIR + 'install_scripts/etc/ubuntu.ntp.conf'), '/etc/ntp.conf'])
-    else:
-        subprocess.call(['sudo', 'cp', '-f', (BASEDIR + 'install_scripts/etc/generic.ntp.conf'), '/etc/ntp.conf'])
-        subprocess.call(['sudo', 'sed', '-i', ('s/= GENERICNTP/= {0}/g'.format(ntp_server)), '/etc/ntp.conf'])
-    subprocess.call(['sudo', 'service', 'ntp', 'start'])
-
-
 def apache_write():
 
     with open(("/tmp/apache.conf"), "w") as apache:
@@ -603,45 +470,10 @@ Alias /videos /var/www/videos
                          '/etc/apache2/sites-enabled/apache.conf'])
 
 
-def std_install():
-    alter_virlcfg()
-    if path.isfile('/tmp/servers.db'):
-        subprocess.call(['sudo', '/usr/local/bin/virl_uwm_server', 'init', '-A',
-                         'http://{0}:5000/v2.0'.format(public_ip), '-u', 'uwmadmin', '-p', uwmadmin_passwd, '-U', 'uwmadmin',
-                         '-P', uwmadmin_passwd, '-T', 'uwmadmin', '-d', '/tmp/servers.db'])
-        subprocess.call(['sudo', 'rm', '-rf', '/tmp/servers.db'])
-    else:
-        subprocess.call(['sudo', '/usr/local/bin/virl_uwm_server', 'init', '-A',
-                         'http://{0}:5000/v2.0'.format(public_ip), '-u', 'uwmadmin', '-p', uwmadmin_passwd, '-U', 'uwmadmin',
-                         '-P', uwmadmin_passwd, '-T', 'uwmadmin'])
-        if guest_account:
-            subprocess.call(['sudo', '/usr/local/bin/virl_uwm_server', 'add-user',
-                         '-u', 'guest', '-p', 'guest', '-U', 'guest',
-                         '-P', 'guest', '-T', 'guest'])
-
-    subprocess.call(['sudo', 'service', 'virl-uwm', 'start'])
-    subprocess.call(['sudo', 'service', 'virl-std', 'start'])
-
-
-def adduser_vmmwsgi(name, password, tenant):
-    add_vmmwsgi = ["sudo", "/usr/local/bin/virl_uwm_server", "add-user", "-u", name,
-                   "-p", password, "-U", name, "-P", password, "-T", tenant]
-    try:
-        output = subprocess.call(add_vmmwsgi)
-        log.debug(output)
-    except Exception:
-        log.error('Error in virl user creation')
-
 def User_Creator(user_list, user_list_limited):
     UNET = True
     user_check = subprocess.check_output(kcall + ['user-list'])
-    # guest_check = subprocess.check_output(kcall + ['user-list'])
-    # if guest_account:
-    #     if 'guest' not in guest_check:
-    #         adduser_os('guest', 'guest', 'Member', 'guest', instances=100)
-    #         sleep(1)
-    #         adduser_vmmwsgi('guest', 'guest', 'guest')
-    #         Net_Creator('guest', 'guest')
+
     if user_list:
         for each_user in user_list.split(','):
             (user, password) = each_user.split(':')
@@ -658,15 +490,6 @@ def User_Creator(user_list, user_list_limited):
                 .format(password), 'user_os_password={0}'.format(password), 'quota_instances={0}'.format(limit)])
 
 
-def adduser_os(name, password, role, tenant, instances):
-    try:
-        #print(name,password,role,tenant,instances)
-        subprocess.call(['/usr/local/bin/adduser_openstack', '{0}'.format(name), '{0}'.format(password), 'foo@example.com'
-                        , '{0}'.format(role), '{0}'.format(tenant), '{0}'.format(instances)])
-    except Exception:
-        log.debug('Error in openstack user creation')
-
-
 def set_vnc_password(vnc_password):
     if not path.exists('/home/virl/.vnc'):
         mkdir('/home/virl/.vnc')
@@ -679,29 +502,6 @@ def set_vnc_password(vnc_password):
         _f.write(_vnc.std_out)
         _f.close()
 
-
-def setup_vnc():
-    rmtree('/home/virl/.vnc', ignore_errors=True)
-    #mkdir('/home/virl/.vnc', 0700)
-    mkdir('/home/virl/.vnc', 0o700)
-    subprocess.call(['cp', '-f', (BASEDIR + 'install_scripts/orig/xstartup'), '/home/virl/.vnc/xstartup'])
-    subprocess.call(['cp', '-f', (BASEDIR + 'install_scripts/vnc.passwd'), '/home/virl/.vnc/passwd'])
-    subprocess.call(['sudo', 'service', 'tightvnc', 'restart'])
-
-
-def desktop_icons():
-            autostart = '/home/virl/.config/autostart'
-            if not path.exists(autostart):
-                makedirs('/home/virl/.config/autostart')
-            subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.config'])
-            desktop = '/home/virl/Desktop'
-            if not path.exists(desktop):
-                mkdir('/home/virl/Desktop')
-
-            subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/Desktop'])
-            subprocess.call(['mkdir', '-p', '/home/virl/.config/pcmanfm/lubuntu'])
-            subprocess.call(['cp', '-f', (BASEDIR + 'install_scripts/orig/desktop-items-0.conf'),
-                             '/home/virl/.config/pcmanfm/lubuntu'])
 
 
 def Net_Creator(user, password):
@@ -734,29 +534,6 @@ def Net_Creator(user, password):
         log.error('Error in net create')
 
 
-def domodification(ospassword, mypassword, ks_token):
-    try:
-        # copy((BASEDIR + 'install_scripts/orig/do.sh.orig'), (BASEDIR + 'install_scripts/do.sh'))
-        copy((BASEDIR + 'install_scripts/orig/index.html.orig'), (BASEDIR + 'install_scripts/index.html'))
-        # copy((BASEDIR + 'install_scripts/orig/alter.sh.orig'), (BASEDIR + 'install_scripts/alter.sh'))
-        copy((BASEDIR + 'install_scripts/orig/bashrc.orig'), (BASEDIR + 'install_scripts/bashrc'))
-
-    except subprocess.CalledProcessError as err:
-        log.error('cp of do and bashrc failed', err)
-    try:
-        replace(BASEDIR + 'install_scripts/index.html', 'UWMPORT', uwm_port)
-        replace(BASEDIR + 'install_scripts/do.sh', 'ospassword', ospassword)
-        replace(BASEDIR + 'install_scripts/do.sh', 'mypassql', mypassword)
-        # replace(BASEDIR + 'install_scripts/alter.sh', 'ospassword', ospassword)
-        # replace(BASEDIR + 'install_scripts/alter.sh', 'mypassql', mypassword)
-        replace(BASEDIR + 'install_scripts/bashrc', 'ospassword', ospassword)
-        replace(BASEDIR + 'install_scripts/bashrc', 'kstoken', ks_token)
-        subprocess.call(['sed', '-i', ('s/--port .*/--port {0}"/g'.format(ank)),
-                         (BASEDIR + 'install_scripts/init.d/ank-webserver.init')])
-        copy((BASEDIR + 'install_scripts/bashrc'), ( '/home/virl/.bashrc'))
-        copy((BASEDIR + 'install_scripts/bash.profile'), ( '/home/virl/.bash_profile'))
-    except subprocess.CalledProcessError as err:
-        log.error('proxy sed do FAIL', err)
 
 def call_salt(slsfile):
     print 'Please be patient file {slsfile} is running'.format(slsfile=slsfile)
@@ -903,7 +680,7 @@ if __name__ == "__main__":
         call_salt('openstack')
         call_salt('openstack.neutron.changes')
         call_salt('openstack.stop')
-        call_salt('virl.host')
+        call_salt('virl.host,virl.ntp')
         call_salt('openstack.rabbitmq')
         call_salt('openstack.start')
         call_salt('openstack.rabbitmq')
