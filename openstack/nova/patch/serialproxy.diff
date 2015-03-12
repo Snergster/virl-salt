@@ -15,7 +15,7 @@
 <         if routes:
 <             routes.sort(key=lambda metr_iface: int(metr_iface[0]))
 <             selected_iface = routes[0][1]
-<
+< 
 <             command = "ifconfig %s" % selected_iface
 <             prc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
 <             out, _ = prc.communicate()
