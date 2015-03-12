@@ -35,13 +35,6 @@
     - group: virl
     - file_mode: 755
 
-uwmadmin change:
-  cmd.run:
-    - names:
-      - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}'
-      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
-      - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
-    - onlyif: 'test -e /var/local/virl/servers.db'
 
 uwm_init:
   file.managed:
@@ -210,13 +203,29 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_std_user_name uwmadmin
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
 
+uwmadmin change:
+  cmd.run:
+    - names:
+     {% if cml %}
+      - sleep 65
+     {% endif %}
+      - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}'
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
+    - onlyif: 'test -e /var/local/virl/servers.db'
+
 virl init:
   cmd:
     - run
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
 
-
+virl init second:
+  cmd:
+    - run
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
+    - onfail:
+      - cmd: uwmadmin change
 
 virl-std:
   service:
