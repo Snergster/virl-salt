@@ -61,6 +61,7 @@ add libvirt-qemu to nova:
 
 /srv/salt/openstack/nova/patch/serialproxy.diff:
   file.managed:
+    - makedirs: True
     - contents: |
         62,64d61
         <     cfg.StrOpt('serial_port_host',
