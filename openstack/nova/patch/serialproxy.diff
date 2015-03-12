@@ -22,7 +22,7 @@
 <             outside_ip = re.search(r'inet (?:addr:)?([^\s]+)', out)
 <             if outside_ip:
 <                 serial_port_host = outside_ip.group(1)
-<
+< 
 124c101
 <                                    target_host=serial_port_host,
 ---
