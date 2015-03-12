@@ -103,6 +103,22 @@ serialproxy patch:
       - file: serialproxy patch
 
 
+cmd/serialproxy.py replace:
+  {% if masterless %}
+  file.copy:
+    - source: file:///srv/salt/openstack/nova/patch/serialproxy.py
+  {% else %}
+  file.managed:
+    - source: salt://openstack/nova/patch/driver.py
+  {% endif %}
+    - name: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
+    - onfail:
+      - file: serialproxy patch
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
+    - watch:
+      - file: cmd/serialproxy.py replace
 
 
 /srv/salt/openstack/nova/patch/driver.diff:
@@ -145,8 +161,9 @@ serialproxy patch:
                  # Return a descriptor for a raw TCP socket
                  return {'host': host, 'port': tcp_port, 'internal_access_path': None}
 
-/usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py:
+libvirt/driver.py patch:
   file.patch:
+    - name: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
     - source: file:///srv/salt/openstack/nova/patch/driver.diff
     - hash: md5=df19fdc44c86233f098e5b44d64e21bb
   cmd.wait:
@@ -157,6 +174,23 @@ serialproxy patch:
     - require:
       - file: /srv/salt/openstack/nova/patch/driver.diff
       - pkg: nova-pkgs
+
+libvirt/driver.py replace:
+  {% if masterless %}
+  file.copy:
+    - source: file:///srv/salt/openstack/nova/patch/driver.py
+  {% else %}
+  file.managed:
+    - source: salt://openstack/nova/patch/driver.py
+  {% endif %}
+    - name: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
+    - onfail:
+      - file: libvirt/driver.py patch
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virl/libvirt/driver.py
+    - watch:
+      - file: libvirt/driver.py replace
 
 
 ## if needs to go here for non controller
