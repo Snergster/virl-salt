@@ -771,7 +771,7 @@ if __name__ == "__main__":
         novaclient = '/home/virl/.novaclient'
         if path.exists(novaclient):
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
-        User_Creator(user_list, user_list_limited)
+        # User_Creator(user_list, user_list_limited)
         subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
         subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
