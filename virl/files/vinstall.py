@@ -783,7 +783,7 @@ if __name__ == "__main__":
         print ' Your salt key needs to be accepted by salt master before continuing\n'
         print ' You can test with salt-call test.ping for ok result'
 
-    if varg['highstate'] or varg['upgrade']:
+    if varg['highstate'] or varg['upgrade'] or varg['rehost']:
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.highstate'])
         else:
@@ -794,7 +794,7 @@ if __name__ == "__main__":
         call_salt('virl.vinstall')
         sleep(2)
 
-    if varg['upgrade']:
+    if varg['upgrade'] or varg['rehost']:
         call_salt('common.pip')
         building_salt_all()
         sleep(10)
