@@ -79,14 +79,14 @@ add libvirt-qemu to nova:
         <         if routes:
         <             routes.sort(key=lambda metr_iface: int(metr_iface[0]))
         <             selected_iface = routes[0][1]
-        < 
+        <
         <             command = "ifconfig %s" % selected_iface
         <             prc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
         <             out, _ = prc.communicate()
         <             outside_ip = re.search(r'inet (?:addr:)?([^\s]+)', out)
         <             if outside_ip:
         <                 serial_port_host = outside_ip.group(1)
-        < 
+        <
         124c101
         <                                    target_host=serial_port_host,
         ---
@@ -109,7 +109,7 @@ cmd/serialproxy.py replace:
     - source: file:///srv/salt/openstack/nova/patch/serialproxy.py
   {% else %}
   file.managed:
-    - source: salt://openstack/nova/patch/driver.py
+    - source: salt://openstack/nova/patch/serialproxy.py
   {% endif %}
     - name: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
     - onfail:
