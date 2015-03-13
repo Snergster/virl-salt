@@ -143,24 +143,23 @@ ank_prereq:
     - proxy: {{ http_proxy }}
     {% endif %}
     - names:
-      - lxml
-      - configobj
-      - six
-      - Mako
-      - MarkupSafe
-      - certifi
-      - backports.ssl_match_hostname
-      - netaddr
-      - networkx
-      - PyYAML
+      - lxml >= 3.3.3
+      - configobj >= 4.7.1
+      - six >= 1.9.0
+      - Mako >= 0.8.0
+      - MarkupSafe >= 0.23
+      - certifi >= 14.5.14
+      - backports.ssl_match_hostname >= 3.4.0.2
+      - netaddr >= 0.7.13
+      - networkx >= 1.7
+      - PyYAML >= 3.10
       - tornado >= 3.2.2, < 4.0.0
 
 textfsm:
   pip.installed:
-    - name: textfsm
+    - name: textfsm >= 0.2.1
     - find_links: "file:///var/cache/virl/ank"
     - onlyif: ls /var/cache/virl/ank/textfsm*
-    - upgrade: True
     - no_deps: True
     - use_wheel: True
     - no_index: True
