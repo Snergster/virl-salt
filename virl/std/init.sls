@@ -122,29 +122,28 @@ std_prereq:
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - upgrade: True
     - names:
-      - ipaddr
-      - flask-sqlalchemy
-      - Flask
-      - Flask_Login
-      - Flask_RESTful
-      - Flask_WTF
-      - itsdangerous
-      - Jinja2
+      - ipaddr >= 2.1.11
+      - flask-sqlalchemy >= 2.0
+      - Flask >= 0.10.1
+      - Flask_Login >= 0.2.11
+      - Flask_RESTful >= 0.3.2
+      - Flask_WTF >= 0.11
+      - itsdangerous >= 0.24
+      - Jinja2 >= 2.7.3
       - lxml <= 3.3.3
-      - MarkupSafe
-      - mock
-      - paramiko
-      - pycrypto
-      - requests
-      - simplejson
-      - sqlalchemy
+      - MarkupSafe >= 0.23
+      - mock >= 1.0.1
+      - paramiko >= 1.15.2
+      - pycrypto >= 2.6.1
+      - requests >= 2.5.3
+      - simplejson >= 3.6.5
+      - sqlalchemy >= 0.9.9
       - tornado >= 3.2.2, < 4.0.0
-      - websocket_client
-      - Werkzeug
+      - websocket_client >= 0.26.0
+      - Werkzeug >= 0.10.1
       - wsgiref
-      - WTForms
+      - WTForms >= 2.0.2
 
 VIRL_CORE:
   pip.installed:
