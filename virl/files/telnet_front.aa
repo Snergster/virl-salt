@@ -1,4 +1,7 @@
-
+  # allow for kvm to read nova.conf
+  /bin/grep rmix,
+  /etc/nova/nova.conf r,
+  
   # allow fronting telnet consoles for kvm
   /bin/bash rmix,
   /bin/sed rmix,

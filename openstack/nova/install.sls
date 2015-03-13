@@ -23,7 +23,6 @@ nova-api:
 
 nova-pkgs:
   pkg.installed:
-    - order: 2
     - refresh: False
     - require:
       - pkg: nova-api
@@ -54,6 +53,74 @@ nova-pkgs:
     - require:
       - pkg: nova-pkgs
 
+add libvirt-qemu to nova:
+  group.present:
+    - name: nova
+    - addusers:
+      - libvirt-qemu
+
+/srv/salt/openstack/nova/patch/serialproxy.diff:
+  file.managed:
+    - makedirs: True
+    - contents: |
+        62,64d61
+        <     cfg.StrOpt('serial_port_host',
+        <                default='ignore',
+        <                help='Host to which to connect for incoming requests'),
+        92,111d88
+        <     serial_port_host = CONF.serial_port_host
+        <     if serial_port_host == '0.0.0.0':
+        <         # determine the correct host to connect to as the local address
+        <         # of the interface with the best default route
+        <         import subprocess, re
+        <         command = "route -n | awk '/^0.0.0.0/{print $5 \" \" $8}'"
+        <         prc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+        <         out, _ = prc.communicate()
+        <         routes = [line.split(None, 1) for line in out.splitlines()]
+        <         if routes:
+        <             routes.sort(key=lambda metr_iface: int(metr_iface[0]))
+        <             selected_iface = routes[0][1]
+        <
+        <             command = "ifconfig %s" % selected_iface
+        <             prc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+        <             out, _ = prc.communicate()
+        <             outside_ip = re.search(r'inet (?:addr:)?([^\s]+)', out)
+        <             if outside_ip:
+        <                 serial_port_host = outside_ip.group(1)
+        <
+        124c101
+        <                                    target_host=serial_port_host,
+        ---
+        >                                    target_host='ignore',
+
+serialproxy patch:
+  file.patch:
+    - name: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
+    - source: file:///srv/salt/openstack/nova/patch/serialproxy.diff
+    - hash: md5=561d6cee861ac3bb159f695c08583da7
+  cmd.run:
+    - name: python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
+    - onchanges:
+      - file: serialproxy patch
+
+
+cmd/serialproxy.py replace:
+  {% if masterless %}
+  file.copy:
+    - source: file:///srv/salt/openstack/nova/patch/serialproxy.py
+  {% else %}
+  file.managed:
+    - source: salt://openstack/nova/patch/serialproxy.py
+  {% endif %}
+    - name: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
+    - onfail:
+      - file: serialproxy patch
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
+    - watch:
+      - file: cmd/serialproxy.py replace
+
 
 /srv/salt/openstack/nova/patch/driver.diff:
   file.managed:
@@ -61,7 +128,7 @@ nova-pkgs:
     - file_mode: 755
     - contents: |
         --- driver.py	2014-07-10 13:22:21.000000000 +0000
-        +++ driver.py	2015-02-10 22:26:30.465829748 +0000
+        +++ driver_new.py	2015-03-11 08:21:52.874891547 +0000
         @@ -56,7 +56,6 @@
          from eventlet import greenthread
          from eventlet import patcher
@@ -85,11 +152,21 @@ nova-pkgs:
                      csock.connect(('localhost', sock.getsockname()[1]))
                      nsock, addr = sock.accept()
                      self._event_notify_send = nsock.makefile('wb', 0)
+        @@ -2448,6 +2445,8 @@
+                     return None
 
-/usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py:
+                 host = CONF.serial_port_proxyclient_address
+        +        if host == '0.0.0.0':
+        +            host = utils.get_my_ipv4_address()
+
+                 # Return a descriptor for a raw TCP socket
+                 return {'host': host, 'port': tcp_port, 'internal_access_path': None}
+
+libvirt/driver.py patch:
   file.patch:
+    - name: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
     - source: file:///srv/salt/openstack/nova/patch/driver.diff
-    - hash: md5=7163850e833c811470fc1f2d46fbb5ea
+    - hash: md5=df19fdc44c86233f098e5b44d64e21bb
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virl/libvirt/driver.py
@@ -98,6 +175,23 @@ nova-pkgs:
     - require:
       - file: /srv/salt/openstack/nova/patch/driver.diff
       - pkg: nova-pkgs
+
+libvirt/driver.py replace:
+  {% if masterless %}
+  file.copy:
+    - source: file:///srv/salt/openstack/nova/patch/driver.py
+  {% else %}
+  file.managed:
+    - source: salt://openstack/nova/patch/driver.py
+  {% endif %}
+    - name: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
+    - onfail:
+      - file: libvirt/driver.py patch
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virl/libvirt/driver.py
+    - watch:
+      - file: libvirt/driver.py replace
 
 
 ## if needs to go here for non controller
@@ -166,6 +260,43 @@ nova-compute serial:
     - parameter: 'serial_port_range'
     - value: '{{ serstart }}:{{ serend }}'
 
+
+/etc/init.d/nova-serialproxy:
+  {% if masterless %}
+  file.copy:
+    - source: /srv/salt/openstack/nova/files/nova-serialproxy
+  {% else %}
+  file.managed:
+    - source: "salt://openstack/nova/files/nova-serialproxy"
+  {% endif %}
+    - force: True
+    - mode: 0755
+
+/etc/nova/policy.json:
+  {% if masterless %}
+  file.copy:
+    - source: /srv/salt/openstack/nova/files/policy.json
+    - force: True
+  {% else %}
+  file.managed:
+    - source: "salt://openstack/nova/files/policy.json"
+  {% endif %}
+    - user: nova
+    - group: nova
+    - mode: 0640
+
+/etc/rc2.d/S98nova-serialproxy:
+  file.absent
+
+
+/home/virl/.novaclient:
+  file.directory:
+    - user: virl
+    - group: virl
+    - recurse:
+      - user
+      - group
+
 nova-restart:
   cmd.run:
     - order: last
@@ -184,26 +315,3 @@ nova-restart:
         service nova-conductor restart
         service nova-compute restart
         service nova-novncproxy restart
-
-/etc/init.d/nova-serialproxy:
-  {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/nova/files/nova-serialproxy
-  {% else %}
-  file.managed:
-    - source: "salt://files/nova-serialproxy"
-  {% endif %}
-    - force: True
-    - order: 4
-    - mode: 0755
-
-/etc/rc2.d/S98nova-serialproxy:
-  file.absent
-
-
-/usr/local/bin/nova:
-  file.symlink:
-    - order: 7
-    - target: /usr/bin/nova
-    - unless: ls /usr/local/bin/nova
-    - mode: 0755

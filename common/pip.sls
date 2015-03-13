@@ -22,6 +22,7 @@ pip hard up:
     - proxy: {{ http_proxy }}
     {% endif %}
     - upgrade: True
+    - unless: ls /usr/local/bin/pip
     - require:
       - pkg: pip on the box
 

@@ -15,9 +15,6 @@
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
 
-include:
-    - openstack.osclients
-
 {% if not masterless %}
 /var/cache/virl/std:
   file.recurse:
@@ -34,7 +31,6 @@ include:
       {% endif %}
     {% endif %}
     - clean: true
-    - order: 1
     - user: virl
     - group: virl
     - file_mode: 755
@@ -42,14 +38,12 @@ include:
 
 uwm_init:
   file.managed:
-    - order: 4
     - name: /etc/init.d/virl-uwm
     - source: "salt://virl/std/files/virl-uwm.init"
     - mode: 0755
 
 std_init:
   file.managed:
-    - order: 3
     - name: /etc/init.d/virl-std
     - source: "salt://virl/std/files/virl-std.init"
     - mode: 0755
@@ -67,7 +61,6 @@ std docs:
 
 std_init local:
   file.managed:
-    - order: 3
     - name: /etc/init.d/virl-std
     - source: "file:///srv/salt/virl/std/files/virl-std.init"
     - source_hash: md5=a143c518d8a7942c96bce306e83e8fb8
@@ -75,7 +68,6 @@ std_init local:
 
 uwm_init local:
   file.managed:
-    - order: 3
     - name: /etc/init.d/virl-uwm
     - source: "file:///srv/salt/virl/std/files/virl-uwm.init"
     - source_hash: md5=97697ed887ccdd534e46fa4cabf16877
@@ -109,14 +101,12 @@ std docs local:
 /etc/virl/virl.cfg:
   file.managed:
     - replace: false
-    - order: 3
     - makedirs: true
     - mode: 0644
 
 
 /etc/rc2.d/S98virl-std:
   file.symlink:
-    - order: 6
     - target: /etc/init.d/virl-std
     - mode: 0755
 
@@ -125,9 +115,10 @@ std docs local:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
 
+
+
 std_prereq:
   pip.installed:
-    - order: 2
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
@@ -157,7 +148,6 @@ std_prereq:
 
 VIRL_CORE:
   pip.installed:
-    - order: 5
     - use_wheel: True
     - no_index: True
     - pre_releases: True
@@ -213,11 +203,29 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_std_user_name uwmadmin
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
 
+uwmadmin change:
+  cmd.run:
+    - names:
+     {% if cml %}
+      - sleep 65
+     {% endif %}
+      - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}'
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
+    - onlyif: 'test -e /var/local/virl/servers.db'
+
 virl init:
   cmd:
     - run
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
+
+virl init second:
+  cmd:
+    - run
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
+    - onfail:
+      - cmd: uwmadmin change
 
 virl-std:
   service:

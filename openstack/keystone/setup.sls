@@ -2,9 +2,16 @@
 {% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 
+
+include:
+  - openstack.keystone.install
+
+
+
 Keystone tenants:
   keystone.tenant_present:
-    - order: 2
+    - require:
+      - cmd: key-db-sync
     - names:
       - admin
       - service
@@ -12,7 +19,6 @@ Keystone tenants:
 
 Keystone roles:
   keystone.role_present:
-    - order: 1
     - names:
       - admin
       - Member
@@ -110,45 +116,69 @@ nova service:
     - name: nova
     - service_type: compute
     - description: OpenStack Compute Service
+    - require:
+      - keystone: Keystone tenants
+      - keystone: Keystone roles
 
 cinder service:
   keystone.service_present:
     - name: cinder
     - service_type: volume
     - description: OpenStack storage Service
+    - require:
+      - keystone: Keystone tenants
+      - keystone: Keystone roles
 
 cinderv2 service:
   keystone.service_present:
     - name: cinderv2
     - service_type: volumev2
     - description: OpenStack storage Service v2
+    - require:
+      - keystone: Keystone tenants
+      - keystone: Keystone roles
 
 heat service:
    keystone.service_present:
      - name: heat
      - service_type: orchestration
      - description: Orchestration
+     - require:
+       - keystone: Keystone tenants
+       - keystone: Keystone roles
 
 heat-cfn service:
    keystone.service_present:
      - name: heat-cfn
      - service_type: cloudformation
      - description: Orchestration CloudFormation
+     - require:
+       - keystone: Keystone tenants
+       - keystone: Keystone roles
 
 neutron service:
   keystone.service_present:
     - name: neutron
     - service_type: network
     - description: Neutron Service
+    - require:
+      - keystone: Keystone tenants
+      - keystone: Keystone roles
 
 glance service:
   keystone.service_present:
     - name: glance
     - service_type: image
     - description: Glance Image Service
+    - require:
+      - keystone: Keystone tenants
+      - keystone: Keystone roles
 
 keystone service:
   keystone.service_present:
     - name: keystone
     - service_type: identity
     - description: Keystone Identity Service
+    - require:
+      - keystone: Keystone tenants
+      - keystone: Keystone roles

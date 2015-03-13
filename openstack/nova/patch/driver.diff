@@ -1,6 +1,6 @@
 --- driver.py	2014-07-10 13:22:21.000000000 +0000
-+++ driver.py	2015-02-10 22:26:30.465829748 +0000
-@@ -56,6 +56,5 @@
++++ driver_new.py	2015-03-11 08:21:52.874891547 +0000
+@@ -56,7 +56,6 @@
  from eventlet import greenthread
  from eventlet import patcher
  from eventlet import tpool
@@ -8,7 +8,7 @@
  from lxml import etree
  from oslo.config import cfg
 
-@@ -622,11 +621,9 @@
+@@ -622,12 +621,10 @@
          except (ImportError, NotImplementedError):
              # This is Windows compatibility -- use a socket instead
              #  of a pipe because pipes don't really exist on Windows.
@@ -23,3 +23,13 @@
              csock.connect(('localhost', sock.getsockname()[1]))
              nsock, addr = sock.accept()
              self._event_notify_send = nsock.makefile('wb', 0)
+@@ -2448,6 +2445,8 @@
+             return None
+
+         host = CONF.serial_port_proxyclient_address
++        if host == '0.0.0.0':
++            host = utils.get_my_ipv4_address()
+
+         # Return a descriptor for a raw TCP socket
+         return {'host': host, 'port': tcp_port, 'internal_access_path': None}
+         

@@ -5,10 +5,15 @@ declare -a rest=()
 
 # replace serial port bind adress to this value recognized by STD
 PRIVATE=127.0.1.1
-# get outside ip - address of interface with best default route
-OUTSIDE=`awk '{if ($2 == "00000000" && $8 == "00000000") { print $5 " " $1 ;}}' </proc/net/route |
-	 sort -n | sed -n '1{s/.* //p;Q}' |
-         xargs -r ifconfig | sed -n 's/.*inet addr:\([0-9.]\+\).*/\1/p'`
+# get outside ip
+OUTSIDE=`grep '^\s*serial_port_proxyclient_address\s*=' </etc/nova/nova.conf |
+         sed -e 's/\s*#.*$//' -e 's/^.*=\s*//'`
+if [ -z "$OUTSIDE" -o "$OUTSIDE" == "0.0.0.0" ] ; then
+    # fall back to address of interface with best default route
+    OUTSIDE=`awk '{if ($2 == "00000000" && $8 == "00000000") { print $5 " " $1 ;}}' </proc/net/route |
+             sort -n | sed -n '1{s/.* //p;Q}' |
+             xargs -r ifconfig | sed -n 's/.*inet addr:\([0-9.]\+\).*/\1/p'`
+fi
 
 prev=none
 

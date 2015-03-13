@@ -15,7 +15,6 @@ debconf-change:
 
 debconf-change-replace:
   file.replace:
-    - order: 2
     - name: /tmp/debconf-change
     - pattern: 'MYPASS'
     - repl: {{ mypassword }}
@@ -32,7 +31,6 @@ debconf-change-set:
 
 debconf-change-noninteractive:
   cmd.run:
-    - order: 4
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
     - onchanges:
       - cmd: debconf-change-set
@@ -40,27 +38,19 @@ debconf-change-noninteractive:
 {% for user in accounts %}
 {{ user }}-mysql:
   mysql_user.present:
-    - onchanges:
-      - cmd: debconf-change-noninteractive
-    - order: 6
     - name: {{ user }}
     - host: 'localhost'
     - password: {{ mypassword }}
   mysql_database:
-    - onchanges:
-      - cmd: debconf-change-noninteractive
     - present
     - name: {{ user }}
   mysql_grants.present:
-    - onchanges:
-      - cmd: debconf-change-noninteractive
     - grant: all privileges
     - database: "{{ user }}.*"
     - user: {{ user }}
 
 {{ user }}-mysql-nonlocal:
   mysql_user.present:
-    - order: 6
     - name: {{ user }}
     - host: {{ int_ip }}
     - password: {{ mypassword }}

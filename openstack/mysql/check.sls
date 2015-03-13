@@ -7,10 +7,10 @@ mysql port internal:
     - name: /etc/mysql/my.cnf
     - pattern: ^bind-address.*
     - repl: 'bind-address = {{ controllerip }}'
-    cmd.wait:
-      - name: 'service mysql restart'
-      - watch:
-        - file: mysql port internal
+  cmd.wait:
+    - name: 'service mysql restart'
+    - watch:
+      - file: mysql port internal
 
 
 check cinder-conn:

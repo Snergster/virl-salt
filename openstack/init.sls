@@ -1,8 +1,23 @@
-{% for dir in ['openstack','virl','_modules','_states','common'] %}
-{{ dir }} sls locally:
-  file.recurse:
-    - clean: True
-    - name: /srv/salt/{{dir}}
-    - source: salt://{{dir}}
-{% endfor %}
+{% set horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', false)) %}
+{% set cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false)) %}
+{% set heat = salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false)) %}
 
+include:
+  - openstack.mysql
+  - openstack.rabbitmq
+  - openstack.keystone
+  - openstack.osclients
+  - openstack.glance
+  - openstack.neutron
+  - openstack.nova
+{% if horizon %}
+  - openstack.dash
+{% endif %}
+{% if cinder %}
+  - openstack.cinder
+{% endif %}
+{% if heat %}
+  - openstack.heat
+{% endif %}
+  - openstack.restart
+  

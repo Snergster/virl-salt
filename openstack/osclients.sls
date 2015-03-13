@@ -3,6 +3,16 @@
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
+include:
+  - openstack.keystone
+  - openstack.nova.install
+  - openstack.neutron
+  - openstack.glance
+
+libffi-dev for rackspace:
+  pkg.installed:
+    - name: libffi-dev
+
 nova client:
   pip.installed:
     - skip_verify: True
@@ -10,31 +20,88 @@ nova client:
     - proxy: {{ http_proxy }}
 {% endif %}
     - refresh: False
-    - name: python-novaclient == 2.20.0
+    - require:
+      - pkg: nova-pkgs
+      - pkg: libffi-dev for rackspace
+    - names:
+      - python-novaclient == 2.20.0
+      - oslo.config == 1.6.0
+      - oslo.rootwrap == 1.5.0
+      - oslo.messaging == 1.6.0
+  file.managed:
+    - name: /etc/apt/preferences.d/python-novaclient
+    - require:
+      - pip: nova client
+    - contents: |
+        Package: python-novaclient
+        Pin: release *
+        Pin-Priority: -1
 
-libffi-dev for rackspace:
-  pkg.installed:
-    - name: libffi-dev
 
 
-pip clients:
+neutron client:
   pip.installed:
     - skip_verify: True
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
     - refresh: False
+    - require:
+      - pkg: neutron-pkgs
+      - pip: nova client
+    - names:
+      - python-neutronclient == 2.3.4
+  file.managed:
+    - name: /etc/apt/preferences.d/python-neutronclient
+    - require:
+      - pip: neutron client
+    - contents: |
+        Package: python-neutronclient
+        Pin: release *
+        Pin-Priority: -1
+
+
+glance client:
+  pip.installed:
+    - skip_verify: True
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - refresh: False
+    - require:
+      - pkg: glance-pkgs
+      - pip: nova client
     - names:
       - python-glanceclient == 0.15.0
-      - python-keystoneclient == 1.0.0
-      - python-neutronclient == 2.3.4
-      - oslo.config == 1.6.0
-      - oslo.rootwrap == 1.5.0
-      - oslo.messaging == 1.6.0
+  file.managed:
+    - name: /etc/apt/preferences.d/python-glanceclient
     - require:
-      - pip: nova client
-      - pkg: libffi-dev for rackspace
+      - pip: glance client
+    - contents: |
+        Package: python-glanceclient
+        Pin: release *
+        Pin-Priority: -1
 
+keystone client:
+  pip.installed:
+    - skip_verify: True
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - refresh: False
+    - require:
+      - pkg: keystone-pkgs
+      - pip: nova client
+    - names:
+      - python-keystoneclient == 1.0.0
+  file.managed:
+    - name: /etc/apt/preferences.d/python-keystoneclient
+    - require:
+      - pip: keystone client
+    - contents: |
+        Package: python-keystoneclient
+        Pin: release *
+        Pin-Priority: -1
 
 
 {% for symlink in ['keystone','neutron','glance','nova']%}
@@ -42,27 +109,8 @@ pip clients:
   file.symlink:
     - target: /usr/local/bin/{{ symlink }}
     - mode: 0755
-    - require:
-      - pip: pip clients
     - onlyif:
       - 'test -e /usr/local/bin/{{ symlink }}'
       - 'test ! -e /usr/bin/{{ symlink }}'
 
 {% endfor %}
-
-{% if not masterless %}
-
-{% for holdies in ['python-glanceclient','python-novaclient','python-neutronclient','python-keystoneclient']%}
-{{ holdies }} hold:
-  file.managed:
-    - name: /etc/apt/preferences.d/{{holdies}}
-    - require:
-      - pip: pip clients
-    - contents: |
-        Package: {{holdies}}
-        Pin: release *
-        Pin-Priority: -1
-
-{% endfor %}
-{% endif %}
-

@@ -23,7 +23,6 @@
 {% set l3_address = salt['pillar.get']('virl:l3_address', salt['grains.get']('l3_address', '172.16.3.254/24' )) %}
 {% set l2_port2 = salt['pillar.get']('virl:l2_port2', salt['grains.get']('l2_port2', 'eth2' )) %}
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
-{% set service_tenid = salt['grains.get']('service_id', ' ' ) %}
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
@@ -32,7 +31,6 @@
 
 neutron-pkgs:
   pkg.installed:
-    - order: 1
     - refresh: False
     - names:
       - neutron-server
@@ -44,42 +42,39 @@ neutron-pkgs:
 
 /etc/neutron/neutron.conf:
   file.managed:
-    - order: 2
     - template: jinja
     - makedirs: True
     - file_mode: 755
     {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/neutron.conf"
     {% else %}
-    - source: "salt://files/neutron.conf.jinja"
+    - source: "salt://openstack/neutron/files/neutron.conf"
     {% endif %}
     - require:
       - pkg: neutron-pkgs
 
 /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
   file.managed:
-    - order: 4
     - template: jinja
     - file_mode: 755
     - makedirs: True
     {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/plugins/linuxbridge/linuxbridge_conf.ini"
     {% else %}
-    - source: "salt://files/linuxbridge_conf.ini.jinja"
+    - source: "salt://openstack/neutron/files/plugins/linuxbridge/linuxbridge_conf.ini"
     {% endif %}
     - require:
       - pkg: neutron-pkgs
 
 /etc/neutron/plugins/ml2/ml2_conf.ini:
   file.managed:
-    - order: 4
     - file_mode: 755
     - template: jinja
     - makedirs: True
     {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/plugins/ml2/ml2_conf.ini"
     {% else %}
-    - source: "salt://files/ml2_conf.ini.jinja"
+    - source: "salt://openstack/neutron/files/plugins/ml2/ml2_conf.ini"
     {% endif %}
     - require:
       - pkg: neutron-pkgs
@@ -461,8 +456,6 @@ linuxbridge_neutron_agent patch:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-
-
 
 
 linuxbridge hold:

@@ -74,14 +74,16 @@ vinstall wheels:
 {% endfor %}
 
 
-/var/www/download:
+download dir exists:
   file.directory:
+    - name: /var/www/download
     - order: 1
     - mode: 755
     - makedirs: True
 
-/var/www/html:
+html dir exists:
   file.directory:
+    - name: /var/www/html
     - order: 1
     - mode: 755
     - makedirs: True

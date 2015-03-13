@@ -6,7 +6,6 @@
 
 glance-pkgs:
   pkg.installed:
-    - order: 1
     - refresh: False
     - names:
       - glance
@@ -120,9 +119,8 @@ glance db-sync:
 
 glance db-restart:
   cmd.run:
-    - order: last
     - names:
-      - service glance-registry restart
-      - service glance-api restart
+      - /usr/sbin/service glance-registry restart | at now + 2 min
+      - /usr/sbin/service glance-api restart | at now + 2 min
     - require:
       - pkg: glance

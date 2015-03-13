@@ -17,7 +17,6 @@ qemu_kvm unhold:
     - source: "salt://openstack/nova/files/kvm"
     {% endif %}
     - force: True
-    - order: 4
     - mode: 0755
 
 /usr/bin/kvm.real:
@@ -28,7 +27,7 @@ qemu_kvm unhold:
       - file: /usr/bin/kvm
 
 manual qemu-kvm:
-  pkg.uptodate:
+  pkg.installed:
     - name: qemu-kvm
     - refresh: True
     - require:
@@ -47,4 +46,4 @@ qemu hold:
   apt.held:
     - name: qemu-kvm
     - require:
-      - file: kvm virl version
+      - pkg: manual qemu-kvm

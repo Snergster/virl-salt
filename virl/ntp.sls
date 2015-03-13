@@ -1,9 +1,10 @@
 {% set ntp_server = salt['pillar.get']('virl:ntp_server', salt['grains.get']('ntp_server', 'pool.ntp.org')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set dhcp = salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )) %}
 
 ntp:
   pkg:
     - installed
-    - order: 1
   service:
     - running
     - enable: True
@@ -11,30 +12,43 @@ ntp:
 
 ntpdate:
   pkg:
-    - order: 2
     - installed
 
+{% if masterless %}
 /etc/ntp.conf:
   file.replace:
-    - order: 4
     - pattern: ^server.*
     - repl: server {{ ntp_server }} iburst
-    - require:
-      - pkg: ntp
+    - onlyif: ls /usr/sbin/ntpd
+
+{% else %}
+/etc/ntp.conf jinja:
+  file.managed:
+    - name: /etc/ntp.conf
+    - source: salt://virl/files/ntp.conf
+    - template: jinja
+{% endif %}
+
+{% if not dhcp %}
+ntp.conf interface lock:
+  file.replace:
+    - name: /etc/ntp.conf
+    - pattern: ^#interface
+    - repl: interface
+    - onlyif: ls /etc/ntp.conf
+{% endif %}
+
 
 ntp stop:
     cmd.run:
-      - order: 5
       - name: service ntp stop
 
 ntpdate sync:
     cmd.run:
-      - order: 6
       - name: ntpdate {{ ntp_server }}
 
 ntp start:
     cmd.run:
-      - order: 7
       - name: service ntp start
 
 /etc/init/ntpd.conf:
