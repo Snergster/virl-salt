@@ -674,6 +674,10 @@ if __name__ == "__main__":
         print ('You need to restart now')
     if varg['test1']:
             sleep(5)
+    if desktop:
+        if varg['desktop']:
+            call_salt('virl.desktop')
+            sleep(5)
     if varg['rehost'] or varg['upgrade']:
         building_salt_all()
         call_salt('openstack')
@@ -774,11 +778,12 @@ if __name__ == "__main__":
         if path.exists(novaclient):
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
         # User_Creator(user_list, user_list_limited)
-        subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
-        subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
-        subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
-        subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
-        subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+        if desktop:
+            subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
+            subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
+            subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
+            subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
+            subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
         print ('You need to restart now')
     #     subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
     #     subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
