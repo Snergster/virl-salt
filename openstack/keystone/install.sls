@@ -12,7 +12,7 @@ keystone-pkgs:
 /etc/keystone/keystone.conf:
   file.managed:
     {% if masterless %}
-    - source: file:///srv/salt/openstack/keystone/files/keystone.conf
+    - source: file:///srv/salt/openstack/keystone/files/keystone.conf.jinja
     {% else %}
     - source: "salt://openstack/keystone/files/keystone.conf.jinja"
     {% endif %}
