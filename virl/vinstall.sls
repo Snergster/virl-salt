@@ -30,6 +30,12 @@
     - makedirs: True
     - mode: 0755
 
+/srv/salt/virl/files/ntp.conf:
+  file.managed:
+    - source: salt://virl/files/ntp.conf
+    - makedirs: True
+    - mode: 0755
+
 /srv/salt/host.sls:
   file.managed:
     - source: salt://host.sls
