@@ -18,7 +18,7 @@ cmake libgit2:
   cmd.run:
     - cwd: /tmp/libgit2-0.22.0
     - require:
-      - pkg: cmake install
+      - pkg: libgit2 prereqs
       - archive: libgit2 pull
     - names:
       - cmake .
