@@ -33,4 +33,7 @@ cmake libgit2:
 
 pygit2 install:
   pip.installed:
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
     - name: pygit2
