@@ -4,8 +4,9 @@ rasa patches:
     - target: /tmp/vmware-tools-patches
   cmd.run:
     - cwd: /tmp/vmware-tools-patches
-    - name:
-      - ./download-tools.sh 7.1.1
+    - name: ./download-tools.sh 7.1.1
+    - require:
+      - git: rasa patches
 
 untar and patch:
   cmd.run:
