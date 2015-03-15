@@ -663,8 +663,7 @@ if __name__ == "__main__":
             # call_salt('virl.ank')
         else:
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.neutron.changes,virl.std,virl.ank'])
-            # sleep(5)
-            # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'virl.ank'])
+
         if guest_account:
             call_salt('virl.guest')
         # std_install()
@@ -685,7 +684,10 @@ if __name__ == "__main__":
         call_salt('openstack.start')
         call_salt('openstack.rabbitmq')
         call_salt('openstack.restart')
-        call_salt('virl.openrc,virl.std,virl.ank')
+        call_salt('virl.openrc')
+        call_salt('virl.std')
+        call_salt('virl.ank')
+
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         else:
