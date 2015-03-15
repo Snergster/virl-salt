@@ -2,6 +2,8 @@ rasa patches:
   git.latest:
     - name: https://github.com/rasa/vmware-tools-patches.git
     - target: /tmp/vmware-tools-patches
+
+download tools:
   cmd.run:
     - cwd: /tmp/vmware-tools-patches
     - name: ./download-tools.sh 7.1.1
@@ -13,7 +15,7 @@ untar and patch:
     - cwd: /tmp/vmware-tools-patches
     - name: ./untar-and-patch.sh
     - require:
-      - git: rasa patches
+      - cmd: download tools
 
 compile with patches:
   cmd.run:
