@@ -192,6 +192,13 @@ VIRL_CORE:
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service False
       - crudini --set /etc/virl/common.cfg orchestration volume_service False
      {% endif %}
+     {% if salt['pillar.get']('virl:cinder_enabled', salt['grains.get']('cinder_enabled', False)) %}
+      - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
+      - crudini --set /etc/virl/common.cfg orchestration volume_service True
+     {% else %}
+      - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service False
+      - crudini --set /etc/virl/common.cfg orchestration volume_service False
+     {% endif %}
       - /usr/local/bin/virl_config update --global
       - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
       - crudini --set /etc/virl/virl.cfg env virl_openstack_service_token {{ ks_token }}
