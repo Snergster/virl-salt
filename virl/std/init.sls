@@ -184,7 +184,7 @@ VIRL_CORE:
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_custom_floating_ip True
       - crudini --set /etc/virl/common.cfg orchestration network_security_groups False
       - crudini --set /etc/virl/common.cfg orchestration network_custom_floating_ip True
-     {% if cinder_enabled == True %}
+     {% if cinder_enabled %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
       - crudini --set /etc/virl/common.cfg orchestration volume_service True
      {% else %}
