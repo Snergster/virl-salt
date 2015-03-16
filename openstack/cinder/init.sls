@@ -31,6 +31,16 @@ cinder-pkgs:
     - source: "salt://openstack/cinder/files/cinder.conf"
     {% endif %}
 
+/etc/cinder/api-paste.ini:
+  file.managed:
+    - file_mode: 755
+    - template: jinja
+    {% if masterless %}
+    - source: "file:///srv/salt/openstack/cinder/files/api-paste.ini"
+    {% else %}
+    - source: "salt://openstack/cinder/files/api-paste.ini"
+    {% endif %}
+
 {% if cinder_enabled == True %}
 cinder-rclocal:
   file.append:
