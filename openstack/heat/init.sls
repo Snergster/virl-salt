@@ -7,7 +7,6 @@
 
 heat-pkgs:
   pkg.installed:
-    - order: 1
     - refresh: false
     - names:
       - heat-api
@@ -24,6 +23,13 @@ heat-conn:
     - filename: /etc/heat/heat.conf
     - section: 'database'
     - parameter: 'connection'
+    - value: 'mysql://heat:{{ mypassword }}@{{ controllerip }}/heat'
+    
+heat-conn sql:
+  openstack_config.present:
+    - filename: /etc/heat/heat.conf
+    - section: 'database'
+    - parameter: 'sql_connection'
     - value: 'mysql://heat:{{ mypassword }}@{{ controllerip }}/heat'
 
 heat-rabbitpass:
