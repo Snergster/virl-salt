@@ -41,7 +41,7 @@ cinder-pkgs:
     - source: "salt://openstack/cinder/files/api-paste.ini"
     {% endif %}
 
-{% if cinder_enabled == True %}
+{% if cinder_enabled %}
 cinder-rclocal:
   file.append:
     - name: /etc/rc.local
