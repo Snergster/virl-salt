@@ -31,6 +31,15 @@ cinder-pkgs:
     - source: "salt://openstack/cinder/files/cinder.conf"
     {% endif %}
 
+/etc/cinder/lvm.conf:
+  file.managed:
+    - file_mode: 755
+    {% if masterless %}
+    - source: "file:///srv/salt/openstack/cinder/files/lvm.conf"
+    {% else %}
+    - source: "salt://openstack/cinder/files/lvm.conf"
+    {% endif %}
+
 /etc/cinder/api-paste.ini:
   file.managed:
     - file_mode: 755
