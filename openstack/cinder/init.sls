@@ -43,11 +43,10 @@ cinder-pkgs:
 
 {% if cinder_enabled %}
 cinder-rclocal:
-  file.append:
+  file.replace:
     - name: /etc/rc.local
-    - text: |
-        /sbin/losetup -f {{ cinder_location }}
-        exit 0
+    - pattern: '# By default this script does nothing.'
+    - repl: /sbin/losetup -f {{ cinder_location }}
 
 {% endif %}
 
