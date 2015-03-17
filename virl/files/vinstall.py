@@ -619,7 +619,8 @@ if __name__ == "__main__":
                                  'count={0}'.format(cinder_size)])
                 subprocess.call(['sudo', '/sbin/losetup', '-f', '--show', '{0}'.format(cinder_loc)])
                 subprocess.call(['sudo', '/sbin/pvcreate', '/dev/loop0'])
-                subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
+                subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '/dev/loop0'])
+                # subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
             elif cinder_device:
                 subprocess.call(['sudo', '/sbin/pvcreate', '{0}'.format(cinder_loc)])
                 subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
