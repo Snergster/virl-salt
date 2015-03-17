@@ -5,13 +5,20 @@
 {% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 
+heat-prereq:
+  pkg.installed:
+    - refresh: true
+    - name: heat-engine
+
 heat-pkgs:
   pkg.installed:
     - refresh: false
     - names:
       - heat-api
       - heat-api-cfn
-      - heat-engine
+      - heat-common
+    - require:
+      - pkg: heat-prereq
 
 /etc/heat:
   file.directory:
@@ -24,7 +31,7 @@ heat-conn:
     - section: 'database'
     - parameter: 'connection'
     - value: 'mysql://heat:{{ mypassword }}@{{ controllerip }}/heat'
-    
+
 heat-conn sql:
   openstack_config.present:
     - filename: /etc/heat/heat.conf
