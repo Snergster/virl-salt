@@ -44,7 +44,7 @@ neutron-pkgs:
   file.managed:
     - template: jinja
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
     {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/neutron.conf"
     {% else %}
@@ -56,7 +56,7 @@ neutron-pkgs:
 /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
   file.managed:
     - template: jinja
-    - file_mode: 755
+    - mode: 755
     - makedirs: True
     {% if masterless %}
     - source: "file:///srv/salt/openstack/neutron/files/plugins/linuxbridge/linuxbridge_conf.ini"
@@ -68,7 +68,7 @@ neutron-pkgs:
 
 /etc/neutron/plugins/ml2/ml2_conf.ini:
   file.managed:
-    - file_mode: 755
+    - mode: 755
     - template: jinja
     - makedirs: True
     {% if masterless %}
@@ -265,7 +265,7 @@ l3-gateway:
 /srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff:
   file.managed:
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
     - contents: |
         102a103,105
         >                      'device_id': port['device_id'],
@@ -279,14 +279,14 @@ l3-gateway:
   file.managed:
     - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.diff"
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
 
 {% endif %}
 
 /srv/salt/openstack/neutron/files/l3.py.diff:
   file.managed:
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
     - contents: |
         --- a/extensions/l3.py  2014-07-10 12:28:49.715740324 +0200
         +++ b/extensions/l3.py  2014-07-03 15:15:51.414240207 +0200
@@ -305,7 +305,7 @@ l3-gateway:
 /srv/salt/openstack/neutron/files/l3_db.diff:
   file.managed:
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
     - contents: |
         --- a/db/l3_db.py       2014-07-10 12:27:57.230986451 +0200
         +++ b/db/l3_db.py       2014-07-03 15:15:52.438764715 +0200
@@ -335,7 +335,7 @@ l3-gateway:
 /srv/salt/openstack/neutron/files/ml2_rpc.diff:
   file.managed:
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
     - contents: |
         149a150,152
         >                      'device_id': port.device_id,
@@ -347,7 +347,7 @@ l3-gateway:
   file.managed:
     - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.diff"
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
   {% else %}
   file.exists:
     - name: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff

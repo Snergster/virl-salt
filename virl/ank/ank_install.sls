@@ -25,7 +25,7 @@
     {% endif %}
     - user: virl
     - group: virl
-    - file_mode: 755
+    - mode: 755
 
 {% endif %}
 

@@ -9,7 +9,7 @@ linuxbridge_neutron_agent.py:
   file.managed:
     - order: 3
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-    - file_mode: 755
+    - mode: 755
     - makedirs: True
     - source: "salt://files/mtu.linuxbridge_neutron_agent.py"
   cmd.wait:
@@ -24,4 +24,3 @@ l3-mtu:
     - section: 'DEFAULT'
     - parameter: 'network_device_mtu'
     - value: '1500'
-

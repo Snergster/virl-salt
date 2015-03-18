@@ -32,7 +32,7 @@ controller_hostname:
 
 /etc/nova/nova.conf:
   file.managed:
-    - file_mode: 755
+    - mode: 755
     - source: "salt://files/nova.conf"
 
 nova-conn:

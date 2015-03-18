@@ -2,7 +2,7 @@
 /srv/salt/openstack/nova/patch/driver.diff:
   file.managed:
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
     - contents: |
         --- driver.py	2014-07-10 13:22:21.000000000 +0000
         +++ driver.py	2015-02-10 22:26:30.465829748 +0000

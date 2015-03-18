@@ -205,4 +205,4 @@
     - source: /srv/salt/virl/files/failsafe.conf
     - force: true
   {% endif %}
-    - file_mode: 644
+    - mode: 644

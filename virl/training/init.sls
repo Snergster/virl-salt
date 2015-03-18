@@ -1,6 +1,6 @@
 /var/www/training:
   file.recurse:
-    - file_mode: 755
+    - mode: 755
     - dir_mode: 755
     - makedirs: True
     - source: "salt://files/training"
@@ -11,7 +11,7 @@
 
 /var/www/doc:
   file.recurse:
-    - file_mode: 755
+    - mode: 755
     - dir_mode: 755
     - makedirs: True
     - source: "salt://files/virl.standalone/glocal/std/virl-cli/doc/build/html"
@@ -19,4 +19,3 @@
     - name: service apache2 restart
     - watch:
       - file: /var/www/doc
-

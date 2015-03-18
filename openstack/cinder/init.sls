@@ -23,7 +23,7 @@ cinder-pkgs:
 
 /etc/cinder/cinder.conf:
   file.managed:
-    - file_mode: 755
+    - mode: 755
     - template: jinja
     {% if masterless %}
     - source: "file:///srv/salt/openstack/cinder/files/cinder.conf"
@@ -33,7 +33,7 @@ cinder-pkgs:
 
 /etc/cinder/lvm.conf:
   file.managed:
-    - file_mode: 755
+    - mode: 755
     {% if masterless %}
     - source: "file:///srv/salt/openstack/cinder/files/lvm.conf"
     {% else %}
@@ -42,7 +42,7 @@ cinder-pkgs:
 
 /etc/cinder/api-paste.ini:
   file.managed:
-    - file_mode: 755
+    - mode: 755
     - template: jinja
     {% if masterless %}
     - source: "file:///srv/salt/openstack/cinder/files/api-paste.ini"

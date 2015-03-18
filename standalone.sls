@@ -2,7 +2,7 @@
   file.recurse:
     - user: virl
     - group: virl
-    - file_mode: 755
+    - mode: 755
     - dir_mode: 755
     - makedirs: True
     - source: "salt://files/virl.standalone"

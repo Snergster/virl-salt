@@ -43,7 +43,7 @@ nova-pkgs:
 
 /etc/nova/nova.conf:
   file.managed:
-    - file_mode: 755
+    - mode: 755
     - template: jinja
     {% if masterless %}
     - source: "file:///srv/salt/openstack/nova/files/nova.conf"
@@ -125,7 +125,7 @@ cmd/serialproxy.py replace:
 /srv/salt/openstack/nova/patch/driver.diff:
   file.managed:
     - makedirs: True
-    - file_mode: 755
+    - mode: 755
     - contents: |
         --- driver.py	2014-07-10 13:22:21.000000000 +0000
         +++ driver_new.py	2015-03-11 08:21:52.874891547 +0000
