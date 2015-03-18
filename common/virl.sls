@@ -30,6 +30,7 @@ mypkgs:
       - socat
       - lxc
       - python-dulwich
+      - virt-what
 
 qemu common virl hold:
   apt.held:
