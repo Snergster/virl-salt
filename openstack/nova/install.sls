@@ -54,9 +54,9 @@ nova-pkgs:
       - pkg: nova-pkgs
 
 add libvirt-qemu to nova:
-  group.absent:
+  group.present:
     - name: nova
-    - addusers:
+    - delusers:
       - libvirt-qemu
 
 /srv/salt/openstack/nova/patch/serialproxy.diff:
