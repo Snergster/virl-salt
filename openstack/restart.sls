@@ -25,3 +25,8 @@ all-restart:
         service heat-api-cfn restart
         service heat-engine restart
         {% endif %}
+        {% if cinder == true %}
+        service cinder-api restart
+        service cinder-scheduler restart
+        service cinder-volume restart
+        {% endif %}

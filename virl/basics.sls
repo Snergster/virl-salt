@@ -12,3 +12,8 @@ include:
   file.directory:
     - name: /var/www/training
     - makedirs: True
+
+prefer ipv4:
+  file.append:
+    - name: /etc/gai.conf
+    - text: 'precedence ::ffff:0:0/96  100'

@@ -347,9 +347,9 @@ virl:
                 else:
                     salt_grain.write(""" '{key}': '{value}',""".format(key=key,value=value))
             if cinder_device or cinder_file:
-                salt_grain.write("""  'cinder_enabled': 'True',""")
+                salt_grain.write("""  'cinder_enabled': True ,""")
             else:
-                salt_grain.write("""  'cinder_enabled': 'False',""")
+                salt_grain.write("""  'cinder_enabled': False ,""")
             if not uwm_port == '14000':
                 salt_grain.write("""  'uwm_url': 'http://{0}:{1}',""".format(public_ip,uwm_port))
             salt_grain.write(""" 'neutron_extnet_id': '{neutid}',""".format(neutid=neutron_extnet_id))
@@ -619,7 +619,8 @@ if __name__ == "__main__":
                                  'count={0}'.format(cinder_size)])
                 subprocess.call(['sudo', '/sbin/losetup', '-f', '--show', '{0}'.format(cinder_loc)])
                 subprocess.call(['sudo', '/sbin/pvcreate', '/dev/loop0'])
-                subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
+                subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '/dev/loop0'])
+                # subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
             elif cinder_device:
                 subprocess.call(['sudo', '/sbin/pvcreate', '{0}'.format(cinder_loc)])
                 subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])

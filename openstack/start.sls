@@ -26,4 +26,9 @@ all-start:
         service heat-engine start
         {% endif %}
         service rabbitmq-server start
+        {% if cinder == true %}
+        service cinder-api restart
+        service cinder-scheduler restart
+        service cinder-volume restart
+        {% endif %}
         

@@ -31,13 +31,31 @@ cinder-pkgs:
     - source: "salt://openstack/cinder/files/cinder.conf"
     {% endif %}
 
-{% if cinder_enabled == True %}
+/etc/cinder/lvm.conf:
+  file.managed:
+    - file_mode: 755
+    {% if masterless %}
+    - source: "file:///srv/salt/openstack/cinder/files/lvm.conf"
+    {% else %}
+    - source: "salt://openstack/cinder/files/lvm.conf"
+    {% endif %}
+
+/etc/cinder/api-paste.ini:
+  file.managed:
+    - file_mode: 755
+    - template: jinja
+    {% if masterless %}
+    - source: "file:///srv/salt/openstack/cinder/files/api-paste.ini"
+    {% else %}
+    - source: "salt://openstack/cinder/files/api-paste.ini"
+    {% endif %}
+
+{% if cinder_enabled %}
 cinder-rclocal:
-  file.append:
+  file.replace:
     - name: /etc/rc.local
-    - text: |
-        /sbin/losetup -f {{ cinder_location }}
-        exit 0
+    - pattern: '# By default this script does nothing.'
+    - repl: /sbin/losetup -f {{ cinder_location }}
 
 {% endif %}
 
