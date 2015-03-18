@@ -33,7 +33,7 @@
     - clean: true
     - user: virl
     - group: virl
-    - mode: 755
+    - file_mode: 755
 
 
 uwm_init:

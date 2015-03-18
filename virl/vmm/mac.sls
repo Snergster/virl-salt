@@ -13,7 +13,7 @@ include:
     - name: /var/www/download
     - clean: true
     - maxdepth: 0
-    - mode: 755
+    - file_mode: 755
     - dir_mode: 755
     - include_pat: '*.dmg'
     - exclude_pat: E@(.*exe$)|(.*zip$)

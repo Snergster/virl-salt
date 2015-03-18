@@ -13,7 +13,7 @@ include:
   file.recurse:
     - name: /var/www/download
     - clean: true
-    - mode: 755
+    - file_mode: 755
     - maxdepth: 0
     - dir_mode: 755
     - include_pat: '*zip'

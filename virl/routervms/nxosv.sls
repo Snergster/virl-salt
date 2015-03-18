@@ -11,15 +11,15 @@ NX-OSv:
   - min_disk: 0
   - min_ram: 0
   - is_public: True
-  - checksum: 36c747f85da77b0d830564d16710a427
+  - checksum: 9d76757de080434d8b70983b477c09aa
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/salt/titanium-final.7.1.0.ZD.0.363.qcow2
+  - copy_from: salt://images/salt/titanium-final.7.2.0.ZD.0.120.qcow2
   - property-config_disk_type: cdrom
   - property-hw_cdrom_type: ide
   - property-hw_disk_bus: ide
   - property-hw_vif_model: e1000
-  - property-release: 7.1.0.363
+  - property-release: 7.2.0.120
   - property-serial: 2
   - property-subtype: NX-OSv
 

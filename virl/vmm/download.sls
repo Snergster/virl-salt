@@ -13,7 +13,7 @@ include:
   file.recurse:
     - name: /var/www/download
     - clean: true
-    - mode: 755
+    - file_mode: 755
     - dir_mode: 755
     - maxdepth: 0
     - include_pat: '*zip'
@@ -36,7 +36,7 @@ include:
   file.recurse:
     - name: /var/www/download
     - clean: true
-    - mode: 755
+    - file_mode: 755
     - dir_mode: 755
     - maxdepth: 0
     - include_pat: '*setup_64.exe'
@@ -59,7 +59,7 @@ include:
   file.recurse:
     - name: /var/www/download
     - clean: true
-    - mode: 755
+    - file_mode: 755
     - maxdepth: 0
     - dir_mode: 755
     - include_pat: '*setup_32.exe'
@@ -82,7 +82,7 @@ include:
   file.recurse:
     - name: /var/www/download
     - clean: true
-    - mode: 755
+    - file_mode: 755
     - dir_mode: 755
     - maxdepth: 0
     - include_pat: '*.dmg'
