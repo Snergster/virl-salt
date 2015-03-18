@@ -54,7 +54,7 @@ nova-pkgs:
       - pkg: nova-pkgs
 
 add libvirt-qemu to nova:
-  group.present:
+  group.absent:
     - name: nova
     - addusers:
       - libvirt-qemu
