@@ -47,6 +47,7 @@ nova-pkgs:
     - template: jinja
     {% if masterless %}
     - source: "file:///srv/salt/openstack/nova/files/nova.conf"
+    - source_hash: md5=e4ee3ae51a7e08ed69029433854f95ae
     {% else %}
     - source: "salt://openstack/nova/files/nova.conf"
     {% endif %}
@@ -108,6 +109,7 @@ cmd/serialproxy.py replace:
   {% if masterless %}
   file.copy:
     - source: file:///srv/salt/openstack/nova/patch/serialproxy.py
+    - force: true
   {% else %}
   file.managed:
     - source: salt://openstack/nova/patch/serialproxy.py
@@ -180,6 +182,7 @@ libvirt/driver.py replace:
   {% if masterless %}
   file.copy:
     - source: file:///srv/salt/openstack/nova/patch/driver.py
+    - force: True
   {% else %}
   file.managed:
     - source: salt://openstack/nova/patch/driver.py
