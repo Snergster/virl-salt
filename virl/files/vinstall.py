@@ -48,8 +48,7 @@ if path.exists(safeparser_file):
 # elif path.exists(safeparser_backup_file):
 #     safeparser.read('/home/virl/vsettings.ini')
 else:
-    print "No config exists at /etc/virl.ini.  Exiting"
-    exit(1)
+    print "No config exists at /etc/virl.ini.  Hope you know what your doing"
     # safeparser.read('./settings.ini')
 DEFAULT = safeparser['DEFAULT']
 # install = safeparser['install']
@@ -780,11 +779,11 @@ if __name__ == "__main__":
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
         # User_Creator(user_list, user_list_limited)
         if desktop:
-            subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
-            subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
-            subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
-            subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
-            subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
+            subprocess.call(['rm', '-f', '/home/virl/Desktop/Edit-settings.desktop'])
+            subprocess.call(['rm', '-f', '/home/virl/Desktop/Reboot2.desktop'])
+            subprocess.call(['rm', '-f', '/home/virl/Desktop/VIRL-rehost.desktop'])
+            subprocess.call(['rm', '-f', '/home/virl/Desktop/VIRL-renumber.desktop'])
+            subprocess.call(['rm', '-f', '/home/virl/Desktop/README.desktop'])
         print ('You need to restart now')
     #     subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
     #     subprocess.call(['sudo', 'service', 'virl-std', 'stop'])

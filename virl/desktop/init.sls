@@ -106,22 +106,6 @@ lubuntu-desktop:
          Type=Application
          Categories=Utility;Application;
 
-/home/virl/Desktop/VIRL-renumber.desktop:
-  file.managed:
-    - mode: 0755
-    - user: virl
-    - group: virl
-    - makedirs: True
-    - contents: |
-         [Desktop Entry]
-         Version=1.0
-         Name=3. Install changes
-         Comment=Only after virl.ini changes
-         Exec=xterm -e "/usr/local/bin/vinstall renumber | tee /var/tmp/virl-renumber-log"
-         Icon=/usr/share/icons/Humanity/apps/48/gconf-editor.svg
-         Terminal=True
-         Type=Application
-         Categories=Utility;Application;
 
 /home/virl/Desktop/Logout.desktop:
   file.managed:
@@ -157,23 +141,6 @@ lubuntu-desktop:
          Type=Application
          Categories=Utility;Application;
 
-/home/virl/Desktop/Reboot4.desktop:
-  file.managed:
-    - makedirs: True
-    - contents: |
-    - mode: 0755
-    - user: virl
-    - group: virl
-    - contents: |
-         [Desktop Entry]
-         Version=1.0
-         Name=4. REBOOT
-         Comment=To reboot
-         Exec=sudo /sbin/reboot
-         Icon=/usr/share/icons/gnome/48x48/status/computer-fail.png
-         Terminal=False
-         Type=Application
-         Categories=Utility;Application;
 
 /home/virl/Desktop/IP-ADDRESS.desktop:
   file.managed:
