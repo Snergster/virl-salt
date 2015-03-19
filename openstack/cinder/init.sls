@@ -29,6 +29,7 @@ cinder-pkgs:
     - source: "file:///srv/salt/openstack/cinder/files/cinder.conf"
     {% else %}
     - source: "salt://openstack/cinder/files/cinder.conf"
+    - source_hash: md5=915cc27d420bbf1eafc7e1443148e733
     {% endif %}
 
 /etc/cinder/lvm.conf:
@@ -38,6 +39,7 @@ cinder-pkgs:
     - source: "file:///srv/salt/openstack/cinder/files/lvm.conf"
     {% else %}
     - source: "salt://openstack/cinder/files/lvm.conf"
+    - source_hash: md5=230a9d0e4a697897a9d87cd1c6a3e2c5
     {% endif %}
 
 /etc/cinder/api-paste.ini:
@@ -48,6 +50,7 @@ cinder-pkgs:
     - source: "file:///srv/salt/openstack/cinder/files/api-paste.ini"
     {% else %}
     - source: "salt://openstack/cinder/files/api-paste.ini"
+    - source_hash: md5=cb35402b781e545c611649db5f3fff78
     {% endif %}
 
 {% if cinder_enabled %}
