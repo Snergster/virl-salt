@@ -671,6 +671,8 @@ if __name__ == "__main__":
         print ('You need to restart now')
     if varg['test']:
         building_salt_all()
+        qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
+                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
