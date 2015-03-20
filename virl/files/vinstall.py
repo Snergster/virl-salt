@@ -670,7 +670,11 @@ if __name__ == "__main__":
         User_Creator(user_list, user_list_limited)
         print ('You need to restart now')
     if varg['test']:
-
+        building_salt_all()
+        subprocess.call(qcall + ['subnet-delete', 'flat'])
+        subprocess.call(qcall + ['subnet-delete', 'flat1'])
+        subprocess.call(qcall + ['subnet-delete', 'ext-net'])
+        create_basic_networks()
         print ('You need to restart now')
     if varg['test1']:
             sleep(5)
