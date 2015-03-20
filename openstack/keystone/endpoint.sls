@@ -2,6 +2,7 @@
 {% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
 {% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
+{% set admin_tenid = salt.keystone.tenant_get(name='admin') %}
 
 include:
   - openstack.keystone.install
@@ -77,3 +78,7 @@ cloudformation endpoint:
     - adminurl: http://{{ public_ip }}:8000/v1
     - require:
       - cmd: key-db-sync
+
+nova_admin_tenant_id insert:
+  cmd.run:
+    - name: crudini --set /etc/salt/minion.d/openstack.conf env keystone.tenant_id {{ admin_tenid.admin.id }}
