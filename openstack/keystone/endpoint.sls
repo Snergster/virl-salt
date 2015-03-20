@@ -6,6 +6,7 @@
 
 include:
   - openstack.keystone.install
+  - openstack.keystone.setup
 
 glance endpoint:
   keystone.endpoint_present:
@@ -82,3 +83,6 @@ cloudformation endpoint:
 nova_admin_tenant_id insert:
   cmd.run:
     - name: crudini --set /etc/salt/minion.d/openstack.conf env keystone.tenant_id {{ admin_tenid.admin.id }}
+    - require:
+      - keystone: Keystone tenants
+      

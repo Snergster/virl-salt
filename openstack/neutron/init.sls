@@ -30,6 +30,9 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set service_tenid = salt.keystone.tenant_get(name='service') %}
 
+include:
+  - openstack.keystone.setup
+
 neutron-pkgs:
   pkg.installed:
     - refresh: False
@@ -62,6 +65,7 @@ nova_admin_tenant_id insert:
     - value: {{ service_tenid.service.id }}
     - require:
       - file: /etc/neutron/neutron.conf
+      - keystone: Keystone tenants
 
 /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
   file.managed:
