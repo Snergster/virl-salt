@@ -28,7 +28,6 @@
 {% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
 {% set iscontroller = salt['pillar.get']('virl:iscontroller', salt['grains.get']('iscontroller', True)) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set service_tenid = salt.keystone.tenant_get(name='service') %}
 
 include:
   - openstack.keystone.setup
@@ -57,15 +56,6 @@ neutron-pkgs:
     - require:
       - pkg: neutron-pkgs
 
-nova_admin_tenant_id insert:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'DEFAULT'
-    - parameter: 'nova_admin_tenant_id'
-    - value: {{ service_tenid.service.id }}
-    - require:
-      - file: /etc/neutron/neutron.conf
-      - keystone: Keystone tenants
 
 /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
   file.managed:
