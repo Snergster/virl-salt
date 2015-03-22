@@ -9,14 +9,14 @@
 {% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
 {% set service_tenid = salt.keystone.tenant_get(name='service') %}
 
-l3-gateway:
+l3-gateway set:
   openstack_config.present:
     - filename: /etc/neutron/l3_agent.ini
     - section: 'DEFAULT'
     - parameter: 'gateway_external_network_id'
     - value: ' '
 
-nova_admin_tenant_id insert:
+nova_admin_tenant_id insert in changes:
   openstack_config.present:
     - filename: /etc/neutron/neutron.conf
     - section: 'DEFAULT'
