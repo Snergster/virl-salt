@@ -39,6 +39,16 @@ qemu common virl hold:
     - require:
       - pkg: mypkgs
 
+/usr/local/bin/vsalt:
+  file.managed:
+    - mode: 755
+    {% if masterless %}
+    - source: /srv/salt/virl/files/vsalt.py
+    - source_hash: md5=3abe32c562818fadb1cd068ea14ae07e
+    {% else %}
+    - source: "salt://virl/files/vsalt.py"
+    {% endif %}
+
 vinstall run:
   cmd.run:
     - name: /usr/local/bin/vinstall salt
@@ -117,4 +127,9 @@ salt-minion nohold:
     - mode: 755
     - template: jinja
     - makedirs: True
+    {% if masterless %}
+    - source: /srv/salt/openstack/files/openstack.conf
+    - source_hash: md5=14325396240796f663be26a7925fb7c5
+    {% else %}
     - source: "salt://openstack/files/openstack.conf"
+    {% endif %}
