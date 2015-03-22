@@ -352,7 +352,7 @@ virl:
             if not uwm_port == '14000':
                 salt_grain.write("""  'uwm_url': 'http://{0}:{1}',""".format(public_ip,uwm_port))
             salt_grain.write(""" 'neutron_extnet_id': '{neutid}',""".format(neutid=neutron_extnet_id))
-            salt_grain.write(""" 'service_id': '{serviceid},'""".format(serviceid=service_tenid))
+            salt_grain.write(""" 'service_id': '{serviceid}',""".format(serviceid=service_tenid))
             salt_grain.write(""" 'admin_id': '{adminid}'""".format(adminid=admin_tenid))
             salt_grain.write("""}""")
         with open(("/tmp/foo"), "r") as salt_grain_read:
