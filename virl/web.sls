@@ -60,3 +60,13 @@ uwm port replace:
     - pattern: :\d{2,}"
     - repl: :{{ uwmport }}"
     - unless: grep {{ uwmport }} /var/www/html/index.html
+
+/etc/apache2/sites-enabled/apache.conf:
+  file.managed:
+    - mode: 755
+    {% if masterless %}
+    source: file:///srv/salt/virl/files/apache.conf
+    source_hash: md5=9a5af69e63deafbe92fc2e9d5bca5839
+    {% else %}
+    source: salt://virl/files/apache.conf
+    
