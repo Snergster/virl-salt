@@ -34,16 +34,16 @@ include:
 
 create flat net:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 net-create flat --shared --provider:network_type flat --provider:physical_network flat
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 net-show flat
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create flat --shared --provider:network_type flat --provider:physical_network flat
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show flat
     - require:
       - pkg: neutron-pkgs
 
 {% if l2_port2_enabled %}
 create flat1 net:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 net-create flat1 --shared --provider:network_type flat --provider:physical_network flat1
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 net-show flat1
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create flat1 --shared --provider:network_type flat --provider:physical_network flat1
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show flat1
     - require:
       - pkg: neutron-pkgs
 
@@ -51,24 +51,24 @@ create flat1 net:
 
 create snat net:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 net-create ext-net --shared --provider:network_type flat --router:external true --provider:physical_network ext-net
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 net-show ext-net
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create ext-net --shared --provider:network_type flat --router:external true --provider:physical_network ext-net
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show ext-net
     - require:
       - pkg: neutron-pkgs
 
 
 create flat subnet:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-create flat {{ l2_network }} --allocation-pool start={{l2_start_address}},end={{l2_end_address}} --gateway {{ l2_gateway }} --name flat --dns-nameservers list=true {{ flat_dns }} {{ flat_dns2 }}
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-show flat
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create flat {{ l2_network }} --allocation-pool start={{l2_start_address}},end={{l2_end_address}} --gateway {{ l2_gateway }} --name flat --dns-nameservers list=true {{ flat_dns }} {{ flat_dns2 }}
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-show flat
     - require:
       - cmd: create flat net
 
 {% if l2_port2_enabled %}
 create flat1 subnet:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-create flat1 {{ l2_network2 }} --allocation-pool start={{l2_start_address2}},end={{l2_end_address2}} --gateway {{ l2_gateway2 }} --name flat1 --dns-nameservers list=true {{ flat1_dns }} {{ flat1_dns2 }}
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-show flat1
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create flat1 {{ l2_network2 }} --allocation-pool start={{l2_start_address2}},end={{l2_end_address2}} --gateway {{ l2_gateway2 }} --name flat1 --dns-nameservers list=true {{ flat1_dns }} {{ flat1_dns2 }}
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-show flat1
     - require:
       - cmd: create flat1 net
 
@@ -76,11 +76,11 @@ create flat1 subnet:
 
 create snat subnet:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-create ext-net {{ l3_network }} --allocation-pool start={{l3_start_address}},end={{l3_end_address}} --gateway {{ l3_gateway }} --name ext-net --dns-nameservers list=true {{ flat_dns }} {{ flat_dns2 }}
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-show ext-net
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create ext-net {{ l3_network }} --allocation-pool start={{l3_start_address}},end={{l3_end_address}} --gateway {{ l3_gateway }} --name ext-net --dns-nameservers list=true {{ flat_dns }} {{ flat_dns2 }}
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-show ext-net
     - require:
       - cmd: create snat net
 
 create quota update:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 quota-update --router -1
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 quota-update --router -1
