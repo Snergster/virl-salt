@@ -7,6 +7,7 @@ include:
   - openstack.repo
   - common.kvm
   - virl.scripts
+  - common.salt-minion
 
 mypkgs:
   pkg.installed:
@@ -98,3 +99,22 @@ salt-minion nohold:
   cmd.run:
     - name: echo 0 > /proc/sys/kernel/numa_balancing
     - onlyif: grep 1 /proc/sys/kernel/numa_balancing
+
+/etc/salt/minion.d/extra.conf:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - makedirs: True
+    {% if masterless %}
+    - source: /srv/salt/openstack/files/local.extra.conf
+    - source_hash: md5=3b816e66f5c6cd8f8a2ab9ede76c2146
+    {% else %}
+    - source: "salt://openstack/files/extra.conf"
+    {% endif %}
+
+/etc/salt/minion.d/openstack.conf:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - makedirs: True
+    - source: "salt://openstack/files/openstack.conf"
