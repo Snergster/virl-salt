@@ -65,8 +65,8 @@ uwm port replace:
   file.managed:
     - mode: 755
     {% if masterless %}
-    source: file:///srv/salt/virl/files/apache.conf
-    source_hash: md5=9a5af69e63deafbe92fc2e9d5bca5839
+    - source: file:///srv/salt/virl/files/apache.conf
+    - source_hash: md5=9a5af69e63deafbe92fc2e9d5bca5839
     {% else %}
-    source: salt://virl/files/apache.conf
+    - source: salt://virl/files/apache.conf
     {% endif %}
