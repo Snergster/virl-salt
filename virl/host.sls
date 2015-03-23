@@ -34,7 +34,7 @@ blank what is there:
     - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
 
 
-{% if dummy_int == True %}
+{% if dummy_int %}
 add dummy right now:
   cmd.run:
     - name: modprobe dummy numdummies=5
@@ -65,7 +65,7 @@ system:
 eth0:
   cmd.run:
     - order: last
-{% if dhcp == True %}
+{% if dhcp %}
     - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
 {% else %}
     - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
@@ -73,7 +73,7 @@ eth0:
 
 {{ int_port }}:
   cmd.run:
-{% if jumbo_frames == True %}
+{% if jumbo_frames %}
     - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} mtu=9100'
 {% else %}
     - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} mtu=1500'
@@ -106,7 +106,7 @@ loop1:
     - netmask: {{ l2_mask }}
 
 
-{% if l2_port2_enabled == True %}
+{% if l2_port2_enabled %}
 {{ l2_port2 }}:
   network.managed:
     - enabled: True
