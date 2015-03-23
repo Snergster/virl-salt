@@ -23,7 +23,7 @@ all-restart:
 
 
 {% if cinder %}
-cinder-restart:
+cinder-restart all:
   cmd.run:
     - name: |
         service cinder-api restart
@@ -32,7 +32,7 @@ cinder-restart:
 {% endif %}
 
 {% if heat == true %}
-heat-restart:
+heat-restart all:
   cmd.run:
     - name: |
         service heat-api restart
