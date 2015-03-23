@@ -20,13 +20,22 @@ all-restart:
         service keystone restart
         service glance-api restart
         service glance-registry restart
-        {% if heat == true %}
-        service heat-api restart
-        service heat-api-cfn restart
-        service heat-engine restart
-        {% endif %}
-        {% if cinder == true %}
+
+
+{% if cinder %}
+cinder-restart:
+  cmd.run:
+    - name: |
         service cinder-api restart
         service cinder-scheduler restart
         service cinder-volume restart
-        {% endif %}
+{% endif %}
+
+{% if heat == true %}
+heat-restart:
+  cmd.run:
+    - name: |
+        service heat-api restart
+        service heat-api-cfn restart
+        service heat-engine restart
+{% endif %}
