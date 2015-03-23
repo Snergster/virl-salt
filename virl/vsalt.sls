@@ -1,3 +1,5 @@
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+
 vsalt install and run:
   file.managed:
     - mode: 755
@@ -12,4 +14,3 @@ vsalt install and run:
     - name: /usr/local/bin/vsalt
     - require:
       - file: vsalt install and run
-      
