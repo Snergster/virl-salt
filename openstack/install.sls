@@ -3,6 +3,7 @@
 {% set heat = salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false)) %}
 
 include:
+  - openstack.repo
   - openstack.mysql
   - openstack.rabbitmq
   - openstack.keystone
