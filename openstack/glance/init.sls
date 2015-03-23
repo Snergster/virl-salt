@@ -15,24 +15,32 @@ glance-api:
     - name: /etc/glance/glance-api.conf
     - pattern: 'image_cache_dir = /var/lib/glance/image-cache/'
     - repl: '#image_cache_dir = /var/lib/glance/image-cache/'
+    - require:
+      - pkg: glance-pkgs
 
 glance-reg:
   file.replace:
     - name: /etc/glance/glance-registry.conf
     - pattern: 'image_cache_dir = /var/lib/glance/image-cache/'
     - repl: '#image_cache_dir = /var/lib/glance/image-cache/'
+    - require:
+      - pkg: glance-pkgs
 
 glance-api-olddb:
   file.replace:
     - name: /etc/glance/glance-api.conf
     - pattern: 'sqlite_db = /var/lib/glance/glance.sqlite'
     - repl: '#sqlite_db = /var/lib/glance/glance.sqlite'
+    - require:
+      - pkg: glance-pkgs
 
 glance-reg-olddb:
   file.replace:
     - name: /etc/glance/glance-registry.conf
     - pattern: 'sqlite_db = /var/lib/glance/glance.sqlite'
     - repl: '#sqlite_db = /var/lib/glance/glance.sqlite'
+    - require:
+      - pkg: glance-pkgs
 
 glance-api-conn:
   openstack_config.present:
@@ -40,6 +48,8 @@ glance-api-conn:
     - section: 'database'
     - parameter: 'connection'
     - value: 'mysql://glance:{{ mypassword }}@{{ controllerip }}/glance'
+    - require:
+      - pkg: glance-pkgs
 
 glance-reg-conn:
   openstack_config.present:
@@ -47,6 +57,8 @@ glance-reg-conn:
     - section: 'database'
     - parameter: 'connection'
     - value: 'mysql://glance:{{ mypassword }}@{{ controllerip }}/glance'
+    - require:
+      - pkg: glance-pkgs
 
 glance-api-rabbitpass:
   openstack_config.present:
@@ -54,6 +66,8 @@ glance-api-rabbitpass:
     - section: 'DEFAULT'
     - parameter: 'rabbit_password'
     - value: '{{ rabbitpassword }}'
+    - require:
+      - pkg: glance-pkgs
 
 
 glance-api-tenname:
@@ -69,6 +83,8 @@ glance-reg-tenname:
     - section: 'keystone_authtoken'
     - parameter: 'admin_tenant_name'
     - value: 'service'
+    - require:
+      - pkg: glance-pkgs
 
 glance-api-user:
   openstack_config.present:
@@ -76,6 +92,8 @@ glance-api-user:
     - section: 'keystone_authtoken'
     - parameter: 'admin_user'
     - value: 'glance'
+    - require:
+      - pkg: glance-pkgs
 
 glance-reg-user:
   openstack_config.present:
@@ -83,6 +101,8 @@ glance-reg-user:
     - section: 'keystone_authtoken'
     - parameter: 'admin_user'
     - value: 'glance'
+    - require:
+      - pkg: glance-pkgs
 
 glance-api-pass:
   openstack_config.present:
@@ -90,6 +110,8 @@ glance-api-pass:
     - section: 'keystone_authtoken'
     - parameter: 'admin_password'
     - value: {{ ospassword }}
+    - require:
+      - pkg: glance-pkgs
 
 
 glance-reg-pass:
@@ -98,6 +120,8 @@ glance-reg-pass:
     - section: 'keystone_authtoken'
     - parameter: 'admin_password'
     - value: {{ ospassword }}
+    - require:
+      - pkg: glance-pkgs
 
 glance-api-flavor:
   openstack_config.present:
@@ -105,6 +129,8 @@ glance-api-flavor:
     - section: 'paste_deploy'
     - parameter: 'flavor'
     - value: 'keystone'
+    - require:
+      - pkg: glance-pkgs
 
 glance-reg-flavor:
   openstack_config.present:
@@ -112,13 +138,17 @@ glance-reg-flavor:
     - section: 'paste_deploy'
     - parameter: 'flavor'
     - value: 'keystone'
+    - require:
+      - pkg: glance-pkgs
 
 glance db-sync:
   cmd.run:
+    - order: last
     - name: su -s /bin/sh -c "glance-manage db_sync" glance
 
 glance db-restart:
   cmd.run:
+    - order: last
     - names:
       - /usr/sbin/service glance-registry restart | at now + 2 min
       - /usr/sbin/service glance-api restart | at now + 2 min

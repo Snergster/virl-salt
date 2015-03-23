@@ -141,6 +141,8 @@ neutron-hostname:
     - section: 'DEFAULT'
     - parameter: 'nova_url'
     - value: 'http://{{ controllerhostname }}:8774/v2'
+    - require:
+      - file: /etc/neutron/neutron.conf
 
 neutron-hostname2:
   openstack_config.present:
@@ -148,6 +150,8 @@ neutron-hostname2:
     - section: 'DEFAULT'
     - parameter: 'nova_admin_auth_url'
     - value: 'http://{{ controllerhostname }}:35357/v2.0'
+    - require:
+      - file: /etc/neutron/neutron.conf
 
 neutron-hostname3:
   openstack_config.present:
@@ -155,6 +159,8 @@ neutron-hostname3:
     - section: 'keystone_authtoken'
     - parameter: 'auth_uri'
     - value: 'http://{{ controllerhostname }}:5000'
+    - require:
+      - file: /etc/neutron/neutron.conf
 
 neutron-hostname4:
   openstack_config.present:
@@ -162,6 +168,8 @@ neutron-hostname4:
     - section: 'keystone_authtoken'
     - parameter: 'auth_host'
     - value: '{{ controllerhostname }}'
+    - require:
+      - file: /etc/neutron/neutron.conf
 
 {% endif %}
 
@@ -171,6 +179,8 @@ meta-tenname:
     - section: 'DEFAULT'
     - parameter: 'admin_tenant_name'
     - value: 'service'
+    - require:
+      - pkg: neutron-pkgs
 
 meta-user:
   openstack_config.present:
@@ -178,6 +188,8 @@ meta-user:
     - section: 'DEFAULT'
     - parameter: 'admin_user'
     - value: 'neutron'
+    - require:
+      - pkg: neutron-pkgs
 
 meta-pass:
   openstack_config.present:
@@ -185,6 +197,8 @@ meta-pass:
     - section: 'DEFAULT'
     - parameter: 'admin_password'
     - value: '{{ ospassword }}'
+    - require:
+      - pkg: neutron-pkgs
 
 meta-meta:
   openstack_config.present:
@@ -192,6 +206,8 @@ meta-meta:
     - section: 'DEFAULT'
     - parameter: 'nova_metadata_ip'
     - value: ' {{ public_ip }}'
+    - require:
+      - pkg: neutron-pkgs
 
 l3-interface:
   openstack_config.present:
@@ -199,6 +215,8 @@ l3-interface:
     - section: 'DEFAULT'
     - parameter: 'interface_driver'
     - value: ' neutron.agent.linux.interface.BridgeInterfaceDriver'
+    - require:
+      - pkg: neutron-pkgs
 
 l3-agent:
   openstack_config.present:
@@ -206,6 +224,8 @@ l3-agent:
     - section: 'DEFAULT'
     - parameter: 'l3_agent_manager'
     - value: ' neutron.agent.l3_agent.L3NATAgentWithStateReport'
+    - require:
+      - pkg: neutron-pkgs
 
 l3-mtu:
   openstack_config.present:
@@ -213,6 +233,8 @@ l3-mtu:
     - section: 'DEFAULT'
     - parameter: 'network_device_mtu'
     - value: '1500'
+    - require:
+      - pkg: neutron-pkgs
 
 
 dhcp-interface:
@@ -221,6 +243,8 @@ dhcp-interface:
     - section: DEFAULT
     - parameter: 'interface_driver'
     - value: ' neutron.agent.linux.interface.BridgeInterfaceDriver'
+    - require:
+      - pkg: neutron-pkgs
 
 dhcp-namespace:
   openstack_config.present:
@@ -228,6 +252,8 @@ dhcp-namespace:
     - section: DEFAULT
     - parameter: 'use_namespaces'
     - value: ' True'
+    - require:
+      - pkg: neutron-pkgs
 
 dhcp-driver:
   openstack_config.present:
@@ -235,6 +261,8 @@ dhcp-driver:
     - section: DEFAULT
     - parameter: 'dhcp_driver'
     - value: ' neutron.agent.linux.dhcp.Dnsmasq'
+    - require:
+      - pkg: neutron-pkgs
 
 l3-namespace:
   openstack_config.present:
@@ -242,6 +270,8 @@ l3-namespace:
     - section: 'DEFAULT'
     - parameter: 'use_namespaces'
     - value: ' True'
+    - require:
+      - pkg: neutron-pkgs
 
 l3-dhcp:
   openstack_config.present:
@@ -249,6 +279,8 @@ l3-dhcp:
     - section: 'DEFAULT'
     - parameter: 'dhcp_driver'
     - value: ' neutron.agent.linux.dhcp.Dnsmasq'
+    - require:
+      - pkg: neutron-pkgs
 
 l3-netbridge:
   openstack_config.present:
@@ -256,6 +288,8 @@ l3-netbridge:
     - section: 'DEFAULT'
     - parameter: 'external_network_bridge'
     - value: ' '
+    - require:
+      - pkg: neutron-pkgs
 
 l3-gateway:
   openstack_config.present:
@@ -263,6 +297,8 @@ l3-gateway:
     - section: 'DEFAULT'
     - parameter: 'gateway_external_network_id'
     - value: ' '
+    - require:
+      - pkg: neutron-pkgs
 
 
 
@@ -284,6 +320,8 @@ l3-gateway:
     - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.diff"
     - makedirs: True
     - mode: 755
+    - require:
+      - pkg: neutron-pkgs
 
 {% endif %}
 

@@ -262,6 +262,8 @@ nova-compute serial:
     - section: 'libvirt'
     - parameter: 'serial_port_range'
     - value: '{{ serstart }}:{{ serend }}'
+    - require:
+      - file: /etc/nova/nova.conf
 
 
 /etc/init.d/nova-serialproxy:
@@ -274,6 +276,8 @@ nova-compute serial:
   {% endif %}
     - force: True
     - mode: 0755
+    - require:
+      - pkg: nova-pkgs
 
 /etc/nova/policy.json:
   {% if masterless %}
@@ -287,6 +291,8 @@ nova-compute serial:
     - user: nova
     - group: nova
     - mode: 0640
+    - require:
+      - pkg: nova-pkgs
 
 /etc/rc2.d/S98nova-serialproxy:
   file.absent
