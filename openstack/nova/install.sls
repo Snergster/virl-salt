@@ -60,50 +60,6 @@ add libvirt-qemu to nova:
     - delusers:
       - libvirt-qemu
 
-/srv/salt/openstack/nova/patch/serialproxy.diff:
-  file.managed:
-    - makedirs: True
-    - contents: |
-        62,64d61
-        <     cfg.StrOpt('serial_port_host',
-        <                default='ignore',
-        <                help='Host to which to connect for incoming requests'),
-        92,111d88
-        <     serial_port_host = CONF.serial_port_host
-        <     if serial_port_host == '0.0.0.0':
-        <         # determine the correct host to connect to as the local address
-        <         # of the interface with the best default route
-        <         import subprocess, re
-        <         command = "route -n | awk '/^0.0.0.0/{print $5 \" \" $8}'"
-        <         prc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-        <         out, _ = prc.communicate()
-        <         routes = [line.split(None, 1) for line in out.splitlines()]
-        <         if routes:
-        <             routes.sort(key=lambda metr_iface: int(metr_iface[0]))
-        <             selected_iface = routes[0][1]
-        <
-        <             command = "ifconfig %s" % selected_iface
-        <             prc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-        <             out, _ = prc.communicate()
-        <             outside_ip = re.search(r'inet (?:addr:)?([^\s]+)', out)
-        <             if outside_ip:
-        <                 serial_port_host = outside_ip.group(1)
-        <
-        124c101
-        <                                    target_host=serial_port_host,
-        ---
-        >                                    target_host='ignore',
-
-serialproxy patch:
-  file.patch:
-    - name: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
-    - source: file:///srv/salt/openstack/nova/patch/serialproxy.diff
-    - hash: md5=561d6cee861ac3bb159f695c08583da7
-  cmd.run:
-    - name: python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
-    - onchanges:
-      - file: serialproxy patch
-
 
 cmd/serialproxy.py replace:
   {% if masterless %}
@@ -115,8 +71,8 @@ cmd/serialproxy.py replace:
     - source: salt://openstack/nova/patch/serialproxy.py
   {% endif %}
     - name: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
-    - onfail:
-      - file: serialproxy patch
+    - require:
+      - pkg: nova-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
