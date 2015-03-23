@@ -1,3 +1,3 @@
 include:
-  - openstack.cinder
+  - openstack.cinder.install
   - openstack.cinder.create
