@@ -30,8 +30,10 @@ cmake libgit2:
       - cmake .
       - make
       - make install
-      - ldconfig
 
+ldconfig always run:
+  cmd.run:
+    - name: ldconfig
 
 pygit2 install:
   pip.installed:
