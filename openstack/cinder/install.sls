@@ -37,9 +37,10 @@ cinder-pkgs:
     - mode: 755
     {% if masterless %}
     - source: "file:///srv/salt/openstack/cinder/files/lvm.conf"
+    - source_hash: md5=230a9d0e4a697897a9d87cd1c6a3e2c5
     {% else %}
     - source: "salt://openstack/cinder/files/lvm.conf"
-    - source_hash: md5=230a9d0e4a697897a9d87cd1c6a3e2c5
+
     {% endif %}
 
 /etc/cinder/api-paste.ini:
