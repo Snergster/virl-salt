@@ -1,7 +1,9 @@
 include:
+  - virl.vsalt
   - virl.host
   - virl.ntp
   - virl.web
+
 
 /var/www/download exists:
   file.directory:
