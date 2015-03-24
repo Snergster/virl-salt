@@ -11,7 +11,6 @@
 
 tightvnc-pkgs:
   pkg.installed:
-    - order: 1
     - refresh: False
     - names:
       - tightvncserver
@@ -19,7 +18,6 @@ tightvnc-pkgs:
 
 /home/virl/.vnc/xstartup:
   file.managed:
-    - order: 2
     - makedirs: True
     - require:
       - file: /home/virl/.vnc
@@ -35,14 +33,12 @@ tightvnc-pkgs:
 
 /home/virl/.vnc:
     file.directory:
-    - order: 3
     - user: virl
     - group: virl
     - dir_mode: 700
 
 /etc/init.d/tightvnc:
   file.managed:
-    - order: 2
     - mode: 755
     {% if masterless %}
     - source: "file:///srv/salt/common/tightvncserver/files/tightvnc.init"
@@ -52,13 +48,11 @@ tightvnc-pkgs:
 
 /etc/rc2.d/S97tightvnc:
   file.symlink:
-    - order: 3
     - target: /etc/init.d/tightvnc
     - mode: 0755
 
 /home/virl/.vnc/passwd:
   file.managed:
-    - order: 2
     - user: virl
     - group: virl
     - makedirs: True

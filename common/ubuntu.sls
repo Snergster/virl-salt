@@ -25,7 +25,9 @@ commonpkgs:
       - at
       - swig
       - libssl-dev
-
+      - htop
+      - gcc
+      
 
 /usr/local/bin/openstack-config:
   file.symlink:

@@ -3,11 +3,12 @@
 
 include:
   - common.ubuntu
+  - common.salt-minion
   - virl.vinstall
   - openstack.repo
   - common.kvm
   - virl.scripts
-  - common.salt-minion
+
 
 mypkgs:
   pkg.installed:
@@ -18,13 +19,9 @@ mypkgs:
       - dkms
       - kexec-tools
       - qemu-kvm
-      - gcc
       - cpu-checker
-      - curl
       - openssl
       - apt-show-versions
-      - htop
-      - debconf-utils
       - apache2
       - libapache2-mod-wsgi
       - mtools
