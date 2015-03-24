@@ -107,10 +107,10 @@ salt-minion nohold:
     - template: jinja
     - makedirs: True
     {% if masterless %}
-    - source: /srv/salt/openstack/files/local.extra.conf
+    - source: /srv/salt/common/salt-minion/files/local.extra.conf
     - source_hash: md5=3b816e66f5c6cd8f8a2ab9ede76c2146
     {% else %}
-    - source: "salt://openstack/files/extra.conf"
+    - source: "salt://common/salt-minion/files/extra.conf"
     {% endif %}
 
 /etc/salt/minion.d/openstack.conf:
@@ -119,8 +119,8 @@ salt-minion nohold:
     - template: jinja
     - makedirs: True
     {% if masterless %}
-    - source: /srv/salt/openstack/files/openstack.conf
+    - source: /srv/salt/common/salt-minion/files/openstack.conf
     - source_hash: md5=14325396240796f663be26a7925fb7c5
     {% else %}
-    - source: "salt://openstack/files/openstack.conf"
+    - source: "salt://common/salt-minion/files/openstack.conf"
     {% endif %}
