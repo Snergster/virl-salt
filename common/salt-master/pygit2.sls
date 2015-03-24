@@ -20,9 +20,10 @@ libgit2 pull:
     - unless: test -e /usr/local/lib/libgit2.so.0.22.0
 
 cmake libgit2:
-  cmd.run:
+  cmd.wait:
     - cwd: /tmp/libgit2-0.22.0
-    - unless: test -e /usr/local/lib/libgit2.so.0.22.0
+    - onchanges:
+      - archive: libgit2 pull
     - require:
       - pkg: libgit2 prereqs
       - archive: libgit2 pull
