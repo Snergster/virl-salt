@@ -45,17 +45,11 @@ qemu common virl hold:
     {% else %}
     - source: "salt://virl/files/vsalt.py"
     {% endif %}
-
-vinstall run:
   cmd.run:
-    - name: /usr/local/bin/vinstall salt
-    - onlyif: 'test -e /etc/virl.ini'
+    - name: /usr/local/bin/vsalt
     - require:
-      - file: /usr/local/bin/vinstall
-      - pip: docopt
-      - pip: envoy
-      - pip: sh
-      - pip: 'configparser>=3.3.0r2'
+      - file: /usr/local/bin/vsalt
+
 
 {% if not masterless %}
 vinstall wheels:
@@ -113,7 +107,7 @@ salt-minion nohold:
     - template: jinja
     - makedirs: True
     {% if masterless %}
-    - source: /srv/salt/openstack/files/local.extra.conf
+    - source: /srv/salt/openstack/files/extra.conf
     - source_hash: md5=3b816e66f5c6cd8f8a2ab9ede76c2146
     {% else %}
     - source: "salt://openstack/files/extra.conf"
