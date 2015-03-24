@@ -5,7 +5,7 @@
 
 {% if dummy_int == True %}
 
-mysql port anycast:
+mysql port anycast open:
   file.replace:
     - name: /etc/mysql/my.cnf
     - pattern: ^bind-address.*
@@ -18,7 +18,7 @@ mysql port anycast:
 
 {% else %}
 
-mysql port anycast:
+mysql port anycast open:
   file.replace:
     - name: /etc/mysql/my.cnf
     - pattern: ^bind-address.*
@@ -28,5 +28,5 @@ mysql port anycast:
     - name: 'service mysql restart'
     - watch:
       - file: mysql port anycast
-      
+
 {% endif %}
