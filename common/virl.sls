@@ -107,7 +107,7 @@ salt-minion nohold:
     - template: jinja
     - makedirs: True
     {% if masterless %}
-    - source: /srv/salt/openstack/files/extra.conf
+    - source: /srv/salt/openstack/files/local.extra.conf
     - source_hash: md5=3b816e66f5c6cd8f8a2ab9ede76c2146
     {% else %}
     - source: "salt://openstack/files/extra.conf"
