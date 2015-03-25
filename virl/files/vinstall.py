@@ -274,6 +274,7 @@ def building_salt_extra():
             extra.write("""verify_master_pubkey_sign: True \n""")
             extra.write("""auth_timeout: 15 \n""")
             extra.write("""master_shuffle: True \n""")
+            extra.write("""random_master: True \n""")
             extra.write("""master_alive_interval: 180 \n""")
         else:
             extra.write("""file_client: local
