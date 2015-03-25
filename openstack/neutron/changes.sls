@@ -22,3 +22,8 @@ nova_admin_tenant_id insert in changes:
     - section: 'DEFAULT'
     - parameter: 'nova_admin_tenant_id'
     - value: {{ service_tenid.service.id }}
+
+service_tenant_id in grains:
+    grains.present:
+        - name: service_id
+        - value: {{ service_tenid.service.id }}
