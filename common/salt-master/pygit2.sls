@@ -18,21 +18,23 @@ libgit2 pull:
     - archive_format: tar
     - if_missing: /tmp/libgit2-0.22.0
     - unless: test -e /usr/local/lib/libgit2.so.0.22.0
-
-cmake libgit2:
-  cmd.wait:
+  cmd.run:
+    - name: cmake .
     - cwd: /tmp/libgit2-0.22.0
-    - onchanges:
-      - archive: libgit2 pull
     - require:
       - pkg: libgit2 prereqs
+    - onchanges: 
       - archive: libgit2 pull
+
+cmake libgit2:
+  cmd.run:
+    - cwd: /tmp/libgit2-0.22.0
+    - onchanges:
+      - cmd: libgit2 pull
     - names:
-      - cmake .
       - make
-      - sleep 60
       - make install
-      - sleep 20
+
 
 ldconfig always run:
   cmd.run:
