@@ -11,3 +11,11 @@ rabbit_pass:
     - user: root
     - require:
       - pkg: rabbitmq-server
+
+rabbitmq restart:
+  service:
+    - name: rabbitmq-server
+    - running
+    - enable: True
+    - watch:
+      - cmd: rabbit_pass
