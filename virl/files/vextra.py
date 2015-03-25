@@ -18,7 +18,13 @@ virlconfig_file = '/etc/virl.ini'
 if path.exists(virlconfig_file):
     Config.read('/etc/virl.ini')
     vgrains = {}
-    for name, value in Config.items('DEFAULT'): vgrains[name] = value
+    for name, value in Config.items('DEFAULT'):
+        if value.lower() == 'true':
+            vgrains[name] = True
+        elif value.lower() == 'false':
+            vgrains[name] = False
+        else:
+            vgrains[name] = value
     caller.sminion.functions['grains.setvals'](vgrains)
 else:
     print "No config exists at /etc/virl.ini."
@@ -112,6 +118,5 @@ if __name__ == "__main__":
             ks_token = scaller.sminion.functions['pillar.get']('virl:keystone_service_token')
             if not ks_token:
                 ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
-#im still not k
             building_salt_extra(masterless,salt_master,salt_id,salt_domain)
     building_salt_openstack(ospassword,ks_token,mypass)

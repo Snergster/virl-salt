@@ -14,7 +14,7 @@ mysql port anycast open:
   cmd.wait:
     - name: 'service mysql restart'
     - watch:
-      - file: mysql port anycast
+      - file: mysql port anycast open
 
 {% else %}
 
@@ -27,6 +27,6 @@ mysql port anycast open:
   cmd.wait:
     - name: 'service mysql restart'
     - watch:
-      - file: mysql port anycast
+      - file: mysql port anycast open
 
 {% endif %}

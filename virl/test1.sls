@@ -3,6 +3,5 @@ include:
   - virl.std
   - virl.ank
   - virl.guest
-  - virl.vmm.guest
+  - virl.vmm.download
   - virl.routervms
-  

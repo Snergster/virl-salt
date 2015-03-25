@@ -20,5 +20,11 @@ else:
 
 if __name__ == "__main__":
     vgrains = {}
-    for name, value in Config.items('DEFAULT'): vgrains[name] = value
+    for name, value in Config.items('DEFAULT'):
+        if value.lower() == 'true':
+            vgrains[name] = True
+        elif value.lower() == 'false':
+            vgrains[name] = False
+        else:
+            vgrains[name] = value
     caller.sminion.functions['grains.setvals'](vgrains)
