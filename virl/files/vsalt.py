@@ -5,7 +5,10 @@ import ConfigParser
 import salt.client
 from os import path
 
-caller = salt.client.Caller()
+opts = salt.config.minion_config('/etc/salt/minion')
+opts['file_client'] = 'local'
+opts['fileserver_backend'] = 'roots'
+caller = salt.client.Caller(mopts=opts)
 Config = ConfigParser.ConfigParser()
 
 virlconfig_file = '/etc/virl.ini'
