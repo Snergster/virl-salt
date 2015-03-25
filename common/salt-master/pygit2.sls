@@ -30,11 +30,16 @@ cmake libgit2:
     - names:
       - cmake .
       - make
+      - sleep 60
       - make install
+      - sleep 20
 
 ldconfig always run:
   cmd.run:
     - name: ldconfig
+    - require:
+      - cmd: cmake libgit2
+      
 
 pygit2 install:
   pip.installed:
