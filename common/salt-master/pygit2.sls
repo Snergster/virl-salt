@@ -41,7 +41,7 @@ ldconfig always run:
     - name: ldconfig
     - require:
       - cmd: cmake libgit2
-      
+
 
 pygit2 install:
   pip.installed:

@@ -1,5 +1,6 @@
 include:
   - virl.vsalt
+  - virl.vextra
   - virl.host
   - virl.ntp
   - virl.web
