@@ -3,10 +3,10 @@
 {% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
 {% if iosvl2 and iosvl2pref %}
 
-IOSvl2:
+IOSvL2:
   glance.image_present:
     - profile: virl
-    - name: 'IOSvl2'
+    - name: 'IOSvL2'
     - container_format: bare
     - min_disk: 0
     - min_ram: 0
@@ -23,34 +23,34 @@ IOSvl2:
     - property-serial: 2
     - property-subtype: IOSv
 
-iosvl2 flavor delete:
+IOSvL2 flavor delete:
   cmd.run:
-    - name: 'nova flavor-delete "IOSvl2"'
-    - onlyif: nova flavor-list | grep -w "IOSvl2"
+    - name: 'nova flavor-delete "IOSvL2"'
+    - onlyif: nova flavor-list | grep -w "IOSvL2"
     - onchanges:
-      - glance: IOSvl2
+      - glance: IOSvL2
 
-IOSvl2 flavor create:
+IOSvL2 flavor create:
   module.run:
     - name: nova.flavor_create
-    - m_name: 'IOSvl2'
+    - m_name: 'IOSvL2'
     - ram: 512
     - disk: 0
     - vcpus: 1
     - onchanges:
-      - glance: IOSvl2
+      - glance: IOSvL2
     - require:
-      - cmd: IOSvl2 flavor delete
+      - cmd: IOSvL2 flavor delete
 
 {% else %}
 
-IOSvl2 gone:
+IOSvL2 gone:
   glance.image_absent:
   - profile: virl
-  - name: 'IOSvl2'
+  - name: 'IOSvL2'
 
-IOSvl2 flavor absent:
+IOSvL2 flavor absent:
   cmd.run:
-    - name: 'nova flavor-delete "IOSvl2"'
-    - onlyif: nova flavor-list | grep -w "IOSvl2"
+    - name: 'nova flavor-delete "IOSvL2"'
+    - onlyif: nova flavor-list | grep -w "IOSvL2"
 {% endif %}
