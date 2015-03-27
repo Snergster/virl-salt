@@ -45,11 +45,6 @@ qemu common virl hold:
     {% else %}
     - source: "salt://virl/files/vsalt.py"
     {% endif %}
-  cmd.run:
-    - name: /usr/local/bin/vsalt
-    - require:
-      - file: /usr/local/bin/vsalt
-
 
 {% if not masterless %}
 vinstall wheels:
