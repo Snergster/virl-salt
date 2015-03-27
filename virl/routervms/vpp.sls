@@ -23,7 +23,7 @@ vPP:
 vPP flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "vPP"'
-    - onlyif: nova flavor-list | grep -w "vPP"
+    - onlyif: nova flavor-show "vPP"
     - onchanges:
       - glance: vPP
 

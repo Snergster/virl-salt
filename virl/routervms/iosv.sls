@@ -26,7 +26,7 @@ iosv:
 iosv flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "IOSv"'
-    - onlyif: nova flavor-list | grep -w "IOSv"
+    - onlyif: nova flavor-show "IOSv"
     - onchanges:
       - glance: iosv
 

@@ -23,7 +23,7 @@ UbuntuServertrusty:
 UbuntuServertrusty flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "server"'
-    - onlyif: nova flavor-list | grep -w "server"
+    - onlyif: nova flavor-show "server"
     - onchanges:
       - glance: UbuntuServertrusty
 

@@ -25,7 +25,7 @@ CSR1000v:
 CSR1000v flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "CSR1000v"'
-    - onlyif: nova flavor-list | grep -w "CSR1000v"
+    - onlyif: nova flavor-show "CSR1000v"
     - onchanges:
       - glance: CSR1000v
 

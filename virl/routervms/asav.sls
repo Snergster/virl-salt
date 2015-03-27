@@ -25,7 +25,7 @@ asav:
 asav flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "ASAv"'
-    - onlyif: nova flavor-list | grep -w "ASAv"
+    - onlyif: nova flavor-show "ASAv"
     - onchanges:
       - glance: asav
 

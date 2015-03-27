@@ -26,7 +26,7 @@ iosxrv52:
 iosxrv52 flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "IOS XRv52"'
-    - onlyif: nova flavor-list | grep -w "IOS XRv52"
+    - onlyif: nova flavor-show "IOS XRv52"
     - onchanges:
       - glance: iosxrv52
 

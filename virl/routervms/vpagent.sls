@@ -26,7 +26,7 @@ vpagent:
 vpagent flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "vpagent"'
-    - onlyif: nova flavor-list | grep -w "vpagent"
+    - onlyif: nova flavor-show "vpagent"
     - onchanges:
       - glance: vpagent
 

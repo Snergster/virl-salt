@@ -26,7 +26,7 @@ IOSvL2:
 IOSvL2 flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "IOSvL2"'
-    - onlyif: nova flavor-list | grep -w "IOSvL2"
+    - onlyif: nova flavor-show "IOSvL2"
     - onchanges:
       - glance: IOSvL2
 
