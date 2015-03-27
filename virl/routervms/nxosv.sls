@@ -26,7 +26,7 @@ NX-OSv:
 NX-OSv flavor delete:
   cmd.run:
     - name: 'nova flavor-delete "NX-OSv"'
-    - onlyif: nova flavor-list | grep -w "NX-OSv"
+    - onlyif: nova flavor-show "NX-OSv"
     - require:
       - glance: NX-OSv
 
