@@ -1,6 +1,8 @@
 upgrade host:
   pkg.uptodate:
     - refresh: True
+    - kwargs:
+      - dist_upgrade: False
 
 apt cleanup:
   cmd.wait:

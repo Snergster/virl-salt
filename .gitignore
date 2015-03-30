@@ -6,4 +6,5 @@ std/*
 /virl/files/.idea/*
 atlassian-ide-plugin.xml
 .gitignore
+*-e
 *~

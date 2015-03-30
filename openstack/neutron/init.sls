@@ -384,17 +384,6 @@ l3-gateway:
         >                      'device_owner': port.device_owner,
         >                      'mac_address': port.mac_address,
 
-/srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff:
-  {% if not masterless %}
-  file.managed:
-    - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.diff"
-    - makedirs: True
-    - mode: 755
-  {% else %}
-  file.exists:
-    - name: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
-  {% endif %}
-
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py:
   file.patch:
@@ -446,8 +435,7 @@ linuxbridge_neutron_agent:
     - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.py"
     {% endif %}
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-    - onfail:
-      - file: linuxbridge_neutron_agent patch
+
 
 compile linuxbridge:
   cmd.run:
@@ -455,20 +443,6 @@ compile linuxbridge:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
     - onchanges:
       - file: linuxbridge_neutron_agent
-
-linuxbridge_neutron_agent patch:
-  file.patch:
-    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-    - source: file:///srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
-    - hash: md5=e5c8f4898103ed7c152066064fdec92c
-    - require:
-      - pkg: neutron-pkgs
-      - file: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.diff
-  cmd.wait:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-    - watch:
-      - file: linuxbridge_neutron_agent patch
 
 
 /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py:
