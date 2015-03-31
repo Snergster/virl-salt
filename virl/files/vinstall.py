@@ -681,6 +681,7 @@ if __name__ == "__main__":
         create_basic_networks()
         print ('You need to restart now')
     if varg['test1']:
+        call_salt('common.pip')
         call_salt('common.salt-minion')
         building_salt_all()
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])

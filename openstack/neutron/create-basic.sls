@@ -31,12 +31,16 @@
 include:
   - openstack.neutron.changes
 
+neutron lives:
+  service.running:
+    - name: neutron-server
+
 create flat net:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create flat --shared --provider:network_type flat --provider:physical_network flat
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show flat
     - require:
-      - pkg: neutron-pkgs
+      - service: neutron lives
 
 {% if l2_port2_enabled %}
 create flat1 net:
@@ -44,7 +48,7 @@ create flat1 net:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create flat1 --shared --provider:network_type flat --provider:physical_network flat1
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show flat1
     - require:
-      - pkg: neutron-pkgs
+      - service: neutron lives
 
 {% endif %}
 
@@ -53,7 +57,7 @@ create snat net:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create ext-net --shared --provider:network_type flat --router:external true --provider:physical_network ext-net
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show ext-net
     - require:
-      - pkg: neutron-pkgs
+      - service: neutron lives
 
 
 create flat subnet:
