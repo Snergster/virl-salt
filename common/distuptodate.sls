@@ -12,4 +12,4 @@ apt cleanup:
   cmd.wait:
     - name: apt-get autoremove -y
     - onchanges:
-      - pkg: dist upgrade host
+      - module: dist upgrade host

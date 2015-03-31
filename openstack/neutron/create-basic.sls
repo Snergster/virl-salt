@@ -29,7 +29,6 @@
 {% set snat_dns2 = salt['pillar.get']('virl:second_snat_nameserver',salt['grains.get']('second_snat_nameserver', '8.8.4.4')) %}
 
 include:
-  - openstack.neutron
   - openstack.neutron.changes
 
 create flat net:
