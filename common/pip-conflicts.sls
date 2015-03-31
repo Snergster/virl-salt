@@ -6,7 +6,7 @@ include:
 
 good six:
   pip.installed:
-    - name: six
+    - name: six >= 1.9.0
     {% if proxy == true %}
     - proxy: {{ http_proxy }}
     {% endif %}

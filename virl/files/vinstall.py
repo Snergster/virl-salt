@@ -697,7 +697,7 @@ if __name__ == "__main__":
         call_salt('virl.openrc')
         call_salt('virl.std')
         call_salt('virl.ank')
-        
+        call_salt('common.pip-conflicts')   
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         else:
