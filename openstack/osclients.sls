@@ -13,7 +13,8 @@ libffi-dev for rackspace:
   pkg.installed:
     - name: libffi-dev
 
-nova client:
+
+oslo messaging first:
   pip.installed:
     - skip_verify: True
 {% if proxy == true %}
@@ -24,10 +25,23 @@ nova client:
       - pkg: nova-pkgs
       - pkg: libffi-dev for rackspace
     - names:
+      - oslo.messaging == 1.6.0
+
+nova client:
+  pip.installed:
+    - skip_verify: True
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - refresh: False
+    - require:
+      - pkg: nova-pkgs
+      - pkg: libffi-dev for rackspace
+      - pip: oslo messaging first
+    - names:
       - python-novaclient == 2.20.0
       - oslo.config == 1.6.0
       - oslo.rootwrap == 1.5.0
-      - oslo.messaging == 1.6.0
   file.managed:
     - name: /etc/apt/preferences.d/python-novaclient
     - require:
