@@ -689,7 +689,7 @@ if __name__ == "__main__":
         call_salt('openstack')
         call_salt('openstack.neutron.changes,openstack.nova.keystone')
         call_salt('openstack.stop')
-        call_salt('virl.host,virl.ntp')
+        call_salt('virl.basics')
         call_salt('openstack.rabbitmq')
         call_salt('openstack.start')
         call_salt('openstack.rabbitmq')
