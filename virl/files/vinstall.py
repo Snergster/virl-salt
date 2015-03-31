@@ -681,7 +681,18 @@ if __name__ == "__main__":
         create_basic_networks()
         print ('You need to restart now')
     if varg['test1']:
-            sleep(5)
+        building_salt_all()
+        call_salt('openstack')
+        call_salt('openstack.neutron.changes')
+        call_salt('openstack.stop')
+        call_salt('virl.host,virl.ntp')
+        call_salt('openstack.rabbitmq')
+        call_salt('openstack.start')
+        call_salt('openstack.rabbitmq')
+        call_salt('openstack.restart')
+        call_salt('virl.openrc')
+        call_salt('virl.std')
+        call_salt('virl.ank')
     if desktop:
         if varg['desktop']:
             call_salt('virl.desktop')
