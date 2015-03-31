@@ -684,8 +684,9 @@ if __name__ == "__main__":
         call_salt('common.salt-minion')
         building_salt_all()
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
+        call_salt('common.distuptodate')
         call_salt('openstack')
-        call_salt('openstack.neutron.changes')
+        call_salt('openstack.neutron.changes,openstack.nova.keystone')
         call_salt('openstack.stop')
         call_salt('virl.host,virl.ntp')
         call_salt('openstack.rabbitmq')
@@ -695,11 +696,12 @@ if __name__ == "__main__":
         call_salt('virl.openrc')
         call_salt('virl.std')
         call_salt('virl.ank')
-        call_salt('openstack.neutron.delete-basic')
+        
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         else:
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
+        call_salt('openstack.neutron.delete-basic')
         nova_service_list = ["nova-compute","nova-cert","nova-consoleauth","nova-scheduler","nova-conductor"]
         print ('Deleting Nova services for old hostnames')
         pmypassword = '-p' + mypassword
