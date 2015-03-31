@@ -681,9 +681,9 @@ if __name__ == "__main__":
         create_basic_networks()
         print ('You need to restart now')
     if varg['test1']:
-        building_salt_all()
         call_salt('common.salt-minion')
-        subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'saltutil.sync_all'])
+        building_salt_all()
+        subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
         call_salt('openstack')
         call_salt('openstack.neutron.changes')
         call_salt('openstack.stop')
