@@ -64,7 +64,8 @@ BRIDGE_FS_FOR_DEVICE = BRIDGE_PORT_FS_FOR_DEVICE + "/bridge"
 VXLAN_INTERFACE_PREFIX = "vxlan-"
 # Allow forwarding of all 802.1d reserved frames but 0 and disallowed STP, LLDP
 BRIDGE_FWD_MASK_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/group_fwd_mask"
-BRIDGE_FWD_MASK = hex(0xffff)
+BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
+#BRIDGE_FWD_MASK = hex(0xffff)
 # Check that instance exists before trying to execute virsh on it
 NOVA_INSTANCE_DIR = '/var/lib/nova/instances/%s'
 
