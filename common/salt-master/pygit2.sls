@@ -13,7 +13,7 @@ libgit2 prereqs:
 libgit2 pull:
   archive.extracted:
     - name: /tmp/
-    - source: http://github.com/libgit2/libgit2/archive/v0.22.0.tar.gz
+    - source: 'salt://images/misc/v0.22.0.tar.gz'
     - source_hash: md5=a8c689d4887cc085295dcf43c46f5f1f
     - archive_format: tar
     - if_missing: /tmp/libgit2-0.22.0
