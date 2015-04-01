@@ -22,3 +22,11 @@ remove old {{each}}:
       - pip: good six
 {% endfor %}
 
+good oslo.config:
+  pip.installed:
+    - name: oslo.config == 1.6.0
+    {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+    {% endif %}
+    - upgrade: True
+

@@ -687,17 +687,15 @@ if __name__ == "__main__":
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
         call_salt('common.distuptodate')
         call_salt('openstack')
-        call_salt('openstack.neutron.changes,openstack.nova.keystone')
+        call_salt('openstack.setup')
         call_salt('openstack.stop')
         call_salt('virl.basics')
         call_salt('openstack.rabbitmq')
         call_salt('openstack.start')
         call_salt('openstack.rabbitmq')
         call_salt('openstack.restart')
-        call_salt('virl.openrc')
         call_salt('virl.std')
         call_salt('virl.ank')
-        call_salt('common.pip-conflicts')   
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
         else:
