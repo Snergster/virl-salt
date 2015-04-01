@@ -88,6 +88,9 @@ if __name__ == "__main__":
         salt_domain = caller.sminion.functions['grains.get']('salt_domain')
         salt_master = ''
         building_salt_extra(masterless,salt_master,salt_id,salt_domain)
+        ospassword = caller.sminion.functions['grains.get']('password')
+        mypass = caller.sminion.functions['grains.get']('mysql_password')
+        ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
     else:
         if caller.sminion.functions['config.get']('master') == 'salt':
             salt_master = caller.sminion.functions['grains.get']('salt_master')
