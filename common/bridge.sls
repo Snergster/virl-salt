@@ -1,4 +1,5 @@
 {% set kernver = salt['cmd.run']('uname -r') %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 /lib/modules/{{ kernver }}/kernel/net/bridge/bridge.ko:
   file.managed:
@@ -23,4 +24,16 @@ run knock.sh:
       - version: {{ kernver }}
     - onfail:
       - file: /lib/modules/{{ kernver }}/kernel/net/bridge/bridge.ko
+
+lacp_linuxbridge_neutron_agent:
+      {% if masterless %}
+  file.copy:
+    - source: /srv/salt/openstack/neutron/files/lacp_linuxbridge_neutron_agent.py
+    - force: true
+    {% else %}
+  file.managed:
+    - source: "salt://openstack/neutron/files/lacp_linuxbridge_neutron_agent.py"
+    {% endif %}
+    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+
 
