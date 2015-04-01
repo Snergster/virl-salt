@@ -6,7 +6,7 @@ vsalt install and run:
     - name: /usr/local/bin/vsalt
     {% if masterless %}
     - source: /srv/salt/virl/files/vsalt.py
-    - source_hash: md5=28b7ad7b740b773a980fe646030585ed
+    - source_hash: md5=785d63b533c9051070942bda81f612ba
     {% else %}
     - source: "salt://virl/files/vsalt.py"
     {% endif %}
