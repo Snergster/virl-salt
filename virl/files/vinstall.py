@@ -593,7 +593,7 @@ if __name__ == "__main__":
         #               'openstack.keystone.endpoint', 'openstack.osclients', 'virl.openrc', 'openstack.glance']:
         #     call_salt(_each)
         call_salt('openstack')
-        call_salt('virl.openrc')
+        call_salt('openstack.setup')
 
         admin_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
