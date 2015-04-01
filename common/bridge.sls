@@ -35,5 +35,10 @@ lacp_linuxbridge_neutron_agent:
     - source: "salt://openstack/neutron/files/lacp_linuxbridge_neutron_agent.py"
     {% endif %}
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+  module.wait:
+    - name: openstack.restart
+    - watch:
+      - file: lacp_linuxbridge_neutron_agent
+
 
 
