@@ -8,7 +8,7 @@
 {% if cinder_file %}
 create cinder file:
   cmd.run:
-    - names:
+    - name:
       - /bin/dd if=/dev/zero of={{ cinder_location }} bs=1M count={{cinder_size}}
       - /sbin/losetup -f --show {{ cinder_location }}
       - /sbin/pvcreate /dev/loop0
@@ -17,7 +17,7 @@ create cinder file:
 {% elif cinder_device %}
 create cinder device:
   cmd.run:
-    - names:
+    - name:
       - /sbin/pvcreate {{ cinder_location }}
       - /sbin/vgcreate cinder-volumes {{ cinder_location }}
 {% endif %}
