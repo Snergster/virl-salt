@@ -6,7 +6,7 @@ vextra install and run:
     - name: /usr/local/bin/vextra
     {% if masterless %}
     - source: /srv/salt/virl/files/vextra.py
-    - source_hash: md5=53b81e549dbd950ce6bddde25963fa09
+    - source_hash: md5=c866d9bc3600522571f1c18fd88d575b
     {% else %}
     - source: "salt://virl/files/vextra.py"
     {% endif %}
