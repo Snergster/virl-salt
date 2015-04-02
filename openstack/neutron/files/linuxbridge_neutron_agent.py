@@ -65,7 +65,7 @@ VXLAN_INTERFACE_PREFIX = "vxlan-"
 # Allow forwarding of all 802.1d reserved frames but 0 and disallowed STP, LLDP
 BRIDGE_FWD_MASK_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/group_fwd_mask"
 BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
-#BRIDGE_FWD_MASK = hex(0xffff)
+BRIDGE_FWD_MASK_ALL = hex(0xffff)
 # Check that instance exists before trying to execute virsh on it
 NOVA_INSTANCE_DIR = '/var/lib/nova/instances/%s'
 
@@ -94,6 +94,7 @@ class LinuxBridgeManager:
                               'must be provided'))
         # Store network mapping to segments
         self.network_map = {}
+        self.bridge_fwd_mask = BRIDGE_FWD_MASK_ALL
 
     def get_bridge_name(self, network_id):
         if not network_id:
@@ -306,14 +307,7 @@ class LinuxBridgeManager:
                         "subinterface %(interface)s"),
                       {'bridge_name': bridge_name, 'interface': interface})
 
-        # Forward all available multicast frames prohibited by 802.1d
-        bridge_mask_path = BRIDGE_FWD_MASK_FS.replace( 
-                               BRIDGE_NAME_PLACEHOLDER, bridge_name)
-        if utils.execute(['tee', bridge_mask_path],
-                         process_input=BRIDGE_FWD_MASK,
-                         root_helper=self.root_helper) != BRIDGE_FWD_MASK:
-            LOG.warning('Failed to unmask group forwarding on bridge %s',
-                        bridge_name)
+        self.set_bridge_group_fwd_mask(bridge_name)
 
         if not interface:
             return bridge_name
@@ -532,6 +526,27 @@ class LinuxBridgeManager:
             LOG.exception('Failed to update port %s of domain %s mac %s to %s',
                           port_id, dom_id, hw_addr, state)
             return False
+
+    def set_bridge_group_fwd_mask(self, bridge_name):
+        """Set bridge group_fwd_mask to let reserved multicast frames through"""
+
+        # Forward all available multicast frames prohibited by 802.1d
+        bridge_mask_path = BRIDGE_FWD_MASK_FS.replace(
+                               BRIDGE_NAME_PLACEHOLDER, bridge_name)
+        try:
+            utils.execute(['tee', bridge_mask_path],
+                          process_input=self.bridge_fwd_mask,
+                          root_helper=self.root_helper)
+        except RuntimeError:
+            if self.bridge_fwd_mask == BRIDGE_FWD_MASK_ALL:
+                LOG.warning('Cannot unmask all mcast forwarding on bridge %s',
+                            bridge_name)
+                LOG.warning('Some frames (LACP, LLDP) will be dropped')
+                self.bridge_fwd_mask = BRIDGE_FWD_MASK
+                self.set_bridge_group_fwd_mask(bridge_name)
+            else:
+                LOG.error('Cannot unmask any mcast forwarding on bridge %s',
+                          bridge_name)
 
     def update_devices(self, registered_devices):
         devices = self.get_tap_devices()
