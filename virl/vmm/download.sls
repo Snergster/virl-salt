@@ -9,7 +9,7 @@ include:
   - .downdir
 
 /var/www/download/linux:
-{% if vmm_linux %}
+{% if vmm_linux == true %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -18,7 +18,7 @@ include:
     - maxdepth: 0
     - include_pat: '*zip'
     - exclude_pat: E@(.*exe$)|(.*dmg$)
-    {% if cml %}
+    {% if cml == true %}
     - source: "salt://cml/vmm/{{ venv }}/"
     {% else %}
     - source: "salt://vmm/{{ venv }}/"
@@ -32,7 +32,7 @@ include:
 
 
 /var/www/download/win64:
-{% if vmm_win64 %}
+{% if vmm_win64 == true %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -41,7 +41,7 @@ include:
     - maxdepth: 0
     - include_pat: '*setup_64.exe'
     - exclude_pat:  E@(.*32.exe$)|(.*dmg$)|(.*zip$)
-    {% if cml %}
+    {% if cml == true %}
     - source: "salt://cml/vmm/{{ venv }}/"
     {% else %}
     - source: "salt://vmm/{{ venv }}/"
@@ -55,7 +55,7 @@ include:
 
 
 /var/www/download/win32:
-{% if vmm_win32 %}
+{% if vmm_win32 == true %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -64,7 +64,7 @@ include:
     - dir_mode: 755
     - include_pat: '*setup_32.exe'
     - exclude_pat: E@(.*64.exe$)|(.*dmg$)|(.*zip$)
-    {% if cml %}
+    {% if cml == true %}
     - source: "salt://cml/vmm/{{ venv }}/"
     {% else %}
     - source: "salt://vmm/{{ venv }}/"
@@ -78,7 +78,7 @@ include:
 
 
 /var/www/download/mac:
-{% if vmm_mac %}
+{% if vmm_mac == true %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -87,7 +87,7 @@ include:
     - maxdepth: 0
     - include_pat: '*.dmg'
     - exclude_pat: E@(.*exe$)|(.*zip$)
-    {% if cml %}
+    {% if cml == true %}
     - source: "salt://cml/vmm/{{ venv }}/"
     {% else %}
     - source: "salt://vmm/{{ venv }}/"

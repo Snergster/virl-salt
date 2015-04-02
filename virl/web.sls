@@ -2,7 +2,7 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
 
-{% if cml %}
+{% if cml == true %}
 /srv/salt/virl/files/cmlweb.tar:
   file.managed:
     - source: 'salt://virl/files/cmlweb.tar'

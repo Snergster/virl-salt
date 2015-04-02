@@ -46,7 +46,7 @@ lubuntu-desktop:
          Type=Application
          Categories=Utility;Application;
 
-{% if cml %}
+{% if cml == true %}
 /home/virl/Desktop/CML.desktop:
   file.managed:
     - mode: 0755
@@ -234,7 +234,7 @@ lubuntu-desktop:
 
 /home/virl/.README:
   file.managed:
-  {% if cml %}
+  {% if cml == true %}
     - source: "salt://virl/desktop/files/cmlREADME"
   {% else %}
     - source: "salt://virl/desktop/files/vREADME"
@@ -284,7 +284,7 @@ lubuntu-desktop:
     - require:
       - pkg: lubuntu-desktop
 
-{% if cml %}
+{% if cml == true %}
 cml background:
   openstack_config.present:
     - order: last

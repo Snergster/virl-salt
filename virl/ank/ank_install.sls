@@ -16,7 +16,7 @@
 
 /var/cache/virl/ank files:
   file.recurse:
-    {% if ank_ver_fixed %}
+    {% if ank_ver_fixed == true %}
     - source: "salt://fixed/ank"
     - name: /var/cache/virl/fixed/ank
     {% else %}
@@ -198,7 +198,7 @@ autonetkit check:
 
 autonetkit_cisco:
   pip.installed:
-    {% if ank_ver_fixed %}
+    {% if ank_ver_fixed == true %}
     - name: autonet_cisco == {{ ank_cisco_ver }}
     - find_links: "file:///var/cache/virl/fixed/ank"
     {% else %}
@@ -215,7 +215,7 @@ autonetkit_cisco:
 
 autonetkit_cisco_webui:
   pip.installed:
-    {% if ank_ver_fixed %}
+    {% if ank_ver_fixed == true %}
     - name: autonetkit_cisco_webui == {{ ank_webui }}
     - find_links: "file:///var/cache/virl/fixed/ank"
     - onlyif: ls /var/cache/virl/fixed/ank/autonetkit_cisco_webui*
@@ -240,7 +240,7 @@ autonetkit_cisco_webui:
 
 virl_collection:
   pip.installed:
-    {% if ank_ver_fixed %}
+    {% if ank_ver_fixed == true %}
     - name: virl_collection == {{ ank_collector }}
     - find_links: "file:///var/cache/virl/fixed/ank"
     - onlyif: ls /var/cache/virl/fixed/ank/virl_collection*

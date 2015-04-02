@@ -177,7 +177,7 @@ VIRL_CORE:
       - pip: VIRL_CORE
   cmd.run:
     - names:
-     {% if cml %}
+     {% if cml == true %}
       - echo /usr/local/bin/virl_config lsb-links | at now + 1 min
      {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
