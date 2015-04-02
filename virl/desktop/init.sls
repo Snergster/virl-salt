@@ -46,7 +46,7 @@ lubuntu-desktop:
          Type=Application
          Categories=Utility;Application;
 
-{% if cml == true %}
+{% if cml %}
 /home/virl/Desktop/CML.desktop:
   file.managed:
     - mode: 0755
@@ -234,7 +234,7 @@ lubuntu-desktop:
 
 /home/virl/.README:
   file.managed:
-  {% if cml == true %}
+  {% if cml %}
     - source: "salt://virl/desktop/files/cmlREADME"
   {% else %}
     - source: "salt://virl/desktop/files/vREADME"
@@ -245,7 +245,7 @@ lubuntu-desktop:
       - pkg: lubuntu-desktop
 
 /usr/share/themes/Lubuntu-default/openbox-3/themerc:
-  {% if masterless == false %}
+  {% if not masterless %}
   file.managed:
     - source: "salt://virl/files/Clearlooks/openbox-3/themerc"
   {% else %}
@@ -258,7 +258,7 @@ lubuntu-desktop:
       - pkg: lubuntu-desktop
 
 /usr/share/themes/Lubuntu-default/gtk-2.0/gtkrc:
-  {% if masterless == false %}
+  {% if not masterless %}
   file.managed:
     - source: "salt://virl/files/Clearlooks/gtk-2.0/gtkrc"
   {% else %}
@@ -271,7 +271,7 @@ lubuntu-desktop:
       - pkg: lubuntu-desktop
 
 /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf:
-  {% if masterless == false %}
+  {% if not masterless %}
   file.managed:
     - source: "salt://virl/desktop/files/desktop-items-0.conf"
   {% else %}
@@ -284,7 +284,7 @@ lubuntu-desktop:
     - require:
       - pkg: lubuntu-desktop
 
-{% if cml == true %}
+{% if cml %}
 cml background:
   openstack_config.present:
     - order: last

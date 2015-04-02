@@ -9,7 +9,7 @@ include:
   - openstack.mysql.open
   - virl.scripts
 
-{% if masterless == false %}
+{% if not masterless %}
 /usr/local/bin/virl-openrc.sh:
   file.managed:
     - order: 1

@@ -15,14 +15,14 @@
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
 
-{% if masterless == false %}
+{% if not masterless %}
 /var/cache/virl/std:
   file.recurse:
-    {% if std_ver_fixed == true %}
+    {% if std_ver_fixed %}
     - name: /var/cache/virl/fixed/std
     - source: "salt://fixed/std"
     {% else %}
-      {% if cml ==true %}
+      {% if cml %}
     - source: "salt://cml/std/{{venv}}/"
     - name: /var/cache/virl/std
       {% else %}
@@ -151,8 +151,8 @@ VIRL_CORE:
     - no_index: True
     - pre_releases: True
     - no_deps: True
-    {% if cml == true %}
-     {% if std_ver_fixed == true %}
+    {% if cml %}
+     {% if std_ver_fixed %}
     - name: CML_CORE  == {{ std_ver }}
     - find_links: "file:///var/cache/virl/fixed/std"
      {% else %}
@@ -160,7 +160,7 @@ VIRL_CORE:
     - name: CML_CORE
      {% endif %}
     {% else %}
-    {% if std_ver_fixed == true %}
+    {% if std_ver_fixed %}
     - name: VIRL_CORE  == {{ std_ver }}
     - find_links: "file:///var/cache/virl/fixed/std"
     {% else %}
@@ -177,7 +177,7 @@ VIRL_CORE:
       - pip: VIRL_CORE
   cmd.run:
     - names:
-     {% if cml == true %}
+     {% if cml %}
       - echo /usr/local/bin/virl_config lsb-links | at now + 1 min
      {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
@@ -185,7 +185,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg orchestration network_security_groups False
       - crudini --set /etc/virl/common.cfg orchestration network_custom_floating_ip True
      {% endif %}
-     {% if cinder_enabled == true %}
+     {% if cinder_enabled %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
       - crudini --set /etc/virl/common.cfg orchestration volume_service True
      {% else %}
@@ -205,7 +205,7 @@ VIRL_CORE:
 uwmadmin change:
   cmd.run:
     - names:
-     {% if cml == true %}
+     {% if cml %}
       - sleep 65
      {% endif %}
       - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}'

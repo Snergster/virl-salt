@@ -12,11 +12,11 @@
 {% set ank_collector = salt['pillar.get']('virl:ank_collector', salt['grains.get']('ank_collector', '0.10.8')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
-{% if masterless == false %}
+{% if not masterless %}
 
 /var/cache/virl/ank files:
   file.recurse:
-    {% if ank_ver_fixed == true %}
+    {% if ank_ver_fixed %}
     - source: "salt://fixed/ank"
     - name: /var/cache/virl/fixed/ank
     {% else %}
@@ -31,7 +31,7 @@
 
 
 /etc/init.d/virl-vis-processor:
-  {% if masterless == false %}
+  {% if not masterless %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-processor.init"
     - mode: 0755
@@ -43,7 +43,7 @@
   {% endif %}
 
 /etc/init.d/virl-vis-mux:
-  {% if masterless == false %}
+  {% if not masterless %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-mux.init"
     - mode: 0755
@@ -57,7 +57,7 @@
 
 
 /etc/init.d/virl-vis-webserver:
-  {% if masterless == false %}
+  {% if not masterless %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-webserver.init"
     - mode: 0755
@@ -104,7 +104,7 @@ virl-vis-webserver port change:
 
 ank init script:
   file:
-  {% if masterless == false %}
+  {% if not masterless %}
     - managed
     - name: /etc/init.d/ank-cisco-webserver
     - source: "salt://virl/ank/files/ank-cisco-webserver.init"
@@ -198,7 +198,7 @@ autonetkit check:
 
 autonetkit_cisco:
   pip.installed:
-    {% if ank_ver_fixed == true %}
+    {% if ank_ver_fixed %}
     - name: autonet_cisco == {{ ank_cisco_ver }}
     - find_links: "file:///var/cache/virl/fixed/ank"
     {% else %}
@@ -215,7 +215,7 @@ autonetkit_cisco:
 
 autonetkit_cisco_webui:
   pip.installed:
-    {% if ank_ver_fixed == true %}
+    {% if ank_ver_fixed %}
     - name: autonetkit_cisco_webui == {{ ank_webui }}
     - find_links: "file:///var/cache/virl/fixed/ank"
     - onlyif: ls /var/cache/virl/fixed/ank/autonetkit_cisco_webui*
@@ -240,7 +240,7 @@ autonetkit_cisco_webui:
 
 virl_collection:
   pip.installed:
-    {% if ank_ver_fixed == true %}
+    {% if ank_ver_fixed %}
     - name: virl_collection == {{ ank_collector }}
     - find_links: "file:///var/cache/virl/fixed/ank"
     - onlyif: ls /var/cache/virl/fixed/ank/virl_collection*
