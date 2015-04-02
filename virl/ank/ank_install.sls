@@ -12,7 +12,7 @@
 {% set ank_collector = salt['pillar.get']('virl:ank_collector', salt['grains.get']('ank_collector', '0.10.8')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
-{% if not masterless %}
+{% if masterless == false %}
 
 /var/cache/virl/ank files:
   file.recurse:
@@ -31,7 +31,7 @@
 
 
 /etc/init.d/virl-vis-processor:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-processor.init"
     - mode: 0755
@@ -43,7 +43,7 @@
   {% endif %}
 
 /etc/init.d/virl-vis-mux:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-mux.init"
     - mode: 0755
@@ -57,7 +57,7 @@
 
 
 /etc/init.d/virl-vis-webserver:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-webserver.init"
     - mode: 0755
@@ -104,7 +104,7 @@ virl-vis-webserver port change:
 
 ank init script:
   file:
-  {% if not masterless %}
+  {% if masterless == false %}
     - managed
     - name: /etc/init.d/ank-cisco-webserver
     - source: "salt://virl/ank/files/ank-cisco-webserver.init"

@@ -15,7 +15,7 @@
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 
 
-{% if not masterless %}
+{% if masterless == false %}
 /var/cache/virl/std:
   file.recurse:
     {% if std_ver_fixed == true %}

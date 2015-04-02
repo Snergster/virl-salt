@@ -245,7 +245,7 @@ lubuntu-desktop:
       - pkg: lubuntu-desktop
 
 /usr/share/themes/Lubuntu-default/openbox-3/themerc:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: "salt://virl/files/Clearlooks/openbox-3/themerc"
   {% else %}
@@ -258,7 +258,7 @@ lubuntu-desktop:
       - pkg: lubuntu-desktop
 
 /usr/share/themes/Lubuntu-default/gtk-2.0/gtkrc:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: "salt://virl/files/Clearlooks/gtk-2.0/gtkrc"
   {% else %}
@@ -271,7 +271,7 @@ lubuntu-desktop:
       - pkg: lubuntu-desktop
 
 /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: "salt://virl/desktop/files/desktop-items-0.conf"
   {% else %}

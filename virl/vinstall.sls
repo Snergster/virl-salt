@@ -3,7 +3,7 @@
 
 
 /usr/local/bin/vinstall:
-{% if not masterless %}
+{% if masterless == false %}
   file.managed:
     - source: salt://virl/files/vinstall.py
     - user: virl
@@ -17,7 +17,7 @@
     - onlyif: 'test -e /srv/salt/virl/files/vinstall.py'
 {% endif %}
 
-{% if not masterless %}
+{% if masterless == false %}
 /srv/salt/virl/host.sls:
   file.managed:
     - source: salt://virl/host.sls

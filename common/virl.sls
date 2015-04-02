@@ -46,7 +46,7 @@ qemu common virl hold:
     - source: "salt://virl/files/vsalt.py"
     {% endif %}
 
-{% if not masterless %}
+{% if masterless == false %}
 vinstall wheels:
   file.recurse:
     - name: /tmp/wheels
@@ -59,13 +59,13 @@ vinstall wheels:
     - require:
       - pkg: pip on the box
       - file: /usr/local/bin/vinstall
-      {% if not masterless %}
+      {% if masterless == false %}
       - file: vinstall wheels
       {% endif %}
     - use_wheel: True
     - pre_releases: True
     - no_deps: True
-    {% if not masterless %}
+    {% if masterless == false %}
     - no_index: True
     - find_links: "file:///tmp/wheels"
     {% endif %}

@@ -314,7 +314,7 @@ l3-gateway:
         112a116
         >         LOG.info('RPC returning %s', entry)
 
-{% if not masterless %}
+{% if masterless == false %}
 /srv/salt/openstack/neutron/files/linuxbridge-plugin.filters.diff:
   file.managed:
     - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.diff"

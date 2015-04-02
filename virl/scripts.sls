@@ -5,7 +5,7 @@
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
-{% if not masterless %}
+{% if masterless == false %}
 
 /usr/local/bin/update-images:
   file.managed:
@@ -121,7 +121,7 @@
     - mode: 0755
 
 /usr/bin/telnet_front:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: salt://virl/files/telnet_front
   {% else %}
@@ -132,7 +132,7 @@
     - mode: 755
 
 /etc/apparmor.d/local/telnet_front:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: salt://virl/files/telnet_front.aa
   {% else %}
@@ -148,7 +148,7 @@
 
 
 /etc/apparmor.d/libvirt/TEMPLATE:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: salt://virl/files/libvirt.template
   {% else %}
@@ -165,7 +165,7 @@
 
 
 /etc/modprobe.d/kvm-intel.conf:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: salt://virl/files/kvm-intel.conf
   {% else %}
@@ -176,7 +176,7 @@
     - mode: 755
 
 /home/virl/.virl.jpg:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: salt://virl/files/virl.jpg
   {% else %}
@@ -187,7 +187,7 @@
     - user: virl
     - group: virl
 
-{% if not masterless %}
+{% if masterless == false %}
 /etc/orig.virl.ini:
   file.managed:
     - source: salt://files/vsettings.ini
@@ -197,7 +197,7 @@
 {% endif %}
 
 /etc/init/failsafe.conf:
-  {% if not masterless %}
+  {% if masterless == false %}
   file.managed:
     - source: salt://virl/files/failsafe.conf
   {% else %}
