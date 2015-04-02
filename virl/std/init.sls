@@ -18,11 +18,11 @@
 {% if not masterless %}
 /var/cache/virl/std:
   file.recurse:
-    {% if std_ver_fixed %}
+    {% if std_ver_fixed == true %}
     - name: /var/cache/virl/fixed/std
     - source: "salt://fixed/std"
     {% else %}
-      {% if cml %}
+      {% if cml ==true %}
     - source: "salt://cml/std/{{venv}}/"
     - name: /var/cache/virl/std
       {% else %}
@@ -151,8 +151,8 @@ VIRL_CORE:
     - no_index: True
     - pre_releases: True
     - no_deps: True
-    {% if cml %}
-     {% if std_ver_fixed %}
+    {% if cml == true %}
+     {% if std_ver_fixed == true %}
     - name: CML_CORE  == {{ std_ver }}
     - find_links: "file:///var/cache/virl/fixed/std"
      {% else %}
@@ -160,7 +160,7 @@ VIRL_CORE:
     - name: CML_CORE
      {% endif %}
     {% else %}
-    {% if std_ver_fixed %}
+    {% if std_ver_fixed == true %}
     - name: VIRL_CORE  == {{ std_ver }}
     - find_links: "file:///var/cache/virl/fixed/std"
     {% else %}
@@ -185,7 +185,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg orchestration network_security_groups False
       - crudini --set /etc/virl/common.cfg orchestration network_custom_floating_ip True
      {% endif %}
-     {% if cinder_enabled %}
+     {% if cinder_enabled == true %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
       - crudini --set /etc/virl/common.cfg orchestration volume_service True
      {% else %}
@@ -205,7 +205,7 @@ VIRL_CORE:
 uwmadmin change:
   cmd.run:
     - names:
-     {% if cml %}
+     {% if cml == true %}
       - sleep 65
      {% endif %}
       - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}'
