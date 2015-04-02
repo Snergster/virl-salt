@@ -41,7 +41,7 @@ qemu common virl hold:
     - mode: 755
     {% if masterless %}
     - source: /srv/salt/virl/files/vsalt.py
-    - source_hash: md5=3abe32c562818fadb1cd068ea14ae07e
+    - source_hash: md5=785d63b533c9051070942bda81f612ba
     {% else %}
     - source: "salt://virl/files/vsalt.py"
     {% endif %}

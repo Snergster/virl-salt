@@ -1,5 +1,6 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
+{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 libgit2 prereqs:
   pkg.installed:
@@ -13,7 +14,11 @@ libgit2 prereqs:
 libgit2 pull:
   archive.extracted:
     - name: /tmp/
+    {% if masterless %}
+    - source: http://github.com/libgit2/libgit2/archive/v0.22.0.tar.gz
+    {% else %}
     - source: 'salt://images/misc/v0.22.0.tar.gz'
+    {% endif %}
     - source_hash: md5=a8c689d4887cc085295dcf43c46f5f1f
     - archive_format: tar
     - if_missing: /tmp/libgit2-0.22.0
