@@ -199,7 +199,7 @@ autonetkit check:
 autonetkit_cisco:
   pip.installed:
     {% if ank_ver_fixed %}
-    - name: autonet_cisco == {{ ank_cisco }}
+    - name: autonet_cisco == {{ ank_cisco_ver }}
     - find_links: "file:///var/cache/virl/fixed/ank"
     {% else %}
     - name: autonetkit_cisco
