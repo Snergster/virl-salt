@@ -13,11 +13,11 @@ iosv:
     - min_ram: 0
     - is_public: True
   {% if cml %}
-    - checksum: a59dd80377d4d7f066c1c1f02971a248
-    - copy_from: salt://images/salt/vios-adventerprisek9-m.155-2.T.qcow2
-  {% else %}
     - checksum: 8d448fe4d202f4d9da81fad0f2a6bb9b
     - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.qcow2
+  {% else %}
+    - checksum: a59dd80377d4d7f066c1c1f02971a248
+    - copy_from: salt://images/salt/vios-adventerprisek9-m.155-2.T.qcow2
   {% endif %}
     - protected: False
     - disk_format: qcow2
