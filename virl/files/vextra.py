@@ -33,7 +33,7 @@ else:
 
 def building_salt_extra(masterless,salt_master,salt_id,salt_domain):
     with open(("/tmp/extra"), "w") as extra:
-        if not masterless == 'true':
+        if not masterless:
             extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
             # for each in salt_master.split(','):
             #     extra.write("""  - {each}\n""".format(each=each))
@@ -58,12 +58,12 @@ gitfs_remotes:
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
 
-def building_salt_openstack(ospassword,ks_token,mypass):
+def building_salt_openstack(ospassword,ks_token,mypass,admin_id):
     with open(("/tmp/openstack"), "w") as openstack:
         openstack.write("""keystone.user: admin
 keystone.password: {ospassword}
 keystone.tenant: admin
-keystone.tenant_id:
+keystone.tenant_id: {admin_id}
 keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
 keystone.token: {kstoken}
 keystone.region_name: 'RegionOne'
@@ -75,9 +75,9 @@ virl:
   keystone.user: admin
   keystone.password: {ospassword}
   keystone.tenant: admin
-  keystone.tenant_id:
+  keystone.tenant_id: {admin_id}
   keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
-  keystone.region_name: 'RegionOne'\n""".format(ospassword=ospassword, kstoken=ks_token, mypass=mypass))
+  keystone.region_name: 'RegionOne'\n""".format(ospassword=ospassword, kstoken=ks_token, mypass=mypass, admin_id=admin_id))
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/openstack'), '/etc/salt/minion.d/openstack.conf'])
 
 
@@ -91,6 +91,7 @@ if __name__ == "__main__":
         ospassword = caller.sminion.functions['grains.get']('password')
         mypass = caller.sminion.functions['grains.get']('mysql_password')
         ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
+        admin_id = caller.sminion.functions['grains.get']('admin_id', ' ')
     else:
         if caller.sminion.functions['config.get']('master') == 'salt':
             salt_master = caller.sminion.functions['grains.get']('salt_master')
@@ -100,6 +101,7 @@ if __name__ == "__main__":
             ospassword = caller.sminion.functions['grains.get']('password')
             mypass = caller.sminion.functions['grains.get']('mysql_password')
             ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
+            admin_id = caller.sminion.functions['grains.get']('admin_id', ' ')
             building_salt_extra(masterless,salt_master,salt_id,salt_domain)
         else:
             scaller = salt.client.Caller(mopts=sopts)
@@ -121,5 +123,6 @@ if __name__ == "__main__":
             ks_token = scaller.sminion.functions['pillar.get']('virl:keystone_service_token')
             if not ks_token:
                 ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
+            admin_id = caller.sminion.functions['grains.get']('admin_id', ' ')
             building_salt_extra(masterless,salt_master,salt_id,salt_domain)
-    building_salt_openstack(ospassword,ks_token,mypass)
+    building_salt_openstack(ospassword,ks_token,mypass,admin_id)

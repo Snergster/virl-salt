@@ -5,4 +5,5 @@ include:
   - openstack.nova.keystone
   - openstack.neutron.changes
   - openstack.neutron.create-basic
-
+  - openstack.cinder.create
+  
