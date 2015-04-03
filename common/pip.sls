@@ -27,7 +27,7 @@ pip hard up:
       - pkg: pip on the box
 
 python-pip:
-  pkg.removed:
+  pkg.purged:
     - name: python-pip
     - hold: True
     - require:

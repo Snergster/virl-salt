@@ -12,6 +12,12 @@
 {% set ank_collector = salt['pillar.get']('virl:ank_collector', salt['grains.get']('ank_collector', '0.10.8')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
+ank prereq pkgs:
+  pkg.installed:
+      - pkgs:
+        - libxml2-dev
+        - libxslt1-dev
+
 {% if not masterless %}
 
 /var/cache/virl/ank files:

@@ -28,13 +28,11 @@ VMMdir virl owned:
     - name: 'chown -R virl:virl /home/virl/VMMaestro-linux'
     - require:
       - module: VMMlinux
-      
+
 vmmpkgs:
   pkg.installed:
       - pkgs:
         - openjdk-7-jre
         - libswt-webkit-gtk-3-jni
-        - libwebkitgtk-3.0-0
-        - libxml2-dev
-        - libxslt1-dev
+        - libwebkitgtk-1.0-0
         - unzip
