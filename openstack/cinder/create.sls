@@ -9,7 +9,7 @@
   {% if not cinder_size == 2000 %}
 delete old cinder file:
   cmd.run:
-    - name: /sbin/vgremove cinder-volumes /dev/loop0
+    - name: /sbin/vgremove cinder-volumes
   file.absent:
     - name: {{ cinder_location }}
   {% endif %}
