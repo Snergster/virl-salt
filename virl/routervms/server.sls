@@ -11,12 +11,12 @@ UbuntuServertrusty:
   - min_disk: 0
   - min_ram: 0
   - is_public: True
-  - checksum: 3b75214936278965eb716449733b105b
+  - checksum: 7865415243633e0f889dafc28d2803e5
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/salt/trusty-server-cloudimg-amd64-disk1.img
+  - copy_from: salt://images/salt/ubuntu-14.04-server-cloudimg-amd64-disk1.img
   - property-hw_disk_bus: virtio
-  - property-release: 14.04
+  - property-release: 14.04.2
   - property-serial: 1
   - property-subtype: server
 
