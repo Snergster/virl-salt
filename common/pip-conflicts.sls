@@ -22,6 +22,22 @@ remove old {{each}}:
       - pip: good six
 {% endfor %}
 
+good pyzmq:
+  pip.installed:
+    - name: pyzmq >= 14.5.0
+    {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+    {% endif %}
+    - upgrade: True
+    - onlyif:
+      - 'test -e /usr/local/bin/pip'
+
+remove old pyzmq:
+  file.absent:
+    - name: /usr/lib/python2.7/dist-packages/zmq
+    - require: 
+      - pip: good zmq
+
 good oslo.config:
   pip.installed:
     - name: oslo.config == 1.6.0
