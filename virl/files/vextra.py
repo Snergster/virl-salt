@@ -61,6 +61,7 @@ gitfs_remotes:
                 extra.write("""gitfs_provider: pygit2\n""")
             else:
                 extra.write("""gitfs_provider: dulwich\n""")
+        extra.write("""log_level: quiet \n""")
         extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id))
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
