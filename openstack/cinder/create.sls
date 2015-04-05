@@ -10,6 +10,7 @@
 delete old cinder file:
   cmd.run:
     - name: /sbin/vgremove cinder-volumes
+    - onlyif: test -e {{ cinder_location }}
   file.absent:
     - name: {{ cinder_location }}
     - onlyif: test -e {{ cinder_location }}

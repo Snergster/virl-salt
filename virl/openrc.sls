@@ -9,7 +9,6 @@ include:
   - openstack.mysql.open
   - virl.scripts
 
-{% if not masterless %}
 /usr/local/bin/virl-openrc.sh:
   file.managed:
     - order: 1
@@ -48,38 +47,6 @@ uwmport replace:
     - name: /var/www/index.html
     - pattern: :\d{2,}"
     - repl: :{{ uwmport }}"
-
-{% endif %}
-{% else %}
-
-/usr/local/bin/virl-openrc.sh:
-  file.copy:
-    - order: 1
-    - source: /srv/salt/virl/files/virl-openrc.sh
-    - onlyif: 'test -e /srv/salt/virl/files/virl-openrc.sh'
-    - force: true
-    - mode: 755
-
-/home/virl/.bashrc:
-  file.copy:
-    - order: 1
-    - source: /srv/salt/virl/files/bashrc
-    - onlyif: 'test -e /srv/salt/virl/files/bashrc'
-    - force: true
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/home/virl/.bash_profile:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/bash_profile
-    - onlyif: 'test -e /srv/salt/virl/files/bash_profile'
-    - user: virl
-    - group: virl
-    - mode: 755
-
 
 {% endif %}
 
