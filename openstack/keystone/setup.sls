@@ -29,11 +29,11 @@ admin:
     - password: {{ ospassword }}
     - email: admin@domain.com
     - roles:
-      admin:   # tenants
-        - admin  # roles
-      service:
-        - admin
-        - Member
+        admin:   # tenants
+          - admin  # roles
+        service:
+          - admin
+          - Member
     - require:
       - keystone: Keystone tenants
       - keystone: Keystone roles
@@ -45,8 +45,8 @@ uwmadmin:
     - email: uwmadmin@domain.com
     - tenant: uwmadmin
     - roles:
-      uwmadmin:
-        - admin
+        uwmadmin:
+          - admin
     - require:
       - keystone: Keystone tenants
       - keystone: Keystone roles
@@ -57,8 +57,8 @@ nova:
     - email: nova@domain.com
     - tenant: service
     - roles:
-      service:
-        - admin
+        service:
+          - admin
     - require:
       - keystone: Keystone tenants
       - keystone: Keystone roles
@@ -69,8 +69,8 @@ neutron:
     - email: neutron@domain.com
     - tenant: service
     - roles:
-      service:
-        - admin
+        service:
+          - admin
     - require:
       - keystone: Keystone tenants
       - keystone: Keystone roles
@@ -81,8 +81,8 @@ glance:
     - email: glance@domain.com
     - tenant: service
     - roles:
-      service:
-        - admin
+        service:
+          - admin
     - require:
       - keystone: Keystone tenants
       - keystone: Keystone roles
@@ -93,8 +93,8 @@ cinder:
     - email: cinder@domain.com
     - tenant: service
     - roles:
-      service:
-        - admin
+        service:
+          - admin
     - require:
       - keystone: Keystone tenants
       - keystone: Keystone roles
@@ -105,8 +105,8 @@ heat:
     - email: heat@domain.com
     - tenant: service
     - roles:
-      service:
-        - admin
+        service:
+          - admin
     - require:
       - keystone: Keystone tenants
       - keystone: Keystone roles
