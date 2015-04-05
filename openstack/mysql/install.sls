@@ -98,14 +98,17 @@ mysql:
     - source: /srv/salt/openstack/mysql/files/my.cnf
     - force: True
     - makedirs: True
-  {% else %}
-  file.managed:
-    - source: salt://openstack/mysql/files/my.cnf
-    - makedirs: True
-  {% endif %}
     - name: /etc/mysql/my.cnf
     - require:
       - pkg: mysql-server
+  {%- else %}
+  file.managed:
+    - name: /etc/mysql/my.cnf
+    - require:
+      - pkg: mysql-server
+    - source: salt://openstack/mysql/files/my.cnf
+    - makedirs: True
+  {%- endif %}
   service:
     - running
     - restart: True
