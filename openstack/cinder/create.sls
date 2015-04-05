@@ -12,6 +12,7 @@ delete old cinder file:
     - name: /sbin/vgremove cinder-volumes
   file.absent:
     - name: {{ cinder_location }}
+    - onlyif: test -e {{ cinder_location }}
   {% endif %}
 
 create cinder file:
