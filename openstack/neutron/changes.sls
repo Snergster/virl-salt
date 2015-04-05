@@ -7,7 +7,7 @@
 {% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set neutid = salt['grains.get']('neutron_extnet_id', ' ') %}
 {% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
-{% set service_tenid = salt.keystone.tenant_get(name='service') %}
+{% set service_tenid = salt['keystone.tenant_get'](name='service') %}
 
 l3-gateway set:
   openstack_config.present:
