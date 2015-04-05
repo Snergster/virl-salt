@@ -4,4 +4,3 @@ include:
   - common.salt-minion.dateutil
   - common.salt-minion.mako
   - common.salt-minion.msgpack-pure
-  - common.salt-minion.zmq
