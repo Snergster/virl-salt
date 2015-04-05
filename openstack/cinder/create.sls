@@ -38,5 +38,6 @@ cinder-rclocal:
     - name: /etc/rc.local
     - pattern: '# By default this script does nothing.'
     - repl: /sbin/losetup -f {{ cinder_location }}
-
+    - onlyif: test -e {{ cinder_location }}
+    
 {% endif %}
