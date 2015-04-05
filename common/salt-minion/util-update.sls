@@ -7,7 +7,7 @@
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/salt/utils/openstack/nova.py
     - watch:
-      - file: /usr/local/lib/python2.7/dist-packages/salt/utils/openstack/nova.py
+      - file: /usr/lib/python2.7/dist-packages/salt/utils/openstack/nova.py
 
 /usr/lib/python2.7/dist-packages/salt/utils/openstack/neutron.py:
   file.managed:
@@ -18,4 +18,4 @@
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/salt/utils/openstack/neutron.py
     - watch:
-      - file: /usr/local/lib/python2.7/dist-packages/salt/utils/openstack/neutron.py
+      - file: /usr/lib/python2.7/dist-packages/salt/utils/openstack/neutron.py

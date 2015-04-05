@@ -41,27 +41,6 @@ commonpkgs:
     - dir_mode: 755
     - makedirs: True
 
-
-M2Crypto:
-  pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - upgrade: True
-    - require:
-      - pkg: commonpkgs
-
-
-msgpack-python:
-  pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - upgrade: True
-    - require:
-      - pkg: commonpkgs
-
-
 salt-master unhold:
   module.run:
     - name: pkg.unhold
