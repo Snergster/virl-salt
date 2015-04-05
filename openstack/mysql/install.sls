@@ -93,22 +93,12 @@ mysql:
   pkg:
     - installed
     - name: mysql-server
-  {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/mysql/files/my.cnf
-    - force: True
-    - makedirs: True
-    - name: /etc/mysql/my.cnf
-    - require:
-      - pkg: mysql-server
-  {%- else %}
   file.managed:
     - name: /etc/mysql/my.cnf
     - require:
       - pkg: mysql-server
     - source: salt://openstack/mysql/files/my.cnf
     - makedirs: True
-  {%- endif %}
   service:
     - running
     - restart: True
