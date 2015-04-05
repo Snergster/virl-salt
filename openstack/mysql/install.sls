@@ -96,10 +96,12 @@ mysql:
   {% if masterless %}
   file.copy:
     - source: /srv/salt/openstack/mysql/files/my.cnf
-    - force: true
+    - force: True
+    - makedirs: True
   {% else %}
   file.managed:
     - source: salt://openstack/mysql/files/my.cnf
+    - makedirs: True
   {% endif %}
     - name: /etc/mysql/my.cnf
     - require:
