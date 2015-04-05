@@ -16,11 +16,9 @@ libffi-dev for rackspace:
 
 oslo messaging first:
   pip.installed:
-    - skip_verify: True
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - refresh: False
     - require:
       - pkg: nova-pkgs
       - pkg: libffi-dev for rackspace
@@ -29,11 +27,9 @@ oslo messaging first:
 
 nova client:
   pip.installed:
-    - skip_verify: True
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - refresh: False
     - require:
       - pkg: nova-pkgs
       - pkg: libffi-dev for rackspace
@@ -55,11 +51,9 @@ nova client:
 
 neutron client:
   pip.installed:
-    - skip_verify: True
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - refresh: False
     - require:
       - pkg: neutron-pkgs
       - pip: nova client
@@ -77,11 +71,9 @@ neutron client:
 
 glance client:
   pip.installed:
-    - skip_verify: True
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - refresh: False
     - require:
       - pkg: glance-pkgs
       - pip: nova client
@@ -98,11 +90,9 @@ glance client:
 
 keystone client:
   pip.installed:
-    - skip_verify: True
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - refresh: False
     - require:
       - pkg: keystone-pkgs
       - pip: nova client
