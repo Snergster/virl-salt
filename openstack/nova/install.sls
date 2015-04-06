@@ -45,12 +45,7 @@ nova-pkgs:
   file.managed:
     - mode: 755
     - template: jinja
-    {% if masterless %}
-    - source: /srv/salt/openstack/nova/files/nova.conf
-    - source_hash: md5=e4ee3ae51a7e08ed69029433854f95ae
-    {% else %}
     - source: "salt://openstack/nova/files/nova.conf"
-    {% endif %}
     - require:
       - pkg: nova-pkgs
 
@@ -62,14 +57,8 @@ add libvirt-qemu to nova:
 
 
 cmd/serialproxy.py replace:
-  {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/nova/patch/serialproxy.py
-    - force: true
-  {% else %}
   file.managed:
     - source: salt://openstack/nova/patch/serialproxy.py
-  {% endif %}
     - name: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
     - require:
       - pkg: nova-pkgs
@@ -135,14 +124,8 @@ libvirt/driver.py patch:
       - pkg: nova-pkgs
 
 libvirt/driver.py replace:
-  {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/nova/patch/driver.py
-    - force: True
-  {% else %}
   file.managed:
     - source: salt://openstack/nova/patch/driver.py
-  {% endif %}
     - name: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
     - onfail:
       - file: libvirt/driver.py patch
@@ -223,27 +206,17 @@ nova-compute serial:
 
 
 /etc/init.d/nova-serialproxy:
-  {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/nova/files/nova-serialproxy
-  {% else %}
+
   file.managed:
     - source: "salt://openstack/nova/files/nova-serialproxy"
-  {% endif %}
     - force: True
     - mode: 0755
     - require:
       - pkg: nova-pkgs
 
 /etc/nova/policy.json:
-  {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/nova/files/policy.json
-    - force: True
-  {% else %}
   file.managed:
     - source: "salt://openstack/nova/files/policy.json"
-  {% endif %}
     - user: nova
     - group: nova
     - mode: 0640
