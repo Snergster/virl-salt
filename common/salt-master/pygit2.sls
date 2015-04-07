@@ -37,8 +37,8 @@ cmake libgit2:
     - onchanges:
       - cmd: libgit2 pull
     - names:
-      - make
-      - make install
+      - 'make -s'
+      - 'make -s install'
 
 
 ldconfig always run:

@@ -3,8 +3,9 @@
 {% if guestaccount == True %}
 
 create guest account:
-  virl_core.project_present:
-    - name: guest
+  module.run:
+    - name: virl_core.project_present
+    - m_name: guest
     - description: guest project
     - require:
       - cmd: virl-std start
@@ -12,17 +13,19 @@ create guest account:
 
 
 fix guest password:
-  virl_core.user_present:
-    - name: guest
+  module.run:
+    - name: virl_core.user_present
+    - m_name: guest
     - password: guest
     - project: guest
     - role: _member_
     - require:
-      - virl_core: create guest account
+      - module: create guest account
 {% else %}
 delete guest account:
-  virl_core.project_absent:
-    - name: guest
+  module.run:
+    - name: virl_core.project_absent
+    - m_name: guest
     - clear_openstack: True
 {% endif %}
 
