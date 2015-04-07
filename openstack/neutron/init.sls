@@ -436,10 +436,13 @@ linuxbridge_neutron_agent:
     {% endif %}
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
 
-linuxbridge_neutron_agent:
+ip_lib for mtu:
   file.managed:
     - source: "salt://openstack/neutron/files/ip_lib.py"
     - name: /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
+  cmd.run:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
 
 
 compile linuxbridge:
