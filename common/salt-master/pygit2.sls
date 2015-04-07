@@ -54,3 +54,7 @@ pygit2 install:
     - proxy: {{ http_proxy }}
 {% endif %}
     - name: pygit2
+  cmd.run:
+    - name: /usr/local/bin/vextra
+    - require:
+      - pip: pygit2 install
