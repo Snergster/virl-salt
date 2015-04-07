@@ -8,6 +8,8 @@ include:
   - openstack.repo
   - common.kvm
   - virl.scripts
+  - virl.vextra
+  
 
 
 mypkgs:
@@ -35,16 +37,6 @@ qemu common virl hold:
     - name: qemu-kvm
     - require:
       - pkg: mypkgs
-
-/usr/local/bin/vsalt:
-  file.managed:
-    - mode: 755
-    {% if masterless %}
-    - source: /srv/salt/virl/files/vsalt.py
-    - source_hash: md5=785d63b533c9051070942bda81f612ba
-    {% else %}
-    - source: "salt://virl/files/vsalt.py"
-    {% endif %}
 
 {% if not masterless %}
 vinstall wheels:
@@ -96,26 +88,3 @@ salt-minion nohold:
     - name: echo 0 > /proc/sys/kernel/numa_balancing
     - onlyif: grep 1 /proc/sys/kernel/numa_balancing
 
-/etc/salt/minion.d/extra.conf:
-  file.managed:
-    - mode: 755
-    - template: jinja
-    - makedirs: True
-    {% if masterless %}
-    - source: /srv/salt/common/salt-minion/files/local.extra.conf
-    - source_hash: md5=3b816e66f5c6cd8f8a2ab9ede76c2146
-    {% else %}
-    - source: "salt://common/salt-minion/files/extra.conf"
-    {% endif %}
-
-/etc/salt/minion.d/openstack.conf:
-  file.managed:
-    - mode: 755
-    - template: jinja
-    - makedirs: True
-    {% if masterless %}
-    - source: /srv/salt/common/salt-minion/files/openstack.conf
-    - source_hash: md5=14325396240796f663be26a7925fb7c5
-    {% else %}
-    - source: "salt://common/salt-minion/files/openstack.conf"
-    {% endif %}
