@@ -98,7 +98,7 @@ lubuntu-desktop:
     - contents: |
          [Desktop Entry]
          Version=1.0
-         Name=1. Install networking
+         Name=1. Upgrade or Rehost
          Comment=To finish install
          Exec=xterm -e "/usr/local/bin/vinstall rehost | tee /var/tmp/virl-rehost-log"
          Icon=/usr/share/icons/gnome/48x48/status/network-wired-disconnected.png
@@ -141,6 +141,22 @@ lubuntu-desktop:
          Type=Application
          Categories=Utility;Application;
 
+/home/virl/Desktop/KernelPatch.desktop:
+  file.managed:
+    - mode: 0755
+    - user: virl
+    - group: virl
+    - makedirs: True
+    - contents: |
+         [Desktop Entry]
+         Version=1.0
+         Name=3. L2 Kernel Patch
+         Comment=Applies kernel bridge patch
+         Exec=xterm -e "/usr/local/bin/vinstall bridge | tee /var/tmp/virl-kernelpatch-log"
+         Icon=/usr/share/icons/gnome/48x48/status/network-wired-disconnected.png
+         Terminal=True
+         Type=Application
+         Categories=Utility;Application;
 
 /home/virl/Desktop/IP-ADDRESS.desktop:
   file.managed:

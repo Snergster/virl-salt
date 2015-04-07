@@ -5,7 +5,7 @@
 """virl install.
 
 Usage:
-  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | wrap | desktop | rehost | renumber | compute | all | upgrade | password | vmm | routervms | users | vinstall | host | mini | highstate
+  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | bridge | desktop | rehost | renumber | compute | all | upgrade | password | vmm | routervms | users | vinstall | host | mini | highstate
 
 Options:
   --version             shows program's version number and exit
@@ -776,16 +776,7 @@ if __name__ == "__main__":
         if not (path.exists('/srv/salt/virl/ntp.sls')) and (path.exists('/srv/salt/ntp.sls')):
             subprocess.call(['sudo', 'cp', '/srv/salt/ntp.sls', '/srv/salt/virl/ntp.sls'])
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.restart'])
-        # subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.rabbitmq'])
-        # subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.host'])
-        # building_salt_all()
         sleep(50)
-        # call_salt('virl.openrc,virl.ntp')
-        # subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', 'virl.ntp'])
-    #     print ('You need to restart now')
-    # if varg['renumber']:
-        # k_delete_list = (subprocess.check_output( ['keystone --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 endpoint-list | grep -v "{publicip}" | grep -v "region" | grep -v "+-" |cut -d "|" -f2'.format(ospassword=ospassword,publicip=public_ip)],shell=True)).split()
-        # print k_delete_list
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
                  ospassword, '--os-auth-url=http://localhost:5000/v2.0']
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
@@ -808,32 +799,9 @@ if __name__ == "__main__":
         # User_Creator(user_list, user_list_limited)
         if desktop:
             subprocess.call(['rm', '-f', '/home/virl/Desktop/Edit-settings.desktop'])
-            subprocess.call(['rm', '-f', '/home/virl/Desktop/Reboot2.desktop'])
-            subprocess.call(['rm', '-f', '/home/virl/Desktop/VIRL-rehost.desktop'])
             subprocess.call(['rm', '-f', '/home/virl/Desktop/VIRL-renumber.desktop'])
             subprocess.call(['rm', '-f', '/home/virl/Desktop/README.desktop'])
         print ('You need to restart now')
-    #     subprocess.call(['sudo', 'service', 'virl-uwm', 'stop'])
-    #     subprocess.call(['sudo', 'service', 'virl-std', 'stop'])
-    #     for _each in ['openstack','openstack.password.change']:
-    #         call_salt(_each)
-    #     building_salt_all()
-    #     sleep(5)
-        # for _next in ['openstack.neutron.changes','virl.std,virl.ank']:
-        #     call_salt(_next)
-        # create_basic_networks()
-        # if guest_account:
-        #     call_salt('virl.guest')
-        # novaclient = '/home/virl/.novaclient'
-        # if path.exists(novaclient):
-        #     subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
-        # User_Creator(user_list, user_list_limited)
-        # subprocess.call(['rm', '/home/virl/Desktop/Edit-settings.desktop'])
-        # subprocess.call(['rm', '/home/virl/Desktop/Reboot2.desktop'])
-        # subprocess.call(['rm', '/home/virl/Desktop/VIRL-rehost.desktop'])
-        # subprocess.call(['rm', '/home/virl/Desktop/VIRL-renumber.desktop'])
-        # subprocess.call(['rm', '/home/virl/Desktop/README.desktop'])
-
     if varg['renumber']:
         print ('This command no longer required.')
         sleep(30)
@@ -850,13 +818,8 @@ if __name__ == "__main__":
     if varg['users']:
         User_Creator(user_list, user_list_limited)
 
-    if varg['wrap']:
-        sshdir = '/home/virl/.ssh'
-        if not path.exists(sshdir):
-            mkdir(sshdir)
-        if vagrant_keys or vagrant_calls:
-            copy((BASEDIR + 'orig/authorized_keys2'), ('/home/virl/.ssh/authorized_keys2'))
-            copy((BASEDIR + 'orig/authorized_keys'), ('/home/virl/.ssh/authorized_keys'))
+    if varg['bridge']:
+        call_salt('common.bridge')
 
     if path.exists('/tmp/install.out'):
         subprocess.call(['sudo', 'rm', '/tmp/install.out'])
