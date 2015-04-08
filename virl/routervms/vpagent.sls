@@ -8,7 +8,7 @@ vpagent:
     - profile: virl
     - name: 'vpagent'
     - container_format: bare
-    - min_disk: 0
+    - min_disk: 2
     - min_ram: 0
     - is_public: True
     - checksum: 3ded7914ddbedc644ea18493edda5b2d

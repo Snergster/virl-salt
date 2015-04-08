@@ -7,7 +7,7 @@ CSR1000v:
   - profile: virl
   - name: 'CSR1000v'
   - container_format: bare
-  - min_disk: 0
+  - min_disk: 8
   - min_ram: 0
   - is_public: True
   - checksum: 7031d6b5ae3371ac5782552ac4522745

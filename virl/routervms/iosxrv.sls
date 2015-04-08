@@ -8,7 +8,7 @@ iosxrv:
   - profile: virl
   - name: 'IOS XRv'
   - container_format: bare
-  - min_disk: 0
+  - min_disk: 4
   - min_ram: 0
   - is_public: True
   - checksum: cf5db65405ff1419ccc3bb509ba27a75

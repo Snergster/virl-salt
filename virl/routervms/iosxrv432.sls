@@ -7,7 +7,7 @@ iosxrv432:
     - profile: virl
     - name: 'IOS XRv432'
     - container_format: bare
-    - min_disk: 0
+    - min_disk: 2
     - min_ram: 0
     - is_public: True
     - checksum:

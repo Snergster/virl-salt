@@ -8,7 +8,7 @@ UbuntuServertrusty:
   - profile: virl
   - name: 'server'
   - container_format: bare
-  - min_disk: 0
+  - min_disk: 3
   - min_ram: 0
   - is_public: True
   - checksum: 7865415243633e0f889dafc28d2803e5

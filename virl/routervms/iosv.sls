@@ -9,7 +9,7 @@ iosv:
     - profile: virl
     - name: 'IOSv'
     - container_format: bare
-    - min_disk: 0
+    - min_disk: 2
     - min_ram: 0
     - is_public: True
   {% if cml %}

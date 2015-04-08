@@ -8,7 +8,7 @@ iosv:
     - profile: virl
     - name: 'IOSv'
     - container_format: bare
-    - min_disk: 0
+    - min_disk: 2
     - min_ram: 0
     - is_public: True
     - checksum: 8d448fe4d202f4d9da81fad0f2a6bb9b

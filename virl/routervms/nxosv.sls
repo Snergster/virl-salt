@@ -8,7 +8,7 @@ NX-OSv:
   - profile: virl
   - name: 'NX-OSv'
   - container_format: bare
-  - min_disk: 0
+  - min_disk: 2
   - min_ram: 0
   - is_public: True
   - checksum: 9d76757de080434d8b70983b477c09aa

@@ -7,7 +7,7 @@ asav:
     - profile: virl
     - name: 'ASAv'
     - container_format: bare
-    - min_disk: 0
+    - min_disk: 9
     - min_ram: 0
     - is_public: True
     - checksum: 076cc1929260af973aaf6606acce9530

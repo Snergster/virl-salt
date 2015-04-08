@@ -7,7 +7,7 @@ iosxrv52:
   - profile: virl
   - name: 'IOS XRv52'
   - container_format: bare
-  - min_disk: 0
+  - min_disk: 4
   - min_ram: 0
   - is_public: True
   - checksum: dbbd206a25ac19ba5b4a1b1f65aed911

@@ -8,7 +8,7 @@ vPP:
   - profile: virl
   - name: 'vPP'
   - container_format: bare
-  - min_disk: 0
+  - min_disk: 4
   - min_ram: 0
   - is_public: True
   - checksum: 7dc139fa8540105c33c3c2b4fc3d6949
