@@ -30,3 +30,10 @@ good oslo.config:
     {% endif %}
     - upgrade: True
 
+requests stop bitching:
+  pip.installed:
+    - name: ndg-httpsclient
+    {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+    {% endif %}
+    - upgrade: True
