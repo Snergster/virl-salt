@@ -24,8 +24,8 @@ asav:
 
 asav flavor delete:
   cmd.run:
-    - name: 'nova flavor-delete "ASAv"'
-    - onlyif: nova flavor-show "ASAv"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "ASAv"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "ASAv"
     - onchanges:
       - glance: asav
 
@@ -50,6 +50,6 @@ asav gone:
 
 asav flavor absent:
   cmd.run:
-    - name: 'nova flavor-delete "ASAv"'
-    - onlyif: nova flavor-list | grep -w "ASAv"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "ASAv"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "ASAv"
 {% endif %}

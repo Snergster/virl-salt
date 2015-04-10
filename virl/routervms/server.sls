@@ -22,8 +22,8 @@ UbuntuServertrusty:
 
 UbuntuServertrusty flavor delete:
   cmd.run:
-    - name: 'nova flavor-delete "server"'
-    - onlyif: nova flavor-show "server"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "server"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "server"
     - onchanges:
       - glance: UbuntuServertrusty
 
@@ -48,6 +48,6 @@ UbuntuServertrusty gone:
 
 UbuntuServertrusty flavor absent:
   cmd.run:
-    - name: 'nova flavor-delete "server"'
-    - onlyif: nova flavor-list | grep -w "server"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "server"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "server"
 {% endif %}

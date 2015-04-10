@@ -25,8 +25,8 @@ NX-OSv:
 
 NX-OSv flavor delete:
   cmd.run:
-    - name: 'nova flavor-delete "NX-OSv"'
-    - onlyif: nova flavor-show "NX-OSv"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "NX-OSv"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "NX-OSv"
     - require:
       - glance: NX-OSv
 
@@ -49,6 +49,6 @@ NX-OSv gone:
 
 NX-OSv flavor absent:
   cmd.run:
-    - name: 'nova flavor-delete "NX-OSv"'
-    - onlyif: nova flavor-list | grep -w "NX-OSv"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "NX-OSv"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "NX-OSv"
 {% endif %}

@@ -25,8 +25,8 @@ vpagent:
 
 vpagent flavor delete:
   cmd.run:
-    - name: 'nova flavor-delete "vpagent"'
-    - onlyif: nova flavor-show "vpagent"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "vpagent"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "vpagent"
     - onchanges:
       - glance: vpagent
 
@@ -51,6 +51,6 @@ vpagent gone:
 
 vpagent flavor absent:
   cmd.run:
-    - name: 'nova flavor-delete "vpagent"'
-    - onlyif: nova flavor-list | grep -w "vpagent"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "vpagent"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "vpagent"
 {% endif %}

@@ -22,8 +22,8 @@ vPP:
 
 vPP flavor delete:
   cmd.run:
-    - name: 'nova flavor-delete "vPP"'
-    - onlyif: nova flavor-show "vPP"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "vPP"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "vPP"
     - onchanges:
       - glance: vPP
 
@@ -48,6 +48,6 @@ vPP gone:
 
 vPP flavor absent:
   cmd.run:
-    - name: 'nova flavor-delete "vPP"'
-    - onlyif: nova flavor-list | grep -w "vPP"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "vPP"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "vPP"
 {% endif %}

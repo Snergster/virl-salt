@@ -25,8 +25,8 @@ iosv:
 
 iosv flavor delete:
   cmd.run:
-    - name: 'nova flavor-delete "IOSv"'
-    - onlyif: nova flavor-show "IOSv"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSv"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "IOSv"
     - onchanges:
       - glance: iosv
 
@@ -51,6 +51,6 @@ iosv gone:
 
 iosv flavor absent:
   cmd.run:
-    - name: 'nova flavor-delete "IOSv"'
-    - onlyif: nova flavor-list | grep -w "IOSv"
+    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSv"'
+    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "IOSv"
 {% endif %}
