@@ -4,6 +4,7 @@
 include:
   - common.pip
   - common.uptodate
+  - common.rc-local
 
 commonpkgs:
   pkg.installed:
@@ -27,7 +28,7 @@ commonpkgs:
       - libssl-dev
       - htop
       - gcc
-      
+
 
 /usr/local/bin/openstack-config:
   file.symlink:

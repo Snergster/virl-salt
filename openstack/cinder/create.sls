@@ -44,10 +44,17 @@ create cinder device:
 {% if cinder_file or cinder_device %}
 
 cinder-rclocal:
-  file.replace:
+  file.blockreplace:
     - name: /etc/rc.local
-    - pattern: '# By default this script does nothing.'
-    - repl: /sbin/losetup -f {{ cinder_location }}
-    - onlyif: test -e {{ cinder_location }}
+    - marker_start: "# 001s Cinder"
+    - marker_end: "# 001e"
+   {% if salt['file.file_exists'](cinder_location) %}
+    - content: |
+             /sbin/losetup -f {{ cinder_location }}
+             /usr/bin/service cinder-volume restart
+   {% else  %}
+    - content: |
+             # Cinder file doesnt exist
+   {% endif %}
 
 {% endif %}
