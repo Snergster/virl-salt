@@ -1,5 +1,5 @@
 {% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
-{% set domain = salt['pillar.get']('virl:domain', salt['grains.get']('domain', 'cisco.com')) %}
+{% set domain = salt['pillar.get']('virl:domain', salt['grains.get']('domain_name', 'cisco.com')) %}
 {% set dhcp = salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )) %}
 {% set publicport = salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')) %}
 {% set public_ip = salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )) %}
