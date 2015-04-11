@@ -342,6 +342,7 @@ virl:
         with open(("/tmp/foo"), "w") as salt_grain:
             salt_grain.write("""{""")
             for key, value in (safeparser.items('DEFAULT')):
+                if key == 'domain': salt_grain.write(""" 'domain_name': '{value}',""".format(key=key,value=value))
                 if value.lower() == 'true' or value.lower() == 'false':
                     salt_grain.write(""" '{key}': {value} ,""".format(key=key,value=value))
                 else:

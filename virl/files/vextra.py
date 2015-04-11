@@ -107,6 +107,7 @@ if __name__ == "__main__":
         Config.read('/etc/virl.ini')
         vgrains = {}
         for name, value in Config.items('DEFAULT'):
+            if name == 'domain': vgrains['domain_name'] = value
             if value.lower() == 'true':
                 vgrains[name] = True
             elif value.lower() == 'false':
