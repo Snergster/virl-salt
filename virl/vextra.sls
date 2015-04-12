@@ -5,7 +5,7 @@ docopt prereq:
 
 vextra install and run:
   file.managed:
-    - mode: 4755
+    - mode: 0755
     - name: /usr/local/bin/vextra
     - source: "salt://virl/files/vextra.py"
   cmd.run:
@@ -16,6 +16,6 @@ vextra install and run:
 
 vsalt install and run:
   file.managed:
-    - mode: 4755
+    - mode: 0755
     - name: /usr/local/bin/vsalt
     - source: "salt://virl/files/vsalt"
