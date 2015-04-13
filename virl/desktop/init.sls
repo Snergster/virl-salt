@@ -328,6 +328,12 @@ gedit:
   pkg.installed:
     - refresh: True
 
+notification-daemon:
+  pkg.removed
+
+/etc/xdg/autostart/nm-applet.desktop:
+  file.absent
+
 desktop_require:
   pkg.installed:
     - skip_verify: True

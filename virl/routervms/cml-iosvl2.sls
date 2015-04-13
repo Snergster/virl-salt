@@ -11,10 +11,10 @@ IOSvL2:
     - min_disk: 2
     - min_ram: 0
     - is_public: True
-    - checksum: 126920bd9a0d67f533ba8dc359a3e306
+    - checksum: cd735f11aa4181fa8c4906d9a0b60d11
     - protected: False
     - disk_format: qcow2
-    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.qcow2
+    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.cml.qcow2
     - property-config_disk_type: disk
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: virtio
