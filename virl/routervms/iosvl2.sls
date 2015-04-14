@@ -25,8 +25,8 @@ IOSvL2:
 
 IOSvL2 flavor delete:
   cmd.run:
-    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSvL2"'
-    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "IOSvL2"
+    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSvL2"'
+    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-show "IOSvL2"
     - onchanges:
       - glance: IOSvL2
 
@@ -51,6 +51,6 @@ IOSvL2 gone:
 
 IOSvL2 flavor absent:
   cmd.run:
-    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSvL2"'
-    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "IOSvL2"
+    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSvL2"'
+    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "IOSvL2"
 {% endif %}

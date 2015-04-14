@@ -24,8 +24,8 @@ CSR1000v:
 
 CSR1000v flavor delete:
   cmd.run:
-    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "CSR1000v"'
-    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "CSR1000v"
+    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "CSR1000v"'
+    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-show "CSR1000v"
     - onchanges:
       - glance: CSR1000v
 
@@ -50,6 +50,6 @@ CSR1000v gone:
 
 CSR1000v flavor absent:
   cmd.run:
-    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "CSR1000v"'
-    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "CSR1000v"
+    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "CSR1000v"'
+    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "CSR1000v"
 {% endif %}
