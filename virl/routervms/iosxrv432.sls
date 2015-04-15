@@ -25,8 +25,8 @@ iosxrv432:
 
 iosxrv432 flavor delete:
   cmd.run:
-    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOS XRv432"'
-    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-show "IOS XRv432"
+    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOS XRv432"'
+    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-show "IOS XRv432"
     - onchanges:
       - glance: iosxrv432
 
@@ -51,6 +51,6 @@ iosxrv52 gone:
 
 iosxrv52 flavor absent:
   cmd.run:
-    - name: '/usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOS XRv432"'
-    - onlyif: /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "IOS XRv432"
+    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOS XRv432"'
+    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "IOS XRv432"
 {% endif %}
