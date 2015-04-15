@@ -20,11 +20,10 @@
 include:
   - .csr1000v
   - .iosv
-  - .cml_iosv
   - .iosxrv
   - .server
   - .vpagent
   - .nxosv
   - .iosvl2
-  - .cml_iosvl2
   - .iosxrv52
+  - .cml_iosvl2

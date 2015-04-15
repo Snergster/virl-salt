@@ -27,7 +27,7 @@ iosxrv:
 iosxrv flavor delete:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOS XRv"'
-    - onlyif: source /usr/local/bin/virl-openrc.sh ;ova flavor-show "IOS XRv"
+    - onlyif: 'source /usr/local/bin/virl-openrc.sh ;ova flavor-show "IOS XRv"'
     - onchanges:
       - glance: iosxrv
 

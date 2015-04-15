@@ -1,7 +1,10 @@
 
-{% set iosvl2 = salt['pillar.get']('routervms:cml_iosvl2', False ) %}
-{% set iosvl2pref = salt['pillar.get']('virl:cml_iosvl2', salt['grains.get']('cml_iosvl2', True)) %}
-{% if iosvl2 and iosvl2pref %}
+{% set cml_iosvl2 = salt['pillar.get']('routervms:cml_iosvl2', False ) %}
+{% set cml_iosvl2pref = salt['pillar.get']('virl:cml_iosvl2', salt['grains.get']('cml_iosvl2', True)) %}
+
+{% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
+{% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
+{% if cml_iosvl2 and cml_iosvl2pref %}
 
 IOSvL2:
   glance.image_present:
@@ -43,7 +46,7 @@ IOSvL2 flavor create:
       - cmd: IOSvL2 flavor delete
 
 {% else %}
-
+  {% if not iosvl2 and iosvl2pref %}
 IOSvL2 gone:
   glance.image_absent:
   - profile: virl
@@ -53,4 +56,6 @@ IOSvL2 flavor absent:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSvL2"'
     - onlyif: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "IOSvL2"'
+  {% endif %}
 {% endif %}
+
