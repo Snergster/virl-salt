@@ -11,7 +11,7 @@ IOSvL2:
     - min_disk: 2
     - min_ram: 0
     - is_public: True
-    - checksum: cd735f11aa4181fa8c4906d9a0b60d11
+    - checksum: b651d49d8d06f962ea3ababa4e755e50
     - protected: False
     - disk_format: qcow2
     - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.cml.qcow2
