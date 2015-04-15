@@ -1,6 +1,6 @@
 
-{% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
-{% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
+{% set iosvl2 = salt['pillar.get']('routervms:cml_iosvl2', False ) %}
+{% set iosvl2pref = salt['pillar.get']('virl:cml_iosvl2', salt['grains.get']('cml_iosvl2', True)) %}
 {% if iosvl2 and iosvl2pref %}
 
 IOSvL2:
