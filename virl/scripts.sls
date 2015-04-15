@@ -120,6 +120,12 @@
     - makedirs: true
     - mode: 0755
 
+/etc/settings.ini:
+  file.symlink:
+    - target: /etc/virl.ini
+    - makedirs: true
+    - mode: 0755
+
 /usr/bin/telnet_front:
   {% if not masterless %}
   file.managed:
