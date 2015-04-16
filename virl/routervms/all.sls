@@ -25,5 +25,6 @@ include:
   - .vpagent
   - .nxosv
   - .iosvl2
+  - .asav
   - .iosxrv52
   - .cml_iosvl2
