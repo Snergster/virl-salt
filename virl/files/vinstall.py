@@ -266,28 +266,44 @@ def replace(file_path, pattern, subst):
 def building_salt_extra():
     with open(("/tmp/extra"), "w") as extra:
         if not masterless or vagrant_pre_fourth:
-            extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
-            # for each in salt_master.split(','):
-            #     extra.write("""  - {each}\n""".format(each=each))
             if len(salt_master.split(',')) >= 2:
+                extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
                 extra.write("""master_type: failover \n""")
+                extra.write("""master_shuffle: True \n""")
+                extra.write("""random_master: True \n""")
+            else:
+                extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
+
             extra.write("""verify_master_pubkey_sign: True \n""")
             extra.write("""auth_timeout: 15 \n""")
-            extra.write("""master_shuffle: True \n""")
-            extra.write("""random_master: True \n""")
             extra.write("""master_alive_interval: 180 \n""")
         else:
-            extra.write("""file_client: local
+            if path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
+                extra.write("""gitfs_provider: pygit2\n""")
+                extra.write("""file_client: local
 
 fileserver_backend:
   - git
   - roots
 
-gitfs_provider: Dulwich
+gitfs_remotes:
+  - https://github.com/Snergster/virl-salt.git\n""")
+            elif path.exists('/usr/local/lib/python2.7/dist-packages/dulwich'):
+                extra.write("""gitfs_provider: dulwich\n""")
+                extra.write("""file_client: local
+
+fileserver_backend:
+  - git
+  - roots
 
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
+            else:
+                extra.write("""file_client: local
 
+fileserver_backend:
+  - roots\n""")
+        extra.write("""log_level: quiet \n""")
         extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id))
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
