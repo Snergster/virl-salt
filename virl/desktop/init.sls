@@ -347,10 +347,12 @@ gedit:
     - refresh: True
 
 notification-daemon:
-  pkg.removed
+  pkg.removed:
+    - name: notification-daemon
 
 /etc/xdg/autostart/nm-applet.desktop:
-  file.absent
+  file.absent:
+    - name: /etc/xdg/autostart/nm-applet.desktop
 
 desktop_require:
   pkg.installed:
