@@ -18,6 +18,6 @@ neutron pull to latest:
       - neutron-plugin-ml2
       - neutron-server
       - python-neutron
-  module.run:
-    - name: apt.held
-    - m_name: neutron-plugin-linuxbridge-agent
+  apt.held:
+    - name: neutron-plugin-linuxbridge-agent
+
