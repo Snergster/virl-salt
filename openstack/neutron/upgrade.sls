@@ -3,6 +3,8 @@ neutron linuxbridge unhold:
   module.run:
     - name: pkg.unhold
     - m_name: neutron-plugin-linuxbridge-agent
+    - prereq:
+      - pkg: neutron pull to latest
 
 neutron pull to latest:
   pkg.latest:
@@ -18,10 +20,6 @@ neutron pull to latest:
       - neutron-plugin-ml2
       - neutron-server
       - python-neutron
-
-neutron linuxbridge held:
   module.run:
     - name: pkg.held
-    - require:
-      - module: neutron pull to latest
     - m_name: neutron-plugin-linuxbridge-agent
