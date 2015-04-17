@@ -58,4 +58,3 @@ pygit2 install:
 remove libgit trash:
   file.absent:
     - name: /tmp/libgit2-0.22.0
-    
