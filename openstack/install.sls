@@ -16,6 +16,8 @@ include:
 {% endif %}
 {% if cinder %}
   - openstack.cinder
+{% else %}
+  - openstack.cinder.off
 {% endif %}
 {% if heat %}
   - openstack.heat
