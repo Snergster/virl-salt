@@ -8,8 +8,6 @@ neutron linuxbridge unhold:
 
 neutron pull to latest:
   pkg.latest:
-    - require:
-      - module: neutron linuxbridge unhold
     - pkgs:
       - neutron-common
       - neutron-dhcp-agent
