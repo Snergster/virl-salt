@@ -1,6 +1,5 @@
 include:
   - common.kvm
-  - openstack.neutron.upgrade
 
 dist upgrade host:
   module.run:
