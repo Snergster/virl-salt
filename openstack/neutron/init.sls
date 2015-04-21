@@ -399,7 +399,7 @@ l3-gateway:
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py:
   file.patch:
     - source: file:///srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff
-    - hash: md5=79821427e71301152b5e5ab6658a4164
+    - hash: md5=7560254626099a5dec158518f47b2d87
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py
@@ -482,7 +482,7 @@ compile linuxbridge:
 /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py:
   file.patch:
     - source: file:///srv/salt/openstack/neutron/files/l3_db.diff
-    - hash: md5=9e54939ede7932edec329d50f41c4c74
+    - hash: md5=3739e6a7463a3e2102b76d1cc3ebeff6
     - require:
       - pkg: neutron-pkgs
       - file: /srv/salt/openstack/neutron/files/l3_db.diff
