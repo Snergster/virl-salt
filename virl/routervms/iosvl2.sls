@@ -34,7 +34,7 @@ IOSvL2 flavor create:
   module.run:
     - name: nova.flavor_create
     - m_name: 'IOSvL2'
-    - ram: 512
+    - ram: 768
     - disk: 0
     - vcpus: 1
     - onchanges:
