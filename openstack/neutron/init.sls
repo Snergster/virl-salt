@@ -32,16 +32,27 @@
 include:
   - openstack.keystone.setup
 
+neutron linuxbridge unhold:
+  module.run:
+    - name: pkg.unhold
+    - m_name: neutron-plugin-linuxbridge-agent
+
 neutron-pkgs:
   pkg.installed:
-    - refresh: False
-    - names:
-      - neutron-server
-      - neutron-common
-      - neutron-l3-agent
-      - neutron-dhcp-agent
-      - neutron-plugin-ml2
-      - neutron-plugin-linuxbridge-agent
+    - force_yes: True
+    - pkgs:
+      - neutron-common: '=1:2014.1.3-0ubuntu1.1'
+      - neutron-dhcp-agent: '=1:2014.1.3-0ubuntu1.1'
+      - neutron-l3-agent: '=1:2014.1.3-0ubuntu1.1'
+      - neutron-metadata-agent: '=1:2014.1.3-0ubuntu1.1'
+      - neutron-plugin-linuxbridge-agent: '=1:2014.1.3-0ubuntu1.1'
+      - neutron-plugin-linuxbridge: '=1:2014.1.3-0ubuntu1.1'
+      - neutron-plugin-ml2: '=1:2014.1.3-0ubuntu1.1'
+      - neutron-server: '=1:2014.1.3-0ubuntu1.1'
+      - python-neutron: '=1:2014.1.3-0ubuntu1.1'
+  apt.held:
+    - name: neutron-plugin-linuxbridge-agent
+
 
 /etc/neutron/neutron.conf:
   file.managed:
