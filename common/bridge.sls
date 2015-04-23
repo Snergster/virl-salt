@@ -25,6 +25,16 @@ run bridge.sh:
     - onfail:
       - file: /lib/modules/{{ kernver }}/kernel/net/bridge/bridge.ko
 
+lacp_linuxbridge_neutron_agent:
+  file.managed:
+    - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.py"
+    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+  cmd.wait:
+    - watch:
+      - file: lacp_linuxbridge_neutron_agent
+    - name:  |
+         service neutron-server restart
+         service neutron-plugin-linuxbridge-agent restart
 
 
 
