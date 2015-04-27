@@ -482,7 +482,7 @@ compile linuxbridge:
 /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py:
   file.patch:
     - source: file:///srv/salt/openstack/neutron/files/l3_db.diff
-    - hash: md5=3739e6a7463a3e2102b76d1cc3ebeff6
+    - hash: md5=c99c80ba6aa209fcd046a972af51a914
     - require:
       - pkg: neutron-pkgs
       - file: /srv/salt/openstack/neutron/files/l3_db.diff
