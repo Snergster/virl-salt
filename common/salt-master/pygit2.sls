@@ -14,11 +14,7 @@ libgit2 prereqs:
 libgit2 pull:
   archive.extracted:
     - name: /tmp/
-    {% if masterless %}
-    - source: http://github.com/libgit2/libgit2/archive/v0.22.0.tar.gz
-    {% else %}
     - source: 'salt://common/salt-master/files/v0.22.0.tar.gz'
-    {% endif %}
     - source_hash: md5=a8c689d4887cc085295dcf43c46f5f1f
     - archive_format: tar
     - if_missing: /tmp/libgit2-0.22.0
