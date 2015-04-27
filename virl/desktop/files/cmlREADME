@@ -1,18 +1,16 @@
-
-If installing from the OVA, you can use the system’s defaults settings now.
+If installing from the OVA, you can use the system's defaults settings now.
 
 If installing from .OVA, AND you need system configuration changes such as Hostname, IP addressing, L2 or L3 subnet:
   0. make necessary changes to /etc/virl.ini
-  1. Double-click “Install networking” and reboot
+  1. Double-click "Upgrade or Rehost"
   2. Reboot
-  3. Double-click “Install changes” and reboot again before use
-  4. Reboot
+  3. Double-click "L2 Kernel Patch"
+  4. Reboot (There is no icon as such but SSH connectivity is not working unless its rebooted)
 
 If using the cli:
   0. make necessary changes to /etc/virl.ini
   1. execute /usr/local/bin/vinstall rehost
   2. Reboot
-  3. execute /usr/local/bin/vinstall renumber
-  4. Reboot
-
+  3. execute /usr/local/bin/vinstall bridge
+  4. Reboot (SSH connectivity is not working unless its rebooted)
 
