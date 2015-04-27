@@ -91,7 +91,7 @@
     "compute_extension:evacuate": "rule:admin_api",
     "compute_extension:v3:os-evacuate": "rule:admin_api",
     "compute_extension:v3:os-evacuate:discoverable": "",
-    "compute_extension:extended_server_attributes": "rule:admin_api",
+    "compute_extension:extended_server_attributes": "rule:admin_or_owner",
     "compute_extension:v3:os-extended-server-attributes": "rule:admin_api",
     "compute_extension:v3:os-extended-server-attributes:discoverable": "",
     "compute_extension:extended_status": "",
