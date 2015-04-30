@@ -62,15 +62,6 @@ system:
 
 
 
-eth0:
-  cmd.run:
-    - order: last
-{% if dhcp %}
-    - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
-{% else %}
-    - name: 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
-{% endif %}
-
 {{ int_port }}:
   cmd.run:
 {% if jumbo_frames %}
@@ -161,3 +152,15 @@ man-int-promisc:
       - cmd: {{ int_port }}
   cmd.run:
     - name: ifup {{ int_port }}
+
+eth0:
+  cmd.run:
+{% if dhcp %}
+    - names:
+      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
+{% else %}
+    - names:
+      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
+      - ifdown {{publicport}}
+      - ifup {{publicport}}
+{% endif %}
