@@ -30,6 +30,14 @@ good oslo.config:
     {% endif %}
     - upgrade: True
 
+pbr not 11:
+  pip.installed:
+    - name: pbr == 0.10.8
+    {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+    {% endif %}
+    - upgrade: True
+
 requests stop bitching:
   pip.installed:
     - name: ndg-httpsclient
