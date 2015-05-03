@@ -1,6 +1,15 @@
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
+desktop_require:
+  pkg.installed:
+    - skip_verify: True
+    - refresh: True
+    - pkgs:
+      - openjdk-7-jre
+      - libswt-webkit-gtk-3-jni
+      - libwebkitgtk-3.0-0
+
 lubuntu-desktop:
   pkg.installed:
     - skip_verify: True
@@ -12,6 +21,10 @@ lubuntu-desktop:
       - crudini --set /etc/lightdm/lightdm.conf.d/20-lubuntu.conf SeatDefaults allow-guest False
     - watch:
       - pkg: lubuntu-desktop
+
+virt-manager install:
+  pkg.installed:
+    - name: virt-manager
 
 /home/virl/.config/libfm/libfm.conf:
   file.managed:
@@ -349,15 +362,6 @@ gedit:
 /etc/xdg/autostart/nm-applet.desktop:
   file.absent:
     - name: /etc/xdg/autostart/nm-applet.desktop
-
-desktop_require:
-  pkg.installed:
-    - skip_verify: True
-    - refresh: True
-    - pkgs:
-      - openjdk-7-jre
-      - libswt-webkit-gtk-3-jni
-      - libwebkitgtk-3.0-0
 
 
 ##      - crudini --set /home/virl/.config/libfm/libfm.conf config terminal xterm -e %s

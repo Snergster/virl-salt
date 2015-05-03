@@ -9,8 +9,6 @@ include:
   - common.kvm
   - virl.scripts
   - virl.vextra
-  
-
 
 mypkgs:
   pkg.installed:
@@ -31,6 +29,7 @@ mypkgs:
       - lxc
       - python-dulwich
       - virt-what
+      - virtinst
 
 qemu common virl hold:
   apt.held:
@@ -78,6 +77,10 @@ html dir exists:
     - mode: 755
     - makedirs: True
 
+add virl to libvirtd:
+  group.present:
+    name: libvirtd
+    addusers: virl
 
 salt-minion nohold:
   file.absent:

@@ -106,12 +106,12 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-#Begin virl section
 
 #Section for unity
 export UBUNTU_MENUPROXY=0
 export SWT_GTK3=0
 
+#Begin virl section
 
 export OS_USERNAME=admin
 export OS_PASSWORD=ADMIN_PASS
@@ -120,5 +120,8 @@ export OS_AUTH_URL=http://controller:35357/v2.0
 export OS_SERVICE_ENDPOINT=http://controller:35357/v2.0
 export OS_SERVICE_TOKEN=OS_TOKEN
 export no_proxy="controller,virl,localhost,127.0.1.1,127.0.0.1,localaddress,.localdomain.com"
+
+export LIBVIRT_DEFAULT_URI='qemu:///system'
+#End virl section
 
 export PATH
