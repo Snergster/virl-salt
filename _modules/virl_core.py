@@ -261,13 +261,13 @@ def user_absent(name, clear_openstack=False):
             'comment': comment}
 
 
-def project_present(name, **kwargs):
+def project_present(name,  description=None, expires=None, quota_vcpus=200, quota_ram=512000, quota_instances=100, **kwargs):
     """Ensure that there's a UWM project with the specified properties.
 
     :returns: dict with keys ('project', 'main-user', 'comment')
 
     """
-    props = {'name': name}
+    props = {'name': name,'description':description,'expires':expires,'quota-vcpus': quota_vcpus, 'quota-ram': quota_ram, 'quota-instances': quota_instances}
     for key in ('description', 'expires', 'enabled', 'user_password',
                 'user_os_password', 'networks', 'quota_instances', 'quota_ram',
                 'quota_vcpus'):
