@@ -79,8 +79,9 @@ html dir exists:
 
 add virl to libvirtd:
   group.present:
-    name: libvirtd
-    addusers: virl
+    - name: libvirtd
+    - addusers: 
+      - 'virl'
 
 salt-minion nohold:
   file.absent:
