@@ -153,6 +153,10 @@ man-int-promisc:
   cmd.run:
     - name: ifup {{ int_port }}
 
+eth0 ifdown:
+  cmd.run:
+    - name: ifdown {{publicport}}
+
 eth0:
   cmd.run:
 {% if dhcp %}
@@ -161,6 +165,12 @@ eth0:
 {% else %}
     - names:
       - 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
-      - ifdown {{publicport}}
-      - ifup {{publicport}}
 {% endif %}
+    - require:
+      - cmd: eth0 ifdown
+
+eth0 ifup:
+  cmd.run:
+    - name: ifup {{publicport}}
+    - require:
+      - cmd: eth0
