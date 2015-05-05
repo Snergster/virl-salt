@@ -166,8 +166,7 @@ eth0:
     - names:
       - 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
 {% endif %}
-    - require:
-      - cmd: eth0 ifdown
+
 
 eth0 ifup:
   cmd.run:
