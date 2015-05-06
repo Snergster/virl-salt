@@ -21,7 +21,7 @@ ntpdate:
     - source: salt://virl/files/ntp.conf
     - template: jinja
 
-{% if dhcp %}
+{% if not dhcp %}
 ntp.conf interface lock:
   file.replace:
     - name: /etc/ntp.conf
