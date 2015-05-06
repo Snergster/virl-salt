@@ -264,9 +264,14 @@ class LinuxBridgeManager:
             dst_device = self.ip.device(destination)
             src_device = self.ip.device(source)
 
+            dst_ips, dst_gw = self.get_interface_details(destination)
+            src_ips, src_gw = self.get_interface_details(source)
+
         # Append IP's to bridge if necessary
         if ips:
             for ip in ips:
+                if ip in dst_ips:
+                    continue
                 dst_device.addr.add(ip_version=ip['ip_version'],
                                     cidr=ip['cidr'],
                                     broadcast=ip['broadcast'])
@@ -276,13 +281,17 @@ class LinuxBridgeManager:
             metric = 100
             if 'metric' in gateway:
                 metric = gateway['metric'] - 1
-            dst_device.route.add_gateway(gateway=gateway['gateway'],
-                                         metric=metric)
-            src_device.route.delete_gateway(gateway=gateway['gateway'])
+            if gateway != dst_gw:
+                dst_device.route.add_gateway(gateway=gateway['gateway'],
+                                             metric=metric)
+            if gateway == src_gw:
+                src_device.route.delete_gateway(gateway=gateway['gateway'])
 
         # Remove IP's from interface
         if ips:
             for ip in ips:
+                if ip not in src_ips:
+                    continue
                 src_device.addr.delete(ip_version=ip['ip_version'],
                                        cidr=ip['cidr'])
 
