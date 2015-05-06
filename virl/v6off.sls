@@ -1,6 +1,6 @@
 include:
-  - common/rc-local.sls
-  
+  - common.rc-local.sls
+
 
 /usr/local/bin/v6off jinja:
   file.managed:
