@@ -19,4 +19,4 @@ rclocal v6off append:
   file.replace:
     - name: /etc/rc.local
     - pattern: '# 002s start'
-    - repl: '002s v6off'
+    - repl: '# 002s v6off'
