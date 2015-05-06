@@ -35,6 +35,7 @@ nova client:
       - pkg: libffi-dev for rackspace
       - pip: oslo messaging first
     - names:
+      - oslo.middleware == 1.2.0
       - python-novaclient == 2.20.0
       - oslo.config == 1.6.0
       - oslo.rootwrap == 1.5.0
