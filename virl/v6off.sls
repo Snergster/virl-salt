@@ -4,7 +4,7 @@ include:
 
 /usr/local/bin/v6off jinja:
   file.managed:
-    - name: /usr/local/bin/v6off.sh
+    - name: /usr/local/bin/adjust-ipv6-sysctl.sh
     - mode: 755
     - source: salt://virl/files/v6off.sh
     - template: jinja
@@ -38,5 +38,5 @@ v6off-rclocal:
     - marker_start: "# 002s v6off"
     - marker_end: "# 002e"
     - content: |
-             /usr/local/bin/v6off.sh
+             /usr/local/bin/adjust-ipv6-sysctl.sh
 

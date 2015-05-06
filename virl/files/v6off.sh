@@ -13,7 +13,7 @@ NICS=$(for i in $IPV6_SYSCTL/tap*; do echo $(basename $i); done)" $MANUAL_NICS"
 
 for nic in $NICS; do
 #  echo $nic
-  echo "1" >>$IPV6_SYSCTL/$nic/disable_ipv6
+  echo 2>/dev/null "1" >>$IPV6_SYSCTL/$nic/disable_ipv6
 done
 
 # disable IPv6 for new NICs (new taps)
