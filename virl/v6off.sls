@@ -1,5 +1,5 @@
 include:
-  - common.rc-local.sls
+  - common.rc-local
 
 
 /usr/local/bin/v6off jinja:
