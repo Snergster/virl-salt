@@ -6,7 +6,7 @@ rclocal replace buckets:
           # VIRL use. Please dont replace or alter the blocks below
           # 001s Cinder
           # 001e end
-          # 002s start
+          # 002s v6off
           # 002e end
           # 003s start
           # 003e end

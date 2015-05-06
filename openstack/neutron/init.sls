@@ -325,16 +325,6 @@ l3-gateway:
         112a116
         >         LOG.info('RPC returning %s', entry)
 
-{% if not masterless %}
-/srv/salt/openstack/neutron/files/linuxbridge-plugin.filters.diff:
-  file.managed:
-    - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.diff"
-    - makedirs: True
-    - mode: 755
-    - require:
-      - pkg: neutron-pkgs
-
-{% endif %}
 
 /srv/salt/openstack/neutron/files/l3.py.diff:
   file.managed:
@@ -437,14 +427,8 @@ l3-gateway:
       - pkg: neutron-pkgs
 
 linuxbridge_neutron_agent:
-      {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/neutron/files/linuxbridge_neutron_agent.py
-    - force: true
-    {% else %}
   file.managed:
     - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.py"
-    {% endif %}
     - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
 
 ip_lib for mtu:
