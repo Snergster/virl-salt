@@ -14,3 +14,9 @@ rclocal replace buckets:
           # 004e end
           # 005s start
           # 005e end
+
+rclocal v6off append:
+  file.replace:
+    - name: /etc/rc.local
+    - pattern: '# 002s start'
+    - repl: '002s v6off'
