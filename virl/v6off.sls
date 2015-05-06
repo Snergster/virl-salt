@@ -7,7 +7,7 @@ include:
   file.managed:
     - name: /usr/local/bin/adjust-ipv6-sysctl.sh
     - mode: 755
-    - source: salt://virl/files/v6off.sh
+    - source: salt://virl/files/adjust-ipv6-sysctl.sh
     - template: jinja
 
 avahi no upstart:
