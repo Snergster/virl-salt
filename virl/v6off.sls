@@ -1,5 +1,6 @@
 include:
   - common.rc-local
+  - virl.ntp
 
 
 /usr/local/bin/v6off jinja:

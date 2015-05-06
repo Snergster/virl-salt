@@ -14,22 +14,14 @@ ntpdate:
   pkg:
     - installed
 
-{% if masterless %}
-/etc/ntp.conf:
-  file.replace:
-    - pattern: ^server.*
-    - repl: server {{ ntp_server }} iburst
-    - onlyif: ls /usr/sbin/ntpd
 
-{% else %}
 /etc/ntp.conf jinja:
   file.managed:
     - name: /etc/ntp.conf
     - source: salt://virl/files/ntp.conf
     - template: jinja
-{% endif %}
 
-{% if not dhcp %}
+{% if dhcp %}
 ntp.conf interface lock:
   file.replace:
     - name: /etc/ntp.conf
