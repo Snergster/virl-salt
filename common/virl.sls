@@ -63,21 +63,6 @@ vinstall wheels:
     {% endif %}
 {% endfor %}
 
-set some os packages early:
-  pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - names:
-      - oslo.config == 1.6.0
-      - oslo.context == 0.3.0
-      - oslo.i18n == 1.6.0
-      - oslo.messaging == 1.6.0
-      - oslo.middleware == 1.1.0
-      - oslo.rootwrap == 1.5.0
-      - oslo.serialization == 1.5.0
-      - oslo.utils == 1.5.0
-      - oslo.vmware == 0.2
 
 download dir exists:
   file.directory:
