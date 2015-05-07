@@ -69,7 +69,6 @@ set some os packages early:
     - proxy: {{ http_proxy }}
 {% endif %}
     - names:
-      - SQLAlchemy == 1.0.2
       - oslo.config == 1.6.0
       - oslo.context == 0.3.0
       - oslo.i18n == 1.6.0

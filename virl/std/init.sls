@@ -138,7 +138,7 @@ std_prereq:
       - pycrypto >= 2.6.1
       - requests >= 2.5.3
       - simplejson >= 3.6.5
-      - sqlalchemy >= 0.9.9
+      - sqlalchemy == 0.9.9
       - tornado >= 3.2.2, < 4.0.0
       - websocket_client >= 0.26.0
       - Werkzeug >= 0.10.1
