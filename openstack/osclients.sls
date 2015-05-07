@@ -35,7 +35,6 @@ nova client:
       - pkg: libffi-dev for rackspace
       - pip: oslo messaging first
     - names:
-      - SQLAlchemy == 0.9.9
       - oslo.middleware == 1.1.0
       - python-novaclient == 2.20.0
       - oslo.config == 1.6.0
