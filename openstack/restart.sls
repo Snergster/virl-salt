@@ -1,9 +1,13 @@
 {% set heat = salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false )) %}
 {% set cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false )) %}
 
+
+
 all-restart:
   cmd.run:
     - name: |
+        su -s /bin/sh -c "glance-manage db_sync" glance
+        su -s /bin/sh -c "nova-manage db sync" nova
         service nova-cert restart
         service nova-api restart
         service nova-consoleauth restart
