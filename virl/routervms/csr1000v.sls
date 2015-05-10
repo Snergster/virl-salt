@@ -10,15 +10,15 @@ CSR1000v:
   - min_disk: 8
   - min_ram: 0
   - is_public: True
-  - checksum: 7031d6b5ae3371ac5782552ac4522745
+  - checksum: 436aa3a728798b4e8c0b6acb13f2eee4
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/salt/csr1000v-universalk9.03.14.00.S.155-1.S-std-serial.qcow2
+  - copy_from: salt://images/salt/csr1000v-universalk9.03.15.00.S.155-2.S-std-serial.qcow2
   - property-config_disk_type: cdrom
   - property-hw_cdrom_type: ide
   - property-hw_disk_bus: virtio
   - property-hw_vif_model: e1000
-  - property-release: 3.14
+  - property-release: 3.15
   - property-serial: 2
   - property-subtype: CSR1000v
 
