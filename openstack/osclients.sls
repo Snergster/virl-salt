@@ -39,6 +39,7 @@ nova client:
       - python-novaclient == 2.20.0
       - oslo.config == 1.6.0
       - oslo.rootwrap == 1.5.0
+      - pbr == 0.10.8
   file.managed:
     - name: /etc/apt/preferences.d/python-novaclient
     - require:
