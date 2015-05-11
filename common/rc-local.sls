@@ -12,7 +12,7 @@ rclocal replace buckets:
           # 003e end
           # 004s start
           # 004e end
-          # 005s start
+          # 005s dummy
           # 005e end
 
 rclocal v6off append:
@@ -20,3 +20,20 @@ rclocal v6off append:
     - name: /etc/rc.local
     - pattern: '# 002s start'
     - repl: '# 002s v6off'
+
+rclocal dummy append:
+  file.replace:
+    - name: /etc/rc.local
+    - pattern: '# 005s start'
+    - repl: '# 005s dummy'
+
+{%if salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
+
+dummy-rclocal:
+  file.blockreplace:
+    - name: /etc/rc.local
+    - marker_start: "# 005s dummy"
+    - marker_end: "# 005e"
+    - content: |
+             /sbin/ifup {{ salt['pillar.get']('virl:internalnet_port', salt['grains.get']('internalnet_port', 'eth4' )) }}
+{% endif %}
