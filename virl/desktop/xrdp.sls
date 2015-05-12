@@ -8,8 +8,7 @@ xrdp:
     - running
     - enable: True
     - require:
-      - pkg:
-        - xrdp
+      - pkg: xrdp
 
 
 /home/virl/.xsession:
