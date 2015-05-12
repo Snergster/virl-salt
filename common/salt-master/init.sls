@@ -7,7 +7,7 @@ salt-master install:
     - mode: 0755
     - source: "salt://install_salt.sh"
   cmd.run:
-      - name: /home/ubuntu/install_salt.sh -M -X stable
+      - name: /home/ubuntu/install_salt.sh -M -X git 2015.5
       - unless:
         - ls /usr/bin/salt-master
 
