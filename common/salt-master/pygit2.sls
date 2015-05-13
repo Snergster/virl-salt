@@ -10,6 +10,16 @@ libgit2 prereqs:
       - libffi-dev
       - libssh2-1-dev
 
+pygit2 prereq install:
+  pip.installed:
+{% if proxy %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - names:
+      - pyopenssl
+      - ndg-httpsclient
+      - pyasn1
+
 
 libgit2 pull:
   archive.extracted:
