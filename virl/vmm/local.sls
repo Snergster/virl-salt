@@ -49,3 +49,8 @@ vmmpkgs:
         - libswt-webkit-gtk-3-jni
         - libwebkitgtk-1.0-0
         - unzip
+
+kill the printer:
+  file.append:
+    - name: /home/virl/VMMaestro-linux/VMMaestro.ini
+    - text: '-Dorg.eclipse.swt.internal.gtk.disablePrinting'
