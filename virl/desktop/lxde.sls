@@ -332,6 +332,15 @@ cml version because they dare to be different:
       - pkg: lxde
 
 {% if cml %}
+cml login background:
+  openstack_config.present:
+    - order: last
+    - filename: /etc/lxdm/default.conf
+    - section: 'display'
+    - parameter: 'wallpaper'
+    - value: '/srv/salt/virl/files/CML.jpg'
+    - onlyif: 'test -e /srv/salt/virl/files/CML.jpg'
+
 cml background:
   openstack_config.present:
     - order: last
@@ -343,6 +352,16 @@ cml background:
     - require:
       - file: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
 {% else %}
+
+virl login background:
+  openstack_config.present:
+    - order: last
+    - filename: /etc/lxdm/default.conf
+    - section: 'display'
+    - parameter: 'wallpaper'
+    - value: '/srv/salt/virl/files/virl.jpg'
+    - onlyif: 'test -e /srv/salt/virl/files/virl.jpg'
+
 virl background:
   openstack_config.present:
     - order: last
@@ -353,7 +372,33 @@ virl background:
     - onlyif: 'test -e /srv/salt/virl/files/virl.jpg'
     - require:
       - file: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
+
 {% endif %}
+
+lxde lang off:
+  openstack_config.present:
+    - order: last
+    - filename: /etc/lxdm/default.conf
+    - section: 'display'
+    - parameter: 'lang'
+    - value: 0
+
+{# need better blacklist#}
+lxde blacklist user list:
+  openstack_config.present:
+    - order: last
+    - filename: /etc/lxdm/default.conf
+    - section: 'userlist'
+    - parameter: 'black'
+    - value: 'ntp,nova'
+
+virl xsession:
+  file.managed:
+    - name: /home/virl/.xsession
+    - user: virl
+    - group: virl
+    - mode: 755
+    - contents: 'lxsession -s LXDE -e LXDE'
 
 gedit:
   pkg.installed:

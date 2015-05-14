@@ -5,5 +5,6 @@ include:
   - common.salt-minion.mako
   - common.salt-minion.msgpack-pure
   - common.salt-master.pygit2
+  - common.salt-master.pyinotify
   - common.salt-minion.no-auto-start
 
