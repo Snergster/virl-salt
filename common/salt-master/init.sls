@@ -37,66 +37,39 @@ msgpack-python backup:
     - require:
       - pkg: pip backup only
 
-pki dir exists:
+/etc/salt/pki:
   file.directory:
-    - name: /etc/salt/pki
-    - makedirs: True
-
-pillar dir exists:
-  file.directory:
-    - name: /srv/pillar
-    - makedirs: True
-
-pillar cache dir exists:
-  file.directory:
-    - name: /var/cache/salt/minion/files/base/pillar
-    - makedirs: True
-
-salt-master ramdisks:
-  file.append:
-    - name: /etc/fstab
-    - text: |
-        ramdisk /etc/salt/pki tmpfs rw,relatime 0 0
-        ramdisk /srv/pillar tmpfs rw,relatime 0 0
-        ramdisk /var/cache/salt/minion/files/base/pillar tmpfs rw,relatime 0 0
-        ramdisk /var/cache/salt/master tmpfs rw,relatime 0 0
-
-pki ramdisk mount:
-  cmd.wait:
-    - name: mount /etc/salt/pki
+    - makedirs: true
+  mount.mounted:
+    - device: ramdisk
+    - fstype: tmpfs
+    - opts: rw,relatime
+    - dump: 0
+    - pass_num: 0
     - require:
-      - file: pki dir exists
-    - watch:
-      - file: salt-master ramdisks
+      - file: /etc/salt/pki
 
-pillar ramdisk mount:
-  cmd.wait:
-    - name: mount /srv/pillar
+/srv/pillar:
+  file.directory:
+    - makedirs: true
+  mount.mounted:
+    - device: ramdisk
+    - fstype: tmpfs
+    - opts: rw,relatime
+    - dump: 0
+    - pass_num: 0
     - require:
-      - file: pillar dir exists
-    - watch:
-      - file: salt-master ramdisks
+      - file: /srv/pillar
 
-pillar cache ramdisk mount:
-  cmd.wait:
-    - name: mount /var/cache/salt/minion/files/base/pillar
+/var/cache/salt/minion/files/base/pillar:
+  file.directory:
+    - makedirs: true
+  mount.mounted:
+    - device: ramdisk
+    - fstype: tmpfs
+    - opts: rw,relatime
+    - dump: 0
+    - pass_num: 0
     - require:
-      - file: pillar cache dir exists
-    - watch:
-      - file: salt-master ramdisks
+      - file: /var/cache/salt/minion/files/base/pillar
 
-
-cache pillar:
-  file.directory:
-    - name: /var/cache/salt/minion/files/base/pillar
-    - makedirs: True
-
-srv pillar:
-  file.directory:
-    - name: /srv/pillar
-    - makedirs: True
-
-pki placeholder:
-  file.directory:
-    - name: /etc/salt/pki
-    - makedirs: True
