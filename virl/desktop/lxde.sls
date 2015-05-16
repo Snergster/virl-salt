@@ -376,16 +376,15 @@ lxde lang off:
     - filename: /etc/lxdm/default.conf
     - section: 'display'
     - parameter: 'lang'
-    - value: 0
+    - value: '0'
 
 {# need better blacklist#}
 lxde blacklist user list:
   openstack_config.present:
-    - order: last
     - filename: /etc/lxdm/default.conf
     - section: 'userlist'
     - parameter: 'black'
-    - value: 'ntp,syslog'
+    - value: 'ntp syslog usbmux xrdp'
 
 virl xsession:
   file.managed:
@@ -403,6 +402,3 @@ gedit:
   file.absent:
     - name: /etc/xdg/autostart/nm-applet.desktop
 
-
-##      - crudini --set /home/virl/.config/libfm/libfm.conf config terminal xterm -e %s
-##      - crudini --set /etc/xdg/lubuntu/libfm/libfm.conf config terminal xterm -e %s
