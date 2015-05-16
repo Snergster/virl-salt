@@ -4,7 +4,7 @@
 {% set desktop_manager = salt['pillar.get']('virl:desktop_manager', salt['grains.get']('desktop_manager', 'lubuntu')) %}
 
 include:
-{% if desktop_manager = 'lxde' %}
+{% if desktop_manager == 'lxde' %}
   - virl.desktop.lxde
 {% else %}
   - virl.desktop.lubuntu
