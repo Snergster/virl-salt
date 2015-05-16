@@ -317,14 +317,9 @@ cml version because they dare to be different:
     - require:
       - pkg: lxde
 
-/home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf:
-  {% if not masterless %}
+/home/virl/.config/pcmanfm/LXDE/desktop-items-0.conf:
   file.managed:
-    - source: "salt://virl/desktop/files/desktop-items-0.conf"
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/desktop/files/desktop-items-0.conf
-  {% endif %}
+    - source: "salt://virl/desktop/files/lxde-desktop-items-0.conf"
     - makedirs: true
     - user: virl
     - group: virl
@@ -344,13 +339,13 @@ cml login background:
 cml background:
   openstack_config.present:
     - order: last
-    - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
+    - filename: /home/virl/.config/pcmanfm/LXDE/desktop-items-0.conf
     - section: '*'
     - parameter: 'wallpaper'
     - value: '/srv/salt/virl/files/CML.jpg'
     - onlyif: 'test -e /srv/salt/virl/files/CML.jpg'
     - require:
-      - file: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
+      - file: /home/virl/.config/pcmanfm/LXDE/desktop-items-0.conf
 {% else %}
 
 virl login background:
@@ -365,13 +360,13 @@ virl login background:
 virl background:
   openstack_config.present:
     - order: last
-    - filename: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
+    - filename: /home/virl/.config/pcmanfm/LXDE/desktop-items-0.conf
     - section: '*'
     - parameter: 'wallpaper'
     - value: '/srv/salt/virl/files/virl.jpg'
     - onlyif: 'test -e /srv/salt/virl/files/virl.jpg'
     - require:
-      - file: /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf
+      - file: /home/virl/.config/pcmanfm/LXDE/desktop-items-0.conf
 
 {% endif %}
 
@@ -390,7 +385,7 @@ lxde blacklist user list:
     - filename: /etc/lxdm/default.conf
     - section: 'userlist'
     - parameter: 'black'
-    - value: 'ntp,nova'
+    - value: 'ntp,syslog'
 
 virl xsession:
   file.managed:
