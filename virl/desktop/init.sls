@@ -6,6 +6,7 @@
 include:
 {% if desktop_manager == 'lxde' %}
   - virl.desktop.lxde
+  - virl.desktop.xrdp
 {% else %}
   - virl.desktop.lubuntu
 {% endif %}

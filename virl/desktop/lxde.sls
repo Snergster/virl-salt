@@ -16,11 +16,6 @@ lxde:
     - refresh: False
     - require:
       - pkg: desktop_require
-  cmd.wait:
-    - names:
-      - crudini --set /etc/lightdm/lightdm.conf.d/20-lubuntu.conf SeatDefaults allow-guest False
-    - watch:
-      - pkg: lxde
 
 virt-manager install:
   pkg.installed:
