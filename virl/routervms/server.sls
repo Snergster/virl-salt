@@ -3,23 +3,6 @@
 
 {% if server and serverpref %}
 
-UbuntuServertrusty:
-  glance.image_present:
-  - profile: virl
-  - name: 'server'
-  - container_format: bare
-  - min_disk: 3
-  - min_ram: 0
-  - is_public: True
-  - checksum: 7865415243633e0f889dafc28d2803e5
-  - protected: False
-  - disk_format: qcow2
-  - copy_from: salt://images/salt/ubuntu-14.04-server-cloudimg-amd64-disk1.img
-  - property-hw_disk_bus: virtio
-  - property-release: 14.04.2
-  - property-serial: 1
-  - property-subtype: server
-
 UbuntuServertrusty new:
   glance.image_present:
   - profile: virl
@@ -36,8 +19,6 @@ UbuntuServertrusty new:
   - property-release: 14.04.2
   - property-serial: 1
   - property-subtype: server
-  - onfail:
-    - glance: UbuntuServertrusty
 
 UbuntuServertrusty flavor delete:
   cmd.run:
