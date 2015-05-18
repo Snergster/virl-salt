@@ -3,7 +3,7 @@
 
 {% if server and serverpref %}
 
-UbuntuServertrusty new:
+UbuntuServertrusty:
   glance.image_present:
   - profile: virl
   - name: 'server'
