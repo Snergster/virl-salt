@@ -37,7 +37,7 @@ IOSvL2 flavor create:
   module.run:
     - name: nova.flavor_create
     - m_name: 'IOSvL2'
-    - ram: 512
+    - ram: 768
     - disk: 0
     - vcpus: 1
     - onchanges:
@@ -46,7 +46,7 @@ IOSvL2 flavor create:
       - cmd: IOSvL2 flavor delete
 
 {% else %}
-  {% if not iosvl2 and iosvl2pref %}
+  {% if not cml_iosvl2 and cml_iosvl2pref %}
 IOSvL2 gone:
   glance.image_absent:
   - profile: virl
