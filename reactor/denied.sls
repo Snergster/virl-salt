@@ -3,7 +3,7 @@
 {% if id %}
 {% set removal = data['data']['path'] %}
 restart salt-master:
-  local.file.removed:
+  local.file.remove:
     - tgt: {{ id }}
     - arg:
       - {{removal}}
