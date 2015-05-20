@@ -1,7 +1,7 @@
 {% set id = data['data']['id'] %}
-
-{% if id %}
 {% set user = data['data']['user'] %}
+{% if user %}
+
 
 sendmsg_run:
   local.hipchat.send_message:
