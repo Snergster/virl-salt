@@ -13,7 +13,11 @@ sendmsg_run:
     - tgt: {{ id }}
     - kwarg:
         message: salt-master status on {{ id }} is {{ running_status }}
+        {% if running_status %}
+        color: green
+        {% else %}
         color: red
+        {% endif %}
         room_id: 1332718
         from_name: master_watch
 {% endif %}
