@@ -101,6 +101,7 @@ address_l2_port2 = True
 flat2_dns1 = safeparser.get('DEFAULT', 'first_flat2_nameserver', fallback='8.8.8.8')
 flat2_dns2 = safeparser.get('DEFAULT', 'second_flat2_nameserver', fallback='8.8.4.4')
 
+dist_upgrade = safeparser.getboolean('DEFAULT', 'dist_upgrade', fallback=True)
 masterless = safeparser.getboolean('DEFAULT', 'salt_masterless', fallback=False)
 RAMDISK = safeparser.getboolean('DEFAULT', 'ramdisk', fallback=False)
 ank = safeparser.get('DEFAULT', 'ank', fallback='19401')
@@ -148,6 +149,7 @@ cinder_size = safeparser.get('DEFAULT', 'cinder_size', fallback=2000 )
 cinder_loc = safeparser.get('DEFAULT', 'cinder_location', fallback='/var/lib/cinder/cinder-volumes.lvm')
 neutron_switch = safeparser.get('DEFAULT', 'neutron_switch', fallback='linuxbridge')
 desktop = safeparser.getboolean('DEFAULT', 'desktop', fallback=False)
+desktop_manager = safeparser.get('DEFAULT', 'desktop_manager', fallback='lubuntu')
 
 #Packaging section
 cariden = safeparser.getboolean('DEFAULT', 'cariden', fallback=False)
@@ -270,7 +272,6 @@ def building_salt_extra():
                 extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
                 extra.write("""master_type: failover \n""")
                 extra.write("""master_shuffle: True \n""")
-                extra.write("""random_master: True \n""")
             else:
                 extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
 
