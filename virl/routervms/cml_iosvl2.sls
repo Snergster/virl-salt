@@ -46,7 +46,7 @@ IOSvL2 flavor create:
       - cmd: IOSvL2 flavor delete cml
 
 {% else %}
-  {% if not cml_iosvl2 and cml_iosvl2pref %}
+  {% if not iosvl2 and iosvl2pref %}
 IOSvL2 gone cml:
   glance.image_absent:
   - profile: virl
