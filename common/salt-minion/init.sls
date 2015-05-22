@@ -4,7 +4,7 @@ include:
   - common.salt-minion.dateutil
   - common.salt-minion.mako
   - common.salt-minion.msgpack-pure
-  - common.salt-master.pygit2
   - common.salt-minion.pyinotify
   - common.salt-minion.no-auto-start
-
+  - common.salt-master.pygit2
+  - common.salt-master.psutil
