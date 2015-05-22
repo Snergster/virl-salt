@@ -9,13 +9,8 @@ qemu_kvm unhold:
     - onlyif: ls /usr/bin/qemu-system-x86_64
 
 /usr/bin/kvm:
-  {% if masterless %}
-  file.copy:
-    - source: /srv/salt/openstack/nova/files/kvm
-  {% else %}
   file.managed:
     - source: "salt://openstack/nova/files/kvm"
-    {% endif %}
     - force: True
     - mode: 0755
 
@@ -27,7 +22,7 @@ qemu_kvm unhold:
       - file: /usr/bin/kvm
 
 manual qemu-kvm:
-  pkg.installed:
+  pkg.latest:
     - name: qemu-kvm
     - refresh: True
     - require:
