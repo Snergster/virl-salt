@@ -26,7 +26,7 @@ IOSvL2:
     - property-serial: 2
     - property-subtype: IOSv
 
-IOSvL2 flavor delete:
+IOSvL2 flavor delete cml:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSvL2"'
     - onlyif: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-show "IOSvL2"'
@@ -43,16 +43,16 @@ IOSvL2 flavor create:
     - onchanges:
       - glance: IOSvL2
     - require:
-      - cmd: IOSvL2 flavor delete
+      - cmd: IOSvL2 flavor delete cml
 
 {% else %}
   {% if not cml_iosvl2 and cml_iosvl2pref %}
-IOSvL2 gone:
+IOSvL2 gone cml:
   glance.image_absent:
   - profile: virl
   - name: 'IOSvL2'
 
-IOSvL2 flavor absent:
+IOSvL2 flavor absent cml:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOSvL2"'
     - onlyif: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "IOSvL2"'
