@@ -779,7 +779,8 @@ if __name__ == "__main__":
         call_salt('virl.routervms')
     if varg['vmm'] or varg['upgrade']:
         call_salt('virl.vmm.download')
-        call_salt('virl.vmm.local')
+        if desktop:
+          call_salt('virl.vmm.local')
 
     if varg['salt']:
         building_salt_all()
