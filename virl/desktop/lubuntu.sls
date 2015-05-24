@@ -60,23 +60,6 @@ virt-manager install:
          Categories=Utility;Application;
 
 {% if cml %}
-/home/virl/Desktop/CML.desktop:
-  file.managed:
-    - mode: 0755
-    - user: virl
-    - group: virl
-    - makedirs: True
-    - contents: |
-         [Desktop Entry]
-         Version=1.0
-         Name=CML
-         Comment=CML for folks
-         Exec=/home/virl/VMMaestro-linux/CML
-         Icon=/home/virl/VMMaestro-linux/icon.xpm
-         Terminal=false
-         Type=Application
-         Categories=Utility;Application;
-
 /home/virl/Desktop/VMMaestro.desktop absent:
   file.absent:
     - name: /home/virl/Desktop/VMMaestro.desktop
@@ -292,39 +275,24 @@ cml version because they dare to be different:
       - pkg: lubuntu-desktop
 
 /usr/share/themes/Lubuntu-default/openbox-3/themerc:
-  {% if not masterless %}
   file.managed:
     - source: "salt://virl/files/Clearlooks/openbox-3/themerc"
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/Clearlooks/openbox-3/themerc
-  {% endif %}
     - user: virl
     - group: virl
     - require:
       - pkg: lubuntu-desktop
 
 /usr/share/themes/Lubuntu-default/gtk-2.0/gtkrc:
-  {% if not masterless %}
   file.managed:
     - source: "salt://virl/files/Clearlooks/gtk-2.0/gtkrc"
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/Clearlooks/gtk-2.0/gtkrc
-  {% endif %}
     - user: virl
     - group: virl
     - require:
       - pkg: lubuntu-desktop
 
 /home/virl/.config/pcmanfm/lubuntu/desktop-items-0.conf:
-  {% if not masterless %}
   file.managed:
     - source: "salt://virl/desktop/files/desktop-items-0.conf"
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/desktop/files/desktop-items-0.conf
-  {% endif %}
     - makedirs: true
     - user: virl
     - group: virl
