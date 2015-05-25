@@ -1,10 +1,9 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set crypt = salt['pillar.get']('restrictedusers:consul:crypt', salt['grains.get']('consul_crypt', '*')) %}
+{% set crypt = salt['pillar.get']('restrictedusers:consul:crypt', salt['grains.get']('consul_crypt', '$6rUu5wzdNP0Y')) %}
 
-/usr/local/bin/consul:
+/tmp/consul.zip:
   file.managed:
-    - name: /tmp/consul.zip
     - source: https://dl.bintray.com/mitchellh/consul/0.5.2_linux_amd64.zip
     - source_hash: md5=37000419d608fd34f0f2d97806cf7399
   module.run:
@@ -12,7 +11,13 @@
     - zip_file: /tmp/consul.zip
     - dest: /usr/local/bin
     - require:
-      - file: /usr/local/bin/consul
+      - file: /tmp/consul.zip
+
+/usr/local/bin/consul:
+  file.managed:
+    - mode: 0755
+    - require:
+      - module: /tmp/consul.zip
 
 consul group:
   group.present:
