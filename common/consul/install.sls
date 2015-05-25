@@ -39,3 +39,27 @@ consul user:
     - makedirs: True
 
 {% endfor %}
+
+python-consul for salt-consul:
+  pip.installed:
+    - name: python-consul
+    {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+    {% endif %}
+
+/srv/salt/_modules/consul_mod.py:
+  file.managed:
+    - source: salt://common/consul/files/consul_mod.py
+
+/srv/salt/_states/consul_check.py:
+  file.managed:
+    - source: salt://common/consul/files/consul_check.py
+
+/srv/salt/_states/consul_key.py:
+  file.managed:
+    - source: salt://common/consul/files/consul_key.py
+
+/srv/salt/_states/consul_service.py:
+  file.managed:
+    - source: salt://common/consul/files/consul_service.py
+
