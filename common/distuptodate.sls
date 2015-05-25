@@ -9,8 +9,17 @@ dist upgrade host:
     - refresh: True
     - dist_upgrade: {{ dist_upgrade }}
 
+{% if '2015' in salt['grains.get']('saltversion') %}
+
 apt cleanup:
-  cmd.wait:
+  module.run:
+    - name: pkg.autoremove
+
+{% else %}
+
+apt cleanup:
+  cmd.run:
     - name: apt-get autoremove -y
     - onchanges:
       - module: dist upgrade host
+{% endif %}
