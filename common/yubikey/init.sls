@@ -29,7 +29,7 @@ yubi auth in:
 
 /etc/pam.d/yubi-auth:
   file.managed:
-    - contents: 'auth required pam_yubico.so mode=client 'id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
+    - contents: 'auth required pam_yubico.so mode=client id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
 key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}'
     - require:
       - pkg: libpam-yubico
