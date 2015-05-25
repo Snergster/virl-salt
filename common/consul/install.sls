@@ -20,6 +20,7 @@ consul group:
 
 consul user:
   user.present:
+    - name: consul
     - require:
       - group: consul group
     - fullname: Consul user
