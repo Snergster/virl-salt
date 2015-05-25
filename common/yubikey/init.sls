@@ -39,8 +39,8 @@ key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url'
     - require:
       - pkg: libpam-yubico
     - text:
-      - auth sufficient pam_yubico.so id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
-key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}
+      - 'auth sufficient pam_yubico.so id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
+key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}'
 
 
 challenge yes:
