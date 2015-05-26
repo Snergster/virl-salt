@@ -31,6 +31,7 @@ consul webui:
 
 web permissions:
   file.directory:
+    - name: /home/consul/dist
     - require:
       - module: consul webui
     - user: consul
