@@ -66,6 +66,11 @@ python-consul for salt-consul:
     - user: consul
     - group: consul
 
+/etc/salt/minion.d/consul.conf:
+  file.managed:
+    - source: "salt://common/consul/files/consul.conf"
+    - template: jinja
+
 /etc/consul.d/ssl/consul.key:
   file.managed:
     - contents_pillar: consul:sslkey
