@@ -13,6 +13,9 @@
 {% set cinder_enabled = salt['pillar.get']('virl:cinder_enabled', salt['grains.get']('cinder_enabled', False)) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
+{% set serstart = salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')) %}
+{% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
+
 
 
 {% if not masterless %}
@@ -115,7 +118,19 @@ std docs local:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
 
+std uwm port replace:
+  file.replace:
+      - name: /var/www/html/index.html
+      - pattern: :\d{2,}"
+      - repl: :{{ uwmport }}"
+      - unless: grep {{ uwmport }} /var/www/html/index.html
 
+std nova-compute serial:
+  openstack_config.present:
+    - filename: /etc/nova/nova-compute.conf
+    - section: 'libvirt'
+    - parameter: 'serial_port_range'
+    - value: '{{ serstart }}:{{ serend }}'
 
 std_prereq:
   pip.installed:

@@ -53,14 +53,6 @@ apache dir remove:
       - file: /srv/salt/virl/files/virlweb.tar
 {% endif %}
 
-uwm port replace:
-  file.replace:
-    - order: last
-    - name: /var/www/html/index.html
-    - pattern: :\d{2,}"
-    - repl: :{{ uwmport }}"
-    - unless: grep {{ uwmport }} /var/www/html/index.html
-
 /etc/apache2/sites-enabled/apache.conf:
   file.managed:
     - mode: 755
