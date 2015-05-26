@@ -27,7 +27,7 @@ just in case:
 
 {% endfor %}
 
-{% if salt['pillar.get']('common:branch:qa', False) %}
+{% if salt['pillar.get']('branch:qa', False) %}
 
   {% for each in 'vmm','ank','std' %}
 /srv/salt2/{{ each }}/qa:
