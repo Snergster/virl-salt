@@ -19,6 +19,16 @@ consul webui:
     - zip_file: /tmp/consulwebui.zip
     - dest: /home/consul
 
+web permissions:
+  file.directory:
+    - require:
+      - module: consul webui
+    - user: consul
+    - group: consul
+    - recurse:
+      - user
+      - group
+
 consul server init:
   file.managed:
     - name: /etc/init/consul.conf
