@@ -17,4 +17,4 @@ consul agent init:
 
 /etc/consul.d/client/config.json:
   file.managed:
-    - contents: '{"server": false, "datacenter": "{{consul_dc}}", "node_name": "{{node_name}}", ui_dir": "/home/consul/dist", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": ["{{consul_server_ip}}"] }'
+    - contents: '{"server": false, "datacenter": "{{consul_dc}}", "node_name": "{{node_name}}", "ui_dir": "/home/consul/dist", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": ["{{consul_server_ip}}"] }'
