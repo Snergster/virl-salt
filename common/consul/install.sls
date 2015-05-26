@@ -35,7 +35,7 @@ consul user:
       - consul
     - password: {{ crypt }}
 
-{% for consuldir in ['/etc/consul.d/bootstrap','/etc/consul.d/server','/etc/consul.d/client','/var/consul'] %}
+{% for consuldir in ['/etc/consul.d/bootstrap','/etc/consul.d/server','/etc/consul.d/client','/var/consul','/etc/consul.d/ssl/CA'] %}
 {{consuldir}}:
   file.directory:
     - require:
@@ -53,19 +53,42 @@ python-consul for salt-consul:
     - proxy: {{ http_proxy }}
     {% endif %}
 
+
+/etc/consul.d/ssl/ca.cert:
+  file.managed:
+    - contents_pillar: consul:cacert
+    - user: consul
+    - group: consul
+
+/etc/consul.d/ssl/consul.cert:
+  file.managed:
+    - contents_pillar: consul:sslcert
+    - user: consul
+    - group: consul
+
+/etc/consul.d/ssl/consul.key:
+  file.managed:
+    - contents_pillar: consul:sslkey
+    - user: consul
+    - group: consul
+
 /srv/salt/_modules/consul_mod.py:
   file.managed:
     - source: salt://common/consul/files/consul_mod.py
+    - makedirs: True
 
 /srv/salt/_states/consul_check.py:
   file.managed:
     - source: salt://common/consul/files/consul_check.py
+    - makedirs: True
 
 /srv/salt/_states/consul_key.py:
   file.managed:
     - source: salt://common/consul/files/consul_key.py
+    - makedirs: True
 
 /srv/salt/_states/consul_service.py:
   file.managed:
     - source: salt://common/consul/files/consul_service.py
+    - makedirs: True
 
