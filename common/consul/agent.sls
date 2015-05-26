@@ -18,3 +18,23 @@ consul agent init:
 /etc/consul.d/client/config.json:
   file.managed:
     - contents: '{"server": false, "datacenter": "{{consul_dc}}", "node_name": "{{node_name}}", "ui_dir": "/home/consul/dist", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": ["{{consul_server_ip}}"] }'
+
+consul webui:
+  file.managed:
+    - name: /tmp/consulwebui.zip
+    - source: https://dl.bintray.com/mitchellh/consul/0.5.2_web_ui.zip
+    - source_hash: md5=eb98ba602bc7e177333eb2e520881f4f
+  module.run:
+    - name: archive.unzip
+    - zip_file: /tmp/consulwebui.zip
+    - dest: /home/consul
+
+web permissions:
+  file.directory:
+    - require:
+      - module: consul webui
+    - user: consul
+    - group: consul
+    - recurse:
+      - user
+      - group
