@@ -4,6 +4,7 @@
 {% set publicport = salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')) %}
 {% set consul_server_ip = salt['pillar.get']('consul:consul_server_ip', salt['grains.get']('consul_server_ip', '"127.0.0.1"')) %}
 {# consul_server_ip format '"127.0.0.1"','"10.10.10.10"'   #}
+{% set node_name = salt['pillar.get']('consul:node_name', salt['grains.get']('id', 'replaceme')) %}
 
 
 include:
@@ -36,9 +37,9 @@ consul server init:
 
 /etc/consul.d/bootstrap/config.json:
   file.managed:
-    - contents: '{"boostrap": true, "server": true, "datacenter": "{{consul_dc}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true }'
+    - contents: '{"bootstrap": true, "server": true, "datacenter": "{{consul_dc}}", "node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true }'
 
 /etc/consul.d/server/config.json:
   file.managed:
-    - contents: '{"boostrap": false, "server": true, "datacenter": "{{consul_dc}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": [{{consul_server_ip}}] }'
+    - contents: '{"bootstrap": false, "server": true, "datacenter": "{{consul_dc}}", "node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": [{{consul_server_ip}}] }'
 
