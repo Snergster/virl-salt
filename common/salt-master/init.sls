@@ -3,6 +3,7 @@
 
 include:
   - common.salt-master.gitpython
+  - common.salt-master.python-consul
   - common.salt-master.psutil
 
 salt-master install:
