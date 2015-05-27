@@ -5,6 +5,7 @@
 {% set consul_server_ip = salt['pillar.get']('consul:consul_server_ip', salt['grains.get']('consul_server_ip', '"127.0.0.1"')) %}
 {# consul_server_ip format '"127.0.0.1"','"10.10.10.10"'   #}
 {% set node_name = salt['pillar.get']('consul:node_name', salt['grains.get']('id', 'replaceme')) %}
+{% set ip = salt['network.interface_ip']({{publicport}})%}
 
 
 include:
@@ -19,10 +20,10 @@ consul server init:
   file.managed:
     - user: consul
     - group: consul
-    - contents: '{"bootstrap": true, "server": true, "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key", "node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true }'
+    - contents: '{"bootstrap": true, "server": true, "advertise_addr": "{{ip}}", "bind_addr": "{{ip}}", "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key", "node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true }'
 
 /etc/consul.d/server/config.json:
   file.managed:
     - user: consul
     - group: consul
-    - contents: '{"bootstrap": false, "server": true, "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key","node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": [{{consul_server_ip}}] }'
+    - contents: '{"bootstrap": false, "server": true, "advertise_addr": "{{ip}}", "bind_addr": "{{ip}}", "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key","node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": [{{consul_server_ip}}] }'
