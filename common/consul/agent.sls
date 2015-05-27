@@ -5,7 +5,7 @@
 {% set consul_server_ip = salt['pillar.get']('consul:consul_server_ip', salt['grains.get']('consul_server_ip', '"127.0.0.1"')) %}
 {% set node_name = salt['pillar.get']('consul:node_name', salt['grains.get']('id', 'replaceme')) %}
 {# consul_server_ip format '"127.0.0.1"','"10.10.10.10"'   #}
-
+{% set ipaddr = salt['network.interface_ip']('eth0')%}
 include:
   - .install
 
@@ -18,7 +18,7 @@ consul agent init:
   file.managed:
     - user: consul
     - group: consul
-    - contents: '{"server": false, "datacenter": "{{consul_dc}}", "advertise_addr": "{{salt['network.interface_ip']({{publicport}})}}", "bind_addr": "{{salt['network.interface_ip']({{publicport}})}}", "node_name": "{{node_name}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key","ui_dir": "/home/consul/dist", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": ["{{consul_server_ip}}"] }'
+    - contents: '{"server": false, "datacenter": "{{consul_dc}}", "advertise_addr": "{{ipaddr}}", "bind_addr": "{{ipaddr}}", "node_name": "{{node_name}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key","ui_dir": "/home/consul/dist", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": ["{{consul_server_ip}}"] }'
 
 consul webui:
   file.managed:
