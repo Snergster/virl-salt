@@ -151,6 +151,7 @@ std_prereq:
       - mock >= 1.0.1
       - paramiko >= 1.15.2
       - pycrypto >= 2.6.1
+      - Pygments
       - requests >= 2.5.3
       - simplejson >= 3.6.5
       - sqlalchemy == 0.9.9
