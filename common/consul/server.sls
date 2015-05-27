@@ -17,8 +17,12 @@ consul server init:
 
 /etc/consul.d/bootstrap/config.json:
   file.managed:
+    - user: consul
+    - group: consul
     - contents: '{"bootstrap": true, "server": true, "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key", "node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true }'
 
 /etc/consul.d/server/config.json:
   file.managed:
+    - user: consul
+    - group: consul
     - contents: '{"bootstrap": false, "server": true, "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key","node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": [{{consul_server_ip}}] }'

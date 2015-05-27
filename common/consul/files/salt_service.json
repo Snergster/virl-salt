@@ -1,0 +1,6 @@
+{
+  "service": {
+    "name": "salt",
+    "tags": ["salt"]
+  }
+}

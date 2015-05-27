@@ -1,0 +1,11 @@
+{
+  "service": [{
+    "name": "virl",
+    "tags": ["virl"]
+  },
+  {
+    "name": "salt",
+    "tags": ["salt"]
+  }
+  ]
+}
