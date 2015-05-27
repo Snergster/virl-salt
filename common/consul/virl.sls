@@ -1,6 +1,6 @@
 
 {% for each in ['/etc/consul.d/bootstrap/','/etc/consul.d/server/','/etc/consul.d/client/']%}
-consul virl.conf:
+{{each}}virl.conf:
   file.managed:
     - name: {{each}}virl.conf
     - source: salt://common/consul/files/virl.conf
@@ -10,7 +10,7 @@ consul virl.conf:
 
 consul:
   service.running:
+    - order: last
     - enable: True
     - reload: True
-    - watch:
-      - file: consul virl.conf
+
