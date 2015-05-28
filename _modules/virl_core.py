@@ -46,7 +46,7 @@ def __get_config(key, default=None):
 class VirlCommandExecutionError(CommandExecutionError):
 
     def __init__(self, output, exitcode=None):
-        super(VirlCommandExecutionError, self).__init__(output, exitcode)
+        super(VirlCommandExecutionError, self).__init__(output)
         self.output = output
         self.exitcode = exitcode
 
