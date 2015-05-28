@@ -28,7 +28,7 @@
     "id": "virl_vis_webserver",
     "name": "virl-vis-webserver on port 19402",
     "service_id": "virl",
-    "http": "http://localhost:19402/test/",
+    "http": "http://localhost:19402/test",
     "interval": "90s",
     "timeout": "20s"
   },
@@ -60,7 +60,7 @@
     "id": "ank_cisco_webserver",
     "name": "ank-cisco-webserver on port 19401",
     "service_id": "virl",
-    "http": "http://localhost:19401/test/",
+    "http": "http://localhost:19401/test",
     "interval": "90s",
     "timeout": "20s"
   },
