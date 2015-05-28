@@ -12,7 +12,7 @@
     - present
     - fullname: {{ user['fullname'] }}
     - name: {{ username }}
-    - shell: /bin/bash
+    - shell: {{ user['shell'] }}
     - home: /home/{{ username }}
     - password: {{ user['crypt'] }}
     {% if 'groups' in user %}
