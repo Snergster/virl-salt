@@ -9,6 +9,14 @@ bgp tenant state ex:
       - description='bgp demo'
       - quota_vcpus=10
       - quota_instances=10
+
+bgp specific image:
+  local.cmd.run:
+    - tgt: {{ id }}
+    - arg:
+      - salt-call state.sls virl.routervms.iosv
+
+bgp password reset:
   local.virl_core.user_present:
     - tgt: {{ id }}
     - arg:
@@ -17,11 +25,9 @@ bgp tenant state ex:
       - project={{ user }}
       - role='_member_'
 
-bgp specific image:
-  local.cmd.run:
-    - tgt: {{ id }}
-    - arg:
-      - salt-call state.sls virl.routervms.iosv
+
+
+
 {% elif 'odl' in user %}
 simple state ex:
   local.virl_core.project_present:
