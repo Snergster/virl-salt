@@ -41,7 +41,6 @@ simple state ex:
       - user_password= {{user}}
 
 
-all state.sls virl.routervms.iosv
 
 {% elif 'salt' in user %}
 simple state ex:
@@ -55,6 +54,7 @@ odl specific image:
   local.cmd.run:
     - tgt: {{ id }}
     - arg:
-      - salt-c
+      - salt-call state.sls virl.routervms.iosv
+
 
 {% endif %}
