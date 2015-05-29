@@ -10,6 +10,12 @@ bgp tenant state ex:
       - quota_vcpus=10
       - quota_instances=10
 
+bgp specific image:
+  local.cmd.run:
+    - tgt: {{ id }}
+    - arg:
+      - /bin/sleep 5
+
 bgp pass fix:
   local.virl_core.user_present:
     - tgt: {{ id }}
