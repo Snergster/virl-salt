@@ -58,7 +58,7 @@ odl specific image:
 
 {% elif 'salt' in user %}
 simple state ex:
-  local.cmd.run:
+  local.state.sls:
     - tgt: {{ id }}
     - env:
       - 'virluser': '{{user}}'
@@ -67,7 +67,7 @@ simple state ex:
       - 'virlexpire': 2
       - 'virlinstances': 10
     - arg:
-      - salt-call state.sls virl.user
+      - virl.user
 
 salt specific image:
   local.cmd.run:
