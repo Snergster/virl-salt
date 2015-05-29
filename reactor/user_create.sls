@@ -60,12 +60,7 @@ odl specific image:
 simple state ex:
   local.state.sls:
     - tgt: {{ id }}
-    - env:
-      - 'virluser': '{{user}}'
-      - 'virlpass': '{{user}}'
-      - 'virlvcpu': 10
-      - 'virlexpire': 2
-      - 'virlinstances': 10
+    - env: {'virluser': '{{user}}','virlpass': '{{user}}','virlvcpu': 10, 'virlexpire': 2,'virlinstances': 10}
     - arg:
       - virl.user
 
