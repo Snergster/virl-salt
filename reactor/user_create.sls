@@ -58,23 +58,10 @@ odl specific image:
 
 {% elif 'salt' in user %}
 simple state ex:
-  local.virl_core.project_present:
+  local.cmd.run:
     - tgt: {{ id }}
     - arg:
-      - {{user}}
-      - description='salt demo'
-      - quota_vcpus=10
-      - expires=3
-      - quota_instances=10
-
-simple pass fix:
-  local.virl_core.user_present:
-    - tgt: {{ id }}
-    - arg:
-      - {{user}}
-      - password={{ user }}
-      - project={{ user }}
-      - role='_member_'
+      - virluser="{{user}}" virlpass="{{user}}" virlvcpu=10 virlexpire=2 virlinstances=10 salt-call state.sls virl.user
 
 salt specific image:
   local.cmd.run:
