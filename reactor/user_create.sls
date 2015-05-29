@@ -69,10 +69,5 @@ simple state ex:
     - arg:
       - virl.user
 
-salt specific image:
-  local.cmd.run:
-    - tgt: {{ id }}
-    - arg:
-      - salt-call state.sls virl.routervms.iosv
 
 {% endif %}
