@@ -38,23 +38,10 @@ simple state ex:
       - quota_vcpus=10
       - expires=2
       - quota_instances=10
+      - user_password= {{user}}
 
-simple pass fix:
-  local.virl_core.user_present:
-    - require:
-      - local.virl_core: simple pass fix
-    - tgt: {{ id }}
-    - arg:
-      - {{user}}
-      - password={{ user }}
-      - project={{ user }}
-      - role='_member_'
 
-odl specific image:
-  local.cmd.run:
-    - tgt: {{ id }}
-    - arg:
-      - salt-call state.sls virl.routervms.iosv
+all state.sls virl.routervms.iosv
 
 {% elif 'salt' in user %}
 simple state ex:
@@ -64,5 +51,10 @@ simple state ex:
     - arg:
       - virl.user
 
+odl specific image:
+  local.cmd.run:
+    - tgt: {{ id }}
+    - arg:
+      - salt-c
 
 {% endif %}
