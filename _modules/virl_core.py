@@ -14,7 +14,7 @@ To use this module on a minion::
     `sudo salt-call --local -m <path> virl_core.<function> <parameters>`
 """
 
-
+import time
 import simplejson
 import subprocess
 from salt.exceptions import CommandExecutionError
@@ -290,7 +290,7 @@ def project_present(name,  description=None, expires=None, quota_vcpus=200, quot
             props[json_key] = kwargs[key]
     data = simplejson.dumps({'projects': [props],
                              'users': []})
-
+    time.sleep(5)
     results = __uwm_client('project-import',
                            args=('--update',),
                            kwargs={'--data': data})
