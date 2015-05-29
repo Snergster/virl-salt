@@ -41,6 +41,7 @@ simple state ex:
 
 simple pass fix:
   local.virl_core.user_present:
+    - order: last
     - tgt: {{ id }}
     - arg:
       - {{user}}
