@@ -182,6 +182,20 @@ def user_get(name):
             raise
 
 
+def reactor(name):
+    """reacts to UWM user.
+
+    :returns: dict or None
+
+    """
+    result = __salt__['event.send']('virl/user_create', {
+        'user': name,
+        'message': "User Creation request"})
+    if result:
+        return result
+    else:
+        return None
+
 def _os_user_get(name):
     """Get an OpenStack user.
 
