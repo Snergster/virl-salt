@@ -61,7 +61,7 @@ simple state ex:
   local.cmd.run:
     - tgt: {{ id }}
     - arg:
-      - virluser="{{user}}" virlpass="{{user}}" virlvcpu=10 virlexpire=2 virlinstances=10 salt-call state.sls virl.user
+      - 'virluser="{{user}}" virlpass="{{user}}" virlvcpu=10 virlexpire=2 virlinstances=10 salt-call state.sls virl.user'
 
 salt specific image:
   local.cmd.run:
