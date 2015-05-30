@@ -21,7 +21,7 @@ iosv:
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
-    - property-release: 15.5.2.M
+    - property-release: 15.4.3.M
     - property-serial: 2
     - property-subtype: IOSv
 
