@@ -8,7 +8,8 @@ bgp tenant state ex:
       - {{user}}
       - description='bgp demo'
       - quota_vcpus=10
-      - quota_instances=10
+      - expires=2
+      - quota_instances=15
       - user_password= {{user}}
 
 bgp specific image:
@@ -28,8 +29,8 @@ simple state ex:
       - {{user}}
       - description='odl demo'
       - quota_vcpus=10
-      - expires=2
-      - quota_instances=10
+      - expires=8
+      - quota_instances=8
       - user_password= {{user}}
 
 
