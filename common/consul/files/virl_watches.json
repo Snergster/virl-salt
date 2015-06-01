@@ -3,8 +3,8 @@
   "watches": [
   {
     "type": "service",
-    "service": "virl-{{salt['grains.get']('host', 'generic')) }}",
-    "handler": "/usr/local/bin/hipchat-minor-alarm 'virl status change on {{salt['grains.get']('host', 'generic')) }}'"
+    "service": "virl-{{salt['grains.get']('host', 'generic')}}",
+    "handler": "/usr/local/bin/hipchat-minor-alarm 'virl status change on {{salt['grains.get']('host', 'generic') }}'"
   }
  ]
 }

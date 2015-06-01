@@ -19,7 +19,7 @@
   {
     "id": "UWM",
     "name": "UWM on port 19400",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "http": "http://localhost:19400/rest/",
     "interval": "90s",
     "timeout": "20s"
@@ -27,7 +27,7 @@
   {
     "id": "virl_vis_webserver",
     "name": "virl-vis-webserver on port 19402",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "http": "http://localhost:19402/test",
     "interval": "90s",
     "timeout": "20s"
@@ -35,7 +35,7 @@
   {
     "id": "keystone_service",
     "name": "keystone service",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "script": "/usr/sbin/service keystone status",
     "interval": "90s",
     "timeout": "20s"
@@ -43,7 +43,7 @@
   {
     "id": "Neutron_port",
     "name": "Neutron API on port 9696",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "http": "http://localhost:9696/",
     "interval": "90s",
     "timeout": "20s"
@@ -51,7 +51,7 @@
   {
     "id": "Nova_port",
     "name": "Nova API on port 8774",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "http": "http://localhost:8774/",
     "interval": "90s",
     "timeout": "20s"
@@ -59,7 +59,7 @@
   {
     "id": "ank_cisco_webserver",
     "name": "ank-cisco-webserver on port 19401",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "http": "http://localhost:19401/test",
     "interval": "90s",
     "timeout": "20s"
@@ -67,7 +67,7 @@
   {
     "id": "virl-vis-processor",
     "name": "service virl-vis-processor running",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "script": "/usr/sbin/service virl-vis-processor status",
     "interval": "90s"
   },
@@ -81,7 +81,7 @@
   {
     "id": "virl-vis-mux",
     "name": "service virl-vis-mux running",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "script": "/usr/sbin/service virl-vis-mux status",
     "interval": "90s"
   }
