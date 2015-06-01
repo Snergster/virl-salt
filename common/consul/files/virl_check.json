@@ -4,7 +4,7 @@
     "id": "VIRL_main",
     "name": "VIRL web on port 80",
     "http": "http://localhost:80/",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "interval": "90s",
     "timeout": "10s"
   },
@@ -12,7 +12,7 @@
     "id": "STD",
     "name": "STD on port 19399",
     "http": "http://localhost:19399/",
-    "service_id": "virl_{{salt['grains.get']('host', 'generic')) }}",
+    "service_id": "virl_{{salt['grains.get']('host', 'generic') }}",
     "interval": "90s",
     "timeout": "10s"
   },
