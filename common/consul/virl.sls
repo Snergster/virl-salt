@@ -3,11 +3,19 @@
 {{each}}virl_check.json:
   file.managed:
     - source: salt://common/consul/files/virl_check.json
+    - template: jinja
     - user: consul
     - group: consul
 {{each}}virl_service.json:
   file.managed:
     - source: salt://common/consul/files/virl_service.json
+    - template: jinja
+    - user: consul
+    - group: consul
+{{each}}virl_service.json:
+  file.managed:
+    - source: salt://common/consul/files/virl_service.json
+    - template: jinja
     - user: consul
     - group: consul
 {% endfor %}
