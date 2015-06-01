@@ -12,9 +12,9 @@
     - template: jinja
     - user: consul
     - group: consul
-{{each}}virl_service.json:
+{{each}}virl_watches.json:
   file.managed:
-    - source: salt://common/consul/files/virl_service.json
+    - source: salt://common/consul/files/virl_watches.json
     - template: jinja
     - user: consul
     - group: consul
