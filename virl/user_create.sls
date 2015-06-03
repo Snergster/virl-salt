@@ -4,8 +4,8 @@
   module.run:
     - name: virl_core.project_present
     - mname: {{username}}
-    - description={{user['description']}}
-    - quota_vcpus={{user['vcpus']}}
-    - quota_instances={{user['instances']}}
-    - user_password={{user['password']}}
+    - description: {{user['description']}}
+    - quota_vcpus: {{user['vcpus']}}
+    - quota_instances: {{user['instances']}}
+    - user_password: {{user['password']}}
 {% endfor %}
