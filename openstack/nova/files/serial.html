@@ -1,0 +1,110 @@
+<!doctype html>
+<head>
+<title>Nova serial port</title>
+<!--
+  Based on tty.js
+  Copyright (c) 2012-2013, Christopher Jeffrey (MIT License)
+  Modified ifor Nova by Ian Wells
+-->
+<style>
+  .terminal {
+    border: #000 solid 5px;
+    font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
+    font-size: 11px;
+    color: #f0f0f0;
+    background: #000;
+  }
+
+  .reverse-video {
+    color: #000;
+    background: #f0f0f0;
+  }
+
+  #terminal-title, #terminal {
+    margin: 0px;
+  }
+  #terminal-title {
+    background: #eee;
+  }
+  #terminal-container {
+    visibility: hidden;
+    display: none;
+    float: left;
+    margin: 10px;
+    padding: 0px;
+  }
+</style>
+<script src="term.js"></script>
+<script>
+(function() {
+  return setTimeout(function() {
+    // getQueryVar, createCookie from noVNC/include/webutil.js
+    getQueryVar = function(name, defVal) {
+	var re = new RegExp('[?][^#]*' + name + '=([^&#]*)'),
+	    match = document.location.href.match(re);
+	if (typeof defVal === 'undefined') { defVal = null; }
+	if (match) {
+	    return decodeURIComponent(match[1]);
+	} else {
+	    return defVal;
+	}
+    };
+
+    createCookie = function(name,value,days) {
+	var date, expires;
+	if (days) {
+	    date = new Date();
+	    date.setTime(date.getTime()+(days*24*60*60*1000));
+	    expires = "; expires="+date.toGMTString();
+	}
+	else {
+	    expires = "";
+	}
+	document.cookie = name+"="+value+expires+"; path=/";
+    };
+
+    // If a token variable is passed in, set the parameter in a cookie.
+    // This is used by nova-novncproxy.
+    token = getQueryVar('token', null);
+    if (token) {
+	createCookie('token', token, 1)
+    }
+
+    var term = new Terminal(80, 40);
+    // the proxy we use uses a binary data format.  To convert we have
+    // to use a filereader.
+    var ws = new WebSocket('ws://' + document.location.hostname + ':' + document.location.port + '/websockify', ['binary']);
+    ws.onopen=(function(evt) {
+      term.on('data', function(data) {
+        ws.send(data);
+      });
+
+      term.on('title', function(title) {
+        document.getElementById('terminal-title').setText(title);
+      });
+
+      term.open(document.getElementById('terminal'));
+
+      ws.onmessage=function(evt) {
+        var reader = new FileReader();
+        reader.addEventListener('loadend', function() {
+	  term.write(reader.result);
+        });
+
+	reader.readAsBinaryString(evt.data);        
+      };
+      ws.onerror=function(evt) {
+	alert('websocket error: ' + evt.data);
+      };
+    });
+  }, 1000);
+}).call(this);
+</script>
+</head>
+<body>
+
+<div id='terminal-container'>
+<div id='terminal-title'>Terminal</div>
+<div id='terminal'></div>
+</div>
+</body></html>
