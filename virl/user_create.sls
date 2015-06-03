@@ -7,6 +7,6 @@
     - description={{user['description']}}
     - quota_vcpus={{user['vcpus']}}
     - expires={{user['expires']}}
-    - quota_instances={{user['password']}}
+    - quota_instances={{user['instances']}}
     - user_password={{user['password']}}
 {% endfor %}
