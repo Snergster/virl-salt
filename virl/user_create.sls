@@ -3,7 +3,7 @@
 {{username}} user creator:
   module.run:
     - name: virl_core.project_present
-    - mname: {{username}}
+    - m_name: {{username}}
     - description: {{user['description']}}
     - quota_vcpus: {{user['vcpus']}}
     - quota_instances: {{user['instances']}}
