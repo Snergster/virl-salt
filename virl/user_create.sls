@@ -6,7 +6,9 @@
     - mname: {{username}}
     - description={{user['description']}}
     - quota_vcpus={{user['vcpus']}}
+    {% if user['expires']%}
     - expires={{user['expires']}}
+    {% endif %}
     - quota_instances={{user['instances']}}
     - user_password={{user['password']}}
 {% endfor %}
