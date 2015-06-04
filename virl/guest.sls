@@ -18,7 +18,7 @@ fix guest password:
     - m_name: guest
     - password: guest
     - project: guest
-    - role: _member_
+    - role: admin
     - require:
       - module: create guest account
 {% else %}
