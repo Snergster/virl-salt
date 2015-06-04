@@ -11,21 +11,21 @@
     - mode: 0755
 
 
-/etc/init/virl-webmux.conf:
+/etc/init/telnetproxy.conf:
   file.managed:
-    - source: "salt://virl/ank/files/virl-webmux.conf"
+    - source: "salt://virl/ank/files/telnetproxy.conf"
     - mode: 0755
     - require:
       - file: /usr/local/bin/telnetproxy.linux
 
-virl-webmux:
+telnetproxy:
   service.running:
-    - name: virl-webmux
+    - name: telnetproxy
     - order: last
     - enable: True
     - restart: True
     - require:
-      - file: /etc/init/virl-webmux.conf
+      - file: /etc/init/telnetproxy.conf
 
 mgmt_lxc_replace:
   file.managed:

@@ -4,12 +4,12 @@
 /usr/local/bin/telnetserver.linux:
   file.absent
 
-/etc/init/virl-webmux.conf:
+/etc/init/telnetproxy.conf:
   file.absent
 
-virl-webmux:
+telnetproxy:
   service.dead:
-    - name: virl-webmux
+    - name: telnetproxy
     - order: last
     - enable: False
 
