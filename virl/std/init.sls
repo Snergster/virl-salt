@@ -58,7 +58,7 @@ std docs:
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
 
-{% if venv = 'qa' %}
+{% if venv == 'qa' %}
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
