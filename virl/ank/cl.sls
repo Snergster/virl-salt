@@ -54,3 +54,12 @@ virl-uwm:
     - onlyif: ls /usr/local/bin/virl_uwm_server
     - watch:
       - file: mgmt_lxc_replace
+
+ank-cisco-webserver:
+  service:
+    - running
+    - order: last
+    - enable: True
+    - restart: True
+    - watch:
+      - file: mgmt_lxc_replace
