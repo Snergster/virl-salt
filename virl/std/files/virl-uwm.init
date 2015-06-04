@@ -25,26 +25,25 @@ case "$1" in
 
     $RUN_CMD >/dev/null 2>&1 &
 
-    WAIT_TIMEOUT=$(($(date +%s) + $MAX_WAIT))
-    while [ $(date +%s) -lt $WAIT_TIMEOUT ]; do
+    WAIT=0
+    while [ $WAIT -ne $MAX_WAIT ]; do
+        ((WAIT++))
         sleep 1
         STATUS=$($STATUS_CMD)
         if [ "$?" -eq 0 ]; then
             echo "$SERVICE has been started."
             echo "$STATUS"
+            initctl emit -n starting JOB=virl-uwm
             exit 0
         fi
     done
-
     PIDS=`getpids`
     if [ -z "$PIDS" ]; then
         echo "$SERVICE could not be started."
-    else
-        echo "$SERVICE has been started in a bad state."
+        exit 1
     fi
-    echo "$STATUS"
-    STD_DIR=$($CMD env | grep 'VIRL_STD_DIR' | tail -1 | sed 's/.\+= \?//')
-    echo "For more details see $STD_DIR/logs/uwm_server.log"
+
+    echo "$SERVICE has been started in a bad state."
     exit 1
     ;;
   stop)
@@ -64,6 +63,7 @@ case "$1" in
 	PIDS=`getpids`
 	if [ -z "$PIDS" ]; then
 	    echo "$SERVICE was stopped."
+	    initctl emit -n stopping JOB=virl-uwm
 	    exit 0
 	fi 
     done
@@ -72,12 +72,7 @@ case "$1" in
         PID_LIST=`echo $PIDS | sed -e "s/ /, /g"`
         echo "$SERVICE is still running. Killing processes: $PID_LIST."
         kill -9 $PIDS
-        sleep 0.1
-        PIDS=`getpids`
-        if [ -n "$PIDS" ]; then
-            echo "$SERVICE could not be killed."
-            exit 1
-        fi
+        exit 1
     fi
     echo "$SERVICE was stopped."
     ;;

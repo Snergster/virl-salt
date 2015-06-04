@@ -17,8 +17,6 @@
 {% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
 
 
-
-{% if not masterless %}
 /var/cache/virl/std:
   file.recurse:
     {% if std_ver_fixed %}
@@ -60,33 +58,12 @@ std docs:
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
 
-{% else %}
-
-std_init local:
+{% if venv = 'qa' %}
+virl_webmux_init:
   file.managed:
-    - name: /etc/init.d/virl-std
-    - source: "file:///srv/salt/virl/std/files/virl-std.init"
-    - source_hash: md5=a143c518d8a7942c96bce306e83e8fb8
+    - name: /etc/init/virl-webmux.conf
+    - source: "salt://virl/std/files/virl-webmux.conf"
     - mode: 0755
-
-uwm_init local:
-  file.managed:
-    - name: /etc/init.d/virl-uwm
-    - source: "file:///srv/salt/virl/std/files/virl-uwm.init"
-    - source_hash: md5=97697ed887ccdd534e46fa4cabf16877
-    - mode: 0755
-
-std docs local:
-  archive:
-    - extracted
-    - name: /var/www/doc/
-    - source: "file:///srv/salt/virl/std/files/html_ext.tar.gz"
-    - source_hash: md5=aa7d771aa4400605e94659c315ddb9e8
-    - archive_format: tar
-    - tar_options: xz
-    - if_missing: /var/www/doc/index.html
-
-
 {% endif %}
 
 /etc/virl directory:
