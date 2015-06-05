@@ -249,14 +249,11 @@ virl_collection:
 /etc/rc2.d/S98ank-webserver:
   file.absent
 
+ank-webserver:
+  service.dead
+
 /etc/init.d/ank-webserver:
-  file.absent:
-    - name: /etc/init.d/ank-webserver
-  service.dead:
-    - names:
-      - ank-webserver
-    - prereq:
-      - file: /etc/init.d/ank-webserver
+  file.absent
 
 /etc/rc2.d/S98live-vis-webserver:
   file.absent
