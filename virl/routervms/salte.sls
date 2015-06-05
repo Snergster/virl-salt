@@ -25,7 +25,7 @@ vsalte flavor delete:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "vsalte"'
     - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-show "vsalte"
     - onchanges:
-      - glance: vsalt
+      - glance: vsalte
 
 vsalte flavor create:
   module.run:
@@ -35,7 +35,7 @@ vsalte flavor create:
     - disk: 0
     - vcpus: 1
     - onchanges:
-      - glance: vsaltee
+      - glance: vsalte
     - require:
       - cmd: vsalte flavor delete
 
