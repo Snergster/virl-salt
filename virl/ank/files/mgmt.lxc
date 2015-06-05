@@ -362,8 +362,8 @@ EOF
     if type -P virl_collection_client ; then
         virl_collection_client &
     fi
-    if type -P virl-telnet-websocket ; then
-        virl-telnet-websocket &
+    if type -P telnetserver.linux ; then
+        telnetserver.linux &
     fi
     exec /usr/sbin/init.lxc -- $sshd_path
     exit 1
