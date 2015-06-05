@@ -364,11 +364,13 @@ virl:
                     salt_grain.write(""" '{key}': {value} ,""".format(key=key,value=value))
                 else:
                     salt_grain.write(""" '{key}': '{value}',""".format(key=key,value=value))
-            if cinder_device or cinder_file:
-                salt_grain.write("""  'cinder_enabled': True ,""")
-            else:
+            if cml:
                 salt_grain.write("""  'cinder_enabled': False ,""")
-            if cml: salt_grain.write("""  'cinder_enabled': False ,""")
+            else:
+                if cinder_device or cinder_file:
+                    salt_grain.write("""  'cinder_enabled': True ,""")
+                else:
+                    salt_grain.write("""  'cinder_enabled': False ,""")
             if not uwm_port == '14000':
                 salt_grain.write("""  'uwm_url': 'http://{0}:{1}',""".format(public_ip,uwm_port))
             salt_grain.write(""" 'neutron_extnet_id': '{neutid}',""".format(neutid=neutron_extnet_id))
