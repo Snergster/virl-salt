@@ -127,6 +127,7 @@ ank_prereq:
       - networkx >= 1.7
       - PyYAML >= 3.10
       - tornado >= 3.2.2, < 4.0.0
+      - pexpect == 3.1
 
 textfsm:
   pip.installed:
