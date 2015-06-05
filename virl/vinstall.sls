@@ -13,7 +13,7 @@
   file.copy:
     - source: /srv/salt/virl/files/vinstall.py
     - mode: 0755
-    - force: true
+    - force: True
     - onlyif: 'test -e /srv/salt/virl/files/vinstall.py'
 {% endif %}
 
