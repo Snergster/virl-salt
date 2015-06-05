@@ -3,19 +3,12 @@
 
 
 /usr/local/bin/vinstall:
-{% if not masterless %}
   file.managed:
     - source: salt://virl/files/vinstall.py
     - user: virl
     - group: virl
     - mode: 0755
-{% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/vinstall.py
-    - mode: 0755
-    - force: True
-    - onlyif: 'test -e /srv/salt/virl/files/vinstall.py'
-{% endif %}
+
 
 {% if not masterless %}
 /srv/salt/virl/host.sls:
