@@ -72,11 +72,11 @@ std_prereq_qa:
     - proxy: {{ http_proxy }}
   {% endif %}
     - names:
-      - Tristed >= 13.2.0
+      - Twisted >= 13.2.0
       - parse >= 1.4.1
       - stuf >= 0.9.4
       - txsockjs >= 1.2.1
-      - zoope.interface >= 4.1.0
+      - zope.interface >= 4.1.0
       - SQLObject >= 1.5.1
       - service_identity
 {% endif %}
