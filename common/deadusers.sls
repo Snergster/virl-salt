@@ -20,3 +20,12 @@
   {% endif %}
 
 {% endfor %}
+
+{% for username, user in pillar.get('demousers', {}).items() %}
+{{ username }}:
+  user:
+    - absent
+    - purge: True
+    - name: {{ username }}
+
+{% endfor %}
