@@ -32,6 +32,7 @@
       {% endif %}
     {% endif %}
     - clean: true
+    - show_diff: False
     - user: virl
     - group: virl
     - file_mode: 755
@@ -64,6 +65,20 @@ virl_webmux_init:
     - name: /etc/init/virl-webmux.conf
     - source: "salt://virl/std/files/virl-webmux.conf"
     - mode: 0755
+
+std_prereq_qa:
+  pip.installed:
+  {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+  {% endif %}
+    - names:
+      - Twisted >= 13.2.0
+      - parse >= 1.4.1
+      - stuf >= 0.9.4
+      - txsockjs >= 1.2.1
+      - zope.interface >= 4.1.0
+      - SQLObject >= 1.5.1
+      - service_identity
 {% endif %}
 
 /etc/virl directory:
