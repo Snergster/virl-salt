@@ -19,6 +19,7 @@ rabbitmq restart:
     - enable: True
     - watch:
       - cmd: rabbit_pass
+      - file: /etc/rabbitmq/rabbitmq-env.conf
 
 /etc/rabbitmq/rabbitmq-env.conf:
   file.managed:
