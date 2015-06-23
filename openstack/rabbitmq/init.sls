@@ -19,3 +19,14 @@ rabbitmq restart:
     - enable: True
     - watch:
       - cmd: rabbit_pass
+
+/etc/rabbitmq/rabbitmq-env.conf:
+  file.managed:
+    - require:
+      - pkg: rabbitmq-server
+    - makedirs: True
+    - contents: |
+        RABBITMQ_NODE_IP_ADDRESS=0.0.0.0
+
+
+
