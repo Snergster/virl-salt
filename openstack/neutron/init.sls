@@ -94,6 +94,14 @@ neutron-pkgs:
     - require:
       - pkg: neutron-pkgs
 
+/etc/init/neutron-server.conf:
+  file.managed:
+    - mode: 644
+    - makedirs: True
+    - source: "salt://openstack/neutron/files/neutron-server.conf"
+    - require:
+      - pkg: neutron-pkgs
+
 neutron-sysctl:
   file.replace:
     - name: /etc/sysctl.conf
