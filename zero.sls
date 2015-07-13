@@ -53,7 +53,7 @@ crudini:
     - require:
       - file: first-vinstall
     {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    {% set proxy = salt['grains.get']('http_proxy', 'None') %}
     - proxy: {{ proxy }}
     {% endif %}
 {% endfor %}
@@ -61,7 +61,7 @@ crudini:
 configparserus:
   pip.installed:
     {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    {% set proxy = salt['grains.get']('http_proxy', 'None') %}
     - proxy: {{ proxy }}
     {% endif %}
     - name: configparser>=3.3.0r2
@@ -69,7 +69,7 @@ configparserus:
 configparser fallback:
   pip.installed:
     {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    {% set proxy = salt['grains.get']('http_proxy', 'None') %}
     - proxy: {{ proxy }}
     {% endif %}
     - name: configparser>=3.3.0.post2

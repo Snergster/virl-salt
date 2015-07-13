@@ -1,6 +1,6 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% set ifproxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 
 include:
   - common.ubuntu
@@ -66,7 +66,7 @@ vinstall wheels:
 configparserus:
   pip.installed:
     {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    {% set proxy = salt['grains.get']('http_proxy', 'None') %}
     - proxy: {{ proxy }}
     {% endif %}
     - name: configparser>=3.3.0r2
@@ -74,7 +74,7 @@ configparserus:
 configparser fallback:
   pip.installed:
     {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    {% set proxy = salt['grains.get']('http_proxy', 'None') %}
     - proxy: {{ proxy }}
     {% endif %}
     - name: configparser>=3.3.0.post2
