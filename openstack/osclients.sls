@@ -100,6 +100,7 @@ keystone client:
       - pip: nova client
     - names:
       - python-keystoneclient == 1.0.0
+      - oslo.i18n == 1.6.0
   file.managed:
     - name: /etc/apt/preferences.d/python-keystoneclient
     - require:

@@ -45,7 +45,7 @@ vinstall wheels:
     - source: salt://files/wheels
 {% endif %}
 
-{% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
+{% for pyreq in 'wheel','envoy','docopt','sh' %}
 {{ pyreq }}:
   pip.installed:
     - require:
@@ -63,6 +63,23 @@ vinstall wheels:
     {% endif %}
 {% endfor %}
 
+configparserus:
+  pip.installed:
+    {% if ifproxy == True %}
+    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    - proxy: {{ proxy }}
+    {% endif %}
+    - name: configparser>=3.3.0r2
+
+configparser fallback:
+  pip.installed:
+    {% if ifproxy == True %}
+    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    - proxy: {{ proxy }}
+    {% endif %}
+    - name: configparser>=3.3.0.post2
+    - onfail:
+      - pip: configparserus
 
 download dir exists:
   file.directory:

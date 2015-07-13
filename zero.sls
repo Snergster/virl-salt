@@ -47,7 +47,7 @@ crudini:
   pkg.installed:
    - refresh: False
 
-{% for pyreq in 'wheel','envoy','docopt','sh','configparser>=3.3.0r2' %}
+{% for pyreq in 'wheel','envoy','docopt','sh' %}
 {{ pyreq }}:
   pip.installed:
     - require:
@@ -57,6 +57,26 @@ crudini:
     - proxy: {{ proxy }}
     {% endif %}
 {% endfor %}
+
+configparserus:
+  pip.installed:
+    {% if ifproxy == True %}
+    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    - proxy: {{ proxy }}
+    {% endif %}
+    - name: configparser>=3.3.0r2
+
+configparser fallback:
+  pip.installed:
+    {% if ifproxy == True %}
+    {% set proxy = salt['grains.get']('http proxy', 'None') %}
+    - proxy: {{ proxy }}
+    {% endif %}
+    - name: configparser>=3.3.0.post2
+    - onfail:
+      - pip: configparserus
+
+
 
 /usr/local/bin/openstack-config:
   file.symlink:
