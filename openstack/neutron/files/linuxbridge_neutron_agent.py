@@ -23,6 +23,7 @@
 # @author: Sumit Naiksatam, Cisco Systems, Inc.
 
 import os
+import os.path
 import sys
 import time
 
@@ -62,6 +63,16 @@ DEVICE_NAME_PLACEHOLDER = "device_name"
 BRIDGE_PORT_FS_FOR_DEVICE = BRIDGE_FS + DEVICE_NAME_PLACEHOLDER + "/brport"
 BRIDGE_FS_FOR_DEVICE = BRIDGE_PORT_FS_FOR_DEVICE + "/bridge"
 VXLAN_INTERFACE_PREFIX = "vxlan-"
+# Bridge ageing control
+BRIDGE_AGEING_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/ageing_time"
+# Bridge multicast snooping control
+BRIDGE_SNOOPING_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/multicast_snooping"
+# Allow forwarding of all 802.1d reserved frames but 0 and disallowed STP, LLDP
+BRIDGE_FWD_MASK_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/group_fwd_mask"
+BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
+BRIDGE_FWD_MASK_ALL = hex(0xffff)
+# Check that instance exists before trying to execute virsh on it
+NOVA_INSTANCE_DIR = '/var/lib/nova/instances/%s'
 # Allow forwarding of all 802.1d reserved frames but 0 and disallowed STP, LLDP
 BRIDGE_FWD_MASK_FS = BRIDGE_FS + BRIDGE_NAME_PLACEHOLDER + "/bridge/group_fwd_mask"
 BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
@@ -79,6 +90,7 @@ class NetworkSegment:
 
 class LinuxBridgeManager:
     def __init__(self, interface_mappings, root_helper):
+        self.bridge_fwd_mask = BRIDGE_FWD_MASK_ALL
         self.interface_mappings = interface_mappings
         self.root_helper = root_helper
         self.ip = ip_lib.IPWrapper(self.root_helper)
@@ -94,7 +106,7 @@ class LinuxBridgeManager:
                               'must be provided'))
         # Store network mapping to segments
         self.network_map = {}
-        self.bridge_fwd_mask = BRIDGE_FWD_MASK_ALL
+        self.known_bridges = set()
 
     def get_bridge_name(self, network_id):
         if not network_id:
@@ -125,12 +137,10 @@ class LinuxBridgeManager:
                           "incorrect vxlan device name"), segmentation_id)
 
     def get_all_neutron_bridges(self):
-        neutron_bridge_list = []
         bridge_list = os.listdir(BRIDGE_FS)
         for bridge in bridge_list:
             if bridge.startswith(BRIDGE_NAME_PREFIX):
-                neutron_bridge_list.append(bridge)
-        return neutron_bridge_list
+                yield bridge
 
     def device_exists(self, device):
         return os.path.exists(BRIDGE_FS + device)
@@ -318,7 +328,14 @@ class LinuxBridgeManager:
                         "subinterface %(interface)s"),
                       {'bridge_name': bridge_name, 'interface': interface})
 
-        self.set_bridge_group_fwd_mask(bridge_name)
+        if bridge_name not in self.known_bridges:
+            self.set_bridge_group_fwd_mask(bridge_name)
+            self.set_bridge_ageing(bridge_name)
+            self.set_bridge_multicast_snooping(bridge_name)
+            if utils.execute(['brctl', 'stp', bridge_name,
+                              'off'], root_helper=self.root_helper):
+                return
+            self.known_bridges.add(bridge_name)
 
         if not interface:
             return bridge_name
@@ -330,12 +347,8 @@ class LinuxBridgeManager:
         bridge = self.get_bridge_for_device(interface)
         if bridge != bridge_name:
             try:
-                # Check if the interface is not enslaved in another bridge
-                if bridge is not None:
-                    utils.execute(['brctl', 'delif', bridge, interface],
-                                  root_helper=self.root_helper)
-
-                utils.execute(['brctl', 'addif', bridge_name, interface],
+                utils.execute(['ip', 'link', 'set', 'dev', interface,
+                              'master', bridge_name],
                               root_helper=self.root_helper)
             except Exception as e:
                 LOG.error(_("Unable to add %(interface)s to %(bridge_name)s! "
@@ -394,28 +407,35 @@ class LinuxBridgeManager:
 
         # fix-neutron-agent-for-mtu-config hack
         LOG.debug(_("Set MTU Of %s"), tap_device_name)
-        utils.execute(['ip', 'link', 'set' , tap_device_name, 'mtu', cfg.CONF.network_device_mtu],
-                              root_helper=self.root_helper)
-        # Check if device needs to be added to bridge
-        in_bridge = self.get_bridge_for_device(tap_device_name)
-        if in_bridge != bridge_name:
-            data = {'tap_device_name': tap_device_name,
-                    'bridge_name': bridge_name}
-            msg = _("Adding device %(tap_device_name)s to bridge "
-                    "%(bridge_name)s") % data
-            LOG.debug(msg)
-            if in_bridge and utils.execute(['brctl', 'delif', in_bridge, tap_device_name],
-                                           root_helper=self.root_helper):
-                return False
-            if utils.execute(['brctl', 'addif', bridge_name, tap_device_name],
-                             root_helper=self.root_helper):
-                return False
-        else:
-            data = {'tap_device_name': tap_device_name,
-                    'bridge_name': bridge_name}
-            msg = _("%(tap_device_name)s already exists on bridge "
-                    "%(bridge_name)s") % data
-            LOG.debug(msg)
+        try:
+            utils.execute(['ip', 'link', 'set' , tap_device_name,
+                           'mtu', cfg.CONF.network_device_mtu],
+                           root_helper=self.root_helper)
+        except RuntimeError:
+            LOG.error('Failed to process interface %s for bridge %s',
+                      tap_device_name, bridge_name)
+            return False
+
+        ## Check if device needs to be added to bridge
+        #in_bridge = self.get_bridge_for_device(tap_device_name)
+        #if in_bridge != bridge_name:
+        #    data = {'tap_device_name': tap_device_name,
+        #            'bridge_name': bridge_name}
+        #    msg = _("Adding device %(tap_device_name)s to bridge "
+        #            "%(bridge_name)s") % data
+        #    LOG.debug(msg)
+        #    if in_bridge and utils.execute(['brctl', 'delif', in_bridge, tap_device_name],
+        #                                   root_helper=self.root_helper):
+        #        return False
+        #    if utils.execute(['brctl', 'addif', bridge_name, tap_device_name],
+        #                     root_helper=self.root_helper):
+        #        return False
+        #else:
+        #    data = {'tap_device_name': tap_device_name,
+        #            'bridge_name': bridge_name}
+        #    msg = _("%(tap_device_name)s already exists on bridge "
+        #            "%(bridge_name)s") % data
+        #    LOG.debug(msg)
         return True
 
     def add_interface(self, network_id, network_type, physical_network,
@@ -432,7 +452,7 @@ class LinuxBridgeManager:
         if self.device_exists(bridge_name):
             interfaces_on_bridge = self.get_interfaces_on_bridge(bridge_name)
             for interface in interfaces_on_bridge:
-                self.remove_interface(bridge_name, interface)
+                #self.remove_interface(bridge_name, interface)
 
                 if interface.startswith(VXLAN_INTERFACE_PREFIX):
                     self.delete_vxlan(interface)
@@ -452,17 +472,13 @@ class LinuxBridgeManager:
                             self.delete_vlan(interface)
 
             LOG.debug(_("Deleting bridge %s"), bridge_name)
-            if utils.execute(['ip', 'link', 'set', bridge_name, 'down'],
-                             root_helper=self.root_helper):
-                return
-            if utils.execute(['brctl', 'delbr', bridge_name],
-                             root_helper=self.root_helper):
-                return
+            bridge = self.ip.device(bridge_name)
+            bridge.link.delete()
             LOG.debug(_("Done deleting bridge %s"), bridge_name)
-
         else:
-            LOG.error(_("Cannot delete bridge %s, does not exist"),
+            LOG.debug(_("Cannot delete bridge %s, does not exist"),
                       bridge_name)
+
 
     def remove_empty_bridges(self):
         for network_id in self.network_map.keys():
@@ -471,44 +487,38 @@ class LinuxBridgeManager:
                 self.delete_vlan_bridge(bridge_name)
                 del self.network_map[network_id]
 
+    def prune_known_bridges(self):
+        self.known_bridges.intersection_update(self.get_all_neutron_bridges())
+
     def remove_interface(self, bridge_name, interface_name):
-        if self.device_exists(bridge_name):
-            if not self.is_device_on_bridge(interface_name):
+        log_data = {'interface_name': interface_name,
+                    'bridge_name': bridge_name}
+        #if self.device_exists(bridge_name):
+        if True:
+            if bridge_name != self.get_bridge_for_device(interface_name):
+                LOG.debug("Interface %(interface_name)s is not on bridge"
+                          " %(bridge_name)s", log_data)
                 return True
             LOG.debug(_("Removing device %(interface_name)s from bridge "
-                        "%(bridge_name)s"),
-                      {'interface_name': interface_name,
-                       'bridge_name': bridge_name})
+                        "%(bridge_name)s"), log_data)
             if utils.execute(['brctl', 'delif', bridge_name, interface_name],
                              root_helper=self.root_helper):
                 return False
             LOG.debug(_("Done removing device %(interface_name)s from bridge "
-                        "%(bridge_name)s"),
-                      {'interface_name': interface_name,
-                       'bridge_name': bridge_name})
+                        "%(bridge_name)s"), log_data)
             return True
-        else:
-            LOG.debug(_("Cannot remove device %(interface_name)s bridge "
-                        "%(bridge_name)s does not exist"),
-                      {'interface_name': interface_name,
-                       'bridge_name': bridge_name})
-            return False
 
     def delete_vlan(self, interface):
         if self.device_exists(interface):
             LOG.debug(_("Deleting subinterface %s for vlan"), interface)
-            if utils.execute(['ip', 'link', 'set', interface, 'down'],
-                             root_helper=self.root_helper):
-                return
-            if utils.execute(['ip', 'link', 'delete', interface],
-                             root_helper=self.root_helper):
-                return
+            int_vlan = self.ip.device(interface)
+            int_vlan.link.set_down()
+            int_vlan.link.delete()
             LOG.debug(_("Done deleting subinterface %s"), interface)
 
     def delete_vxlan(self, interface):
         if self.device_exists(interface):
-            LOG.debug(_("Deleting vxlan interface %s for vlan"),
-                      interface)
+            LOG.debug(_("Deleting vxlan interface %s for vlan"), interface)
             int_vxlan = self.ip.device(interface)
             int_vxlan.link.set_down()
             int_vxlan.link.delete()
@@ -558,6 +568,32 @@ class LinuxBridgeManager:
             else:
                 LOG.error('Cannot unmask any mcast forwarding on bridge %s',
                           bridge_name)
+
+    def set_bridge_ageing(self, bridge_name):
+        """Set bridge ageing to control MAC learning"""
+        if cfg.CONF.network_bridge_ageing is None:
+            return
+        bridge_ageing_path = BRIDGE_AGEING_FS.replace(
+                               BRIDGE_NAME_PLACEHOLDER, bridge_name)
+        try:
+            utils.execute(['tee', bridge_ageing_path],
+                          process_input=str(cfg.CONF.network_bridge_ageing),
+                          root_helper=self.root_helper)
+        except RuntimeError:
+            LOG.error('Cannot set ageing on bridge %s', bridge_name)
+
+    def set_bridge_multicast_snooping(self, bridge_name):
+        """Set bridge ageing to control MAC learning"""
+        if cfg.CONF.network_bridge_multicast_snooping is None:
+            return
+        bridge_snooping_path = BRIDGE_SNOOPING_FS.replace(
+                               BRIDGE_NAME_PLACEHOLDER, bridge_name)
+        try:
+            utils.execute(['tee', bridge_snooping_path],
+                          process_input=str(cfg.CONF.network_bridge_multicast_snooping),
+                          root_helper=self.root_helper)
+        except RuntimeError:
+            LOG.error('Cannot set ageing on bridge %s', bridge_name)
 
     def update_devices(self, registered_devices):
         devices = self.get_tap_devices()
@@ -963,6 +999,8 @@ class LinuxBridgeNeutronAgentRPC(sg_rpc.SecurityGroupAgentRpcMixin):
             resync_a = self.treat_devices_added(device_info['added'])
         if 'removed' in device_info:
             resync_b = self.treat_devices_removed(device_info['removed'])
+
+        self.br_mgr.prune_known_bridges()
         # If one of the above operations fails => resync with plugin
         return (resync_a | resync_b)
 
@@ -984,11 +1022,12 @@ class LinuxBridgeNeutronAgentRPC(sg_rpc.SecurityGroupAgentRpcMixin):
             if 'port_id' in details:
                 LOG.info(_("Port %(device)s updated. Details: %(details)s"),
                          {'device': device, 'details': details})
-                updown = self.br_mgr.update_device_link(port_id=details['port_id'],
-                                                        dom_id=details.get('device_id'),
-                                                        hw_addr=details.get('mac_address'),
-                                                        owner=details.get('device_owner'),
-                                                        state=details['admin_state_up'])
+                updown = self.br_mgr.update_device_link(
+                    port_id=details['port_id'],
+                    dom_id=details.get('device_id'),
+                    hw_addr=details.get('mac_address'),
+                    owner=details.get('device_owner'),
+                    state=details['admin_state_up'])
                 if details['admin_state_up']:
                     # create the networking for the port
                     network_type = details.get('network_type')
@@ -1040,7 +1079,7 @@ class LinuxBridgeNeutronAgentRPC(sg_rpc.SecurityGroupAgentRpcMixin):
                 LOG.info(_("Port %s updated."), device)
             else:
                 LOG.debug(_("Device %s not defined on plugin"), device)
-            self.br_mgr.remove_empty_bridges()
+        self.br_mgr.remove_empty_bridges()
         return resync
 
     def daemon_loop(self):
