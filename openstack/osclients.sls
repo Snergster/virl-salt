@@ -101,6 +101,9 @@ keystone client:
     - names:
       - python-keystoneclient == 1.0.0
       - oslo.i18n == 1.6.0
+      - oslo.serialization == 1.5.0
+      - oslo.utils == 1.5.0
+
   file.managed:
     - name: /etc/apt/preferences.d/python-keystoneclient
     - require:
