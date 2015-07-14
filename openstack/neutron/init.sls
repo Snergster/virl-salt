@@ -447,6 +447,14 @@ ip_lib for mtu:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
 
+config.py for multicast bridge:
+  file.managed:
+    - source: "salt://openstack/neutron/files/plugins/linuxbridge/config.py"
+    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/common/config.py
+  cmd.run:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/common/config.py
+
 
 compile linuxbridge:
   cmd.run:
@@ -490,6 +498,20 @@ linuxbridge hold:
     - name: neutron-plugin-linuxbridge-agent
     - require:
       - pkg: neutron-pkgs
+
+neutron doublecheck lxc bridge off in init:
+  openstack_config.present:
+    - filename: /etc/init/lxc-net.conf
+    - section: ''
+    - parameter: 'USE_LXC_BRIDGE'
+    - value: '"false"'
+
+neutron doublecheck lxc bridge off in default:
+  openstack_config.present:
+    - filename: /etc/default/lxc-net
+    - section: ''
+    - parameter: 'USE_LXC_BRIDGE'
+    - value: '"false"'
 
 neutron restart:
   cmd.run:

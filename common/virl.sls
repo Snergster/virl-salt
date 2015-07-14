@@ -150,9 +150,16 @@ v6off-rclocal:
     - content: |
              /usr/local/bin/adjust-ipv6-sysctl.sh
 
-lxc bridge off:
+lxc bridge off in init:
   openstack_config.present:
-    - filename: /etc/default/lxc-net.conf
+    - filename: /etc/init/lxc-net.conf
+    - section: ''
+    - parameter: 'USE_LXC_BRIDGE'
+    - value: '"false"'
+
+lxc bridge off in default:
+  openstack_config.present:
+    - filename: /etc/default/lxc-net
     - section: ''
     - parameter: 'USE_LXC_BRIDGE'
     - value: '"false"'
