@@ -152,7 +152,7 @@ v6off-rclocal:
 
 lxc bridge off:
   openstack_config.present:
-    - filename: /etc/default/lxc-net
+    - filename: /etc/default/lxc-net.conf
     - section: ''
     - parameter: 'USE_LXC_BRIDGE'
     - value: '"false"'
