@@ -201,16 +201,6 @@ meta-tenname:
     - require:
       - pkg: neutron-pkgs
 
-disable multicast snooping:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'DEFAULT'
-    - parameter: 'network_bridge_multicast_snooping'
-    - value: '0'
-    - require:
-      - file: /etc/neutron/neutron.conf
-
-
 meta-user:
   openstack_config.present:
     - filename: /etc/neutron/metadata_agent.ini
