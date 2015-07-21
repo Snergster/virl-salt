@@ -27,15 +27,23 @@
     background: #eee;
   }
   #terminal-container {
-    visibility: hidden;
-    display: none;
     float: left;
     margin: 10px;
     padding: 0px;
   }
 </style>
+<script>
+function getURLParameter(name) {
+  return decodeURIComponent(
+        (new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20')
+    )||null
+}
+var node = getURLParameter('node');
+document.title = node + ' :serial port';
+</script>
 <script src="term.js"></script>
 <script>
+
 (function() {
   return setTimeout(function() {
     // getQueryVar, createCookie from noVNC/include/webutil.js
@@ -70,7 +78,7 @@
 	createCookie('token', token, 1)
     }
 
-    var term = new Terminal(80, 40);
+    var term = new Terminal(80, 60);
     // the proxy we use uses a binary data format.  To convert we have
     // to use a filereader.
     var ws = new WebSocket('ws://' + document.location.hostname + ':' + document.location.port + '/websockify', ['binary']);

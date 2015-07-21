@@ -409,9 +409,8 @@ l3-gateway:
 
 
 /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py:
-  file.patch:
-    - source: file:///srv/salt/openstack/neutron/files/ml2_rpc.diff
-    - hash: md5=23ab68a470d8b1a2223e0f495dc21837
+  file.managed:
+    - source: salt://openstack/neutron/files/plugins/ml2/rpc.py
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py
@@ -419,7 +418,6 @@ l3-gateway:
       - file: /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py
     - require:
       - pkg: neutron-pkgs
-      - file: /srv/salt/openstack/neutron/files/ml2_rpc.diff
 
 
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:

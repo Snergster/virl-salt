@@ -17,7 +17,7 @@ include:
     - maxdepth: 0
     - dir_mode: 755
     - include_pat: '*zip'
-    - exclude_pat: E@(.*exe$)|(.*dmg$)
+    - exclude_pat: E@(.*exe$)|(.*dmg$)|(.*box$)
     - source: "salt://vmm/{{ venv }}/"
     - require:
       - file: download

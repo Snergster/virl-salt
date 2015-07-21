@@ -409,7 +409,8 @@ class LinuxBridgeManager:
         LOG.debug(_("Set MTU Of %s"), tap_device_name)
         try:
             utils.execute(['ip', 'link', 'set' , tap_device_name,
-                           'mtu', cfg.CONF.network_device_mtu],
+                           'mtu', cfg.CONF.network_device_mtu,
+                           'master', bridge_name],
                            root_helper=self.root_helper)
         except RuntimeError:
             LOG.error('Failed to process interface %s for bridge %s',
@@ -482,8 +483,11 @@ class LinuxBridgeManager:
 
     def remove_empty_bridges(self):
         for network_id in self.network_map.keys():
+            if self.network_map[network_id].physical_network:
+                continue
             bridge_name = self.get_bridge_name(network_id)
             if not self.get_tap_devices_count(bridge_name):
+                LOG.debug('No tap devices found on bridge %s', bridge_name)
                 self.delete_vlan_bridge(bridge_name)
                 del self.network_map[network_id]
 

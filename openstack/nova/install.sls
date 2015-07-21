@@ -238,6 +238,15 @@ nova-compute serial:
 /etc/rc2.d/S98nova-serialproxy:
   file.absent
 
+/usr/share/novnc/vnc_auto.html:
+  file.managed:
+    - source: "salt://openstack/nova/files/vnc_auto.html"
+    - user: nova
+    - group: nova
+    - mode: 0644
+    - require:
+      - pkg: nova-pkgs
+
 /usr/share/nova-serial/serial.html:
   file.managed:
     - source: "salt://openstack/nova/files/serial.html"
