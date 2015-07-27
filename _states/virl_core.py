@@ -171,3 +171,59 @@ def user_absent(name, clear_openstack=False):
         ret['comment'] = result['comment']
 
     return ret
+
+
+def lxc_image_present(name, subtype, version, release=None):
+    """Ensure that the UWM image `name` exists."""
+    name = '%s-%s' % (subtype, version)
+    ret = {
+        'name': name,
+        'result': False,
+        'changes': {},
+        'comment': '',
+    }
+
+    try:
+        image = __get_function('lxc_image_show')(name=name)
+        import logging
+        log = logging.getLogger(__name__)
+        log.debug(image)
+        if 'name' in image and image['name'] == name:
+            __get_function('lxc_image_delete')(name=name)
+        else:
+            image = None
+        result = __get_function('lxc_image_create')(subtype, version, release)
+    except Exception as exc:
+        ret['comment'] = str(exc)
+    else:
+        ret['result'] = True
+        ret['changes']['image'] = {'old': image, 'new': result['lxc-image']}
+        ret['comment'] = 'Image %s was successfully added' % name
+
+    return ret
+
+
+def lxc_image_absent(name, subtype, version):
+    """Ensure that there's no image `name` in UWM lxc images."""
+    name = '%s-%s' % (subtype, version)
+    ret = {
+        'name': name,
+        'result': False,
+        'changes': {},
+        'comment': '',
+    }
+
+    try:
+        image = __get_function('lxc_image_show')(name=name)
+        if 'name' in image and image['name'] == name:
+            result = __get_function('lxc_image_delete')(name=name)
+    except Exception as exc:
+        ret['comment'] = str(exc)
+    else:
+        image = result['image']
+        if image is not None:
+            ret['changes']['image'] = {'old': image, 'new': None}
+        ret['result'] = True
+        ret['comment'] = 'Image %s was successfully deleted' % name
+
+    return ret

@@ -7,6 +7,8 @@
 {% set csr1000v = salt['pillar.get']('routervms:csr1000v', False) %}
 {% set vpagent = salt['pillar.get']('routervms:vpagent', False) %}
 {% set server = salt['pillar.get']('routervms:UbuntuServertrusty', True) %}
+{% set lxc = salt['pillar.get']('routervms:lxc_server', True) %}
+{% set lxciperf = salt['pillar.get']('routervms:lxc_iperf', True) %}
 
 {% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
 {% set iosxrv432pref = salt['pillar.get']('virl:iosxrv432', salt['grains.get']('iosxrv432', True)) %}
@@ -16,12 +18,16 @@
 {% set nxosvpref = salt['pillar.get']('virl:nxosv', salt['grains.get']('nxosv', True)) %}
 {% set vpagentpref = salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', True)) %}
 {% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
+{% set lxcpref = salt['pillar.get']('virl:lxc_server', salt['grains.get']('lxc_server', True)) %}
+{% set lxciperfpref = salt['pillar.get']('virl:lxc_iperf', salt['grains.get']('lxc_iperf', True)) %}
 
 include:
   - .csr1000v
   - .iosv
   - .iosxrv
   - .server
+  - .lxc_server
+  - .lxc_iperf
   - .vpagent
   - .nxosv
   - .iosvl2

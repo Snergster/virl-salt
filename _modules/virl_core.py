@@ -330,3 +330,58 @@ def user_present(name, password, project, role, **kwargs):
         raise CommandExecutionError(result['exception'])
 
     return result
+
+
+def lxc_image_list():
+    ret = {}
+    result = __uwm_client('lxc-image-info')
+    for image in result['lxc-images']:
+        ret[image['name']] = image
+    return ret
+
+
+def lxc_image_show(id=None, name=None):
+    if name:
+        result = __uwm_client('lxc-image-info')
+        image_info = result['lxc-images']
+        for image in image_info:
+            if image['name'] == name:
+                return image
+        else:
+            return {'Error': 'Unable to resolve image name'}
+    elif id:
+        try:
+            return __uwm_client('lxc-image-info',
+                                kwargs={'--id': id})
+        except VirlCommandExecutionError as exc:
+            return {'Error': 'Unable to resolve image id'}
+
+    raise TypeError('at least one of `id` or `name` have to be specified')
+
+
+def lxc_image_create(subtype, version, release=None, **properties):
+    name = '%s-%s' % (subtype, version)
+    img_salt_path = 'salt://virl/lxc/%s.tar.gz' % name
+    img_path = __salt__['cp.cache_file'](img_salt_path)
+    if not img_path:
+        raise Exception('Could not find %s' % img_salt_path)
+
+    creation_params = {
+        '--subtype': subtype,
+        '--version': version,
+        '--image-on-server': img_path,
+    }
+    if release is not None:
+        creation_params['--release'] = str(release)
+    return __uwm_client('lxc-image-create',
+                        kwargs=creation_params)
+
+
+def lxc_image_delete(id=None, name=None):
+    if name:
+        image = lxc_image_show(name=name)
+        id = image['id']
+
+    return __uwm_client('lxc-image-delete',
+                        kwargs={'--id': id})
+
