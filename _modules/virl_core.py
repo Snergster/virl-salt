@@ -361,7 +361,7 @@ def lxc_image_show(id=None, name=None):
 
 def lxc_image_create(subtype, version, release=None, **properties):
     name = '%s-%s' % (subtype, version)
-    img_salt_path = 'salt://virl/lxc/%s.tar.gz' % name
+    img_salt_path = 'salt://images/salt/%s.tar.gz' % name
     img_path = __salt__['cp.cache_file'](img_salt_path)
     if not img_path:
         raise Exception('Could not find %s' % img_salt_path)
