@@ -421,14 +421,8 @@ l3-gateway:
 
 
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
-  {% if masterless %}
-  file.copy:
-    - force: true
-    - source: /srv/salt/openstack/neutron/files/linuxbridge-plugin.filters
-    {% else %}
   file.managed:
     - source: "salt://openstack/neutron/files/linuxbridge-plugin.filters"
-    {% endif %}
     - require:
       - pkg: neutron-pkgs
 
