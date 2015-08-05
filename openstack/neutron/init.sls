@@ -22,6 +22,9 @@
 {% set l3_floating_end_address = salt['pillar.get']('virl:l3_floating_end_address', salt['grains.get']('l3_floating_end_address', '172.16.3.253' )) %}
 {% set l3_address = salt['pillar.get']('virl:l3_address', salt['grains.get']('l3_address', '172.16.3.254/24' )) %}
 {% set l2_port2 = salt['pillar.get']('virl:l2_port2', salt['grains.get']('l2_port2', 'eth2' )) %}
+{% set first_snat_nameserver = salt['pillar.get']('virl:first_snat_nameserver', salt['grains.get']('first_snat_nameserver', '8.8.8.8' )) %}
+{% set second_snat_nameserver = salt['pillar.get']('virl:second_snat_nameserver', salt['grains.get']('second_snat_nameserver', '8.8.8.8' )) %}
+
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
@@ -187,6 +190,15 @@ neutron-hostname4:
     - section: 'keystone_authtoken'
     - parameter: 'auth_host'
     - value: '{{ controllerhostname }}'
+    - require:
+      - file: /etc/neutron/neutron.conf
+
+neutron-dhcp-namerver:
+  openstack_config.present:
+    - filename: /etc/neutron/dhcp_agent.ini
+    - section: 'DEFAULT'
+    - parameter: 'dnsmasq_dns_servers'
+    - value: '{{ first_snat_nameserver }},{{ second_snat_nameserver }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
