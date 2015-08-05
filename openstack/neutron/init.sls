@@ -193,7 +193,7 @@ neutron-hostname4:
     - require:
       - file: /etc/neutron/neutron.conf
 
-neutron-dhcp-namerver:
+neutron-dhcp-nameserver:
   openstack_config.present:
     - filename: /etc/neutron/dhcp_agent.ini
     - section: 'DEFAULT'
