@@ -11,15 +11,15 @@ iosv:
     - min_disk: 2
     - min_ram: 0
     - is_public: True
-    - checksum: 8d448fe4d202f4d9da81fad0f2a6bb9b
+    - checksum: d38cecec672522313c60d20edfea9773
     - protected: False
     - disk_format: qcow2
-    - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.qcow2
+    - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.155-3.M
     - property-config_disk_type: disk
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
-    - property-release: 15.5.2.M
+    - property-release: 15.5.3.M
     - property-serial: 2
     - property-subtype: IOSv
 

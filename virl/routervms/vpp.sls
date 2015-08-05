@@ -11,10 +11,10 @@ vPP:
   - min_disk: 4
   - min_ram: 0
   - is_public: True
-  - checksum: 7dc139fa8540105c33c3c2b4fc3d6949
+  - checksum: d93fd5ae034b74b0524e0f12167b4049
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/private/vpp-demo-PHASE2_03_25_2015.qcow2
+  - copy_from: salt://images/private/vpp-VPPDEV_07302015.qcow2
   - property-hw_disk_bus: virtio
   - property-release: PHASE2_03_25_2015
   - property-serial: 1

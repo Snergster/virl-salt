@@ -17,17 +17,17 @@ IOSvL2:
     - protected: False
     - disk_format: qcow2
 {% if cml %}
-    - checksum: b651d49d8d06f962ea3ababa4e755e50
-    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.cml.qcow2
+    - checksum: 1a3a21f5697cae64bb930895b986d71e
+    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.vmdk.SSA.152-4.0.55.E
 {% else %}
-    - checksum: 9729c931406897d63496627e88c56887
-    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.qcow2
+    - checksum: 1a3a21f5697cae64bb930895b986d71e
+    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.vmdk.SSA.152-4.0.55.E
 {% endif %}
     - property-config_disk_type: disk
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
-    - property-release: 15.2.411
+    - property-release: 15.2.4055
     - property-serial: 2
     - property-subtype: IOSv
 
