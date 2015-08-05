@@ -58,14 +58,14 @@ virl-vis-webserver port change:
       - virl-vis-webserver
     - unless:
       - grep {{ ank_live }} /etc/init.d/virl-vis-webserver
+      - 'test ! -e  /etc/init.d/virl-vis-webserver'
   file.replace:
     - order: last
     - name: /etc/init.d/virl-vis-webserver
     - pattern: '.*--port.*"'
     - repl: 'RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver --port {{ ank_live }}"'
-    - unless:
-      - grep {{ ank_live }} /etc/init.d/virl-vis-webserver
-      - 'test ! -e  /etc/init.d/virl-vis-webserver'
+    - onchanges:
+      - service: virl-vis-webserver port change
 
 
 /etc/rc2.d/S98virl-vis-processor:
