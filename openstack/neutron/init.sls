@@ -193,6 +193,9 @@ neutron-hostname4:
     - require:
       - file: /etc/neutron/neutron.conf
 
+
+{% endif %}
+
 neutron-dhcp-nameserver:
   openstack_config.present:
     - filename: /etc/neutron/dhcp_agent.ini
@@ -201,8 +204,6 @@ neutron-dhcp-nameserver:
     - value: '{{ first_snat_nameserver }},{{ second_snat_nameserver }}'
     - require:
       - file: /etc/neutron/neutron.conf
-
-{% endif %}
 
 meta-tenname:
   openstack_config.present:
