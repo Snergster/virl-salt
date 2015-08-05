@@ -53,6 +53,11 @@ ank prereq pkgs:
     - mode: 0755
 
 virl-vis-webserver port change:
+  service.dead:
+    - names:
+      - virl-vis-webserver
+    - unless:
+      - grep {{ ank_live }} /etc/init.d/virl-vis-webserver
   file.replace:
     - order: last
     - name: /etc/init.d/virl-vis-webserver
@@ -61,11 +66,7 @@ virl-vis-webserver port change:
     - unless:
       - grep {{ ank_live }} /etc/init.d/virl-vis-webserver
       - 'test ! -e  /etc/init.d/virl-vis-webserver'
-  service.dead:
-    - names:
-      - virl-vis-webserver
-    - prereq:
-      - file: virl-vis-webserver port change
+
 
 /etc/rc2.d/S98virl-vis-processor:
   file.symlink:
@@ -285,8 +286,8 @@ virl-vis-webserver:
     - enable: True
     - restart: True
     - onchanges:
-      - pip: virl_collection
       - file: virl-vis-webserver port change
+      - pip: virl_collection
 
 virl-vis-processor:
   service:
