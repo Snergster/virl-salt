@@ -2,7 +2,8 @@
 #
 
 
-RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver --port 19402"
+RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver"
+RUN_CMD="/usr/local/bin/virl_live_vis_webserver --port 19402"
 LOGFILE="/tmp/live_vis/virl_live_vis_webserver.log"
 SERVICE="virl_live_vis_webserver"
 
@@ -23,7 +24,7 @@ start)
     fi
     mkdir -p /tmp/live_vis || true
     echo "tmp/live_vis created"
-    $RUNNING_CMD >> $LOGFILE 2>&1 &
+    $RUN_CMD >> $LOGFILE 2>&1 &
     echo "$SERVICE started"
     ps aux | grep "$RUNNING_CMD" | grep -v grep
     ;;
