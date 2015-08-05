@@ -59,8 +59,13 @@ virl-vis-webserver port change:
     - pattern: '.*--port.*"'
     - repl: 'RUNNING_CMD="/usr/local/bin/virl_live_vis_webserver --port {{ ank_live }}"'
     - unless:
-      - grep {{ ank }} /etc/init.d/virl-vis-webserver
+      - grep {{ ank_live }} /etc/init.d/virl-vis-webserver
       - 'test ! -e  /etc/init.d/virl-vis-webserver'
+  service.dead:
+    - names:
+      - virl-vis-webserver
+    - prereq:
+      - file: virl-vis-webserver port change
 
 /etc/rc2.d/S98virl-vis-processor:
   file.symlink:
