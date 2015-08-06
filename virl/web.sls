@@ -16,10 +16,9 @@ apache dir remove:
     - clean: True
     - onchanges:
       - file: /srv/salt/virl/files/cmlweb.tar
-  cmd.wait:
+  cmd.run:
     - name: /bin/tar -xf /srv/salt/virl/files/cmlweb.tar -C /var/www/html
-    - watch:
-      - file: apache dir remove
+    - onlyif: test ! -e /var/www/html/index.html
 
 {% else %}
 
@@ -34,10 +33,12 @@ apache dir remove:
   file.directory:
     - name: /var/www/html
     - clean: True
-  cmd.wait:
-    - name: tar -xf /srv/salt/virl/files/virlweb.tar -C /var/www/html
-    - watch:
-      - file: apache dir remove
+    - onchanges:
+      - file: /srv/salt/virl/files/virlweb.tar
+  cmd.run:
+    - name: /bin/tar -xf /srv/salt/virl/files/virlweb.tar -C /var/www/html
+    - onlyif: test ! -e /var/www/html/index.html
+
 
 {% endif %}
 
