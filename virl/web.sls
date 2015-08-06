@@ -10,21 +10,16 @@
     - user: virl
     - group: virl
 
-apache overwrite:
-  archive:
-    - extracted
-    - name: /var/www/html
-    - source: file:///srv/salt/virl/files/cmlweb.tar
-    - source_hash: md5=d67f85b69bc80bb1ac4e2592d20a4c83
-    - archive_format: tar
-    - onchanges:
-      - file: apache dir remove
-
 apache dir remove:
-  file.absent:
+  file.directory:
     - name: /var/www/html
+    - clean: True
     - onchanges:
       - file: /srv/salt/virl/files/cmlweb.tar
+  cmd.wait:
+    - name: /bin/tar -xf /srv/salt/virl/files/cmlweb.tar -C /var/www/html
+    - watch:
+      - file: apache dir remove
 
 {% else %}
 
@@ -35,22 +30,15 @@ apache dir remove:
     - user: virl
     - group: virl
 
-apache overwrite:
-  archive:
-    - extracted
+apache dir remove:
+  file.directory:
     - name: /var/www/html
-    - source: file:///srv/salt/virl/files/virlweb.tar
-    - source_hash: md5=b1a24317d5937caeba82fbc049f5055f
-    - archive_format: tar
-    - onchanges:
+    - clean: True
+  cmd.wait:
+    - name: tar -xf /srv/salt/virl/files/virlweb.tar -C /var/www/html
+    - watch:
       - file: apache dir remove
 
-
-apache dir remove:
-  file.absent:
-    - name: /var/www/html
-    - onchanges:
-      - file: /srv/salt/virl/files/virlweb.tar
 {% endif %}
 
 /etc/apache2/sites-enabled/apache.conf:

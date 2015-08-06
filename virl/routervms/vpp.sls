@@ -16,7 +16,7 @@ vPP:
   - disk_format: qcow2
   - copy_from: salt://images/private/vpp-VPPDEV_07302015.qcow2
   - property-hw_disk_bus: virtio
-  - property-release: PHASE2_03_25_2015
+  - property-release: 07302015
   - property-serial: 1
   - property-subtype: vPP
 
