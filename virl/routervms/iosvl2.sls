@@ -17,8 +17,8 @@ IOSvL2:
     - protected: False
     - disk_format: qcow2
 {% if cml %}
-    - checksum: 1a3a21f5697cae64bb930895b986d71e
-    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.vmdk.SSA.152-4.0.55.E
+    - checksum: c9d556c75a3aa510443014c5dea3dbdb
+    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.cml.vmdk
 {% else %}
     - checksum: 1a3a21f5697cae64bb930895b986d71e
     - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.vmdk.SSA.152-4.0.55.E
