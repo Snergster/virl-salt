@@ -59,14 +59,13 @@ std docs:
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
 
-{% if venv == 'qa' %}
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
     - source: "salt://virl/std/files/virl-webmux.conf"
     - mode: 0755
 
-std_prereq_qa:
+std_prereq:
   pip.installed:
   {% if proxy == true %}
     - proxy: {{ http_proxy }}
@@ -79,7 +78,6 @@ std_prereq_qa:
       - zope.interface >= 4.1.0
       - SQLObject >= 1.5.1
       - service_identity
-{% endif %}
 
 /etc/virl directory:
   file.directory:
