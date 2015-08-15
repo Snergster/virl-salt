@@ -59,6 +59,7 @@ std docs:
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
 
+  {% if not cml %}
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
@@ -78,6 +79,7 @@ std_prereq_webmux:
       - zope.interface >= 4.1.0
       - SQLObject >= 1.5.1
       - service_identity
+  {% endif %}
 
 /etc/virl directory:
   file.directory:
