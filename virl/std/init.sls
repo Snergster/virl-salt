@@ -65,7 +65,7 @@ virl_webmux_init:
     - source: "salt://virl/std/files/virl-webmux.conf"
     - mode: 0755
 
-std_prereq:
+std_prereq_webmux:
   pip.installed:
   {% if proxy == true %}
     - proxy: {{ http_proxy }}
