@@ -3,7 +3,7 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
 
-gitpython install:
+gitpython also install:
   pip.installed:
 {% if proxy %}
     - proxy: {{ http_proxy }}
