@@ -59,7 +59,7 @@ pygit2 install:
 {% if proxy %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - name: pygit2
+    - name: pygit2 == 0.22.0
 
 remove libgit trash:
   file.absent:
