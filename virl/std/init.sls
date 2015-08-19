@@ -16,7 +16,7 @@
 {% set serstart = salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')) %}
 {% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
 {% set ank_live = salt['pillar.get']('virl:ank_live', salt['grains.get']('ank_live', '19402')) %}
-
+{% set fdns = salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )) %}
 /var/cache/virl/std:
   file.recurse:
     {% if std_ver_fixed %}
@@ -209,7 +209,12 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_std_user_name uwmadmin
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
+      - crudini --set /etc/virl/virl.cfg 'new-project-networks' snat_net_dns {{ fdns }}
       - crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}
+
+ank_live_port change:
+  cmd.run:
+    - name: 'crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}'
 
 uwmadmin change:
   cmd.run:
