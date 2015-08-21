@@ -516,16 +516,14 @@ class LinuxBridgeManager:
         if self.device_exists(interface):
             LOG.debug(_("Deleting subinterface %s for vlan"), interface)
             int_vlan = self.ip.device(interface)
-            int_vlan.link.set_down()
-            int_vlan.link.delete()
+            int_vlan.link.set_down() and int_vlan.link.delete()
             LOG.debug(_("Done deleting subinterface %s"), interface)
 
     def delete_vxlan(self, interface):
         if self.device_exists(interface):
             LOG.debug(_("Deleting vxlan interface %s for vlan"), interface)
             int_vxlan = self.ip.device(interface)
-            int_vxlan.link.set_down()
-            int_vxlan.link.delete()
+            int_vxlan.link.set_down() and int_vxlan.link.delete()
             LOG.debug(_("Done deleting vxlan interface %s"), interface)
 
     def update_device_link(self, port_id, dom_id, hw_addr, owner, state):

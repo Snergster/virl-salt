@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import os.path
 import netaddr
 from oslo.config import cfg
 
@@ -240,7 +241,13 @@ class IpLinkCommand(IpDeviceCommandBase):
         self._as_root('set', self.name, 'up')
 
     def set_down(self):
-        self._as_root('set', self.name, 'down')
+        try:
+            self._as_root('set', self.name, 'down')
+            return True
+        except RuntimeError:
+            if device_exists(self.name):
+                raise
+            return False
 
     def set_netns(self, namespace):
         self._as_root('set', self.name, 'netns', namespace)
@@ -254,7 +261,13 @@ class IpLinkCommand(IpDeviceCommandBase):
         self._as_root('set', self.name, 'alias', alias_name)
 
     def delete(self):
-        self._as_root('delete', self.name)
+        try:
+            self._as_root('delete', self.name)
+            return True
+        except RuntimeError:
+            if device_exists(self.name):
+                raise
+            return False
 
     @property
     def address(self):
@@ -479,7 +492,12 @@ class IpNetnsCommand(IpCommandBase):
         return False
 
 
+SYS_NET_PATH = '/sys/class/net'
+
 def device_exists(device_name, root_helper=None, namespace=None):
+    if not namespace:
+        # Quicker (no subprocess), unlikely that a device wouldn't have a MAC
+        return os.path.exists(os.path.join(SYS_NET_PATH, device_name))
     try:
         address = IPDevice(device_name, root_helper, namespace).link.address
     except RuntimeError:
