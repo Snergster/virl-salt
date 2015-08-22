@@ -50,6 +50,11 @@ std_init:
     - source: "salt://virl/std/files/virl-std.init"
     - mode: 0755
 
+std doc cleaner:
+  file.directory:
+    - name: /var/www/doc
+    - clean: True
+
 std docs:
   archive:
     - extracted
@@ -58,6 +63,9 @@ std docs:
     - source_hash: md5=d44c6584a80aea1af377868636ac0383
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
+    - require:
+      - file: std doc cleaner
+
 
   {% if not cml %}
 virl_webmux_init:
