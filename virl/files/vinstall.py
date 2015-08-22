@@ -287,6 +287,8 @@ fileserver_backend:
   - git
   - roots
 
+state_output: mixed
+
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
             elif path.exists('/usr/local/lib/python2.7/dist-packages/dulwich'):
@@ -296,6 +298,8 @@ gitfs_remotes:
 fileserver_backend:
   - git
   - roots
+
+state_output: mixed
 
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
