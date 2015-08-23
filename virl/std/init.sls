@@ -59,8 +59,12 @@ std docs:
   archive:
     - extracted
     - name: /var/www/doc/
+    {% if cml %}
+    - source: "salt://cml/std/{{venv}}/doc/html_ext.tar.gz"
+    {{ else }}
     - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
-    - source_hash: md5=d44c6584a80aea1af377868636ac0383
+    {{ endif }}
+{#    - source_hash: md5=d44c6584a80aea1af377868636ac0383 #}
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
     - require:
