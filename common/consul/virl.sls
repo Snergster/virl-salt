@@ -20,9 +20,7 @@
     - group: consul
 {% endfor %}
 
-consul:
-  service.running:
-    - order: last
-    - enable: True
-    - reload: True
+virl consul restart:
+  cmd.run:
+    - name: /usr/sbin/service consul restart
 

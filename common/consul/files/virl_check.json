@@ -36,7 +36,7 @@
     "id": "keystone_service",
     "name": "keystone service",
     "service_id": "virl-{{salt['grains.get']('host', 'generic') }}",
-    "script": "/usr/local/bin/process_check keystone",
+    "script": "/usr/local/bin/process_check keystone-all",
     "interval": "90s",
     "timeout": "20s"
   },
@@ -65,10 +65,17 @@
     "timeout": "20s"
   },
   {
-    "id": "virl-vis-processor",
-    "name": "service virl-vis-processor running",
+    "id": "virl-webmuxd",
+    "name": "service virl_webmuxd running",
     "service_id": "virl-{{salt['grains.get']('host', 'generic') }}",
-    "script": "/usr/local/bin/process_check virl-vis-processor",
+    "script": "/usr/local/bin/process_check virl_webmuxd",
+    "interval": "90s"
+  },
+  {
+    "id": "virl-vis-webserver",
+    "name": "service virl-vis-webserver running",
+    "service_id": "virl-{{salt['grains.get']('host', 'generic') }}",
+    "script": "/usr/local/bin/process_check virl_live_vis_processor",
     "interval": "90s"
   },
    {
@@ -82,7 +89,7 @@
     "id": "virl-vis-mux",
     "name": "service virl-vis-mux running",
     "service_id": "virl-{{salt['grains.get']('host', 'generic') }}",
-    "script": "/usr/local/bin/process_check virl-vis-mux status",
+    "script": "/usr/local/bin/process_check virl_live_vis_muxes",
     "interval": "90s"
   }
  ]
