@@ -225,6 +225,8 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
       - crudini --set /etc/virl/virl.cfg 'new-project-networks' snat_net_dns {{ fdns }}
       - crudini --set /etc/virl/virl.cfg 'new-project-networks' snat_net_dns2 {{ sdns }}
+      - crudini --set /etc/virl/virl.cfg 'new-project-networks' mgmt_net_dns {{ fdns }}
+      - crudini --set /etc/virl/virl.cfg 'new-project-networks' mgmt_net_dns2 {{ sdns }}
       - crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}
 
 ank_live_port change:
