@@ -68,7 +68,7 @@
     "id": "virl-webmuxd",
     "name": "service virl_webmuxd running",
     "service_id": "virl-{{salt['grains.get']('host', 'generic') }}",
-    "script": "/usr/local/bin/process_check virl_webmuxd",
+    "script": "/usr/local/bin/process_check 'python /usr/local/bin/virl_webmuxd'",
     "interval": "90s"
   },
   {
