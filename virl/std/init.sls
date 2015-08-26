@@ -52,10 +52,14 @@ std_init:
     - source: "salt://virl/std/files/virl-std.init"
     - mode: 0755
 
+{% if not cml %}
+
 std doc cleaner:
   file.directory:
     - name: /var/www/doc
     - clean: True
+
+{% endif %}
 
 std docs:
   archive:
