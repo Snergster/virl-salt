@@ -36,7 +36,7 @@
     "id": "keystone_service",
     "name": "keystone service",
     "service_id": "virl-{{salt['grains.get']('host', 'generic') }}",
-    "script": "/usr/sbin/service keystone status",
+    "script": "/usr/local/bin/process_check keystone",
     "interval": "90s",
     "timeout": "20s"
   },
@@ -68,21 +68,21 @@
     "id": "virl-vis-processor",
     "name": "service virl-vis-processor running",
     "service_id": "virl-{{salt['grains.get']('host', 'generic') }}",
-    "script": "/usr/sbin/service virl-vis-processor status",
+    "script": "/usr/local/bin/process_check virl-vis-processor",
     "interval": "90s"
   },
    {
     "id": "salt_minion",
     "name": "salt-minion service",
     "service_id": "salt-minion",
-    "script": "/usr/sbin/service salt-minion status",
+    "script": "/usr/local/bin/process_check salt-minion",
     "interval": "90s"
   },
   {
     "id": "virl-vis-mux",
     "name": "service virl-vis-mux running",
     "service_id": "virl-{{salt['grains.get']('host', 'generic') }}",
-    "script": "/usr/sbin/service virl-vis-mux status",
+    "script": "/usr/local/bin/process_check virl-vis-mux status",
     "interval": "90s"
   }
  ]
