@@ -2,22 +2,29 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set crypt = salt['pillar.get']('restrictedusers:consul:crypt', salt['grains.get']('consul_crypt', '$6rUu5wzdNP0Y')) %}
 
-/tmp/consul.zip:
+/var/cache/salt/consul.zip:
   file.managed:
     - source: https://dl.bintray.com/mitchellh/consul/0.5.2_linux_amd64.zip
     - source_hash: md5=37000419d608fd34f0f2d97806cf7399
+  service.dead:
+    - names:
+      - consul
+    - onchanges:
+      - file: /var/cache/salt/consul.zip
   module.run:
     - name: archive.unzip
-    - zip_file: /tmp/consul.zip
+    - zip_file: /var/cache/salt/consul.zip
     - dest: /usr/local/bin
     - require:
-      - file: /tmp/consul.zip
+      - file: /var/cache/salt/consul.zip
+    - onchanges:
+      - file: /var/cache/salt/consul.zip
 
 /usr/local/bin/consul:
   file.managed:
     - mode: 0755
-    - require:
-      - module: /tmp/consul.zip
+    - onchanges:
+      - module: /var/cache/salt/consul.zip
 
 /usr/local/bin/process_check:
   file.managed:
