@@ -89,3 +89,9 @@ python-consul for salt-consul:
     - user: consul
     - group: consul
 
+consul:
+  service:
+    - running
+    - order: last
+    - enable: True
+    - restart: True
