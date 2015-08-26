@@ -19,6 +19,11 @@
     - require:
       - module: /tmp/consul.zip
 
+/usr/local/bin/process_check:
+  file.managed:
+    - mode: 0755
+    - source: salt://common/consul/files/process_check.sh
+
 consul group:
   group.present:
     - name: consul
