@@ -73,9 +73,10 @@ std docs:
 {#    - source_hash: md5=d44c6584a80aea1af377868636ac0383 #}
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
+{% if not cml %}
     - require:
       - file: std doc cleaner
-
+{% endif %}
 
   {% if not cml %}
 virl_webmux_init:
