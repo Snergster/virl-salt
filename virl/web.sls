@@ -14,8 +14,6 @@ apache dir remove:
   file.directory:
     - name: /var/www/html
     - clean: True
-    - onchanges:
-      - file: /srv/salt/virl/files/cmlweb.tar
   cmd.run:
     - name: /bin/tar -xf /srv/salt/virl/files/cmlweb.tar -C /var/www/html
     - onlyif: test ! -e /var/www/html/index.html
