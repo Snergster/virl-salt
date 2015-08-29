@@ -6,7 +6,6 @@ include:
   - openstack.repo
   - openstack.mysql
   - openstack.rabbitmq
-  - openstack.prereq
   - openstack.keystone
   - openstack.osclients
   - openstack.glance
