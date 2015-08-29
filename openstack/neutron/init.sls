@@ -31,6 +31,7 @@
 {% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
 {% set iscontroller = salt['pillar.get']('virl:iscontroller', salt['grains.get']('iscontroller', True)) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 
 include:
   - openstack.keystone.setup
