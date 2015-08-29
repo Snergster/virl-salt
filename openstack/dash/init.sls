@@ -65,7 +65,6 @@ horizon-restart:
       - file: horizon-oshosts
       - file: horizon-hosts
       - file: horizon-allowed
-      - file: uwm port replace
       - file: openstack-dash
       - pkg: horizon-pkgs
     - name: |
