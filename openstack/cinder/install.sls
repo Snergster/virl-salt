@@ -9,6 +9,7 @@
 {% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 
 cinder-pkgs:
   pkg.installed:
@@ -18,6 +19,18 @@ cinder-pkgs:
       - cinder-scheduler
       - lvm2
       - cinder-volume
+
+oslo cinder prereq:
+  pip.installed:
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - require:
+      - pkg: cinder-pkgs
+    - names:
+      - oslo.messaging == 1.6.0
+      - oslo.config == 1.6.0
+      - pbr == 0.10.8
 
 
 
