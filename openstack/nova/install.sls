@@ -48,6 +48,8 @@ oslo messaging 11 prevent:
       - pkg: nova-pkgs
     - names:
       - oslo.messaging == 1.6.0
+      - oslo.config == 1.6.0
+      - pbr == 0.10.8
 
 /etc/nova:
   file.directory:

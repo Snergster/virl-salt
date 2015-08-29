@@ -56,6 +56,17 @@ neutron-pkgs:
   apt.held:
     - name: neutron-plugin-linuxbridge-agent
 
+oslo prereq pin of hate:
+  pip.installed:
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - require:
+      - pkg: neutron-pkgs
+    - names:
+      - oslo.messaging == 1.6.0
+      - oslo.config == 1.6.0
+      - pbr == 0.10.8
 
 /etc/neutron/neutron.conf:
   file.managed:
