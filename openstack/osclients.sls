@@ -31,8 +31,6 @@ nova client:
     - proxy: {{ http_proxy }}
 {% endif %}
     - require:
-      - pkg: nova-pkgs
-      - pkg: libffi-dev for rackspace
       - pip: oslo messaging first
     - names:
       - oslo.middleware == 1.1.0
