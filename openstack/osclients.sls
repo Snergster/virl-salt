@@ -30,8 +30,6 @@ nova client:
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - require:
-      - pip: oslo messaging first
     - names:
       - oslo.middleware == 1.1.0
       - python-novaclient == 2.20.0
