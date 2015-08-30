@@ -71,6 +71,7 @@ cinder-restart:
   cmd.run:
     - require:
       - file: /etc/cinder/cinder.conf
+      - pip: oslo cinder prereq
     - name: |
         cinder-manage db sync
         service cinder-volume restart
