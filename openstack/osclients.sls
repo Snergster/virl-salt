@@ -109,7 +109,7 @@ keystone client:
         Pin: release *
         Pin-Priority: -1
 
-nova client:
+middleware failsafe:
   pip.installed:
     - watch:
       - pip: keystone client
