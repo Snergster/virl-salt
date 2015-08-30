@@ -25,13 +25,23 @@ oslo cinder prereq:
 {% if proxy == true %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - require:
+    - onchanges:
       - pkg: cinder-pkgs
     - names:
       - oslo.messaging == 1.6.0
       - oslo.config == 1.6.0
       - pbr == 0.10.8
 
+cinder-reinstall:
+  pkg.installed:
+    - refresh: False
+    - names:
+      - cinder-api
+      - cinder-scheduler
+      - lvm2
+      - cinder-volume
+    - onchanges:
+      - pip: oslo cinder prereq
 
 
 /etc/cinder/cinder.conf:
@@ -77,3 +87,14 @@ cinder-restart:
         service cinder-volume restart
         service cinder-api restart
         service tgt restart
+
+cinder backup:
+  cmd.run:
+    - onfail:
+      - cmd: cinder-restart
+    - name: |
+        cinder-manage db sync
+        service cinder-volume restart
+        service cinder-api restart
+        service tgt restart
+
