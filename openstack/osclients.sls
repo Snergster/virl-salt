@@ -109,6 +109,20 @@ keystone client:
         Pin: release *
         Pin-Priority: -1
 
+nova client:
+  pip.installed:
+    - watch:
+      - pip: keystone client
+      - pip: glance client
+      - pip: neutron client
+{% if proxy == true %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - names:
+      - oslo.middleware == 1.1.0
+      - oslo.config == 1.6.0
+      - oslo.rootwrap == 1.5.0
+      - pbr == 0.10.8
 
 {% for symlink in ['keystone','neutron','glance','nova']%}
 /usr/bin/{{ symlink }}:
