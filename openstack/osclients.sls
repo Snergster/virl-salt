@@ -36,6 +36,7 @@ nova client:
       - oslo.config == 1.6.0
       - oslo.rootwrap == 1.5.0
       - pbr == 0.10.8
+      - netaddr==0.7.15
   file.managed:
     - name: /etc/apt/preferences.d/python-novaclient
     - require:
@@ -57,6 +58,7 @@ neutron client:
       - pip: nova client
     - names:
       - python-neutronclient == 2.3.4
+      - netaddr==0.7.15
   file.managed:
     - name: /etc/apt/preferences.d/python-neutronclient
     - require:
@@ -123,6 +125,7 @@ middleware failsafe:
       - oslo.config == 1.6.0
       - oslo.rootwrap == 1.5.0
       - pbr == 0.10.8
+      - netaddr==0.7.15
 
 {% for symlink in ['keystone','neutron','glance','nova']%}
 /usr/bin/{{ symlink }}:

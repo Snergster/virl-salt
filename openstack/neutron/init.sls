@@ -69,6 +69,7 @@ oslo prereq pin of hate:
       - oslo.messaging == 1.6.0
       - oslo.config == 1.6.0
       - pbr == 0.10.8
+      - netaddr==0.7.15
 
 /etc/neutron/neutron.conf:
   file.managed:
