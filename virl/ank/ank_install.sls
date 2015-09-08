@@ -128,7 +128,7 @@ ank_prereq:
       - MarkupSafe >= 0.23
       - certifi >= 14.5.14
       - backports.ssl_match_hostname >= 3.4.0.2
-      - netaddr >= 0.7.13
+      - netaddr == 0.7.15
       - networkx >= 1.7
       - PyYAML >= 3.10
       - tornado >= 3.2.2, < 4.0.0
