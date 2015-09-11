@@ -5,7 +5,7 @@
 {% set consul_server_ip = salt['pillar.get']('consul:consul_server_ip', salt['grains.get']('consul_server_ip', '"127.0.0.1"')) %}
 {# consul_server_ip format '"127.0.0.1"','"10.10.10.10"'   #}
 {% set node_name = salt['pillar.get']('consul:node_name', salt['grains.get']('id', 'replaceme')) %}
-{% set ip = salt['network.interface_ip']({{publicport}})%}
+{% set ip = salt['network.interface_ip'](salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')))%}
 
 
 include:
