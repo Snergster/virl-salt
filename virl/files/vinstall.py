@@ -272,13 +272,15 @@ def building_salt_extra():
                 extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
                 extra.write("""master_type: failover \n""")
                 extra.write("""master_shuffle: True \n""")
+                extra.write("""random_master: True \n""")
+                extra.write("""auth_tries: 1 \n""")
+                extra.write("""auth_timeout: 15 \n""")
+                extra.write("""master_alive_interval: 180 \n""")
             else:
                 extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
-
             extra.write("""verify_master_pubkey_sign: True \n""")
-            extra.write("""auth_timeout: 15 \n""")
-            extra.write("""master_alive_interval: 180 \n""")
             extra.write("""state_output: mixed \n""")
+            extra.write("""always_verify_signature: True \n""")
         else:
             if path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
                 extra.write("""gitfs_provider: pygit2\n""")
