@@ -98,6 +98,7 @@ std_prereq_webmux:
       - zope.interface >= 4.1.0
       - SQLObject >= 1.5.1
       - service_identity
+      - docker-py >= 1.3.1
   {% endif %}
 
 /etc/virl directory:
