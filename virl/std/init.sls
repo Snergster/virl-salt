@@ -153,7 +153,7 @@ std_prereq:
       - ipaddr >= 2.1.11
       - flask-sqlalchemy >= 2.0
       - Flask >= 0.10.1
-      - Flask_Login >= 0.2.11
+      - Flask_Login == 0.2.11
       - Flask_RESTful >= 0.3.2
       - Flask_WTF >= 0.11
       - itsdangerous >= 0.24
