@@ -3,19 +3,19 @@
    {
     "id": "saltminion",
     "name": "salt-minion",
-    "script": "/usr/sbin/service salt-minion status",
+    "script": "/usr/local/bin/process_check salt-minion",
     "interval": "90s"
   },
    {
     "id": "saltmaster",
     "name": "salt-master",
-    "script": "/usr/sbin/service salt-master status",
+    "script": "/usr/local/bin salt-master",
     "interval": "90s"
   },
    {
     "id": "ssh",
     "name": "ssh",
-    "script": "/usr/sbin/service ssh status",
+    "script": "/usr/local/bin sshd",
     "interval": "90s"
   }
  ]
