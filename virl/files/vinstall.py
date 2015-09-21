@@ -171,7 +171,7 @@ cml = safeparser.getboolean('DEFAULT', 'cml', fallback=False)
 #Operational Section
 image_set = safeparser.get('DEFAULT', 'image_set', fallback='internal')
 salt = safeparser.getboolean('DEFAULT', 'salt', fallback=True)
-salt_master = safeparser.get('DEFAULT', 'salt_master', fallback='none')
+salt_master = safeparser.get('DEFAULT', 'salt_master', fallback='')
 salt_id = safeparser.get('DEFAULT', 'salt_id', fallback='virl')
 salt_domain = safeparser.get('DEFAULT', 'salt_domain', fallback='virl.info')
 salt_env = safeparser.get('DEFAULT', 'salt_env', fallback='none')
@@ -183,6 +183,7 @@ jumbo_frames = safeparser.getboolean('DEFAULT', 'jumbo_frames', fallback=False)
 
 #Testing Section
 icehouse = safeparser.getboolean('DEFAULT', 'icehouse', fallback=True)
+kilo = safeparser.getboolean('DEFAULT', 'kilo', fallback=False)
 
 testingank = safeparser.getboolean('DEFAULT', 'testing_ank', fallback=False)
 testingstd = safeparser.getboolean('DEFAULT', 'testing_std', fallback=False)
