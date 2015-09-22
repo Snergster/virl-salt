@@ -28,7 +28,7 @@ oslo glance prereq:
 
 {% endif %}
 
-{% if not kilo %}
+{% if kilo %}
 glance-api user token:
   file.replace:
     - name: /etc/glance/glance-api.conf
