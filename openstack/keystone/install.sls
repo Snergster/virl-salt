@@ -67,7 +67,7 @@ keystone-pkgs:
      - name: /etc/apache2/sites-enabled/wsgi-keystone.conf
      - target: /etc/apache2/sites-available/wsgi-keystone.conf
 
-/var/www/cgi-bin/keystone.py:
+/var/www/cgi-bin/keystone/main:
   file.managed:
     - source: "salt://openstack/keystone/files/keystone.py"
     - mode: 0755
@@ -78,41 +78,16 @@ keystone-pkgs:
     - require:
       - pkg: keystone-pkgs
 
-keystone memcached:
-  openstack_config.present:
-    - filename: /etc/keystone/keystone.conf
-    - section: 'memcache'
-    - parameter: 'servers'
-    - value: 'localhost:11211'
+/var/www/cgi-bin/keystone/admin:
+  file.managed:
+    - source: "salt://openstack/keystone/files/keystone.py"
+    - mode: 0755
+    - dir_mode: 0755
+    - makedirs: True
+    - user: keystone
+    - group: keystone
     - require:
-      - file: /etc/keystone/keystone.conf
-
-keystone token provider:
-  openstack_config.present:
-    - filename: /etc/keystone/keystone.conf
-    - section: 'token'
-    - parameter: 'provider'
-    - value: 'keystone.token.providers.uuid.Provider'
-    - require:
-      - file: /etc/keystone/keystone.conf
-
-keystone token driver:
-  openstack_config.present:
-    - filename: /etc/keystone/keystone.conf
-    - section: 'token'
-    - parameter: 'driver'
-    - value: 'keystone.token.persistence.backends.memcache.Token'
-    - require:
-      - file: /etc/keystone/keystone.conf
-
-keystone revoke driver:
-  openstack_config.present:
-    - filename: /etc/keystone/keystone.conf
-    - section: 'revoke'
-    - parameter: 'driver'
-    - value: 'keystone.token.persistence.backends.memcache.Revoke'
-    - require:
-      - file: /etc/keystone/keystone.conf
+      - pkg: keystone-pkgs
 
 apache restart keystone:
   cmd.run:
