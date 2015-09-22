@@ -3,6 +3,8 @@
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
+{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 
 {% if kilo %}
 keystone no upstart:
@@ -20,8 +22,12 @@ keystone-pkgs:
 {% if kilo %}
       - apache2
       - libapache2-mod-wsgi
-      - python-openstackclient
       - memcached
+  pip.installed:
+  {% if proxy == true %}
+    - proxy: {{ http_proxy }}
+  {% endif %}
+    - names:
       - python-memcache
 {% endif %}
 
@@ -66,6 +72,7 @@ keystone-pkgs:
     - source: "salt://openstack/keystone/files/keystone.py"
     - mode: 0755
     - dir_mode: 0755
+    - makedirs: True
     - user: keystone
     - group: keystone
     - require:
