@@ -127,8 +127,11 @@ keystone db-sync:
     - require:
       - cmd: keystone db-sync
 
+{% if not kilo %}
+
 key-db-sync:
   cmd.run:
     - names:
       - 'service keystone restart'
       - 'sleep 15'
+{% endif %}
