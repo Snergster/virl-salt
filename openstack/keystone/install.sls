@@ -28,7 +28,7 @@ keystone-pkgs:
     - proxy: {{ http_proxy }}
   {% endif %}
     - names:
-      - python-memcache
+      - python-memcached
 {% endif %}
 
 /etc/keystone/keystone.conf:
