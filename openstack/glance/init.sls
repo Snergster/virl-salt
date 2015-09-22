@@ -28,6 +28,50 @@ oslo glance prereq:
 
 {% endif %}
 
+{% if not kilo %}
+glance-api user token:
+  file.replace:
+    - name: /etc/glance/glance-api.conf
+    - pattern: '#use_user_token = True'
+    - repl: 'use_user_token = False'
+    - require:
+      - pkg: glance-pkgs
+
+glance-api admin user:
+  file.replace:
+    - name: /etc/glance/glance-api.conf
+    - pattern: '#admin_user = None'
+    - repl: 'admin_user = glance'
+    - require:
+      - pkg: glance-pkgs
+
+glance-api admin password:
+  file.replace:
+    - name: /etc/glance/glance-api.conf
+    - pattern: '#admin_password = None'
+    - repl: 'admin_password = {{glancepassword}}'
+    - require:
+      - pkg: glance-pkgs
+
+glance-api admin tenant:
+  file.replace:
+    - name: /etc/glance/glance-api.conf
+    - pattern: '#admin_tenant_name = None'
+    - repl: 'admin_tenant_name = service'
+    - require:
+      - pkg: glance-pkgs
+
+glance-api auth url:
+  file.replace:
+    - name: /etc/glance/glance-api.conf
+    - pattern: '#auth_url = None'
+    - repl: 'auth_url = http://127.0.1.1:35357/v2.0'
+    - require:
+      - pkg: glance-pkgs
+
+
+{% endif %}
+
 glance-api:
   file.replace:
     - name: /etc/glance/glance-api.conf
