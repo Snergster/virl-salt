@@ -4,6 +4,15 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
+{% if kilo %}
+keystone no upstart:
+  file.managed:
+    - name: /etc/init/keystone.override
+    - contents: |
+        start on manual
+        stop on manual
+{% endif %}
+
 keystone-pkgs:
   pkg.installed:
     - names:
