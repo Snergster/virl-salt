@@ -3,7 +3,7 @@ export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=admin
 export OS_TENANT_NAME=admin
 export OS_USERNAME=admin
-export OS_PASSWORD={% salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-export OS_AUTH_URL=http://{%salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %} :35357/v3
-export OS_SERVICE_TOKEN={% salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
+export OS_PASSWORD={{ salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) }}
+export OS_AUTH_URL=http://{{ salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) }} :35357/v3
+export OS_SERVICE_TOKEN={{ salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) }}
 
