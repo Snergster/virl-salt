@@ -20,6 +20,18 @@ keystone-pkgs:
     - require:
       - pkg: keystone-pkgs
 
+/usr/local/bin/admin-openrc:
+  file.managed:
+    {% if masterless %}
+    - source: file:///srv/salt/openstack/keystone/files/admin-openrc.jinja
+    {% else %}
+    - source: "salt://openstack/keystone/files/admin-openrc.jinja"
+    {% endif %}
+    - mode: 0755
+    - template: jinja
+    - require:
+      - pkg: keystone-pkgs
+
 keystone db-sync:
   cmd.run:
     - name: su -s /bin/sh -c "keystone-manage db_sync" keystone
