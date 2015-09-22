@@ -5,6 +5,7 @@
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
+{% set kilo = salt['pillar.get']('virl:kilo, salt['grains.get']('kilo', false)) %}
 
 glance-pkgs:
   pkg.installed:
@@ -12,6 +13,7 @@ glance-pkgs:
     - names:
       - glance
 
+{% if not kilo %}
 oslo glance prereq:
   pip.installed:
 {% if proxy == true %}
@@ -24,6 +26,7 @@ oslo glance prereq:
       - oslo.config == 1.6.0
       - pbr == 0.10.8
 
+{% endif %}
 
 glance-api:
   file.replace:
@@ -155,6 +158,19 @@ glance-reg-flavor:
     - value: 'keystone'
     - require:
       - pkg: glance-pkgs
+
+{% if kilo %}
+
+glance-api-user-token:
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - section: 'DEFAULT'
+    - parameter: 'use_user_token'
+    - value: 'False'
+    - require:
+      - pkg: glance-pkgs
+
+{% endif %}
 
 glance db-sync:
   cmd.run:
