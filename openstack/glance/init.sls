@@ -13,7 +13,7 @@ glance-pkgs:
     - names:
       - glance
 
-{% if not kilo %}
+
 oslo glance prereq:
   pip.installed:
 {% if proxy == true %}
@@ -22,11 +22,13 @@ oslo glance prereq:
     - require:
       - pkg: glance-pkgs
     - names:
+    {% if not kilo %}
       - oslo.messaging == 1.6.0
       - oslo.config == 1.6.0
       - pbr == 0.10.8
-
-{% endif %}
+    {% else %}
+      - oslo.i18n == 1.6.0
+    {% endif %}
 
 {% if kilo %}
 glance-api user token:
