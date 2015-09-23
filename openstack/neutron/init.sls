@@ -33,6 +33,7 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 include:
   - openstack.keystone.setup
@@ -46,6 +47,17 @@ neutron-pkgs:
   pkg.installed:
     - force_yes: True
     - pkgs:
+    {% if kilo %}
+      - neutron-common: '=1:2015.1.1-0ubuntu2'
+      - neutron-dhcp-agent: '=1:2015.1.1-0ubuntu2'
+      - neutron-l3-agent: '=1:2015.1.1-0ubuntu2'
+      - neutron-metadata-agent: '=1:2015.1.1-0ubuntu2'
+      - neutron-plugin-linuxbridge-agent: '=1:2015.1.1-0ubuntu2'
+      - neutron-plugin-linuxbridge: '=1:2015.1.1-0ubuntu2'
+      - neutron-plugin-ml2: '=1:2015.1.1-0ubuntu2'
+      - neutron-server: '=1:2015.1.1-0ubuntu2'
+      - python-neutron: '=1:2015.1.1-0ubuntu2'
+    {% else %}
       - neutron-common: '=1:2014.1.3-0ubuntu1.1'
       - neutron-dhcp-agent: '=1:2014.1.3-0ubuntu1.1'
       - neutron-l3-agent: '=1:2014.1.3-0ubuntu1.1'
@@ -55,8 +67,11 @@ neutron-pkgs:
       - neutron-plugin-ml2: '=1:2014.1.3-0ubuntu1.1'
       - neutron-server: '=1:2014.1.3-0ubuntu1.1'
       - python-neutron: '=1:2014.1.3-0ubuntu1.1'
+    {% endif %}
   apt.held:
     - name: neutron-plugin-linuxbridge-agent
+
+{% if not kilo %}
 
 oslo prereq pin of hate:
   pip.installed:
@@ -71,19 +86,22 @@ oslo prereq pin of hate:
       - pbr == 0.10.8
       - netaddr==0.7.15
 
+{% endif %}
+
 /etc/neutron/neutron.conf:
   file.managed:
     - template: jinja
     - makedirs: True
     - mode: 755
-    {% if masterless %}
-    - source: "file:///srv/salt/openstack/neutron/files/neutron.conf"
+    {% if kilo %}
+    - source: "salt://openstack/neutron/files/kilo.neutron.conf"
     {% else %}
     - source: "salt://openstack/neutron/files/neutron.conf"
     {% endif %}
     - require:
       - pkg: neutron-pkgs
 
+{% if not kilo %}
 
 /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
   file.managed:
@@ -98,13 +116,15 @@ oslo prereq pin of hate:
     - require:
       - pkg: neutron-pkgs
 
+{% endif %}
+
 /etc/neutron/plugins/ml2/ml2_conf.ini:
   file.managed:
     - mode: 755
     - template: jinja
     - makedirs: True
-    {% if masterless %}
-    - source: "file:///srv/salt/openstack/neutron/files/plugins/ml2/ml2_conf.ini"
+    {% if kilo %}
+    - source: "salt://openstack/neutron/files/plugins/ml2/kilo.ml2_conf.ini"
     {% else %}
     - source: "salt://openstack/neutron/files/plugins/ml2/ml2_conf.ini"
     {% endif %}
@@ -153,7 +173,11 @@ neutron-mtu:
 {% if l2_port2_enabled == false %}
 neutron-provider-networks:
   openstack_config.present:
+  {% if kilo %}
+    - filename: /etc/neutron/neutron.conf
+  {% else %}
     - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
+  {% endif %}
     - section: 'vlans'
     - parameter: 'network_vlan_ranges'
     - value: 'flat,ext-net'
@@ -162,7 +186,11 @@ neutron-provider-networks:
 
 neutron-provider-networks-phymap:
   openstack_config.present:
+  {% if kilo %}
+    - filename: /etc/neutron/neutron.conf
+  {% else %}
     - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
+  {% endif %}
     - section: 'linux_bridge'
     - parameter: 'physical_interface_mappings'
     - value: 'flat:{{ l2_port }},ext-net:{{ l3_port }}'
@@ -194,9 +222,24 @@ neutron-hostname3:
     - filename: /etc/neutron/neutron.conf
     - section: 'keystone_authtoken'
     - parameter: 'auth_uri'
+    {% if kilo %}
+    - value: 'http://{{ controllerhostname }}:35357/v2.0/'
+    {% else %}
+    - value: 'http://{{ controllerhostname }}:5000'
+    {% endif %}
+    - require:
+      - file: /etc/neutron/neutron.conf
+
+  {% if kilo %}
+neutron-hostname-indentity:
+  openstack_config.present:
+    - filename: /etc/neutron/neutron.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'identity_uri'
     - value: 'http://{{ controllerhostname }}:5000'
     - require:
       - file: /etc/neutron/neutron.conf
+  {% endif %}
 
 neutron-hostname4:
   openstack_config.present:
@@ -346,7 +389,15 @@ l3-gateway:
     - require:
       - pkg: neutron-pkgs
 
+{% if kilo %}
+/etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
+  file.managed:
+    - source: "salt://openstack/neutron/files/kilo.linuxbridge-plugin.filters"
+    - require:
+      - pkg: neutron-pkgs
 
+
+{% else %}
 
 /srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff:
   file.managed:
@@ -510,7 +561,7 @@ compile linuxbridge:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-
+{% endif %}
 
 linuxbridge hold:
   apt.held:

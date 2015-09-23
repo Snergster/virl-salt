@@ -11,6 +11,7 @@
   /sbin/ifconfig rmix,
   /usr/bin/telnet_front rmix,
   /usr/bin/socat rmix,
+  /usr/bin/crudini rmix,
   /bin/sleep rmix,
 
   @{PROC}/[0-9]*/cmdline r,
