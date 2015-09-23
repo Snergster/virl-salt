@@ -396,6 +396,60 @@ l3-gateway:
     - require:
       - pkg: neutron-pkgs
 
+/usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py:
+  file.managed:
+    - source: salt://openstack/neutron/files/kilo/ip_lib.py
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
+    - require:
+      - pkg: neutron-pkgs
+
+/usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py:
+  file.managed:
+    - source: salt://openstack/neutron/files/kilo/linuxbridge_neutron_agent.py
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+    - require:
+      - pkg: neutron-pkgs
+
+/usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/common/config.py:
+  file.managed:
+    - source: salt://openstack/neutron/files/kilo/config.py
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/common/config.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/common/config.py
+    - require:
+      - pkg: neutron-pkgs
+
+/usr/lib/python2.7/dist-packages/neutron/plugins/ml2/plugin.py:
+  file.managed:
+    - source: salt://openstack/neutron/files/kilo/plugin.py
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/plugin.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/plugin.py
+    - require:
+      - pkg: neutron-pkgs
+
+/usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py:
+  file.managed:
+    - source: salt://openstack/neutron/files/kilo/rpc.py
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py
+    - require:
+      - pkg: neutron-pkgs
 
 {% else %}
 

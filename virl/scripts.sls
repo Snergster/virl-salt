@@ -3,6 +3,7 @@
 {% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
 {% set enable_horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 {% if not masterless %}
 
@@ -152,6 +153,19 @@
       - file: /etc/apparmor.d/local/telnet_front
 
 
+
+{% if kilo %}
+
+/etc/apparmor.d/libvirt/TEMPLATE.qemu:
+  file.managed:
+    - source: salt://virl/files/libvirt.template
+    - makedirs: true
+    - mode: 644
+  cmd.wait:
+    - name: service apparmor reload
+    - watch:
+      - file: /etc/apparmor.d/libvirt/TEMPLATE.qemu
+{% else %}
 /etc/apparmor.d/libvirt/TEMPLATE:
   {% if not masterless %}
   file.managed:
@@ -167,6 +181,7 @@
     - name: service apparmor reload
     - watch:
       - file: /etc/apparmor.d/libvirt/TEMPLATE
+{% endif %}
 
 
 /etc/modprobe.d/kvm-intel.conf:
