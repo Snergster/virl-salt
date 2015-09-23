@@ -1,5 +1,6 @@
 {% set heat = salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false )) %}
 {% set cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false )) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 all-start:
   cmd.run:
@@ -17,7 +18,9 @@ all-start:
         service neutron-l3-agent start
         service neutron-metadata-agent start
         service neutron-plugin-linuxbridge-agent start
+        {% if not kilo %}
         service keystone start
+        {% endif %}
         service glance-api start
         service glance-registry start
         {% if heat == true %}
