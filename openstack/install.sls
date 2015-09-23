@@ -12,7 +12,9 @@ include:
   - openstack.mysql
   - openstack.rabbitmq
   - openstack.keystone
+{% if not kilo %}
   - openstack.osclients
+{% endif %}
   - openstack.glance
   - openstack.neutron
   - openstack.nova

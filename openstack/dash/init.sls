@@ -3,6 +3,7 @@
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 include:
   - virl.web
@@ -19,6 +20,7 @@ horizon-pkgs:
       - libapache2-mod-wsgi
       - openstack-dashboard
 
+{% if not kilo %}
 openstack-dashboard-ubuntu-theme:
   pkg.removed:
     - order: 2
@@ -33,7 +35,7 @@ openstack-dash:
         Pin: release *
         Pin-Priority: -1
 
-
+{% endif %}
 horizon-allowed:
   file.replace:
     - name: /etc/openstack-dashboard/local_settings.py
