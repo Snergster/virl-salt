@@ -1,7 +1,7 @@
 {% set iosxrv432 = salt['pillar.get']('routervms:iosxrv432', False ) %}
 {% set iosxrv432pref = salt['pillar.get']('virl:iosxrv432', salt['grains.get']('iosxrv432', True)) %}
 
-% if iosxrv432 and iosxrv432pref %}
+{% if iosxrv432 and iosxrv432pref %}
 iosxrv432:
   glance.image_present:
     - profile: virl
