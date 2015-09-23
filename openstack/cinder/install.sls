@@ -34,7 +34,7 @@ oslo cinder prereq:
       - oslo.messaging == 1.6.0
       - oslo.config == 1.6.0
       - pbr == 0.10.8
-{% endif %}
+
 
 cinder-reinstall:
   pkg.installed:
@@ -46,7 +46,7 @@ cinder-reinstall:
       - cinder-volume
     - onchanges:
       - pip: oslo cinder prereq
-
+{% endif %}
 
 /etc/cinder/cinder.conf:
   file.managed:
@@ -87,7 +87,9 @@ cinder-restart:
   cmd.run:
     - require:
       - file: /etc/cinder/cinder.conf
+{% if not kilo %}
       - pip: oslo cinder prereq
+{% endif %}
     - name: |
         cinder-manage db sync
         service cinder-volume restart
