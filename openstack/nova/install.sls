@@ -14,6 +14,7 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 include:
   - virl.ramdisk
@@ -39,6 +40,7 @@ nova-pkgs:
       - nova-serialproxy
       - python-novaclient
 
+{% if not kilo %}
 oslo messaging 11 prevent:
   pip.installed:
 {% if proxy == true %}
@@ -50,6 +52,7 @@ oslo messaging 11 prevent:
       - oslo.messaging == 1.6.0
       - oslo.config == 1.6.0
       - pbr == 0.10.8
+{% endif %}
 
 /etc/nova:
   file.directory:
@@ -59,7 +62,11 @@ oslo messaging 11 prevent:
   file.managed:
     - mode: 755
     - template: jinja
+    {% if kilo %}
+    - source: "salt://openstack/nova/files/kilo.nova.conf"
+    {% else %}
     - source: "salt://openstack/nova/files/nova.conf"
+    {% endif %}
     - require:
       - pkg: nova-pkgs
 
@@ -69,7 +76,8 @@ add libvirt-qemu to nova:
     - delusers:
       - libvirt-qemu
 
-
+{% if kilo %}
+{% else %}
 cmd/serialproxy.py replace:
   file.managed:
     - source: salt://openstack/nova/patch/serialproxy.py
@@ -149,7 +157,7 @@ libvirt/driver.py replace:
     - watch:
       - file: libvirt/driver.py replace
 
-
+{% endif %}
 ## if needs to go here for non controller
 {% if iscontroller == False %}
 
@@ -209,18 +217,56 @@ nova-hostname5:
 
 {% endif %}
 
-nova-compute serial:
-  openstack_config.present:
-    - filename: /etc/nova/nova-compute.conf
-    - section: 'libvirt'
-    - parameter: 'serial_port_range'
-    - value: '{{ serstart }}:{{ serend }}'
+{% if kilo %}
+/etc/nova/policy.json:
+  file.managed:
+    - source: "salt://openstack/nova/files/kilo.policy.json"
+    - user: nova
+    - group: nova
+    - mode: 0640
     - require:
-      - file: /etc/nova/nova.conf
+      - pkg: nova-pkgs
+
+/usr/share/nova-serial/serial.html:
+  file.managed:
+    - source: "salt://openstack/nova/files/kilo.serial.html"
+    - user: nova
+    - group: nova
+    - mode: 0644
+    - require:
+      - pkg: nova-pkgs
+
+/usr/lib/python2.7/dist-packages/nova/console/serial.html:
+  file.managed:
+    - source: "salt://openstack/nova/files/kilo.serial.html"
+    - user: nova
+    - group: nova
+    - mode: 0644
+    - require:
+      - pkg: nova-pkgs
+
+/usr/share/nova-serial/term.js:
+  file.managed:
+    - source: "salt://openstack/nova/files/term.js"
+    - user: nova
+    - group: nova
+    - mode: 0644
+    - require:
+      - pkg: nova-pkgs
+
+/usr/lib/python2.7/dist-packages/nova/console/term.js:
+  file.managed:
+    - source: "salt://openstack/nova/files/term.js"
+    - user: nova
+    - group: nova
+    - mode: 0644
+    - require:
+      - pkg: nova-pkgs
+
+{% else %}
 
 
 /etc/init.d/nova-serialproxy:
-
   file.managed:
     - source: "salt://openstack/nova/files/nova-serialproxy"
     - force: True
@@ -237,18 +283,6 @@ nova-compute serial:
     - require:
       - pkg: nova-pkgs
 
-/etc/rc2.d/S98nova-serialproxy:
-  file.absent
-
-/usr/share/novnc/vnc_auto.html:
-  file.managed:
-    - source: "salt://openstack/nova/files/vnc_auto.html"
-    - user: nova
-    - group: nova
-    - mode: 0644
-    - require:
-      - pkg: nova-pkgs
-
 /usr/share/nova-serial/serial.html:
   file.managed:
     - source: "salt://openstack/nova/files/serial.html"
@@ -261,6 +295,29 @@ nova-compute serial:
 /usr/lib/python2.7/dist-packages/nova/console/serial.html:
   file.managed:
     - source: "salt://openstack/nova/files/serial.html"
+    - user: nova
+    - group: nova
+    - mode: 0644
+    - require:
+      - pkg: nova-pkgs
+
+{% endif %}
+
+nova-compute serial:
+  openstack_config.present:
+    - filename: /etc/nova/nova-compute.conf
+    - section: 'libvirt'
+    - parameter: 'serial_port_range'
+    - value: '{{ serstart }}:{{ serend }}'
+    - require:
+      - file: /etc/nova/nova.conf
+
+/etc/rc2.d/S98nova-serialproxy:
+  file.absent
+
+/usr/share/novnc/vnc_auto.html:
+  file.managed:
+    - source: "salt://openstack/nova/files/vnc_auto.html"
     - user: nova
     - group: nova
     - mode: 0644
