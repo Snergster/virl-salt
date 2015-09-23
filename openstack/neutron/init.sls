@@ -645,12 +645,12 @@ neutron restart:
   cmd.run:
     - order: last
     - name: |
-        sleep 75
         service neutron-server restart | at now + 1 min
         service neutron-dhcp-agent restart | at now + 1 min
         service neutron-l3-agent restart | at now + 1 min
         service neutron-metadata-agent restart | at now + 1 min
         service neutron-plugin-linuxbridge-agent restart | at now + 1 min
+        sleep 75
 {% else %}
 neutron restart:
   cmd.run:
