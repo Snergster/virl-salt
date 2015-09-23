@@ -429,6 +429,7 @@ nova-hostname5:
 /usr/share/nova-serial/serial.html:
   file.managed:
     - source: "salt://openstack/nova/files/kilo.serial.html"
+    - makedirs: True
     - user: nova
     - group: nova
     - mode: 0644
@@ -447,6 +448,7 @@ nova-hostname5:
 /usr/share/nova-serial/term.js:
   file.managed:
     - source: "salt://openstack/nova/files/term.js"
+    - makedirs: True
     - user: nova
     - group: nova
     - mode: 0644
@@ -465,13 +467,6 @@ nova-hostname5:
 {% else %}
 
 
-/etc/init.d/nova-serialproxy:
-  file.managed:
-    - source: "salt://openstack/nova/files/nova-serialproxy"
-    - force: True
-    - mode: 0755
-    - require:
-      - pkg: nova-pkgs
 
 /etc/nova/policy.json:
   file.managed:
@@ -501,6 +496,13 @@ nova-hostname5:
       - pkg: nova-pkgs
 
 {% endif %}
+/etc/init.d/nova-serialproxy:
+  file.managed:
+    - source: "salt://openstack/nova/files/nova-serialproxy"
+    - force: True
+    - mode: 0755
+    - require:
+      - pkg: nova-pkgs
 
 nova-compute serial:
   openstack_config.present:

@@ -636,21 +636,18 @@ neutron lxc bridge off in default:
     - repl: 'USE_LXC_BRIDGE="false"'
 
 {% if kilo %}
-glance db-sync:
-  cmd.run:
-    - order: last
-    - name: su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade kilo" neutron
 
 neutron restart:
   cmd.run:
     - order: last
     - name: |
+        su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade kilo" neutron
         service neutron-server restart | at now + 1 min
         service neutron-dhcp-agent restart | at now + 1 min
         service neutron-l3-agent restart | at now + 1 min
         service neutron-metadata-agent restart | at now + 1 min
         service neutron-plugin-linuxbridge-agent restart | at now + 1 min
-        sleep 75
+        sleep 65
 {% else %}
 neutron restart:
   cmd.run:
