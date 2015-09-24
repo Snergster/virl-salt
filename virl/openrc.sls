@@ -4,6 +4,7 @@
 {% set enable_horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)) %}
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 include:
   - openstack.mysql.open
@@ -18,7 +19,11 @@ include:
 /home/virl/.bashrc:
   file.managed:
     - order: 1
+    {% if kilo %}
+    - source: salt://virl/files/kilo.bashrc
+    {% else %}
     - source: salt://virl/files/bashrc
+    {% endif %}
     - user: virl
     - group: virl
     - mode: 755
