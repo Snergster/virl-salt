@@ -1,4 +1,10 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+
+{% if kilo %}
+include:
+  - openstack.repo.kilo
+{% else %}
 
 {% if masterless %}
 /etc/apt/sources.list.d/cisco-openstack-mirror_icehouse.list:
@@ -37,4 +43,5 @@
     - watch:
       - file: /tmp/cisco-openstack.key
 
+{% endif %}
 {% endif %}

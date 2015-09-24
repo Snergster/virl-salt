@@ -23,6 +23,10 @@ keystone-pkgs:
       - apache2
       - libapache2-mod-wsgi
       - memcached
+  cmd.run:
+    - names:
+      - service keystone stop
+      - service apache2 restart
   pip.installed:
   {% if proxy == true %}
     - proxy: {{ http_proxy }}
