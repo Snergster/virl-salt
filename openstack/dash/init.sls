@@ -67,8 +67,10 @@ horizon-restart:
       - file: horizon-oshosts
       - file: horizon-hosts
       - file: horizon-allowed
-      - file: openstack-dash
       - pkg: horizon-pkgs
+      {% if not kilo %}
+      - file: openstack-dash
+      {% endif %}
     - name: |
         service apache2 restart
         service memcached restart
