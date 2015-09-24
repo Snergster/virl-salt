@@ -70,13 +70,13 @@ adminpass2:
 {% if kilo %}
 controllername2v3:
   cmd.run:
-    - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v3' repl='http://{{ hostname }}:35357/v2.0'
+    - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v3' repl='http://{{ hostname }}:35357/v3'
     - unless: grep {{ hostname }}:35357 /home/virl/.bashrc
 
 
 controllernamev3:
   cmd.run:
-    - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v3' repl='http://{{ hostname }}:35357/v2.0'
+    - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v3' repl='http://{{ hostname }}:35357/v3'
     - unless: grep {{ hostname }}:35357 /usr/local/bin/virl-openrc.sh
 {% endif %}
 controllername2:
