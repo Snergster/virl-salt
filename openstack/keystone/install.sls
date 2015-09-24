@@ -49,11 +49,7 @@ keystone-pkgs:
 {% if kilo %}
 /usr/local/bin/admin-openrc:
   file.managed:
-    {% if masterless %}
-    - source: file:///srv/salt/openstack/keystone/files/admin-openrc.jinja
-    {% else %}
     - source: "salt://openstack/keystone/files/admin-openrc.jinja"
-    {% endif %}
     - mode: 0755
     - template: jinja
     - require:
