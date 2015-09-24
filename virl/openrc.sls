@@ -71,14 +71,26 @@ adminpass2:
 controllername2v3:
   cmd.run:
     - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v3' repl='http://{{ hostname }}:35357/v3'
-    - unless: grep {{ hostname }}:35357 /home/virl/.bashrc
+    - unless: grep '{{ hostname }}:35357/v3' /home/virl/.bashrc
 
 
 controllernamev3:
   cmd.run:
     - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v3' repl='http://{{ hostname }}:35357/v3'
-    - unless: grep {{ hostname }}:35357 /usr/local/bin/virl-openrc.sh
-{% endif %}
+    - unless: grep '{{ hostname }}:35357/v3' /usr/local/bin/virl-openrc.sh
+
+controllernamev2:
+  cmd.run:
+    - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
+    - unless: grep '{{ hostname }}:35357/v2.0' /home/virl/.bashrc
+
+
+controllernamev:
+  cmd.run:
+    - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
+    - unless: grep '{{ hostname }}:35357/v2.0' /usr/local/bin/virl-openrc.sh
+
+{% else %}
 controllername2:
   cmd.run:
     - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
@@ -89,6 +101,7 @@ controllername:
   cmd.run:
     - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ hostname }}:35357/v2.0'
     - unless: grep {{ hostname }}:35357 /usr/local/bin/virl-openrc.sh
+{% endif %}
 
 token:
   file.replace:
