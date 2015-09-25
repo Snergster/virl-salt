@@ -18,6 +18,7 @@
 {% set ank_live = salt['pillar.get']('virl:ank_live', salt['grains.get']('ank_live', '19402')) %}
 {% set fdns = salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )) %}
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 /var/cache/virl/std:
   file.recurse:
@@ -99,6 +100,7 @@ std_prereq_webmux:
       - SQLObject >= 1.5.1
       - service_identity
       - docker-py >= 1.3.1
+      - lxml >= 3.4.1
   {% endif %}
 
 /etc/virl directory:
@@ -136,13 +138,23 @@ std uwm port replace:
       - pattern: :\d{2,}"
       - repl: :{{ uwmport }}"
       - unless: grep {{ uwmport }} /var/www/html/index.html
+{% if kilo %}
+std nova-compute serial:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'serial_console'
+    - parameter: 'port_range'
+    - value: '{{ serstart }}:{{ serend }}'
 
+{% else %}
 std nova-compute serial:
   openstack_config.present:
     - filename: /etc/nova/nova-compute.conf
     - section: 'libvirt'
     - parameter: 'serial_port_range'
     - value: '{{ serstart }}:{{ serend }}'
+
+{% endif %}
 
 std_prereq:
   pip.installed:
