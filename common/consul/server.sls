@@ -20,10 +20,10 @@ consul server init:
   file.managed:
     - user: consul
     - group: consul
-    - contents: '{"bootstrap": true, "server": true, "advertise_addr": "{{ip}}", "bind_addr": "{{ip}}", "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key", "node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true }'
+    - contents: '{"bootstrap": true, "server": true, "advertise_addr": "{{ip}}", "disable_remote_exec": true, "bind_addr": "{{ip}}", "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key", "node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true }'
 
 /etc/consul.d/server/config.json:
   file.managed:
     - user: consul
     - group: consul
-    - contents: '{"bootstrap": false, "server": true, "advertise_addr": "{{ip}}", "bind_addr": "{{ip}}", "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key","node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": [{{consul_server_ip}}] }'
+    - contents: '{"bootstrap": false, "server": true, "advertise_addr": "{{ip}}", "disable_remote_exec": true, "bind_addr": "{{ip}}", "datacenter": "{{consul_dc}}", "verify_incoming": true, "verify_outgoing": true, "ca_file": "/etc/consul.d/ssl/ca.cert", "cert_file": "/etc/consul.d/ssl/consul.cert", "key_file": "/etc/consul.d/ssl/consul.key","node_name": "{{node_name}}", "data_dir": "/var/consul", "encrypt": "{{consul_encrypt}}", "log_level": "INFO", "enable_syslog": true, "start_join": [{{consul_server_ip}}] }'
