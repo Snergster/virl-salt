@@ -16,6 +16,7 @@
 {% set serstart = salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')) %}
 {% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
 {% set ank_live = salt['pillar.get']('virl:ank_live', salt['grains.get']('ank_live', '19402')) %}
+{% set virl_webmux = salt['pillar.get']('virl:virl_webmux', salt['grains.get']('virl_webmux', '19403')) %}
 {% set fdns = salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )) %}
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
@@ -245,11 +246,20 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg 'new-project-networks' snat_net_dns2 {{ sdns }}
       - crudini --set /etc/virl/virl.cfg 'new-project-networks' mgmt_net_dns {{ fdns }}
       - crudini --set /etc/virl/virl.cfg 'new-project-networks' mgmt_net_dns2 {{ sdns }}
+      - crudini --set /etc/virl/virl.cfg env virl_webmux_port {{ virl_webmux }}
+      - crudini --set /etc/virl/common.cfg host webmux_port {{ virl_webmux }}
       - crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}
 
 ank_live_port change:
   cmd.run:
     - name: 'crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}'
+
+webmux_port change:
+  cmd.run:
+    - names:
+      - crudini --set /etc/virl/virl.cfg env virl_webmux_port {{ virl_webmux }}
+      - crudini --set /etc/virl/common.cfg host webmux_port {{ virl_webmux }}
+      - service virl-webmux restart
 
 uwmadmin change:
   cmd.run:
