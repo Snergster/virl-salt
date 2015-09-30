@@ -43,7 +43,7 @@ nova-conn:
     - filename: /etc/nova/nova.conf
     - section: 'database'
     - parameter: 'connection'
-    - value: ' mysql://keystone:{{ novapassword }}@{{ controllerip }}/nova'
+    - value: ' mysql://nova:{{ novapassword }}@{{ controllerip }}/nova'
 
 
 nova-rabbitpass:
