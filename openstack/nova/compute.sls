@@ -151,7 +151,7 @@ serialproxy_base:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
-    - parameter: 'serialproxy_base_url'
+    - parameter: 'serial_port_base_url'
     - value: ' http://{{ controllerip }}:{{ serial_port }}/serial.html'
 
 serialproxy_port:
