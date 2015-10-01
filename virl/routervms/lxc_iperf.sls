@@ -1,6 +1,9 @@
 {% set lxc_iperf = salt['pillar.get']('lxcimages:lxc_iperf', True) %}
 {% set lxc_iperf_pref = salt['pillar.get']('virl:lxc_iperf', salt['grains.get']('lxc_iperf', True)) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if lxc_iperf and lxc_iperf_pref %}
 
 lxc_iperf:

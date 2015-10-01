@@ -1,6 +1,9 @@
 {% set csr1000vpref = salt['pillar.get']('virl:csr1000v', salt['grains.get']('csr1000v', True)) %}
 {% set csr1000v = salt['pillar.get']('routervms:csr1000v', False) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if csr1000v and csr1000vpref %}
 CSR1000v:
   glance.image_present:

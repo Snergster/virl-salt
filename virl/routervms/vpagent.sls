@@ -1,6 +1,9 @@
 {% set vpagentpref = salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', True)) %}
 {% set vpagent = salt['pillar.get']('routervms:vpagent', False) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if vpagent and vpagentpref %}
 
 vpagent:

@@ -4,6 +4,9 @@
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
 {% set cml_iosvl2 = salt['pillar.get']('virl:cml_iosvl2', salt['grains.get']('cml_iosvl2', True)) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if iosvl2 or cml_iosvl2 %}
 
 IOSvL2:

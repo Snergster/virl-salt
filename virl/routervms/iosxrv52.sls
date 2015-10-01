@@ -1,6 +1,9 @@
 {% set iosxrv52 = salt['pillar.get']('routervms:iosxrv52', False ) %}
 {% set iosxrv52pref = salt['pillar.get']('virl:iosxrv52', salt['grains.get']('iosxrv52', False)) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if iosxrv52 and iosxrv52pref %}
 iosxrv52:
   glance.image_present:

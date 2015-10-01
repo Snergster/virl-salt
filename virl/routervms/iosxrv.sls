@@ -1,6 +1,9 @@
 {% set iosxrvpref = salt['pillar.get']('virl:iosxrv', salt['grains.get']('iosxrv', True)) %}
 {% set iosxrv = salt['pillar.get']('routervms:iosxrv', False ) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if iosxrv and iosxrvpref %}
 
 iosxrv:

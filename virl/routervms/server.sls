@@ -1,6 +1,9 @@
 {% set server = salt['pillar.get']('routervms:UbuntuServertrusty', True) %}
 {% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if server and serverpref %}
 
 UbuntuServertrusty:

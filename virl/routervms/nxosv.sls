@@ -1,6 +1,9 @@
 {% set nxosv = salt['pillar.get']('routervms:nxosv', False) %}
 {% set nxosvpref = salt['pillar.get']('virl:nxosv', salt['grains.get']('nxosv', True)) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if nxosv and nxosvpref %}
 
 NX-OSv:

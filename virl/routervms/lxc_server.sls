@@ -1,6 +1,9 @@
 {% set lxc_server = salt['pillar.get']('lxcimages:lxc_server', True) %}
 {% set lxc_server_pref = salt['pillar.get']('virl:lxc_server', salt['grains.get']('lxc_server', True)) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if lxc_server and lxc_server_pref %}
 
 lxc_server:

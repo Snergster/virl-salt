@@ -1,6 +1,9 @@
 {% set asav = salt['pillar.get']('routervms:asav', False) %}
 {% set asavpref = salt['pillar.get']('virl:asav', salt['grains.get']('asav', True)) %}
 
+include:
+  - virl.routervms.virl-core-sync
+
 {% if asav and asavpref %}
 asav:
   glance.image_present:
