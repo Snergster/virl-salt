@@ -33,3 +33,10 @@ remove msg file:
     - require:
       - service: virl-std dead
       - service: virl-uwm dead
+
+std cache cleanup:
+  cmd.run:
+    - names:
+      - 'rm -f /var/cache/virl/std/VIRL*'
+      - 'rm -rf /var/cache/virl/std/doc'
+

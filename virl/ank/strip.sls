@@ -8,3 +8,9 @@
   pip.removed:
     - name: {{ank}}
 {%endfor%}
+
+ank cache cleanup:
+  cmd.run:
+    - names:
+      - 'rm -f /var/cache/virl/ank/auto*'
+      - 'rm -f /var/cache/virl/ank/virl*'
