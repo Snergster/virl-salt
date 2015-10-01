@@ -95,15 +95,6 @@ ank init script:
     - source: "salt://virl/ank/files/ank-cisco-webserver.init"
     - mode: 0755
 
-substitute ank port:
-  file.replace:
-    - order: last
-    - name: /etc/init.d/ank-cisco-webserver
-    - pattern: '.*--port.*"'
-    - repl: 'RUNNING_CMD="/usr/local/bin/ank_cisco_webserver --multi_user --port {{ ank }}"'
-    - unless:
-      - grep {{ ank }} /etc/init.d/ank-cisco-webserver
-      - 'test ! -e /etc/init.d/ank-cisco-webserver'
 
 ank symlink:
   file.symlink:
@@ -269,6 +260,21 @@ ank-webserver:
 autonetkit_cisco.so remove:
   file.absent:
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
+
+substitute ank port:
+  file.replace:
+    - order: last
+    - name: /etc/init.d/ank-cisco-webserver
+    - pattern: '.*--port.*"'
+    - repl: 'RUNNING_CMD="/usr/local/bin/ank_cisco_webserver --multi_user --port {{ ank }}"'
+    - unless:
+      - grep {{ ank }} /etc/init.d/ank-cisco-webserver
+      - 'test ! -e /etc/init.d/ank-cisco-webserver'
+  cmd.wait:
+    - names:
+      - service ank-cisco-webserver restart
+    - onchanges:
+      - file: substitute ank port
 
 
 ank-cisco-webserver:
