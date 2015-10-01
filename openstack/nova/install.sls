@@ -551,3 +551,4 @@ nova-restart:
         service nova-conductor restart
         service nova-compute restart
         service nova-novncproxy restart
+        service nova-serialproxy restart
