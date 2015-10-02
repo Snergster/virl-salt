@@ -17,6 +17,8 @@
 {% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
 {% set ank_live = salt['pillar.get']('virl:ank_live', salt['grains.get']('ank_live', '19402')) %}
 {% set virl_webmux = salt['pillar.get']('virl:virl_webmux', salt['grains.get']('virl_webmux', '19403')) %}
+{% set topology_editor_port = salt['pillar.get']('virl:ank', salt['grains.get']('ank', '19401')) %}
+{% set web_editor = salt['pillar.get']('virl:web_editor', salt['grains.get']('web_editor', False)) %}
 {% set fdns = salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )) %}
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
@@ -253,6 +255,20 @@ VIRL_CORE:
 ank_live_port change:
   cmd.run:
     - name: 'crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}'
+
+
+web editor alpha:
+{% if web_editor %}
+  cmd.run:
+    - name: 'crudini --set /etc/virl/common.cfg host topology_editor_port {{ topology_editor_port }}'
+{% else %}
+  file.replace:
+    - name: /etc/virl/common.cfg
+    - pattern: '^topology_editor_port.*'
+    - repl: ''
+{% endif %}
+    - require:
+      - pip: VIRL_CORE
 
 webmux_port change:
   cmd.run:
