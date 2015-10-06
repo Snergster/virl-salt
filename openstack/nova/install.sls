@@ -276,6 +276,15 @@ add libvirt-qemu to nova:
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
 
+{% for each in ['cert','api','serialproxy','conductor','compute','scheduler','novncproxy','consoleauth'] %}
+nova-{{each}}:
+  file.replace:
+    - name: /etc/init/nova-{{each}}.conf
+    - pattern: '^start on runlevel \[2345\]'
+    - repl: 'start on (rabbitmq-server-running or started rabbitmq-server)'
+{% endfor %}
+
+
 {% else %}
 cmd/serialproxy.py replace:
   file.managed:

@@ -451,6 +451,14 @@ l3-gateway:
     - require:
       - pkg: neutron-pkgs
 
+{% for each in ['server','dhcp-agent','l3-agent','metadata-agent','plugin-linuxbridge-agent'] %}
+neutron-{{each}}:
+  file.replace:
+    - name: /etc/init/neutron-{{each}}.conf
+    - pattern: '^start on runlevel \[2345\]'
+    - repl: 'start on (rabbitmq-server-running or started rabbitmq-server)'
+{% endfor %}
+
 {% else %}
 
 /srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff:
