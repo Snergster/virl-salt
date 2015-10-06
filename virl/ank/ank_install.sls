@@ -106,7 +106,7 @@ ank symlink:
       - pip: autonetkit_cisco
 
 
-ank_prereq:
+ank prereq:
   pip.installed:
     {% if proxy == true %}
     - proxy: {{ http_proxy }}
@@ -159,7 +159,7 @@ autonetkit check:
     - use_wheel: True
     - no_index: True
     - require:
-      - pip: ank_prereq
+      - pip: ank prereq
   cmd.wait:
     - names:
       - wheel install-scripts autonetkit

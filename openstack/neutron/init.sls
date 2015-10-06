@@ -135,7 +135,11 @@ oslo prereq pin of hate:
   file.managed:
     - mode: 644
     - makedirs: True
+    {% if kilo %}
+    - source: "salt://openstack/neutron/files/kilo.neutron-server.conf"
+    {% else %}
     - source: "salt://openstack/neutron/files/neutron-server.conf"
+    {% endif %}
     - require:
       - pkg: neutron-pkgs
 
