@@ -22,6 +22,7 @@ include:
 
 nova-api:
   pkg.installed:
+    - name: nova-api
     - refresh: true
 
 nova-pkgs:
@@ -277,7 +278,7 @@ add libvirt-qemu to nova:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
 
 {% for each in ['cert','api','serialproxy','conductor','compute','scheduler','novncproxy','consoleauth'] %}
-nova-{{each}}:
+nova-{{each}} conf:
   file.replace:
     - name: /etc/init/nova-{{each}}.conf
     - pattern: '^start on runlevel \[2345\]'

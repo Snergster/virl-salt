@@ -456,7 +456,7 @@ l3-gateway:
       - pkg: neutron-pkgs
 
 {% for each in ['server','dhcp-agent','l3-agent','metadata-agent','plugin-linuxbridge-agent'] %}
-neutron-{{each}}:
+neutron-{{each}} conf:
   file.replace:
     - name: /etc/init/neutron-{{each}}.conf
     - pattern: '^start on runlevel \[2345\]'
