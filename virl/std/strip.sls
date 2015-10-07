@@ -21,8 +21,9 @@ std no upstart:
       - service: virl-std dead
 
 remove virl-core:
-  pip_state.removed:
-    - name: VIRL-CORE
+  module.run:
+    - name: pip.uninstall
+    - pkgs: virl-core
     - require:
       - service: virl-std dead
       - service: virl-uwm dead
