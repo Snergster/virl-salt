@@ -179,7 +179,7 @@ std_prereq:
       - paramiko >= 1.15.2
       - pycrypto >= 2.6.1
       - Pygments
-      - requests >= 2.5.3
+      - requests == 2.7.0
       - simplejson >= 3.6.5
       - sqlalchemy == 0.9.9
       - tornado >= 3.2.2, < 4.0.0
