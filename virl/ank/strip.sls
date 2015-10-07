@@ -3,11 +3,15 @@
   service.dead:
     - name: {{each}}
 {% endfor %}
-{% for ank in ['autonetkit','autonetkit-cisco','autonetkit-cisco-webui','virl-collection']%}
-{{ank}} remove:
+
+ank remove:
   pip.removed:
-    - name: {{ank}}
-{%endfor%}
+    - names:
+      - autonetkit
+      - autonetkit-cisco
+      - autonetkit-cisco-webui
+      - virl-collection
+
 
 ank cache cleanup:
   cmd.run:
