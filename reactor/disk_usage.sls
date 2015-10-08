@@ -11,6 +11,7 @@ sendmsg_run:
     - kwarg:
         message: Disk usage on {{ id }} on mount {{ mount }} is at {{ disk }}
         color: yellow
-        room_id: 1332718
+        room_id: 1552753
         from_name: disk_filler
+        notify: True
 {% endif %}

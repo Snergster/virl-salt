@@ -11,4 +11,5 @@ sendmsg_run:
         color: yellow
         room_id: 2026504
         from_name: login
+        notify: True
 {% endif %}
