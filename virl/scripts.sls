@@ -5,8 +5,7 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
-{% if not masterless %}
-
+{% if not kilo %}
 /usr/local/bin/update-images:
   file.managed:
     - order: 1
@@ -47,60 +46,6 @@
     - group: virl
     - mode: 755
 
-{% else %}
-
-/usr/local/bin/update-images:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/update_images
-    - onlyif: 'test -e /srv/salt/virl/files/update_images'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-images:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/add-images
-    - onlyif: 'test -e /srv/salt/virl/files/add-images'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-images-auto:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/add-images-auto
-    - onlyif: 'test -e /srv/salt/virl/files/add-images-auto'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-servers:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/add-servers
-    - onlyif: 'test -e /srv/salt/virl/files/add-servers'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/adduser_openstack:
-  file.copy:
-    - order: 1
-    - force: true
-    - source: /srv/salt/virl/files/adduser_openstack
-    - onlyif: 'test -e /srv/salt/virl/files/adduser_openstack'
-    - user: virl
-    - group: virl
-    - mode: 755
-
-
-{% endif %}
 
 /opt/support/add-images:
   file.symlink:
@@ -119,6 +64,7 @@
     - target: /usr/local/bin/add-servers
     - makedirs: true
     - mode: 0755
+{% endif %}
 
 /etc/settings.ini:
   file.symlink:
