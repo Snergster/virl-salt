@@ -14,6 +14,6 @@ sendmsg_run:
     - kwarg:
         message: Received deny creation on {{ id }} key {{ removal }}
         color: yellow
-        room_id: 1332718
+        room_id: 2026476
         from_name: deny_killer
 {% endif %}

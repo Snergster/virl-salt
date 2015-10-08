@@ -9,6 +9,6 @@ sendmsg_run:
     - kwarg:
         message: cpu usage on {{ id }} is over threshold at {{ cpu }}
         color: yellow
-        room_id: 1332718
+        room_id: 1552751
         from_name: cpu_watcher
 {% endif %}

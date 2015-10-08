@@ -9,6 +9,6 @@ sendmsg_run:
     - kwarg:
         message: Failed login on {{ id }} from user {{ user }}
         color: yellow
-        room_id: 1332718
+        room_id: 2026504
         from_name: login
 {% endif %}

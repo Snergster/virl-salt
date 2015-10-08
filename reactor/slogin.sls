@@ -10,6 +10,6 @@ sendmsg_run:
     - kwarg:
         message: Successful login on {{ id }} from user {{ user }} source {{hostname}}
         color: yellow
-        room_id: 1332718
+        room_id: 2026504
         from_name: login
 {% endif %}
