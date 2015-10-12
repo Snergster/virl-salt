@@ -180,6 +180,7 @@ std_prereq:
       - Flask_Login == 0.2.11
       - Flask_RESTful >= 0.3.2
       - Flask_WTF >= 0.11
+      - Flask_Breadcrumbs >= 0.3.0
       - itsdangerous >= 0.24
       - Jinja2 >= 2.7.3
       - lxml <= 3.3.3
