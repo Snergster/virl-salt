@@ -35,14 +35,15 @@ blank what is there:
 
 
 {% if dummy_int %}
-add dummy right now:
-  cmd.run:
-    - name: modprobe dummy numdummies=5
 
 dummy modprobe:
   file.append:
     - name: /etc/modules
     - text: dummy numdummies=5
+    - unless: grep dummy /etc/modules
+  cmd.run:
+    - name: modprobe dummy numdummies=5
+    - unless: grep "^dummy" /proc/modules
 
 special alias up:
   file.blockreplace:
