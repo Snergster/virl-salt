@@ -197,7 +197,7 @@ std_prereq:
       - wsgiref
       - WTForms >= 2.0.2
 {% if kilo %}
-      - tornado >= 4.2.1
+      - tornado >= 3.2.2
 {% else %}
       - tornado >= 3.2.2, < 4.0.0
 {% endif %}

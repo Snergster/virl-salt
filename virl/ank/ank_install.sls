@@ -125,7 +125,7 @@ ank prereq:
       - PyYAML >= 3.10
       - pexpect == 3.1
 {% if kilo %}
-      - tornado >= 4.2.1
+      - tornado >= 3.2.2
 {% else %}
       - tornado >= 3.2.2, < 4.0.0
 {% endif %}
