@@ -11,6 +11,7 @@
 {% set ank_webui = salt['pillar.get']('virl:ank_webui', salt['grains.get']('ank_webui', '0.10.8')) %}
 {% set ank_collector = salt['pillar.get']('virl:ank_collector', salt['grains.get']('ank_collector', '0.10.8')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 ank prereq pkgs:
   pkg.installed:
@@ -122,8 +123,12 @@ ank prereq:
       - netaddr == 0.7.15
       - networkx >= 1.7
       - PyYAML >= 3.10
-      - tornado >= 3.2.2, < 4.0.0
       - pexpect == 3.1
+{% if kilo %}
+      - tornado >= 4.2.1
+{% else %}
+      - tornado >= 3.2.2, < 4.0.0
+{% endif %}
 
 textfsm:
   pip.installed:
