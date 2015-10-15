@@ -183,7 +183,7 @@ std_prereq:
       - Flask_Breadcrumbs >= 0.3.0
       - itsdangerous >= 0.24
       - Jinja2 >= 2.7.3
-      - lxml <= 3.3.3
+      - lxml >= 3.4.1
       - MarkupSafe >= 0.23
       - mock >= 1.0.1
       - paramiko >= 1.15.2
