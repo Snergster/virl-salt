@@ -13,7 +13,7 @@ get_ip() {
 # we expect a single VIRL file (ignore jumphost)
 session=$(ls -t1 $SESSION_DIR/*.virl | grep -v jumphost | head -1)
 echo "***"
-echo "***"
 echo "Link below for live visualization of automatically started session"
+echo "***"
 echo "http://"$(get_ip)":19402/?sim_id="$(basename "${session%.*}")"#/layer/phy"
 exit 0
