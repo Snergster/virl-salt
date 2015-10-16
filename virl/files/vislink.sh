@@ -11,11 +11,7 @@ get_ip() {
 
 
 # we expect a single VIRL file (ignore jumphost)
-session=$(ls -1 $SESSION_DIR/*.virl | grep -v jumphost)
-if [[ $(echo "$session" | wc -l) > 1 ]]; then
-    echo "single file expected";
-    exit 1
-fi
+session=$(ls -t1 $SESSION_DIR/*.virl | grep -v jumphost | head -1)
 
 echo "http://"$(get_ip)":19402/?sim_id="$(basename "${session%.*}")"#/layer/phy"
 exit 0
