@@ -1,5 +1,5 @@
 
 /root/.profile:
   file.replace:
-    - pattern: ^tty -s$
-    - repl: tty -s && mesn n
+    - pattern: ^mesg n$
+    - repl: tty -s && mesg n
