@@ -23,6 +23,13 @@
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
+
+std prereq pkgs:
+  pkg.installed:
+      - pkgs:
+        - libxml2-dev
+        - libxslt1-dev
+
 /var/cache/virl/std:
   file.recurse:
     {% if std_ver_fixed %}
@@ -104,6 +111,8 @@ std_prereq_webmux:
       - service_identity
       - docker-py >= 1.3.1
       - lxml >= 3.4.1
+    - require:
+      - pkg: std prereq pkgs
   {% endif %}
 
 /etc/virl directory:

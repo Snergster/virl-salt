@@ -129,6 +129,9 @@ ank prereq:
 {% else %}
       - tornado >= 3.2.2, < 4.0.0
 {% endif %}
+      - require:
+        - pkg: ank prereq pkgs
+
 
 textfsm:
   pip.installed:
