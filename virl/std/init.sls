@@ -210,6 +210,9 @@ std_prereq:
 {% else %}
       - tornado >= 3.2.2, < 4.0.0
 {% endif %}
+      - require:
+        - pkg: 'std prereq pkgs'
+
 VIRL_CORE:
   pip.installed:
     - use_wheel: True
