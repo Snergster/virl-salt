@@ -1,11 +1,11 @@
-{% set openvpn_enable = salt['grains.get']('openvpn_enable', False) %}
-{% set openvpn_dir = '/etc/openvpn' %}
-{% set easyrsa_key_dir = '/usr/share/easy-rsa/keys' %}
-{% set easyrsa_dir = '/usr/share/easy-rsa' %}
+{% set openvpn_enable = salt['pillar.get']('virl:openvpn_enable', salt['grains.get']('openvpn_enable', False)) %}
+{% set openvpn_dir = salt['pillar.get']('virl:openvpn_dir', salt['grains.get']('openvpn_dir','/etc/openvpn')) %}
+{% set easyrsa_key_dir = salt['pillar.get']('virl:easyrsa_key_dir', salt['grains.get']('easyrsa_key_dir','/usr/share/easy-rsa/keys')) %}
+{% set easyrsa_dir = salt['pillar.get']('virl:easyrsa_dir', salt['grains.get']('easyrsa_dir','/usr/share/easy-rsa')) %}
+{% set openvpn_ovpn_path = salt['pillar.get']('virl:openvpn_ovpn_path', salt['grains.get']('openvpn_ovpn_path','/var/local/virl/client.ovpn')) %}
 {% set server_name = 'virl.virl.lab' %}   {# ${CFG_HOSTNAME}.${CFG_DOMAIN} #}
 {% set client_name = 'client' %}
 
-{% set openvpn_ovpn_path = '/var/local/virl/client.ovpn' %}
 
 {% if openvpn_enable %}
 
