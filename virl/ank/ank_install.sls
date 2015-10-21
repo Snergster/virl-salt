@@ -112,6 +112,8 @@ ank prereq:
     {% if proxy == true %}
     - proxy: {{ http_proxy }}
     {% endif %}
+    - require:
+      - pkg: ank prereq pkgs
     - names:
       - lxml >= 3.3.3
       - configobj >= 4.7.1
@@ -129,9 +131,6 @@ ank prereq:
 {% else %}
       - tornado >= 3.2.2, < 4.0.0
 {% endif %}
-      - require:
-        - pkg: ank prereq pkgs
-
 
 textfsm:
   pip.installed:
