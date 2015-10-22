@@ -101,6 +101,8 @@ std_prereq_webmux:
   {% if proxy == true %}
     - proxy: {{ http_proxy }}
   {% endif %}
+    - require:
+      - pkg: std prereq pkgs
     - names:
       - Twisted >= 13.2.0
       - parse >= 1.4.1
@@ -111,8 +113,6 @@ std_prereq_webmux:
       - service_identity
       - docker-py >= 1.3.1
       - lxml >= 3.4.1
-    - require:
-      - pkg: std prereq pkgs
   {% endif %}
 
 /etc/virl directory:
