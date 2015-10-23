@@ -93,19 +93,16 @@ keystone-pkgs:
 
 apache die:
   cmd.run:
-    - names:
-      - 'service apache2 stop'
+    - name: service apache2 stop
 
 apache die2:
   cmd.run:
     - onfail: apache die
-    - names:
-      - 'service apache2 stop'
+    - name: service apache2 stop
 
 apache restart keystone:
   cmd.run:
-    - names:
-      - 'service apache2 start'
+    - name: service apache2 start
 {% endif %}
 
 keystone db-sync:
