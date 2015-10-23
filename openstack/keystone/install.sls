@@ -97,7 +97,8 @@ apache die:
 
 apache die2:
   cmd.run:
-    - onfail: apache die
+    - onfail: 
+      - cmd: apache die
     - name: service apache2 stop
 
 apache restart keystone:
