@@ -24,12 +24,6 @@
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 
-# std prereq pkgs:
-#   pkg.installed:
-#       - pkgs:
-#         - libxml2-dev
-#         - libxslt1-dev
-
 /var/cache/virl/std:
   file.recurse:
     {% if std_ver_fixed %}
@@ -51,17 +45,17 @@
     - file_mode: 755
 
 
-# uwm_init:
-#   file.managed:
-#     - name: /etc/init.d/virl-uwm
-#     - source: "salt://virl/std/files/virl-uwm.init"
-#     - mode: 0755
+uwm_init:
+  file.managed:
+    - name: /etc/init.d/virl-uwm
+    - source: "salt://virl/std/files/virl-uwm.init"
+    - mode: 0755
 
-# std_init:
-#   file.managed:
-#     - name: /etc/init.d/virl-std
-#     - source: "salt://virl/std/files/virl-std.init"
-#     - mode: 0755
+std_init:
+  file.managed:
+    - name: /etc/init.d/virl-std
+    - source: "salt://virl/std/files/virl-std.init"
+    - mode: 0755
 
 {% if not cml %}
 
@@ -90,11 +84,11 @@ std docs:
 {% endif %}
 
 #   {% if not cml %}
-# virl_webmux_init:
-#   file.managed:
-#     - name: /etc/init/virl-webmux.conf
-#     - source: "salt://virl/std/files/virl-webmux.conf"
-#     - mode: 0755
+virl_webmux_init:
+  file.managed:
+    - name: /etc/init/virl-webmux.conf
+    - source: "salt://virl/std/files/virl-webmux.conf"
+    - mode: 0755
 
 # std_prereq_webmux:
 #   pip.installed:
@@ -115,34 +109,34 @@ std docs:
 #       - lxml >= 3.4.1
 #   {% endif %}
 
-# /etc/virl directory:
-#   file.directory:
-#     - name: /etc/virl
-#     - dir_mode: 755
+/etc/virl directory:
+  file.directory:
+    - name: /etc/virl
+    - dir_mode: 755
 
-# /etc/virl/common.cfg:
-#   file.touch:
-#     - require:
-#       - file: /etc/virl directory
-#     - onlyif: 'test ! -e /etc/virl/common.cfg'
-
-
-# /etc/virl/virl.cfg:
-#   file.managed:
-#     - replace: false
-#     - makedirs: true
-#     - mode: 0644
+/etc/virl/common.cfg:
+  file.touch:
+    - require:
+      - file: /etc/virl directory
+    - onlyif: 'test ! -e /etc/virl/common.cfg'
 
 
-# /etc/rc2.d/S98virl-std:
-#   file.symlink:
-#     - target: /etc/init.d/virl-std
-#     - mode: 0755
+/etc/virl/virl.cfg:
+  file.managed:
+    - replace: false
+    - makedirs: true
+    - mode: 0644
 
-# /etc/rc2.d/S98virl-uwm:
-#   file.symlink:
-#     - target: /etc/init.d/virl-uwm
-#     - mode: 0755
+
+/etc/rc2.d/S98virl-std:
+  file.symlink:
+    - target: /etc/init.d/virl-std
+    - mode: 0755
+
+/etc/rc2.d/S98virl-uwm:
+  file.symlink:
+    - target: /etc/init.d/virl-uwm
+    - mode: 0755
 
 ifb modprobe:
   file.append:
