@@ -77,6 +77,7 @@ glance-api auth url:
 glance-api:
   file.replace:
     - name: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - pattern: 'image_cache_dir = /var/lib/glance/image-cache/'
     - repl: '#image_cache_dir = /var/lib/glance/image-cache/'
     - require:
@@ -85,6 +86,7 @@ glance-api:
 glance-reg:
   file.replace:
     - name: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
     - pattern: 'image_cache_dir = /var/lib/glance/image-cache/'
     - repl: '#image_cache_dir = /var/lib/glance/image-cache/'
     - require:
@@ -93,6 +95,7 @@ glance-reg:
 glance-api-olddb:
   file.replace:
     - name: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - pattern: 'sqlite_db = /var/lib/glance/glance.sqlite'
     - repl: '#sqlite_db = /var/lib/glance/glance.sqlite'
     - require:
@@ -101,6 +104,7 @@ glance-api-olddb:
 glance-reg-olddb:
   file.replace:
     - name: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
     - pattern: 'sqlite_db = /var/lib/glance/glance.sqlite'
     - repl: '#sqlite_db = /var/lib/glance/glance.sqlite'
     - require:
@@ -109,6 +113,7 @@ glance-reg-olddb:
 glance-api-conn:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'database'
     - parameter: 'connection'
     - value: 'mysql://glance:{{ mypassword }}@{{ controllerip }}/glance'
@@ -118,6 +123,7 @@ glance-api-conn:
 glance-reg-conn:
   openstack_config.present:
     - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
     - section: 'database'
     - parameter: 'connection'
     - value: 'mysql://glance:{{ mypassword }}@{{ controllerip }}/glance'
@@ -127,6 +133,7 @@ glance-reg-conn:
 glance-api-rabbitpass:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'DEFAULT'
     - parameter: 'rabbit_password'
     - value: '{{ rabbitpassword }}'
@@ -137,6 +144,7 @@ glance-api-rabbitpass:
 glance-api-tenname:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'keystone_authtoken'
     - parameter: 'admin_tenant_name'
     - value: 'service'
@@ -144,6 +152,7 @@ glance-api-tenname:
 glance-reg-tenname:
   openstack_config.present:
     - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
     - section: 'keystone_authtoken'
     - parameter: 'admin_tenant_name'
     - value: 'service'
@@ -153,6 +162,7 @@ glance-reg-tenname:
 glance-api-user:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'keystone_authtoken'
     - parameter: 'admin_user'
     - value: 'glance'
@@ -162,6 +172,7 @@ glance-api-user:
 glance-reg-user:
   openstack_config.present:
     - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
     - section: 'keystone_authtoken'
     - parameter: 'admin_user'
     - value: 'glance'
@@ -171,6 +182,7 @@ glance-reg-user:
 glance-api-pass:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'keystone_authtoken'
     - parameter: 'admin_password'
     - value: {{ ospassword }}
@@ -181,6 +193,7 @@ glance-api-pass:
 glance-reg-pass:
   openstack_config.present:
     - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
     - section: 'keystone_authtoken'
     - parameter: 'admin_password'
     - value: {{ ospassword }}
@@ -190,6 +203,7 @@ glance-reg-pass:
 glance-api-flavor:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'paste_deploy'
     - parameter: 'flavor'
     - value: 'keystone'
@@ -199,6 +213,7 @@ glance-api-flavor:
 glance-reg-flavor:
   openstack_config.present:
     - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
     - section: 'paste_deploy'
     - parameter: 'flavor'
     - value: 'keystone'
@@ -210,6 +225,7 @@ glance-reg-flavor:
 glance-api-user-token:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'DEFAULT'
     - parameter: 'use_user_token'
     - value: 'False'
