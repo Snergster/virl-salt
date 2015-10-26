@@ -180,6 +180,7 @@ cisco_internal = safeparser.getboolean('DEFAULT', 'inside_cisco', fallback=False
 onedev = safeparser.getboolean('DEFAULT', 'onedev', fallback=False)
 dummy_int = safeparser.getboolean('DEFAULT', 'dummy_int', fallback=False)
 jumbo_frames = safeparser.getboolean('DEFAULT', 'jumbo_frames', fallback=False)
+ram_overcommit = safeparser.get('DEFAULT', 'ram_overcommit', fallback='2')
 
 #Testing Section
 icehouse = safeparser.getboolean('DEFAULT', 'icehouse', fallback=True)

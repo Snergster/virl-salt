@@ -22,6 +22,8 @@
 {% set fdns = salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )) %}
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set ram_overcommit = salt['pillar.get']('virl:ram_overcommit', salt['grains.get']('ram_overcommit', '2')) %}
+
 
 
 std prereq pkgs:
@@ -277,6 +279,9 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_webmux_port {{ virl_webmux }}
       - crudini --set /etc/virl/common.cfg host webmux_port {{ virl_webmux }}
       - crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}
+    {% if kilo %}
+      - crudini --set /etc/virl/common.cfg host ram_overcommit {{ ram_overcommit }}
+    {% endif %}
 
 ank_live_port change:
   cmd.run:
