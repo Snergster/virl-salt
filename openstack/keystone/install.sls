@@ -91,10 +91,21 @@ keystone-pkgs:
     - require:
       - pkg: keystone-pkgs
 
+apache die:
+  cmd.run:
+    - names:
+      - 'service apache2 stop'
+
+apache die2:
+  cmd.run:
+    - onfail: apache die
+    - names:
+      - 'service apache2 stop'
+
 apache restart keystone:
   cmd.run:
     - names:
-      - 'service apache2 restart'
+      - 'service apache2 start'
 {% endif %}
 
 keystone db-sync:

@@ -24,11 +24,11 @@
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
 
-std prereq pkgs:
-  pkg.installed:
-      - pkgs:
-        - libxml2-dev
-        - libxslt1-dev
+# std prereq pkgs:
+#   pkg.installed:
+#       - pkgs:
+#         - libxml2-dev
+#         - libxslt1-dev
 
 /var/cache/virl/std:
   file.recurse:
@@ -51,17 +51,17 @@ std prereq pkgs:
     - file_mode: 755
 
 
-uwm_init:
-  file.managed:
-    - name: /etc/init.d/virl-uwm
-    - source: "salt://virl/std/files/virl-uwm.init"
-    - mode: 0755
+# uwm_init:
+#   file.managed:
+#     - name: /etc/init.d/virl-uwm
+#     - source: "salt://virl/std/files/virl-uwm.init"
+#     - mode: 0755
 
-std_init:
-  file.managed:
-    - name: /etc/init.d/virl-std
-    - source: "salt://virl/std/files/virl-std.init"
-    - mode: 0755
+# std_init:
+#   file.managed:
+#     - name: /etc/init.d/virl-std
+#     - source: "salt://virl/std/files/virl-std.init"
+#     - mode: 0755
 
 {% if not cml %}
 
@@ -89,60 +89,60 @@ std docs:
       - file: std doc cleaner
 {% endif %}
 
-  {% if not cml %}
-virl_webmux_init:
-  file.managed:
-    - name: /etc/init/virl-webmux.conf
-    - source: "salt://virl/std/files/virl-webmux.conf"
-    - mode: 0755
+#   {% if not cml %}
+# virl_webmux_init:
+#   file.managed:
+#     - name: /etc/init/virl-webmux.conf
+#     - source: "salt://virl/std/files/virl-webmux.conf"
+#     - mode: 0755
 
-std_prereq_webmux:
-  pip.installed:
-  {% if proxy == true %}
-    - proxy: {{ http_proxy }}
-  {% endif %}
-    - require:
-      - pkg: std prereq pkgs
-    - names:
-      - Twisted >= 13.2.0
-      - parse >= 1.4.1
-      - stuf >= 0.9.4
-      - txsockjs >= 1.2.1
-      - zope.interface >= 4.1.0
-      - SQLObject >= 1.5.1
-      - service_identity
-      - docker-py >= 1.3.1
-      - lxml >= 3.4.1
-  {% endif %}
+# std_prereq_webmux:
+#   pip.installed:
+#   {% if proxy == true %}
+#     - proxy: {{ http_proxy }}
+#   {% endif %}
+#     - require:
+#       - pkg: std prereq pkgs
+#     - names:
+#       - Twisted >= 13.2.0
+#       - parse >= 1.4.1
+#       - stuf >= 0.9.4
+#       - txsockjs >= 1.2.1
+#       - zope.interface >= 4.1.0
+#       - SQLObject >= 1.5.1
+#       - service_identity
+#       - docker-py >= 1.3.1
+#       - lxml >= 3.4.1
+#   {% endif %}
 
-/etc/virl directory:
-  file.directory:
-    - name: /etc/virl
-    - dir_mode: 755
+# /etc/virl directory:
+#   file.directory:
+#     - name: /etc/virl
+#     - dir_mode: 755
 
-/etc/virl/common.cfg:
-  file.touch:
-    - require:
-      - file: /etc/virl directory
-    - onlyif: 'test ! -e /etc/virl/common.cfg'
-
-
-/etc/virl/virl.cfg:
-  file.managed:
-    - replace: false
-    - makedirs: true
-    - mode: 0644
+# /etc/virl/common.cfg:
+#   file.touch:
+#     - require:
+#       - file: /etc/virl directory
+#     - onlyif: 'test ! -e /etc/virl/common.cfg'
 
 
-/etc/rc2.d/S98virl-std:
-  file.symlink:
-    - target: /etc/init.d/virl-std
-    - mode: 0755
+# /etc/virl/virl.cfg:
+#   file.managed:
+#     - replace: false
+#     - makedirs: true
+#     - mode: 0644
 
-/etc/rc2.d/S98virl-uwm:
-  file.symlink:
-    - target: /etc/init.d/virl-uwm
-    - mode: 0755
+
+# /etc/rc2.d/S98virl-std:
+#   file.symlink:
+#     - target: /etc/init.d/virl-std
+#     - mode: 0755
+
+# /etc/rc2.d/S98virl-uwm:
+#   file.symlink:
+#     - target: /etc/init.d/virl-uwm
+#     - mode: 0755
 
 ifb modprobe:
   file.append:
@@ -177,42 +177,42 @@ std nova-compute serial:
 
 {% endif %}
 
-std_prereq:
-  pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - names:
-      - ipaddr >= 2.1.11
-      - flask-sqlalchemy >= 2.0
-      - Flask >= 0.10.1
-      - Flask_Login == 0.2.11
-      - Flask_RESTful >= 0.3.2
-      - Flask_WTF >= 0.11
-      - Flask_Breadcrumbs >= 0.3.0
-      - Flask_Swagger >= 0.2.10
-      - itsdangerous >= 0.24
-      - Jinja2 >= 2.7.3
-      - lxml >= 3.4.1
-      - MarkupSafe >= 0.23
-      - mock >= 1.0.1
-      - paramiko >= 1.15.2
-      - pycrypto >= 2.6.1
-      - Pygments
-      - requests == 2.7.0
-      - simplejson >= 3.6.5
-      - sqlalchemy == 0.9.9
-      - websocket_client >= 0.26.0
-      - Werkzeug >= 0.10.1
-      - wsgiref
-      - WTForms >= 2.0.2
-{% if kilo %}
-      - tornado >= 3.2.2
-{% else %}
-      - tornado >= 3.2.2, < 4.0.0
-{% endif %}
-      - require:
-        - pkg: 'std prereq pkgs'
+# std_prereq:
+#   pip.installed:
+# {% if proxy == true %}
+#     - proxy: {{ http_proxy }}
+# {% endif %}
+#     - names:
+#       - ipaddr >= 2.1.11
+#       - flask-sqlalchemy >= 2.0
+#       - Flask >= 0.10.1
+#       - Flask_Login == 0.2.11
+#       - Flask_RESTful >= 0.3.2
+#       - Flask_WTF >= 0.11
+#       - Flask_Breadcrumbs >= 0.3.0
+#       - Flask_Swagger >= 0.2.10
+#       - itsdangerous >= 0.24
+#       - Jinja2 >= 2.7.3
+#       - lxml >= 3.4.1
+#       - MarkupSafe >= 0.23
+#       - mock >= 1.0.1
+#       - paramiko >= 1.15.2
+#       - pycrypto >= 2.6.1
+#       - Pygments
+#       - requests == 2.7.0
+#       - simplejson >= 3.6.5
+#       - sqlalchemy == 0.9.9
+#       - websocket_client >= 0.26.0
+#       - Werkzeug >= 0.10.1
+#       - wsgiref
+#       - WTForms >= 2.0.2
+# {% if kilo %}
+#       - tornado >= 3.2.2
+# {% else %}
+#       - tornado >= 3.2.2, < 4.0.0
+# {% endif %}
+#       - require:
+#         - pkg: 'std prereq pkgs'
 
 VIRL_CORE:
   pip.installed:

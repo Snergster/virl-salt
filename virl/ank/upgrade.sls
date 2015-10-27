@@ -13,11 +13,11 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
-ank prereq pkgs:
-  pkg.installed:
-      - pkgs:
-        - libxml2-dev
-        - libxslt1-dev
+# ank prereq pkgs:
+#   pkg.installed:
+#       - pkgs:
+#         - libxml2-dev
+#         - libxslt1-dev
 
 {% if not masterless %}
 
@@ -42,21 +42,21 @@ ank prereq pkgs:
 {% endif %}
 
 
-/etc/init.d/virl-vis-processor:
-  file.managed:
-    - source: "salt://virl/ank/files/virl-vis-processor.init"
-    - mode: 0755
+# /etc/init.d/virl-vis-processor:
+#   file.managed:
+#     - source: "salt://virl/ank/files/virl-vis-processor.init"
+#     - mode: 0755
 
-/etc/init.d/virl-vis-mux:
-  file.managed:
-    - source: "salt://virl/ank/files/virl-vis-mux.init"
-    - mode: 0755
+# /etc/init.d/virl-vis-mux:
+#   file.managed:
+#     - source: "salt://virl/ank/files/virl-vis-mux.init"
+#     - mode: 0755
 
 
-/etc/init.d/virl-vis-webserver:
-  file.managed:
-    - source: "salt://virl/ank/files/virl-vis-webserver.init"
-    - mode: 0755
+# /etc/init.d/virl-vis-webserver:
+#   file.managed:
+#     - source: "salt://virl/ank/files/virl-vis-webserver.init"
+#     - mode: 0755
 
 virl-vis-webserver port change:
   file.replace:
@@ -68,78 +68,78 @@ virl-vis-webserver port change:
       - grep {{ ank_live }} /etc/init.d/virl-vis-webserver
       - 'test ! -e  /etc/init.d/virl-vis-webserver'
 
-/etc/rc2.d/S98virl-vis-processor:
-  file.symlink:
-    - target: /etc/init.d/virl-vis-processor
-    - require:
-      - file: /etc/init.d/virl-vis-processor
-    - mode: 0755
+# /etc/rc2.d/S98virl-vis-processor:
+#   file.symlink:
+#     - target: /etc/init.d/virl-vis-processor
+#     - require:
+#       - file: /etc/init.d/virl-vis-processor
+#     - mode: 0755
 
-/etc/rc2.d/S98virl-vis-mux:
-  file.symlink:
-    - target: /etc/init.d/virl-vis-mux
-    - require:
-      - file: /etc/init.d/virl-vis-mux
-    - mode: 0755
+# /etc/rc2.d/S98virl-vis-mux:
+#   file.symlink:
+#     - target: /etc/init.d/virl-vis-mux
+#     - require:
+#       - file: /etc/init.d/virl-vis-mux
+#     - mode: 0755
 
-/etc/rc2.d/S98virl-vis-webserver:
-  file.symlink:
-    - order: last
-    - target: /etc/init.d/virl-vis-webserver
-    - onlyif: 'test -e /etc/init.d/virl-vis-webserver'
-    - mode: 0755
-
-
-ank init script:
-  file.managed:
-    - name: /etc/init.d/ank-cisco-webserver
-    - source: "salt://virl/ank/files/ank-cisco-webserver.init"
-    - mode: 0755
+# /etc/rc2.d/S98virl-vis-webserver:
+#   file.symlink:
+#     - order: last
+#     - target: /etc/init.d/virl-vis-webserver
+#     - onlyif: 'test -e /etc/init.d/virl-vis-webserver'
+#     - mode: 0755
 
 
-ank symlink:
-  file.symlink:
-    - name: /etc/rc2.d/S98ank-cisco-webserver
-    - target: /etc/init.d/ank-cisco-webserver
-    - onlyif: ls /usr/local/bin/ank_cisco_webserver
-    - mode: 0755
-    - require:
-      - pip: autonetkit_cisco
+# ank init script:
+#   file.managed:
+#     - name: /etc/init.d/ank-cisco-webserver
+#     - source: "salt://virl/ank/files/ank-cisco-webserver.init"
+#     - mode: 0755
 
 
-ank prereq:
-  pip.installed:
-    {% if proxy == true %}
-    - proxy: {{ http_proxy }}
-    {% endif %}
-    - require:
-      - pkg: ank prereq pkgs
-    - names:
-      - lxml >= 3.3.3
-      - configobj >= 4.7.1
-      - six >= 1.9.0
-      - Mako >= 0.8.0
-      - MarkupSafe >= 0.23
-      - certifi >= 14.5.14
-      - backports.ssl_match_hostname >= 3.4.0.2
-      - netaddr == 0.7.15
-      - networkx >= 1.7
-      - PyYAML >= 3.10
-      - pexpect == 3.1
-{% if kilo %}
-      - tornado >= 3.2.2
-{% else %}
-      - tornado >= 3.2.2, < 4.0.0
-{% endif %}
+# ank symlink:
+#   file.symlink:
+#     - name: /etc/rc2.d/S98ank-cisco-webserver
+#     - target: /etc/init.d/ank-cisco-webserver
+#     - onlyif: ls /usr/local/bin/ank_cisco_webserver
+#     - mode: 0755
+#     - require:
+#       - pip: autonetkit_cisco
 
-textfsm:
-  pip.installed:
-    - name: textfsm >= 0.2.1
-    - find_links: "file:///var/cache/virl/ank"
-    - onlyif: ls /var/cache/virl/ank/textfsm*
-    - no_deps: True
-    - use_wheel: True
-    - no_index: True
+
+# ank prereq:
+#   pip.installed:
+#     {% if proxy == true %}
+#     - proxy: {{ http_proxy }}
+#     {% endif %}
+#     - require:
+#       - pkg: ank prereq pkgs
+#     - names:
+#       - lxml >= 3.3.3
+#       - configobj >= 4.7.1
+#       - six >= 1.9.0
+#       - Mako >= 0.8.0
+#       - MarkupSafe >= 0.23
+#       - certifi >= 14.5.14
+#       - backports.ssl_match_hostname >= 3.4.0.2
+#       - netaddr == 0.7.15
+#       - networkx >= 1.7
+#       - PyYAML >= 3.10
+#       - pexpect == 3.1
+# {% if kilo %}
+#       - tornado >= 3.2.2
+# {% else %}
+#       - tornado >= 3.2.2, < 4.0.0
+# {% endif %}
+
+# textfsm:
+#   pip.installed:
+#     - name: textfsm >= 0.2.1
+#     - find_links: "file:///var/cache/virl/ank"
+#     - onlyif: ls /var/cache/virl/ank/textfsm*
+#     - no_deps: True
+#     - use_wheel: True
+#     - no_index: True
 
 
 
@@ -165,8 +165,6 @@ autonetkit check:
     - no_deps: True
     - use_wheel: True
     - no_index: True
-    - require:
-      - pip: ank prereq
   cmd.wait:
     - names:
       - wheel install-scripts autonetkit
@@ -243,30 +241,30 @@ virl_collection:
       - pip: virl_collection
 
 
-/etc/init.d/virl-vis:
-  file.absent
+# /etc/init.d/virl-vis:
+#   file.absent
 
-/etc/rc2.d/S98virl-vis:
-  file.absent
+# /etc/rc2.d/S98virl-vis:
+#   file.absent
 
-/etc/rc2.d/S98ank-webserver:
-  file.absent
+# /etc/rc2.d/S98ank-webserver:
+#   file.absent
 
-ank-webserver:
-  service.dead
+# ank-webserver:
+#   service.dead
 
-/etc/init.d/ank-webserver:
-  file.absent
+# /etc/init.d/ank-webserver:
+#   file.absent
 
-/etc/rc2.d/S98live-vis-webserver:
-  file.absent
+# /etc/rc2.d/S98live-vis-webserver:
+#   file.absent
 
-/etc/init.d/live-vis-webserver:
-  file.absent
+# /etc/init.d/live-vis-webserver:
+#   file.absent
 
-autonetkit_cisco.so remove:
-  file.absent:
-    - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
+# autonetkit_cisco.so remove:
+#   file.absent:
+#     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
 
 substitute ank port:
   file.replace:
