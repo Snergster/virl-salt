@@ -4083,7 +4083,8 @@ class LibvirtDriver(driver.ComputeDriver):
                                            image_meta, caps)
         if virt_type != 'parallels':
             consolepty.type = "pty"
-            guest.add_device(consolepty)
+            # Only use serial consoles
+            #guest.add_device(consolepty)
 
         # We want a tablet if VNC is enabled, or SPICE is enabled and
         # the SPICE agent is disabled. If the SPICE agent is enabled
