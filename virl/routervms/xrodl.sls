@@ -1,10 +1,3 @@
-{% set iosxrvpref = salt['pillar.get']('virl:iosxrv', salt['grains.get']('iosxrv', True)) %}
-{% set iosxrv = salt['pillar.get']('routervms:iosxrv', False ) %}
-
-include:
-  - virl.routervms.virl-core-sync
-
-{% if iosxrv and iosxrvpref %}
 
 iosxrv:
   glance.image_present:
@@ -46,15 +39,3 @@ iosxrv flavor create:
     - require:
       - cmd: iosxrv flavor delete
 
-{% else %}
-
-iosxrv gone:
-  glance.image_absent:
-  - profile: virl
-  - name: 'IOS XRv'
-
-iosxrv flavor absent:
-  cmd.run:
-    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOS XRv"'
-    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "IOS XRv"
-{% endif %}
