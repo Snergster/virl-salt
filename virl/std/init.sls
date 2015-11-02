@@ -345,3 +345,6 @@ virl-uwm:
     - order: last
     - enable: True
     - restart: True
+
+include:
+  - .clients
