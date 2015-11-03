@@ -28,6 +28,9 @@
 #
 # client config file
 #
+#this is crude mechanic to ensure openvpn_ovpn_path exists
+/bin/mkdir -p /var/local/virl
+#end crude hack
 cat >{{ openvpn_ovpn_path }} <<EOF
 #  VIRL OpenVPN Client Configuration
 client
