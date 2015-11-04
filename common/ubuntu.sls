@@ -3,7 +3,7 @@
 
 include:
   - common.pip
-  - common.uptodate
+  - common.distuptodate
   - common.rc-local
 
 commonpkgs:

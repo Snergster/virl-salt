@@ -50,6 +50,7 @@ def building_salt_extra(masterless,salt_master,salt_id,salt_domain):
             extra.write("""verify_master_pubkey_sign: True \n""")
             extra.write("""auth_timeout: 15 \n""")
             extra.write("""master_alive_interval: 180 \n""")
+            extra.write("""state_output: mixed \n""")
         else:
             if path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
                 extra.write("""gitfs_provider: pygit2\n""")
@@ -58,6 +59,8 @@ def building_salt_extra(masterless,salt_master,salt_id,salt_domain):
 fileserver_backend:
   - git
   - roots
+
+state_output: mixed 
 
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
@@ -68,6 +71,8 @@ gitfs_remotes:
 fileserver_backend:
   - git
   - roots
+
+state_output: mixed 
 
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
