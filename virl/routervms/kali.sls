@@ -1,5 +1,3 @@
-{# TODO: - update checksum #}
-
 {% set kali = salt['pillar.get']('routervms:kali', False) %}
 {% set kalipref = salt['pillar.get']('virl:kali', salt['grains.get']('kali', True)) %}
 
@@ -13,7 +11,7 @@ kali:
   - min_disk: 3
   - min_ram: 0
   - is_public: True
-  #- checksum: e52cfb43cff5e7b198d4d8e2412f5e68
+  - checksum: e52cfb43cff5e7b198d4d8e2412f5e68
   - protected: False
   - disk_format: qcow2
   - copy_from: salt://images/salt/kali_light-2.0.qcow2
