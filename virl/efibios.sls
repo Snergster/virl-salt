@@ -5,14 +5,10 @@
 
 get_efibios:
   file.managed:
-    - name: /usr/share/seabios/n9kbios.bin
+    - name: /usr/share/qemu/n9kbios.bin
+    - makedirs: True
     - source:
       - salt://virl/files/n9kbios.bin
     - source_hash: 776934a17d88b515355c072533f66464
-
-/usr/share/qemu/n9kbios.bin:
-  file.symlink:
-      - target: ../seabios/n9kbios.bin
-      - mode: 777
 
 {% endif %}
