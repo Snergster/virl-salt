@@ -66,10 +66,10 @@
   copy_keys_rsa2etc:
     cmd.run:
       - names:
-        - cp --update ./keys/dh2048.pem {{ openvpn_dir }}
-        - cp --update ./keys/ca.* {{ openvpn_dir }}
-        - cp --update ./keys/{{ client_name }}.* {{ openvpn_dir }}
-        - cp --update ./keys/{{ server_name }}.* {{ openvpn_dir }}
+        - cp ./keys/dh2048.pem {{ openvpn_dir }}
+        - cp ./keys/ca.* {{ openvpn_dir }}
+        - cp ./keys/{{ client_name }}.* {{ openvpn_dir }}
+        - cp ./keys/{{ server_name }}.* {{ openvpn_dir }}
       - cwd: {{ easyrsa_dir }}
 
   {{ openvpn_dir }}/server.conf:
