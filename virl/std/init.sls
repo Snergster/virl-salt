@@ -24,7 +24,8 @@
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 {% set ram_overcommit = salt['pillar.get']('virl:ram_overcommit', salt['grains.get']('ram_overcommit', '2')) %}
 
-
+include:
+  - .clients
 
 std prereq pkgs:
   pkg.installed:
@@ -345,6 +346,3 @@ virl-uwm:
     - order: last
     - enable: True
     - restart: True
-
-include:
-  - .clients

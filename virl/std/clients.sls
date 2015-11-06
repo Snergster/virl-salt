@@ -1,7 +1,7 @@
 {% set venv = salt['pillar.get']('behave:environment', 'stable') %}
 {% set std_clients = salt['pillar.get']('virl:std_clients', salt['grains.get']('std_clients', True)) %}
 
-/var/www/download:
+virl_client download:
 {% if std_clients %}
   file.recurse:
     - name: /var/www/download
