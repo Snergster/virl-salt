@@ -15,15 +15,16 @@ nxosv9k:
   - min_disk: 2
   - min_ram: 0
   - is_public: True
-  - checksum: feeb4f5bc3b7114cc2ba5b5475716f25
+  - checksum: 6ad954141ce9ce3edf0c17ce01485e4e
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/salt/nxosv-final.7.0.3.I2.1.qcow2
+  - copy_from: salt://images/salt/nxosv-final.7.0.3.I3.0.100.qcow2
   - property-config_disk_type: cdrom
   - property-hw_cdrom_type: ide
   - property-hw_disk_bus: ide
   - property-hw_vif_model: e1000
-  - property-release: 7.0.3.I2.1
+  - property-hw_bios: n9kbios.bin
+  - property-release: 7.0.3.I3.0.100
   - property-serial: 2
   - property-subtype: NX-OSv 9000
 

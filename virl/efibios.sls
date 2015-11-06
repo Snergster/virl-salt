@@ -9,6 +9,6 @@ get_efibios:
     - makedirs: True
     - source:
       - salt://virl/files/n9kbios.bin
-    - source_hash: 776934a17d88b515355c072533f66464
+    - source_hash: 443c99c734736d6323f68b3f6c0df06f
 
 {% endif %}
