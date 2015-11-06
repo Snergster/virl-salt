@@ -27,8 +27,8 @@ ifconfig $1 up mtu $2
 
 # make sure that the bridge interfaces are not subject
 # to iptables filtering
-sysctl -w net.bridge.bridge-nf-call-iptables=0
-sysctl -w net.bridge.bridge-nf-call-ip6tables=0
+sysctl -e -w net.bridge.bridge-nf-call-iptables=0
+sysctl -e -w net.bridge.bridge-nf-call-ip6tables=0
 
 # add the bridge to iptables
 # ufw allow in on $bridge_name

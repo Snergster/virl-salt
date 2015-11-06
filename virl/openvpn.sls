@@ -16,11 +16,6 @@
         - easy-rsa
       - refresh: false
 
-  #install_easy_rsa:
-  #  pkg.installed:
-  #    - sources:
-  #      - easy-rsa: salt://files/easy-rsa_2.2.2-1_all.deb
-  #    - refresh: false
   install_easy-rsa_download:
     file.managed:
       - name: /var/cache/apt/archives/easy-rsa_2.2.2-1_all.deb
@@ -42,20 +37,6 @@
         - sed -ri 's/(^export KEY_EXPIRE=)(.*)/\13650/' ./vars
         - sed -ri 's/(^export CA_EXPIRE=)(.*)/\13650/' ./vars
       - cwd: {{ easyrsa_dir }}
-
-  clean_keys:
-     cmd.run:
-       - name: source ./vars && ./clean-all
-       - cwd: {{ easyrsa_dir }}
-
-  copy_keys_etc2rsa:
-    cmd.run:
-      - names:
-        - ls -1 dh2048.pem | xargs -r cp -t {{ easyrsa_key_dir }}
-        - ls -1 ca.* | xargs -r cp -t {{ easyrsa_key_dir }}
-        - ls -1 {{ client_name }}.* | xargs -r cp -t {{ easyrsa_key_dir }}
-        - ls -1 {{ server_name }}.* | xargs -r cp -t {{ easyrsa_key_dir }}
-      - cwd: {{ openvpn_dir }}
 
   init_ca:
     cmd.run:
