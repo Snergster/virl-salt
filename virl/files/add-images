@@ -106,13 +106,19 @@ register_qcow() {
     config_disk_type=$6
     disk_bus=$7
     Release="$8"
+    if [ -n "$9" ]; then
+        other_property="--property $9"
+    else
+        other_property=
+    fi
     echo "Registering image $name $subtype"
     glance image-create --disk-format=qcow2 --container-format=bare \
        --property serial=$serials --is-public=true --property subtype="$subtype" \
        --property hw_disk_bus=${disk_bus:-ide} --property hw_cdrom_type=ide  \
        --property hw_vif_model=$driver \
        --property config_disk_type=$config_disk_type --name "$name" < $qcow_image_name \
-       --property Release="$Release"
+       --property Release="$Release" \
+       $other_property
 }
 
 register_vmdk() {

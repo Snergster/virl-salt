@@ -1,11 +1,11 @@
-{% set openvpn_enable = salt['pillar.get']('virl:openvpn_enable', salt['grains.get']('openvpn_enable', False)) %}
-{% set openvpn_dir = salt['pillar.get']('virl:openvpn_dir', salt['grains.get']('openvpn_dir','/etc/openvpn')) %}
-{% set easyrsa_key_dir = salt['pillar.get']('virl:easyrsa_key_dir', salt['grains.get']('easyrsa_key_dir','/usr/share/easy-rsa/keys')) %}
-{% set easyrsa_dir = salt['pillar.get']('virl:easyrsa_dir', salt['grains.get']('easyrsa_dir','/usr/share/easy-rsa')) %}
-{% set openvpn_ovpn_path = salt['pillar.get']('virl:openvpn_ovpn_path', salt['grains.get']('openvpn_ovpn_path','/var/local/virl/client.ovpn')) %}
+{% set openvpn_enable = salt['grains.get']('openvpn_enable', False) %}
+{% set openvpn_dir = '/etc/openvpn' %}
+{% set easyrsa_key_dir = '/usr/share/easy-rsa/keys' %}
+{% set easyrsa_dir = '/usr/share/easy-rsa' %}
 {% set server_name = 'virl.virl.lab' %}   {# ${CFG_HOSTNAME}.${CFG_DOMAIN} #}
 {% set client_name = 'client' %}
 
+{% set openvpn_ovpn_path = '/var/local/virl/client.ovpn' %}
 
 {% if openvpn_enable %}
 
@@ -20,7 +20,7 @@
     file.managed:
       - name: /var/cache/apt/archives/easy-rsa_2.2.2-1_all.deb
       - source:
-        - salt://virl/files/easy-rsa_2.2.2-1_all.deb 
+        - salt://files/easy-rsa_2.2.2-1_all.deb
       - source_hash: md5=b3c38caa4baae7091b7631f9cc299a89
   install_easy-rsa:
     cmd.run:
@@ -38,20 +38,6 @@
         - sed -ri 's/(^export CA_EXPIRE=)(.*)/\13650/' ./vars
       - cwd: {{ easyrsa_dir }}
 
-  clean_keys:
-     cmd.run:
-       - name: source ./vars && ./clean-all
-       - cwd: {{ easyrsa_dir }}
-
-  copy_keys_etc2rsa:
-    cmd.run:
-      - names:
-        - test -f dh2048.pem && cp dh2048.pem {{ easyrsa_key_dir }}
-        - ls -1 ca.* | xargs -r cp -t {{ easyrsa_key_dir }}
-        - ls -1 {{ client_name }}.* | xargs -r cp -t {{ easyrsa_key_dir }}
-        - ls -1 {{ server_name }}.* | xargs -r cp -t {{ easyrsa_key_dir }}
-      - cwd: {{ openvpn_dir }}
-
   init_ca:
     cmd.run:
       - name: source ./vars && ./pkitool --initca
@@ -62,7 +48,7 @@
     cmd.run:
       - name: source ./vars && ./pkitool --server {{ server_name }}
       - cwd: {{ easyrsa_dir }}
-      - creates: {{ easyrsa_key_dir }}/{{ server_name }}.key       
+      - creates: {{ easyrsa_key_dir }}/{{ server_name }}.key
 
   gen_client_keys:
     cmd.run:
@@ -80,10 +66,10 @@
   copy_keys_rsa2etc:
     cmd.run:
       - names:
-        - cp --update ./keys/dh2048.pem {{ openvpn_dir }}
-        - cp --update ./keys/ca.* {{ openvpn_dir }}
-        - cp --update ./keys/{{ client_name }}.* {{ openvpn_dir }}
-        - cp --update ./keys/{{ server_name }}.* {{ openvpn_dir }}
+        - cp ./keys/dh2048.pem {{ openvpn_dir }}
+        - cp ./keys/ca.* {{ openvpn_dir }}
+        - cp ./keys/{{ client_name }}.* {{ openvpn_dir }}
+        - cp ./keys/{{ server_name }}.* {{ openvpn_dir }}
       - cwd: {{ easyrsa_dir }}
 
   {{ openvpn_dir }}/server.conf:
@@ -128,7 +114,6 @@
 
   openvpn_disable:
     cmd.run:
-      - onlyif: test -e /etc/init.d/openvpn
       - names:
         - update-rc.d openvpn disable
         - service openvpn stop
