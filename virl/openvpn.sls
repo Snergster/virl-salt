@@ -20,7 +20,7 @@
     file.managed:
       - name: /var/cache/apt/archives/easy-rsa_2.2.2-1_all.deb
       - source:
-        - salt://files/easy-rsa_2.2.2-1_all.deb
+        - salt://virl/files/easy-rsa_2.2.2-1_all.deb
       - source_hash: md5=b3c38caa4baae7091b7631f9cc299a89
   install_easy-rsa:
     cmd.run:
