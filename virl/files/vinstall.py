@@ -278,6 +278,7 @@ def building_salt_extra():
                 extra.write("""auth_tries: 1 \n""")
                 extra.write("""auth_timeout: 15 \n""")
                 extra.write("""master_alive_interval: 180 \n""")
+                extra.write("""retry_dns: 0 \n""")
             else:
                 extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
             extra.write("""verify_master_pubkey_sign: True \n""")
