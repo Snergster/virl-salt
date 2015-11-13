@@ -7,17 +7,15 @@ security-onion:
     - profile: virl
     - name: 'security-onion'
     - container_format: bare
-    - min_disk: 9
-    - min_ram: 0
+    - min_disk: 6
+    - min_ram: 1024
     - is_public: True
     - checksum: c9f8acedc7510280cc3e27896b411196
     - protected: False
     - disk_format: qcow2
     - copy_from: salt://images/salt/securityonion-12.04.5.3.qcow2
-    - property-config_disk_type: cdrom
-    - property-hw_cdrom_type: ide
+    - property-hw_disk_bus: virtio
     - property-hw_disk_bus: ide
-    - property-hw_vif_model: e1000
     - property-release: 12.04.5.3
     - property-serial: 1
     - property-subtype: security-onion
@@ -34,7 +32,7 @@ security-onion flavor create:
     - name: nova.flavor_create
     - m_name: 'security-onion'
     - ram: 3096
-    - disk: 0
+    - disk: 8
     - vcpus: 1
     - onchanges:
       - glance: security-onion
