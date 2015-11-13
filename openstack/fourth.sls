@@ -7,3 +7,5 @@ include:
   - virl.routervms.iosvl2
   - virl.routervms.lxc_server
   - virl.routervms.lxc_iperf
+  - virl.routervms.lxc_routem
+  - virl.routervms.lxc_ostinato
