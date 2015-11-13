@@ -16,16 +16,21 @@
 #
 
 {% set l2_port = salt['grains.get']('l2_port', 'eth1') %}
-
+#bridge_name=$(readlink -f "/sys/class/net/{{ l2_port }}/master")
+#[ -n "$bridge_name" ] || exit 1
+#bridge_name=$(basename "$bridge_name")
 bridge_name=""
+
 while [ -z "$bridge_name" ]; do
-        if [ -e /sys/class/net/{{ l2_port }}/master ]; then
-                bridge_name=$(basename $(readlink /sys/class/net/{{ l2_port }}/master))
+        if [ -e /sys/class/net/{{l2_port}}/master ]; then
+                bridge_name=$(basename $(readlink /sys/class/net/{{l2_port}}/master))
         else
                 echo "OpenVPN: waiting for FLAT bridge to come up..."
                 sleep 5
         fi
 done
+
+
 
 ip link set dev $1 master $bridge_name
 

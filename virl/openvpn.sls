@@ -20,7 +20,7 @@
     file.managed:
       - name: /var/cache/apt/archives/easy-rsa_2.2.2-1_all.deb
       - source:
-        - salt://virl/files/easy-rsa_2.2.2-1_all.deb 
+        - salt://virl/files/easy-rsa_2.2.2-1_all.deb
       - source_hash: md5=b3c38caa4baae7091b7631f9cc299a89
   install_easy-rsa:
     cmd.run:
@@ -38,26 +38,40 @@
         - sed -ri 's/(^export CA_EXPIRE=)(.*)/\13650/' ./vars
       - cwd: {{ easyrsa_dir }}
 
+  pkitool cleaner:
+    cmd.run:
+      - name: source ./vars && ./clean-all
+      - cwd: {{ easyrsa_dir }}
+      - creates: {{ easyrsa_key_dir }}/ca.crt
+
   init_ca:
     cmd.run:
+      - require:
+        - cmd: pkitool cleaner
       - name: source ./vars && ./pkitool --initca
       - cwd: {{ easyrsa_dir }}
       - creates: {{ easyrsa_key_dir }}/ca.crt
 
   gen_server_keys:
     cmd.run:
+      - require:
+        - cmd: pkitool cleaner
       - name: source ./vars && ./pkitool --server {{ server_name }}
       - cwd: {{ easyrsa_dir }}
       - creates: {{ easyrsa_key_dir }}/{{ server_name }}.key       
 
   gen_client_keys:
     cmd.run:
+      - require:
+        - cmd: pkitool cleaner
       - name: source ./vars && ./pkitool {{ client_name }}
       - cwd: {{ easyrsa_dir }}
       - creates: {{ easyrsa_key_dir }}/{{ client_name }}.key
 
   gen_dh_file:
     cmd.run:
+      - require:
+        - cmd: pkitool cleaner
       - name: source ./vars && ./build-dh
       - cwd: {{ easyrsa_dir }}
       - creates: {{ easyrsa_key_dir }}/dh2048.pem
@@ -103,8 +117,9 @@
       - name: update-rc.d openvpn start 99 2 3 4 5 . stop 80 0 1 6 .
 
   openvpn_enable:
-    cmd.run:
-      - name: update-rc.d openvpn enable
+    service.running:
+      - name: openvpn
+      - enable: True
 
   openvpn_restart:
     cmd.run:
@@ -113,11 +128,9 @@
 {% else %}
 
   openvpn_disable:
-    cmd.run:
-      - onlyif: test -e /etc/init.d/openvpn
-      - names:
-        - update-rc.d openvpn disable
-        - service openvpn stop
+    service.dead:
+      - name: openvpn
+      - enable: False
 
 {% endif %}
 
