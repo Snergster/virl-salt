@@ -41,12 +41,12 @@ include:
 
 internal ifdown:
   cmd.run:
-    - name: ifdown {{publicport}}
+    - name: ifdown {{int_port}}
     - require:
       - cmd: {{ int_port }}
 
 internal ifup:
   cmd.run:
-    - name: ifup {{publicport}}
+    - name: ifup {{int_port}}
     - require:
       - cmd: {{ int_port }}
