@@ -725,6 +725,7 @@ if __name__ == "__main__":
         building_salt_all()
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
         call_salt('common.distuptodate')
+        call_salt('virl.network.int')
         call_salt('openstack')
         call_salt('openstack.setup')
         call_salt('openstack.stop')
