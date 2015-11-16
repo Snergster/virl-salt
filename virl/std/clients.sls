@@ -13,6 +13,11 @@ virl_client download:
     - exclude_pat:  E@(.*64.exe)|(.*32.exe$)|(.*dmg$)|(.*zip$)|(.*box$)
     - source: "salt://std/{{ venv }}/"
 {% else %}
-  cmd.run:
-    - name: 'rm -f /var/www/download/VIRL_CLIENTS*.whl'
+  module.run:
+    - name: file.find
+    - path: /var/www/download/
+    - kwargs:
+        name: VIRL_CLIENTS*.whl
+        delete: 'f'
+        maxdepth: 0
 {% endif %}
