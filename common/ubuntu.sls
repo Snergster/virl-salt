@@ -59,3 +59,9 @@ salt-common unhold:
     - name: pkg.unhold
     - m_name: salt-common
     - onlyif: ls /usr/bin/salt-minion
+
+/etc/apt/apt.conf.d/99force-ipv4:
+  file.managed:
+    - makedirs: true
+    - contents: |
+        Acquire::ForceIPv4 "true";
