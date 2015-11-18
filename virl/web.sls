@@ -49,3 +49,28 @@ apache dir remove:
     {% else %}
     - source: salt://virl/files/apache.conf
     {% endif %}
+
+/etc/apache2/ports.conf:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    {% if masterless %}
+    - source: file:///srv/salt/virl/files/ports.conf
+    {% else %}
+    - source: salt://virl/files/ports.conf
+    {% endif %}
+
+/etc/apache2/sites-enabled/000-default.conf:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    {% if masterless %}
+    - source: file:///srv/salt/virl/files/000-default.conf
+    {% else %}
+    - source: salt://virl/files/000-default.conf
+    {% endif %}
+
+restart apache:
+  cmd.run:
+    - name: /etc/init.d/apache2 restart
+
