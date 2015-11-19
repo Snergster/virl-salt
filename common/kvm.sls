@@ -33,6 +33,12 @@ manual qemu-kvm:
     - require:
       - module: qemu_kvm unhold
 
+libvirt install:
+  pkg.installed:
+    - name: libvirt-bin
+    - skip_verify: True
+    - refresh: False
+
 kvm virl version:
   file.managed:
     - name: /usr/bin/kvm
@@ -47,7 +53,7 @@ uncomment min vnc port:
     - name: /etc/libvirt/qemu.conf
     - regex: remote_display_port_min.*
     - require:
-      - pkg: manual qemu-kvm
+      - pkg: libvirt install
 
 alter min vnc port:
   file.replace:
