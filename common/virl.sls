@@ -11,7 +11,6 @@ include:
   - common.kvm
   - virl.scripts
   - virl.vextra
-  - virl.openvpn
 
 mypkgs:
   pkg.installed:

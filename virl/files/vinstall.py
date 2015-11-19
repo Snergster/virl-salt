@@ -694,7 +694,7 @@ if __name__ == "__main__":
 
     if varg['fourth'] or varg['all'] :
         if masterless:
-            call_salt('openstack.neutron.changes,virl.std,virl.ank')
+            call_salt('openstack.neutron.changes,virl.std,virl.ank,virl.openvpn')
             # call_salt('virl.ank')
         else:
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.neutron.changes,virl.std,virl.ank'])
