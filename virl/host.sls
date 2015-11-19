@@ -32,7 +32,7 @@ include:
 blank what is there:
   cmd.run:
     - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
-
+    - onlyif: test -e /etc/network/interfaces
 
 system:
   network.system:
