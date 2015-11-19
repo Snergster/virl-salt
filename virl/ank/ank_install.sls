@@ -126,6 +126,7 @@ ank prereq:
       - networkx >= 1.7
       - PyYAML >= 3.10
       - pexpect == 3.1
+      - pyparsing >= 2.0.1
 {% if kilo %}
       - tornado >= 3.2.2
 {% else %}
