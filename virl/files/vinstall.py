@@ -59,7 +59,7 @@ DEFAULT = safeparser['DEFAULT']
 
 
 hostname = safeparser.get('DEFAULT', 'hostname', fallback='virl')
-fqdn = safeparser.get('DEFAULT', 'domain', fallback='cisco.com')
+fqdn = safeparser.get('DEFAULT', 'domain_name', fallback='virl.info')
 
 dhcp_public = safeparser.getboolean('DEFAULT', 'using_dhcp_on_the_public_port', fallback=True)
 public_port = safeparser.get('DEFAULT', 'public_port', fallback='eth0')
