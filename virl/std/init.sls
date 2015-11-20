@@ -265,7 +265,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg orchestration volume_service False
      {% endif %}
       - /usr/local/bin/virl_config update --global
-      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ ospassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
       - crudini --set /etc/virl/virl.cfg env virl_openstack_service_token {{ ks_token }}
       - crudini --set /etc/virl/virl.cfg env virl_std_port {{ stdport }}
       - crudini --set /etc/virl/virl.cfg env virl_std_url http://localhost:{{ stdport }}
@@ -316,7 +316,7 @@ uwmadmin change:
       - sleep 65
      {% endif %}
       - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ uwmpassword }} -P {{ uwmpassword }}'
-      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ ospassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ uwmpassword }}
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ uwmpassword }}
     - onlyif: 'test -e /var/local/virl/servers.db'
 
