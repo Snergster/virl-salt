@@ -42,6 +42,21 @@ kvm virl version:
     - require:
       - pkg: manual qemu-kvm
 
+uncomment min vnc port:
+  file.uncomment:
+    - name: /etc/libvirt/qemu.conf
+    - regex: remote_display_port_min.*
+    - require:
+      - pkg: manual qemu-kvm
+
+alter min vnc port:
+  file.replace:
+    - name: /etc/libvirt/qemu.conf
+    - pattern: remote_display_port_min = 59..
+    - repl: remote_display_port_min = 5950
+    - require:
+      - file: uncomment min vnc port
+
 qemu hold:
   apt.held:
     - name: qemu-kvm

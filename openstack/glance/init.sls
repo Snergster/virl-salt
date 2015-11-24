@@ -47,13 +47,22 @@ glance-api admin user:
     - require:
       - pkg: glance-pkgs
 
+glance-api admin password uncomment:
+  file.uncomment:
+    - name: /etc/glance/glance-api.conf
+    - regex: 'admin_password = None'
+    - onlyif: grep '#admin_password = None' /etc/glance/glance-api.conf
+    - require:
+      - pkg: glance-pkgs
+
 glance-api admin password:
   file.replace:
     - name: /etc/glance/glance-api.conf
-    - pattern: '#admin_password = None'
+    - pattern: '^admin_password = .*'
     - repl: 'admin_password = {{glancepassword}}'
     - require:
       - pkg: glance-pkgs
+
 
 glance-api admin tenant:
   file.replace:

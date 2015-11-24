@@ -10,11 +10,20 @@ include:
   - openstack.mysql.open
   - virl.scripts
 
+{% if kilo %}
 /usr/local/bin/virl-openrc.sh:
   file.managed:
-    - order: 1
+    - source: "salt://openstack/keystone/files/admin-openrc.jinja"
+    - mode: 0755
+    - template: jinja
+
+{% else %}
+/usr/local/bin/virl-openrc.sh:
+  file.managed:
     - source: salt://virl/files/virl-openrc.sh
     - mode: 755
+
+{% endif %}
 
 /home/virl/.bashrc:
   file.managed:
