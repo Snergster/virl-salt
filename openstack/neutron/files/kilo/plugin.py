@@ -177,9 +177,9 @@ class Ml2Plugin(db_base_plugin_v2.NeutronDbPluginV2,
 
     def _get_host_port_if_changed(self, mech_context, attrs):
         binding = mech_context._binding
-        host = attrs and attrs.get(portbindings.HOST_ID)
-        if (attributes.is_attr_set(host) and binding.host != host):
-            return mech_context.current
+        if attrs and portbindings.HOST_ID in attrs:
+            if binding.host != attrs.get(portbindings.HOST_ID):
+                return mech_context.current
 
     def _check_mac_update_allowed(self, orig_port, port, binding):
         unplugged_types = (portbindings.VIF_TYPE_BINDING_FAILED,
@@ -540,6 +540,8 @@ class Ml2Plugin(db_base_plugin_v2.NeutronDbPluginV2,
                               {'res': resource,
                                'id': obj['result']['id']})
 
+    @oslo_db_api.wrap_db_retry(max_retries=db_api.MAX_RETRIES,
+                               retry_on_request=True)
     def _create_bulk_ml2(self, resource, context, request_items):
         objects = []
         collection = "%ss" % resource
@@ -679,7 +681,8 @@ class Ml2Plugin(db_base_plugin_v2.NeutronDbPluginV2,
         for port in ports:
             try:
                 self.delete_port(context, port.id)
-            except exc.PortNotFound:
+            except (exc.PortNotFound, sa_exc.ObjectDeletedError):
+                context.session.expunge(port)
                 # concurrent port deletion can be performed by
                 # release_dhcp_port caused by concurrent subnet_delete
                 LOG.info(_LI("Port %s was deleted concurrently"), port.id)
@@ -692,7 +695,8 @@ class Ml2Plugin(db_base_plugin_v2.NeutronDbPluginV2,
         for subnet in subnets:
             try:
                 self.delete_subnet(context, subnet.id)
-            except exc.SubnetNotFound:
+            except (exc.SubnetNotFound, sa_exc.ObjectDeletedError):
+                context.session.expunge(subnet)
                 LOG.info(_LI("Subnet %s was deleted concurrently"),
                          subnet.id)
             except Exception:
@@ -967,6 +971,8 @@ class Ml2Plugin(db_base_plugin_v2.NeutronDbPluginV2,
 
         return result, mech_context
 
+    @oslo_db_api.wrap_db_retry(max_retries=db_api.MAX_RETRIES,
+                               retry_on_request=True)
     def create_port(self, context, port):
         attrs = port[attributes.PORT]
         result, mech_context = self._create_port_db(context, port)
@@ -1171,6 +1177,7 @@ class Ml2Plugin(db_base_plugin_v2.NeutronDbPluginV2,
             'context': context,
             'port': new_host_port,
             'mac_address_updated': mac_address_updated,
+            'original_port': original_port,
         }
         registry.notify(resources.PORT, events.AFTER_UPDATE, self, **kwargs)
 

@@ -45,6 +45,7 @@ from neutron import context
 from neutron.i18n import _LE, _LI, _LW
 from neutron.openstack.common import loopingcall
 from neutron.plugins.common import constants as p_const
+from neutron.plugins.linuxbridge.agent import arp_protect
 from neutron.plugins.linuxbridge.common import config  # noqa
 from neutron.plugins.linuxbridge.common import constants as lconst
 
@@ -400,11 +401,15 @@ class LinuxBridgeManager(object):
         bridge_name = self.get_bridge_name(network_id)
         if network_type == p_const.TYPE_LOCAL:
             self.ensure_local_bridge(network_id)
-        elif not self.ensure_physical_in_bridge(network_id,
-                                                network_type,
-                                                physical_network,
-                                                segmentation_id):
-            return False
+        else:
+            phy_dev_name = self.ensure_physical_in_bridge(network_id,
+                                                          network_type,
+                                                          physical_network,
+                                                          segmentation_id)
+            if not phy_dev_name:
+                return False
+            # (mirlos) we are setting MTU to the configured value below
+            #self.ensure_tap_mtu(tap_device_name, phy_dev_name)
 
         # fix-neutron-agent-for-mtu-config hack
         # also set the bridge in one go
@@ -419,6 +424,11 @@ class LinuxBridgeManager(object):
                       tap_device_name, bridge_name)
             return False
         return True
+
+    def ensure_tap_mtu(self, tap_dev_name, phy_dev_name):
+        """Ensure the MTU on the tap is the same as the physical device."""
+        phy_dev_mtu = ip_lib.IPDevice(phy_dev_name).link.mtu
+        ip_lib.IPDevice(tap_dev_name).link.set_mtu(phy_dev_mtu)
 
     def add_interface(self, network_id, network_type, physical_network,
                       segmentation_id, port_id):
@@ -459,7 +469,7 @@ class LinuxBridgeManager(object):
             LOG.debug("Done deleting bridge %s", bridge_name)
 
         else:
-            LOG.debug(_LE("Cannot delete bridge %s, does not exist"),
+            LOG.debug("Cannot delete bridge %s; it does not exist",
                       bridge_name)
 
     def remove_empty_bridges(self):
@@ -829,6 +839,7 @@ class LinuxBridgeNeutronAgentRPC(object):
 
     def __init__(self, interface_mappings, polling_interval):
         self.polling_interval = polling_interval
+        self.prevent_arp_spoofing = cfg.CONF.AGENT.prevent_arp_spoofing
         self.setup_linux_bridge(interface_mappings)
         configurations = {'interface_mappings': interface_mappings}
         if self.br_mgr.vxlan_mode != lconst.VXLAN_NONE:
@@ -948,12 +959,20 @@ class LinuxBridgeNeutronAgentRPC(object):
             if 'port_id' in device_details:
                 LOG.info(_LI("Port %(device)s updated. Details: %(details)s"),
                          {'device': device, 'details': device_details})
+
+                if self.prevent_arp_spoofing:
+                    port = self.br_mgr.get_tap_device_name(
+                        device_details['port_id'])
+                    arp_protect.setup_arp_spoofing_protection(port,
+                                                              device_details)
+
                 updown = self.br_mgr.update_device_link(
                                      port_id=device_details['port_id'],
                                      dom_id=device_details.get('device_id'),
                                      hw_addr=device_details.get('mac_address'),
                                      owner=device_details.get('device_owner'),
                                      state=device_details['admin_state_up'])
+
                 if device_details['admin_state_up']:
                     # create the networking for the port
                     network_type = device_details.get('network_type')
@@ -1007,6 +1026,8 @@ class LinuxBridgeNeutronAgentRPC(object):
                 LOG.info(_LI("Port %s updated."), device)
             else:
                 LOG.debug("Device %s not defined on plugin", device)
+        if self.prevent_arp_spoofing:
+            arp_protect.delete_arp_spoofing_protection(devices)
         self.br_mgr.remove_empty_bridges()
         return resync
 
@@ -1028,6 +1049,10 @@ class LinuxBridgeNeutronAgentRPC(object):
                         'current': set(),
                         'updated': set(),
                         'removed': set()}
+            # clear any orphaned ARP spoofing rules (e.g. interface was
+            # manually deleted)
+            if self.prevent_arp_spoofing:
+                arp_protect.delete_unreferenced_arp_protection(current_devices)
 
         if sync:
             # This is the first iteration, or the previous one had a problem.
