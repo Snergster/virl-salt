@@ -33,6 +33,7 @@ import glob
 import mmap
 import operator
 import os
+import platform
 import shutil
 import sys
 import tempfile
@@ -95,6 +96,7 @@ from nova.virt.libvirt import firewall as libvirt_firewall
 from nova.virt.libvirt import host
 from nova.virt.libvirt import imagebackend
 from nova.virt.libvirt import imagecache
+from nova.virt.libvirt import instancejobtracker
 from nova.virt.libvirt import lvm
 from nova.virt.libvirt import rbd_utils
 from nova.virt.libvirt import utils as libvirt_utils
@@ -263,7 +265,7 @@ DISABLE_PREFIX = 'AUTO: '
 DISABLE_REASON_UNDEFINED = None
 
 # Guest config console string
-CONSOLE = "console=tty0 console=ttyS0 console=ttyAMA0"
+CONSOLE = "console=tty0 console=ttyS0"
 
 GuestNumaConfig = collections.namedtuple(
     'GuestNumaConfig', ['cpuset', 'cputune', 'numaconfig', 'numatune'])
@@ -464,6 +466,8 @@ class LibvirtDriver(driver.ComputeDriver):
                   {'actual': CONF.libvirt.sysinfo_serial,
                    'expect': ', '.join("'%s'" % k for k in
                                        sysinfo_serial_funcs.keys())})
+
+        self.job_tracker = instancejobtracker.InstanceJobTracker()
 
     def _get_volume_drivers(self):
         return libvirt_volume_drivers
@@ -987,6 +991,8 @@ class LibvirtDriver(driver.ComputeDriver):
             connector["wwnns"] = self._fc_wwnns
             connector["wwpns"] = self._fc_wwpns
 
+        connector['platform'] = platform.machine()
+        connector['os_type'] = sys.platform
         return connector
 
     def _cleanup_resize(self, instance, network_info):
@@ -3668,7 +3674,8 @@ class LibvirtDriver(driver.ComputeDriver):
             # qemu -no-hpet is not supported on non-x86 targets.
             tmhpet = vconfig.LibvirtConfigGuestTimer()
             tmhpet.name = "hpet"
-            tmhpet.present = False
+            present = image_meta.get('properties', {}).get('hw_hpet', '')
+            tmhpet.present = strutils.bool_from_string(present)
             clk.add_timer(tmhpet)
 
         # With new enough QEMU we can provide Windows guests
@@ -6005,8 +6012,24 @@ class LibvirtDriver(driver.ComputeDriver):
         # Disconnect from volume server
         block_device_mapping = driver.block_device_info_get_mapping(
                 block_device_info)
+        connector = self.get_volume_connector(instance)
+        volume_api = self._volume_api
         for vol in block_device_mapping:
-            connection_info = vol['connection_info']
+            # Retrieve connection info from Cinder's initialize_connection API.
+            # The info returned will be accurate for the source server.
+            volume_id = vol['connection_info']['serial']
+            connection_info = volume_api.initialize_connection(context,
+                                                               volume_id,
+                                                               connector)
+
+            # Pull out multipath_id from the bdm information. The
+            # multipath_id can be placed into the connection info
+            # because it is based off of the volume and will be the
+            # same on the source and destination hosts.
+            if 'multipath_id' in vol['connection_info']['data']:
+                multipath_id = vol['connection_info']['data']['multipath_id']
+                connection_info['data']['multipath_id'] = multipath_id
+
             disk_dev = vol['mount_device'].rpartition("/")[2]
             self._disconnect_volume(connection_info, disk_dev)
 
@@ -6329,6 +6352,11 @@ class LibvirtDriver(driver.ComputeDriver):
                     # finish_migration/_create_image to re-create it for us.
                     continue
 
+                on_execute = lambda process: self.job_tracker.add_job(
+                    instance, process.pid)
+                on_completion = lambda process: self.job_tracker.remove_job(
+                    instance, process.pid)
+
                 if info['type'] == 'qcow2' and info['backing_file']:
                     tmp_path = from_path + "_rbase"
                     # merge backing file
@@ -6338,11 +6366,15 @@ class LibvirtDriver(driver.ComputeDriver):
                     if shared_storage:
                         utils.execute('mv', tmp_path, img_path)
                     else:
-                        libvirt_utils.copy_image(tmp_path, img_path, host=dest)
+                        libvirt_utils.copy_image(tmp_path, img_path, host=dest,
+                                                 on_execute=on_execute,
+                                                 on_completion=on_completion)
                         utils.execute('rm', '-f', tmp_path)
 
                 else:  # raw or qcow2 with no backing file
-                    libvirt_utils.copy_image(from_path, img_path, host=dest)
+                    libvirt_utils.copy_image(from_path, img_path, host=dest,
+                                             on_execute=on_execute,
+                                             on_completion=on_completion)
         except Exception:
             with excutils.save_and_reraise_exception():
                 self._cleanup_remote_migration(dest, inst_base,
@@ -6711,6 +6743,8 @@ class LibvirtDriver(driver.ComputeDriver):
         # invocation failed due to the absence of both target and
         # target_resize.
         if not remaining_path and os.path.exists(target_del):
+            self.job_tracker.terminate_jobs(instance)
+
             LOG.info(_LI('Deleting instance files %s'), target_del,
                      instance=instance)
             remaining_path = target_del
