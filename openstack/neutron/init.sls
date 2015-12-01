@@ -48,15 +48,15 @@ neutron-pkgs:
     - force_yes: True
     - pkgs:
     {% if kilo %}
-      - neutron-common: '1:2015.1.2-0ubuntu1~cloud0'
-      - neutron-dhcp-agent: '1:2015.1.2-0ubuntu1~cloud0'
-      - neutron-l3-agent: '1:2015.1.2-0ubuntu1~cloud0'
-      - neutron-metadata-agent: '1:2015.1.2-0ubuntu1~cloud0'
-      - neutron-plugin-linuxbridge-agent: '1:2015.1.2-0ubuntu1~cloud0'
-      - neutron-plugin-linuxbridge: '1:2015.1.2-0ubuntu1~cloud0'
-      - neutron-plugin-ml2: '1:2015.1.2-0ubuntu1~cloud0'
-      - neutron-server: '1:2015.1.2-0ubuntu1~cloud0'
-      - python-neutron: '1:2015.1.2-0ubuntu1~cloud0'
+      - neutron-common: '1:2015.1.2-0ubuntu2~cloud0'
+      - neutron-dhcp-agent: '1:2015.1.2-0ubuntu2~cloud0'
+      - neutron-l3-agent: '1:2015.1.2-0ubuntu2~cloud0'
+      - neutron-metadata-agent: '1:2015.1.2-0ubuntu2~cloud0'
+      - neutron-plugin-linuxbridge-agent: '1:2015.1.2-0ubuntu2~cloud0'
+      - neutron-plugin-linuxbridge: '1:2015.1.2-0ubuntu2~cloud0'
+      - neutron-plugin-ml2: '1:2015.1.2-0ubuntu2~cloud0'
+      - neutron-server: '1:2015.1.2-0ubuntu2~cloud0'
+      - python-neutron: '1:2015.1.2-0ubuntu2~cloud0'
     {% else %}
       - neutron-common: '=1:2014.1.3-0ubuntu1.1'
       - neutron-dhcp-agent: '=1:2014.1.3-0ubuntu1.1'
