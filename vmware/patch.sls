@@ -6,7 +6,7 @@ rasa patches:
 download tools:
   cmd.run:
     - cwd: /tmp/vmware-tools-patches
-    - name: ./download-tools.sh 7.1.1
+    - name: ./download-tools.sh 8.0.2
     - require:
       - git: rasa patches
 
@@ -20,7 +20,7 @@ untar and patch:
 compile with patches:
   cmd.run:
     - cwd: /tmp/vmware-tools-patches
-    - name: ./compile.sh
+    - name: ./compile.sh force-install
     - require:
       - cmd: untar and patch
 
