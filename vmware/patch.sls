@@ -3,6 +3,11 @@ rasa patches:
     - name: https://github.com/rasa/vmware-tools-patches.git
     - target: /tmp/vmware-tools-patches
 
+uninstall tool:
+  file.managed:
+    - name : /usr/bin/vmware-uninstall-tools.pl
+    - source: salt://vmware/files/vmware-uninstall-tools.pl
+
 download tools:
   cmd.run:
     - cwd: /tmp/vmware-tools-patches
