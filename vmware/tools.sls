@@ -1,22 +1,17 @@
-/tmp/vmwaretools.tar.gz:
-  file.managed:
-    - source: "salt://images/vmware/vmwaretools.tar.gz"
-    - order: 1
 
 tar-vmware:
-    module.run:
-        - name: archive.tar
-        - tarfile: /tmp/vmwaretools.tar.gz
-        - order: 2
-        - dest: /tmp
-        - options: xf
-        # FIXME: take out tar file name
-        - cwd: /tmp/
+    file.absent:
+      - name: /tmp/vmware-tools-distrib
+    archive.extracted:
+      - name: /tmp/
+      - source: "salt://images/vmware/vmwaretools.tar.gz"
+      - souce_hash: md5=a70a61d99dcaa38e55305164f75fdc14
+      - archive_format: tar
+      - if_missing: /tmp/vmware-tools/distrib/
 
 
 install-vmware-tools:
     cmd.run:
-        - order: 3
         - cwd: /tmp/vmware-tools-distrib/
         - name: ./vmware-install.pl -d 2>&1
 
