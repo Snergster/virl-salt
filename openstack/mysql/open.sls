@@ -10,7 +10,9 @@ mysql port anycast open:
     - name: /etc/mysql/my.cnf
     - pattern: ^bind-address.*
     - repl: 'bind-address = {{ controllerip }}'
-    - onlyif: ls /etc/mysql/my.cnf
+    - onlyif:
+      - ls /etc/mysql/my.cnf
+      - test -e /etc/init.d/mysql
   cmd.wait:
     - name: 'service mysql restart'
     - watch:
@@ -23,7 +25,9 @@ mysql port anycast open:
     - name: /etc/mysql/my.cnf
     - pattern: ^bind-address.*
     - repl: 'bind-address = 0.0.0.0'
-    - onlyif: ls /etc/mysql/my.cnf
+    - onlyif: 
+      - ls /etc/mysql/my.cnf
+      - test -e /etc/init.d/mysql
   cmd.wait:
     - name: 'service mysql restart'
     - watch:
