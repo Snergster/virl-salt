@@ -108,8 +108,7 @@ salt-minion nohold:
 
 /proc/sys/kernel/numa_balancing:
   cmd.run:
-    - name: echo 0 > /proc/sys/kernel/numa_balancing
-    - onlyif: grep 1 /proc/sys/kernel/numa_balancing
+    - name: '/sbin/sysctl kernel.numa_balancing=0'
 
 /usr/local/bin/v6off jinja:
   file.managed:
