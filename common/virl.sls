@@ -172,4 +172,9 @@ dummy modprobe default:
     - name: modprobe dummy numdummies=5
     - unless: grep "^dummy" /proc/modules
 
+numa no balance:
+  file.managed:
+    - name: /etc/sysctl.d/10-numa-balancing.conf
+    - contents: |
+        kernel.numa_balancing = 0
 
