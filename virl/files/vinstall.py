@@ -577,6 +577,14 @@ def call_salt(slsfile):
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', slsfile])
     sleep(5)
 
+def call_salt_quiet(slsfile):
+    print 'Please be patient file {slsfile} is running'.format(slsfile=slsfile)
+    if masterless:
+        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', slsfile])
+    else:
+        subprocess.call(['sudo', 'salt-call', '--state-output=terse', '-l', 'quiet', 'state.sls', slsfile])
+    sleep(5)
+
 if __name__ == "__main__":
 
     varg = docopt(__doc__, version='vinstall .8')
@@ -842,11 +850,11 @@ if __name__ == "__main__":
     if varg['host']:
         call_salt('virl.host')
     if varg['routervms']:
-        call_salt('virl.routervms')
+        call_salt_quiet('virl.routervms')
     if varg['vmm'] or varg['upgrade']:
-        call_salt('virl.vmm.download')
+        call_salt_quiet('virl.vmm.download')
         if desktop:
-          call_salt('virl.vmm.local')
+          call_salt_quiet('virl.vmm.local')
 
     if varg['salt']:
         building_salt_all()
