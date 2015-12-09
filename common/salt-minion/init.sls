@@ -10,3 +10,5 @@ include:
   - common.salt-master.pygit2
   - common.salt-master.psutil
   - common.salt-minion.glance
+  - common.salt-minion.boto
+
