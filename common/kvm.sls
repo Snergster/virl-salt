@@ -30,6 +30,7 @@ manual qemu-kvm:
   pkg.installed:
     - pkgs:
       - qemu-kvm: '2.0.0+dfsg-2ubuntu1.21'
+      - qemu-system-x86: '2.0.0+dfsg-2ubuntu1.21'
     - refresh: True
     - require:
       - module: qemu_kvm unhold
