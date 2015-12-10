@@ -27,8 +27,9 @@ qemu_kvm unhold:
       - file: /usr/bin/kvm
 
 manual qemu-kvm:
-  pkg.latest:
-    - name: qemu-kvm
+  pkg.installed:
+    - pkgs:
+      - qemu-kvm: '2.0.0+dfsg-2ubuntu1.21'
     - refresh: True
     - require:
       - module: qemu_kvm unhold
