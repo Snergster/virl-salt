@@ -654,20 +654,20 @@ if __name__ == "__main__":
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
 
     if varg['third'] or varg['all'] :
-        if cinder:
-            # call_salt('openstack.cinder.install')
-            if cinder_file:
-                subprocess.call(['sudo', '/bin/dd', 'if=/dev/zero', 'of={0}'.format(cinder_loc), 'bs=1M',
-                                 'count={0}'.format(cinder_size)])
-                subprocess.call(['sudo', '/sbin/losetup', '-f', '--show', '{0}'.format(cinder_loc)])
-                subprocess.call(['sudo', '/sbin/pvcreate', '/dev/loop0'])
-                subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '/dev/loop0'])
-                # subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
-            elif cinder_device:
-                subprocess.call(['sudo', '/sbin/pvcreate', '{0}'.format(cinder_loc)])
-                subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
-            else:
-                print 'No cinder file or drive created'
+        # if cinder:
+        #     # call_salt('openstack.cinder.install')
+        #     if cinder_file:
+        #         subprocess.call(['sudo', '/bin/dd', 'if=/dev/zero', 'of={0}'.format(cinder_loc), 'bs=1M',
+        #                          'count={0}'.format(cinder_size)])
+        #         subprocess.call(['sudo', '/sbin/losetup', '-f', '--show', '{0}'.format(cinder_loc)])
+        #         subprocess.call(['sudo', '/sbin/pvcreate', '/dev/loop0'])
+        #         subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '/dev/loop0'])
+        #         # subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
+        #     elif cinder_device:
+        #         subprocess.call(['sudo', '/sbin/pvcreate', '{0}'.format(cinder_loc)])
+        #         subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
+        #     else:
+        #         print 'No cinder file or drive created'
 
         #
         # if horizon:
