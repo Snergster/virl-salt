@@ -27,11 +27,8 @@ qemu_kvm unhold:
       - file: /usr/bin/kvm
 
 manual qemu-kvm:
-  pkg.installed:
-    - pkgs:
-      - qemu-kvm: '2.0.0+dfsg-2ubuntu1.21'
-      - qemu-system-x86: '2.0.0+dfsg-2ubuntu1.21'
-    - refresh: True
+  cmd.run:
+    - name: 'apt-get install qemu-kvm=2.0.0+dfsg-2ubuntu1.21 qemu-system-x86=2.0.0+dfsg-2ubuntu1.21 -y --force-yes'
     - require:
       - module: qemu_kvm unhold
 
@@ -48,7 +45,7 @@ kvm virl version:
     - source: "salt://openstack/nova/files/kvm"
     - mode: 0755
     - require:
-      - pkg: manual qemu-kvm
+      - cmd: manual qemu-kvm
 
 uncomment min vnc port:
   file.uncomment:
@@ -69,4 +66,4 @@ qemu hold:
   apt.held:
     - name: qemu-kvm
     - require:
-      - pkg: manual qemu-kvm
+      - cmd: manual qemu-kvm
