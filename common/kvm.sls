@@ -32,6 +32,12 @@ manual qemu-kvm:
     - require:
       - module: qemu_kvm unhold
 
+hand qemu dpkg fix:
+  cmd.run:
+    - name: 'dpkg --configure -a --force-confnew'
+    - onfail:
+      - cmd: manual qemu-kvm
+
 libvirt install:
   pkg.installed:
     - name: libvirt-bin
@@ -44,8 +50,6 @@ kvm virl version:
     - onlyif: ls /usr/bin/kvm.real
     - source: "salt://openstack/nova/files/kvm"
     - mode: 0755
-    - require:
-      - cmd: manual qemu-kvm
 
 uncomment min vnc port:
   file.uncomment:
@@ -65,5 +69,4 @@ alter min vnc port:
 qemu hold:
   apt.held:
     - name: qemu-kvm
-    - require:
-      - cmd: manual qemu-kvm
+
