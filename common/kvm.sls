@@ -26,17 +26,33 @@ qemu_kvm unhold:
     - require:
       - file: /usr/bin/kvm
 
-manual qemu-kvm:
-  cmd.run:
-    - name: 'apt-get install qemu-kvm=2.0.0+dfsg-2ubuntu1.21 qemu-system-x86=2.0.0+dfsg-2ubuntu1.21 -y --force-yes'
-    - require:
-      - module: qemu_kvm unhold
+qemu prime:
+  pkg.installed:
+    - force_conf_new: True
+    - force_yes: True
+    - refresh: True
+    - version: 2.0.0+dfsg-2ubuntu1.21
+    - name: qemu-kvm
 
-hand qemu dpkg fix:
-  cmd.run:
-    - name: 'dpkg --configure -a --force-confnew'
+qemu-system:
+  pkg.installed:
+    - force_conf_new: True
+    - force_yes: True
+    - refresh: False
+    - version: 2.0.0+dfsg-2ubuntu1.21
+    - name: qemu-system-x86
+
+qemu:
+  pkg.installed:
+    - force_conf_new: True
+    - force_yes: True
+    - refresh: False
     - onfail:
-      - cmd: manual qemu-kvm
+      - pkg: qemu-system
+      - pkg: qemu prime
+    - pkgs:
+      - qemu-system-x86=2.0.0+dfsg-2ubuntu1.21
+      - qemu-kvm=2.0.0+dfsg-2ubuntu1.21
 
 libvirt install:
   pkg.installed:
