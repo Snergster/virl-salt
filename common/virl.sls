@@ -9,6 +9,7 @@ include:
   - virl.vinstall
   - openstack.repo
   - common.kvm
+  - common.ksm
   - virl.scripts
   - virl.vextra
 
