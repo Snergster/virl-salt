@@ -5,7 +5,7 @@
 """virl install.
 
 Usage:
-  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | bridge | desktop | rehost | renumber | compute | all | upgrade | nova | vmm | routervms | users | vinstall | host | mini | highstate | defrost
+  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | bridge | desktop | rehost | renumber | compute | all | upgrade | nova | vmm | routervms | users | vinstall | host | mini | highstate | defrost | kvm
 
 Options:
   --version             shows program's version number and exit
@@ -863,6 +863,7 @@ if __name__ == "__main__":
 
     if varg['bridge']:
         call_salt('common.bridge')
-
+    if varg['kvm']:
+        call_salt('common.kvm,common.ksm')
     if path.exists('/tmp/install.out'):
         subprocess.call(['sudo', 'rm', '/tmp/install.out'])

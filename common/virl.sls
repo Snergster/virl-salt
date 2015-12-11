@@ -107,10 +107,6 @@ salt-minion nohold:
   file.absent:
     - name: /etc/apt/preferences.d/salt-minion
 
-/proc/sys/kernel/numa_balancing:
-  cmd.run:
-    - name: '/sbin/sysctl kernel.numa_balancing=0'
-
 /usr/local/bin/v6off jinja:
   file.managed:
     - name: /usr/local/bin/adjust-ipv6-sysctl.sh
@@ -172,9 +168,4 @@ dummy modprobe default:
     - name: modprobe dummy numdummies=5
     - unless: grep "^dummy" /proc/modules
 
-numa no balance:
-  file.managed:
-    - name: /etc/sysctl.d/10-numa-balancing.conf
-    - contents: |
-        kernel.numa_balancing = 0
 
