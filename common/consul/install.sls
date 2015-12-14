@@ -9,16 +9,13 @@
   service.dead:
     - names:
       - consul
-    - onchanges:
-      - file: /var/cache/salt/consul.zip
   module.run:
     - name: archive.unzip
     - zip_file: /var/cache/salt/consul.zip
     - dest: /usr/local/bin
     - require:
       - file: /var/cache/salt/consul.zip
-    - onchanges:
-      - file: /var/cache/salt/consul.zip
+
 
 /usr/local/bin/consul:
   file.managed:
