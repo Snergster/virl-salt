@@ -13,8 +13,6 @@
     - name: archive.unzip
     - zip_file: /var/cache/salt/consul.zip
     - dest: /usr/local/bin
-    - require:
-      - file: /var/cache/salt/consul.zip
 
 
 /usr/local/bin/consul:
