@@ -28,6 +28,7 @@ commonpkgs:
       - libssl-dev
       - htop
       - gcc
+      - bc
 
 
 /usr/local/bin/openstack-config:
