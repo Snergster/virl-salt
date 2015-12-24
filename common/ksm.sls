@@ -1,4 +1,4 @@
-{% set ksm = salt['pillar.get']('virl:ksm', salt['grains.get']('ksm', true)) %}
+{% set ksm = salt['pillar.get']('virl:ksm', salt['grains.get']('ksm', false )) %}
 
 {% if ksm %}
 /etc/default/qemu-kvm:
