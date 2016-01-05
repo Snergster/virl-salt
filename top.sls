@@ -26,3 +26,19 @@ base:
     - match: pcre
     - common.virl
     - virl.vinstall
+
+  '.*packet.net$':
+    - match: pcre
+    - common.virl
+    - virl.vinstall
+
+  'appcat.virl.qa$':
+    - match: pcre
+    - common.salt-minion
+    - virl.basics
+    - common.virl
+    - openstack
+    - openstack.setup
+    - openstack.restart
+    - common.bridge
+
