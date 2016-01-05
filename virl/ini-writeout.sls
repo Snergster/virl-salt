@@ -1,6 +1,7 @@
 /etc/virl.ini:
   file.managed:
-   - contents_pillar: virl
+   - template: jinja
+   - source: salt://virl/files/jinja.vsettings.ini
    - user: virl
    - group: virl
    - mode: 0755
