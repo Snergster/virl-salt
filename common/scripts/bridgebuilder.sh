@@ -1,7 +1,9 @@
 #!/bin/bash
 mkdir /tmp/bridge
 cd /tmp/bridge/
-version=`uname -r`
+if [ -z $version ]; then
+    version=`uname -r`
+fi
 apt-get install -y linux-headers-$version
 apt-get source -y linux-image-$version
 cd linux*/
@@ -12,3 +14,4 @@ make prepare modules_prepare
 make SUBDIRS=scripts/mod
 make SUBDIRS=net/bridge modules
 cp -f net/bridge/bridge.ko /lib/modules/$version/kernel/net/bridge/
+rm -rf /tmp/bridge/
