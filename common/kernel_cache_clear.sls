@@ -15,4 +15,4 @@ kernel cache clear:
   cron.present:
     - identifier: kernel cache clear
     - user: root
-    - minute: 15
+    - minute: 15,45
