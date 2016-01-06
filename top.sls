@@ -38,7 +38,5 @@ base:
     - virl.basics
     - common.virl
     - openstack
-    - openstack.setup
-    - openstack.restart
     - common.bridge
 
