@@ -29,8 +29,14 @@ base:
 
   '.*packet.net$':
     - match: pcre
+    - common.users
+    - common.get-pip
+    - virl.ini-writeout
+    - common.salt-minion
+    - virl.basics
     - common.virl
-    - virl.vinstall
+    - openstack
+    - common.bridge
 
   'appcat.virl.qa$':
     - match: pcre

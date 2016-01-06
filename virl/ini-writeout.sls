@@ -5,3 +5,4 @@
    - user: virl
    - group: virl
    - mode: 0755
+   - unless: test -e /etc/virl.ini
