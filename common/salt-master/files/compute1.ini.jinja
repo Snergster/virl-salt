@@ -1,0 +1,7 @@
+virl:
+  public_port: {{salt['grains.get']('compute1_public_port', 'eth0')}}
+  l2_port: {{salt['grains.get']('compute1_l2port', 'eth1')}}
+  l2_port2: {{salt['grains.get']('compute1_l2port2', 'eth2')}}
+  l3_port: {{salt['grains.get']('compute1_l3port', 'eth3')}}
+  internalnet_port: {{salt['grains.get']('compute1_internalnet_port', 'eth4')}}
+  controller_ip: {{salt['grains.get']('compute1_internalnet_controller_ip', '172.16.10.250')}}
