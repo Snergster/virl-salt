@@ -1,3 +1,6 @@
+include:
+  - common.salt-master.no-auto-start
+
 salt-minion no upstart:
   file.managed:
     - name: /etc/init/salt-minion.override
