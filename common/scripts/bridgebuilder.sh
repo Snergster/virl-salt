@@ -14,4 +14,5 @@ make prepare modules_prepare
 make SUBDIRS=scripts/mod
 make SUBDIRS=net/bridge modules
 cp -f net/bridge/bridge.ko /lib/modules/$version/kernel/net/bridge/
+cp -f net/bridge/bridge.ko /tmp/bridge.ko-$version
 rm -rf /tmp/bridge/

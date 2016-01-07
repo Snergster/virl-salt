@@ -17,11 +17,11 @@ iosv:
     - min_ram: 0
     - is_public: True
   {% if cml %}
-    - checksum: d38cecec672522313c60d20edfea9773
-    - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.155-3.M
+    - checksum: 6bad30d1961c5a460c173404c60432d6
+    - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.156-1.T
   {% else %}
-    - checksum: 79f613ac3b179d5a64520730925130b2
-    - copy_from: salt://images/salt/vios-adventerprisek9-m.vmdk.SPA.155-3.M
+    - checksum: e7cb1bbd0c59280dd946feefa68fa270
+    - copy_from: salt://images/salt/vios-adventerprisek9-m.vmdk.SPA.156-1.T
   {% endif %}
     - protected: False
     - disk_format: qcow2
@@ -29,7 +29,7 @@ iosv:
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
-    - property-release: 15.5.3.M
+    - property-release: 15.6.1.T
     - property-serial: 2
     - property-subtype: IOSv
 

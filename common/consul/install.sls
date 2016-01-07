@@ -4,21 +4,16 @@
 
 /var/cache/salt/consul.zip:
   file.managed:
-    - source: https://dl.bintray.com/mitchellh/consul/0.5.2_linux_amd64.zip
-    - source_hash: md5=37000419d608fd34f0f2d97806cf7399
+    - source: https://releases.hashicorp.com/consul/0.6.0/consul_0.6.0_linux_amd64.zip
+    - source_hash: sha256=307fa26ae32cb8732aed2b3320ed8daf02c28b50d952cbaae8faf67c79f78847
   service.dead:
     - names:
       - consul
-    - onchanges:
-      - file: /var/cache/salt/consul.zip
   module.run:
     - name: archive.unzip
     - zip_file: /var/cache/salt/consul.zip
     - dest: /usr/local/bin
-    - require:
-      - file: /var/cache/salt/consul.zip
-    - onchanges:
-      - file: /var/cache/salt/consul.zip
+
 
 /usr/local/bin/consul:
   file.managed:

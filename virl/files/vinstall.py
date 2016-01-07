@@ -5,7 +5,7 @@
 """virl install.
 
 Usage:
-  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | bridge | desktop | rehost | renumber | compute | all | upgrade | nova | vmm | routervms | users | vinstall | host | mini | highstate | defrost
+  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | bridge | desktop | rehost | renumber | compute | all | upgrade | nova | vmm | routervms | users | vinstall | host | mini | highstate | defrost | kvm
 
 Options:
   --version             shows program's version number and exit
@@ -59,7 +59,7 @@ DEFAULT = safeparser['DEFAULT']
 
 
 hostname = safeparser.get('DEFAULT', 'hostname', fallback='virl')
-fqdn = safeparser.get('DEFAULT', 'domain', fallback='cisco.com')
+fqdn = safeparser.get('DEFAULT', 'domain_name', fallback='virl.info')
 
 dhcp_public = safeparser.getboolean('DEFAULT', 'using_dhcp_on_the_public_port', fallback=True)
 public_port = safeparser.get('DEFAULT', 'public_port', fallback='eth0')
@@ -577,6 +577,14 @@ def call_salt(slsfile):
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', slsfile])
     sleep(5)
 
+def call_salt_quiet(slsfile):
+    print 'Please be patient file {slsfile} is running'.format(slsfile=slsfile)
+    if masterless:
+        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', slsfile])
+    else:
+        subprocess.call(['sudo', 'salt-call', '--state-output=terse', '-l', 'quiet', 'state.sls', slsfile])
+    sleep(5)
+
 if __name__ == "__main__":
 
     varg = docopt(__doc__, version='vinstall .8')
@@ -646,20 +654,20 @@ if __name__ == "__main__":
             subprocess.call(['sudo', 'chown', '-R', 'virl:virl', '/home/virl/.novaclient'])
 
     if varg['third'] or varg['all'] :
-        if cinder:
-            # call_salt('openstack.cinder.install')
-            if cinder_file:
-                subprocess.call(['sudo', '/bin/dd', 'if=/dev/zero', 'of={0}'.format(cinder_loc), 'bs=1M',
-                                 'count={0}'.format(cinder_size)])
-                subprocess.call(['sudo', '/sbin/losetup', '-f', '--show', '{0}'.format(cinder_loc)])
-                subprocess.call(['sudo', '/sbin/pvcreate', '/dev/loop0'])
-                subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '/dev/loop0'])
-                # subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
-            elif cinder_device:
-                subprocess.call(['sudo', '/sbin/pvcreate', '{0}'.format(cinder_loc)])
-                subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
-            else:
-                print 'No cinder file or drive created'
+        # if cinder:
+        #     # call_salt('openstack.cinder.install')
+        #     if cinder_file:
+        #         subprocess.call(['sudo', '/bin/dd', 'if=/dev/zero', 'of={0}'.format(cinder_loc), 'bs=1M',
+        #                          'count={0}'.format(cinder_size)])
+        #         subprocess.call(['sudo', '/sbin/losetup', '-f', '--show', '{0}'.format(cinder_loc)])
+        #         subprocess.call(['sudo', '/sbin/pvcreate', '/dev/loop0'])
+        #         subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '/dev/loop0'])
+        #         # subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
+        #     elif cinder_device:
+        #         subprocess.call(['sudo', '/sbin/pvcreate', '{0}'.format(cinder_loc)])
+        #         subprocess.call(['sudo', '/sbin/vgcreate', 'cinder-volumes', '{0}'.format(cinder_loc)])
+        #     else:
+        #         print 'No cinder file or drive created'
 
         #
         # if horizon:
@@ -694,7 +702,7 @@ if __name__ == "__main__":
 
     if varg['fourth'] or varg['all'] :
         if masterless:
-            call_salt('openstack.neutron.changes,virl.std,virl.ank')
+            call_salt('openstack.neutron.changes,virl.std,virl.ank,virl.openvpn')
             # call_salt('virl.ank')
         else:
             subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.neutron.changes,virl.std,virl.ank'])
@@ -725,7 +733,7 @@ if __name__ == "__main__":
         building_salt_all()
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
         call_salt('common.distuptodate')
-        call_salt('virl.network.int')
+        #call_salt('virl.network.int')
         call_salt('openstack')
         call_salt('openstack.setup')
         call_salt('openstack.stop')
@@ -842,11 +850,11 @@ if __name__ == "__main__":
     if varg['host']:
         call_salt('virl.host')
     if varg['routervms']:
-        call_salt('virl.routervms')
+        call_salt_quiet('virl.routervms')
     if varg['vmm'] or varg['upgrade']:
-        call_salt('virl.vmm.download')
+        call_salt_quiet('virl.vmm.download')
         if desktop:
-          call_salt('virl.vmm.local')
+          call_salt_quiet('virl.vmm.local')
 
     if varg['salt']:
         building_salt_all()
@@ -855,6 +863,7 @@ if __name__ == "__main__":
 
     if varg['bridge']:
         call_salt('common.bridge')
-
+    if varg['kvm']:
+        call_salt('common.kvm,common.ksm')
     if path.exists('/tmp/install.out'):
         subprocess.call(['sudo', 'rm', '/tmp/install.out'])

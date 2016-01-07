@@ -156,7 +156,7 @@
 {% if not masterless %}
 /etc/orig.virl.ini:
   file.managed:
-    - source: salt://files/vsettings.ini
+    - source: salt://virl/files/vsettings.ini
     - user: virl
     - group: virl
     - mode: 755

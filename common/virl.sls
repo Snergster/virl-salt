@@ -9,9 +9,9 @@ include:
   - virl.vinstall
   - openstack.repo
   - common.kvm
+  - common.ksm
   - virl.scripts
   - virl.vextra
-  - virl.openvpn
 
 mypkgs:
   pkg.installed:
@@ -107,11 +107,6 @@ salt-minion nohold:
   file.absent:
     - name: /etc/apt/preferences.d/salt-minion
 
-/proc/sys/kernel/numa_balancing:
-  cmd.run:
-    - name: echo 0 > /proc/sys/kernel/numa_balancing
-    - onlyif: grep 1 /proc/sys/kernel/numa_balancing
-
 /usr/local/bin/v6off jinja:
   file.managed:
     - name: /usr/local/bin/adjust-ipv6-sysctl.sh
@@ -164,5 +159,13 @@ lxc bridge off in default:
     - pattern: '^USE_LXC_BRIDGE="true"'
     - repl: 'USE_LXC_BRIDGE="false"'
 
+dummy modprobe default:
+  file.append:
+    - name: /etc/modules
+    - text: dummy numdummies=5
+    - unless: grep dummy /etc/modules
+  cmd.run:
+    - name: modprobe dummy numdummies=5
+    - unless: grep "^dummy" /proc/modules
 
 

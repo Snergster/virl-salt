@@ -32,28 +32,7 @@ include:
 blank what is there:
   cmd.run:
     - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
-
-
-{% if dummy_int %}
-
-dummy modprobe:
-  file.append:
-    - name: /etc/modules
-    - text: dummy numdummies=5
-    - unless: grep dummy /etc/modules
-  cmd.run:
-    - name: modprobe dummy numdummies=5
-    - unless: grep "^dummy" /proc/modules
-
-special alias up:
-  file.blockreplace:
-    - name: /etc/rc.local
-    - marker_start: "# bits."
-    - marker_end: "# By default this script does nothing."
-    - content: "ifup {{int_port}}"
-    - append_if_not_found: True
-
-{% endif %}
+    - onlyif: test -e /etc/network/interfaces
 
 system:
   network.system:

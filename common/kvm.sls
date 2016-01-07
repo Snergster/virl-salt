@@ -1,7 +1,8 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
-
+include:
+  - common.numa
 
 qemu_kvm unhold:
   module.run:
@@ -26,12 +27,39 @@ qemu_kvm unhold:
     - require:
       - file: /usr/bin/kvm
 
-manual qemu-kvm:
-  pkg.latest:
-    - name: qemu-kvm
+qemu prime:
+  pkg.installed:
+    - force_conf_new: True
+    - force_yes: True
     - refresh: True
-    - require:
-      - module: qemu_kvm unhold
+    - version: 2.0.0+dfsg-2ubuntu1.21
+    - name: qemu-kvm
+
+qemu-system:
+  pkg.installed:
+    - force_conf_new: True
+    - force_yes: True
+    - refresh: False
+    - version: 2.0.0+dfsg-2ubuntu1.21
+    - name: qemu-system-x86
+
+qemu:
+  pkg.installed:
+    - force_conf_new: True
+    - force_yes: True
+    - refresh: False
+    - onfail:
+      - pkg: qemu-system
+      - pkg: qemu prime
+    - pkgs:
+      - qemu-system-x86=2.0.0+dfsg-2ubuntu1.21
+      - qemu-kvm=2.0.0+dfsg-2ubuntu1.21
+
+libvirt install:
+  pkg.installed:
+    - name: libvirt-bin
+    - skip_verify: True
+    - refresh: False
 
 kvm virl version:
   file.managed:
@@ -39,15 +67,13 @@ kvm virl version:
     - onlyif: ls /usr/bin/kvm.real
     - source: "salt://openstack/nova/files/kvm"
     - mode: 0755
-    - require:
-      - pkg: manual qemu-kvm
 
 uncomment min vnc port:
   file.uncomment:
     - name: /etc/libvirt/qemu.conf
     - regex: remote_display_port_min.*
     - require:
-      - pkg: manual qemu-kvm
+      - pkg: libvirt install
 
 alter min vnc port:
   file.replace:
@@ -60,5 +86,4 @@ alter min vnc port:
 qemu hold:
   apt.held:
     - name: qemu-kvm
-    - require:
-      - pkg: manual qemu-kvm
+
