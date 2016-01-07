@@ -1028,7 +1028,8 @@ class LinuxBridgeNeutronAgentRPC(object):
                 LOG.debug("Device %s not defined on plugin", device)
         if self.prevent_arp_spoofing:
             arp_protect.delete_arp_spoofing_protection(devices)
-        self.br_mgr.remove_empty_bridges()
+        # Let's hope they'll get cleaned through network deletes on all computes
+        #self.br_mgr.remove_empty_bridges()
         return resync
 
     def scan_devices(self, previous, sync):
