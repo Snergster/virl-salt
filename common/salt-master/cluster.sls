@@ -25,3 +25,15 @@ port block salt-master:
 /srv/salt:
   file.directory:
     - makedirs: true
+
+/srv/salt/pillar/top.sls:
+  file.managed:
+    - contents: |
+      base:
+        '*':
+          - virl
+
+/srv/salt/pillar/virl/init.sls:
+  file.managed:
+    template: jinja
+    source: salt://common/salt-master/files/cluster.ini.jinja
