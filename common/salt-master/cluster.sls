@@ -17,3 +17,11 @@ port block salt-master:
     - marker_end: "# 004e"
     - content: |
              /sbin/iptables -A INPUT -p tcp --dport 4505:4506 -i {{ publicport }} -j DROP
+
+/srv/pillar/virl:
+  file.directory:
+    - makedirs: true
+
+/srv/salt:
+  file.directory:
+    - makedirs: true

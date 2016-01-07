@@ -2,19 +2,10 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 
 include:
+  - common.salt-master.install
   - common.salt-master.gitpython
   - common.salt-master.python-consul
   - common.salt-master.psutil
-
-salt-master install:
-  file.managed:
-    - name: /home/ubuntu/install_salt.sh
-    - mode: 0755
-    - source: "salt://install_salt.sh"
-  cmd.run:
-      - name: /home/ubuntu/install_salt.sh -M -X -P git 2015.8.3
-      - unless:
-        - ls /usr/bin/salt-master
 
 pip backup only:
   pkg.installed:
