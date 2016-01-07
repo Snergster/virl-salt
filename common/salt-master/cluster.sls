@@ -35,5 +35,5 @@ port block salt-master:
 
 /srv/salt/pillar/virl/init.sls:
   file.managed:
-    template: jinja
-    source: salt://common/salt-master/files/cluster.ini.jinja
+    - template: jinja
+    - source: salt://common/salt-master/files/cluster.ini.jinja
