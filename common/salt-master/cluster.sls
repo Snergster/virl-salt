@@ -34,8 +34,6 @@ port block salt-master:
             - compute3
           'compute4*':
             - compute4
-          'compute4*':
-            - compute4
           'appcat*':
             - appcat
 
