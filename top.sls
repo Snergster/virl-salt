@@ -33,10 +33,9 @@ base:
     - common.get-pip
     - virl.ini-writeout
     - common.salt-minion
-    - virl.basics
+    - virl.ntp
+    - virl.web
     - common.virl
-    - openstack
-    - common.bridge
 
   'appcat.virl.qa$':
     - match: pcre
