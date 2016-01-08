@@ -2,7 +2,9 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
+{% if not kilo %}
 include:
   - openstack.keystone
   - openstack.nova.install
@@ -127,6 +129,8 @@ middleware failsafe:
       - pbr == 0.10.8
       - netaddr==0.7.15
 
+{% else %}
+
 {% for symlink in ['keystone','neutron','glance','nova']%}
 /usr/bin/{{ symlink }}:
   file.symlink:
@@ -137,3 +141,4 @@ middleware failsafe:
       - 'test ! -e /usr/bin/{{ symlink }}'
 
 {% endfor %}
+{% endif %}
