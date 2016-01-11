@@ -26,130 +26,44 @@
 {% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 
-include:
-  - virl.hostname
+#include:
+#  - virl.hostname
 
-#blank what is there:
-#  cmd.run:
-#    - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
-#    - onlyif: test -e /etc/network/interfaces
-
-#system:
-#  network.system:
-#    - enabled: False
-#    - hostname: {{hostname}}.{{domain}}
-#    - gatewaydev: {{ publicport }}
-
-
-
-{{ int_port }}:
+adding source to interfaces:
   cmd.run:
-{% if jumbo_frames %}
-    - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} mtu=9100'
-{% else %}
-    - name: 'salt-call --local ip.build_interface {{int_port}} eth True address={{int_ip}} proto=static netmask={{ int_mask}} mtu=1500'
-{% endif %}
-
-
-
-
-loop0:
-  network.managed:
-    - enabled: True
-    - name: 'lo'
-    - type: eth
-    - enabled: True
-    - proto: loopback
-
-
-loop1:
-  cmd.run:
-    - name: 'salt-call --local ip.build_interface "lo:1" eth True address=127.0.1.1 proto=loopback netmask=255.0.0.0'
-
-
-
-{{ l2_port }}:
-  network.managed:
-    - enabled: True
-    - proto: static
-    - type: eth
-    - ipaddr: {{ l2_address }}
-    - netmask: {{ l2_mask }}
-
-
-{% if l2_port2_enabled %}
-{{ l2_port2 }}:
-  network.managed:
-    - enabled: True
-    - proto: static
-    - type: eth
-    - ipaddr: {{ l2_address2 }}
-    - netmask: {{ l2_mask2 }}
-
-
-man-flat2-address:
-  file.replace:
+    - names: 
+      - 'chattr -i /etc/network/interfaces'
+      - 'chattr +i /etc/network/interfaces | at now + 1 min'
+  file.append:
     - name: /etc/network/interfaces
-    - pattern: {{ l2_address2 }}
-    - repl: '{{ l2_address2 }}\n    post-up ip link set {{l2_port2}} promisc on'
-    - require:
-      - network: {{ l2_port2 }}
+    - text: source /etc/network/interfaces.d/*.cfg
 
-{% endif %}
+/etc/network/interfaces.d/dummy.cfg:
+  file.managed:
+    - contents:  |
+          auto lo:1
+          iface lo:1 inet loopback
+              address 127.0.1.1
+              netmask 255.0.0.0
+          auto {{l2_port}}
+          iface {{l2_port}} inet static
+              address {{l2_address}}
+              netmask {{l2_mask}}
+              post-up ip link set {{l2_port}} promisc on
+          auto dummy2
+          iface dummy2 inet static
+              address 172.16.2.254/24
+              netmask 255.255.255.0
+              post-up ip link set dummy2 promisc on
+          auto dummy3
+          iface dummy3 inet static
+              address 172.16.3.254/24
+              netmask 255.255.255.0
+              post-up ip link set dummy3 promisc on
+          auto {{int_port}}
+          iface {{int_port}} inet static
+              address {{int_ip}}
+              netmask {{int_mask}}
+              mtu 1500
+              post-up ip link set {{int_port}} promisc on
 
-{{ l3_port }}:
-  network.managed:
-    - name: {{ l3_port }}
-    - enabled: True
-    - proto: static
-    - type: eth
-    - ipaddr: {{ l3_address }}
-    - netmask: {{ l3_mask }}
-
-
-man-flat-promisc:
-  file.replace:
-    - name: /etc/network/interfaces
-    - pattern: {{ l2_address }}
-    - repl: '{{ l2_address }}\n    post-up ip link set {{l2_port}} promisc on'
-    - require:
-      - network: {{ l2_port }}
-
-man-snat-promisc:
-  file.replace:
-    - name: /etc/network/interfaces
-    - pattern: {{ l3_address }}
-    - repl: '{{ l3_address }}\n    post-up ip link set {{l3_port}} promisc on'
-    - require:
-      - network: {{ l3_port }}
-
-man-int-promisc:
-  file.replace:
-    - name: /etc/network/interfaces
-    - pattern: {{ int_ip }}
-    - repl: '{{ int_ip }}\n    post-up ip link set {{int_port}} promisc on'
-    - require:
-      - cmd: {{ int_port }}
-  cmd.run:
-    - name: ifup {{ int_port }}
-
-#eth0 ifdown:
-#  cmd.run:
-#    - name: ifdown {{publicport}}
-
-#eth0:
-#  cmd.run:
-#{% if dhcp %}
-#    - names:
-#      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
-#{% else %}
-#    - names:
-#      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
-#{% endif %}
-
-
-#eth0 ifup:
-#  cmd.run:
-#    - name: ifup {{publicport}}
-#    - require:
-#      - cmd: eth0
