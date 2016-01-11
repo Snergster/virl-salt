@@ -5,7 +5,7 @@
 """virl install.
 
 Usage:
-  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | bridge | desktop | rehost | renumber | compute | all | upgrade | nova | vmm | routervms | users | vinstall | host | mini | highstate | defrost | kvm
+  vinstall.py zero | first | second | third | fourth | salt | test | test1 | iso | bridge | desktop | rehost | renumber | compute | all | upgrade | nova | vmm | routervms | users | vinstall | host | mini | highstate | defrost | kvm | cluster
 
 Options:
   --version             shows program's version number and exit
@@ -196,6 +196,7 @@ v144 = safeparser.getboolean('DEFAULT', 'v144', fallback=True)
 testingdevops = safeparser.getboolean('DEFAULT', 'testing_devops', fallback=False)
 
 #cluster section
+virl_cluster = safeparser.getboolean('DEFAULT', 'virl_cluster', fallback=False)
 controller = safeparser.getboolean('DEFAULT', 'this_node_is_the_controller', fallback=True)
 internalnet_controller_ip = safeparser.get('DEFAULT', 'internalnet_controller_IP', fallback='172.16.10.250')
 internalnet_controller_hostname = safeparser.get('DEFAULT', 'internalnet_controller_hostname', fallback='controller')
@@ -858,6 +859,8 @@ if __name__ == "__main__":
 
     if varg['salt']:
         building_salt_all()
+        if virl_cluster:
+            call_salt_quiet('common.salt-master.cluster-config')
     if varg['users']:
         User_Creator(user_list, user_list_limited)
 

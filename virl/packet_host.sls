@@ -29,16 +29,16 @@
 include:
   - virl.hostname
 
-blank what is there:
-  cmd.run:
-    - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
-    - onlyif: test -e /etc/network/interfaces
+#blank what is there:
+#  cmd.run:
+#    - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
+#    - onlyif: test -e /etc/network/interfaces
 
-system:
-  network.system:
-    - enabled: False
-    - hostname: {{hostname}}.{{domain}}
-    - gatewaydev: {{ publicport }}
+#system:
+#  network.system:
+#    - enabled: False
+#    - hostname: {{hostname}}.{{domain}}
+#    - gatewaydev: {{ publicport }}
 
 
 
@@ -133,23 +133,23 @@ man-int-promisc:
   cmd.run:
     - name: ifup {{ int_port }}
 
-eth0 ifdown:
-  cmd.run:
-    - name: ifdown {{publicport}}
+#eth0 ifdown:
+#  cmd.run:
+#    - name: ifdown {{publicport}}
 
-eth0:
-  cmd.run:
-{% if dhcp %}
-    - names:
-      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
-{% else %}
-    - names:
-      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
-{% endif %}
+#eth0:
+#  cmd.run:
+#{% if dhcp %}
+#    - names:
+#      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
+#{% else %}
+#    - names:
+#      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'
+#{% endif %}
 
 
-eth0 ifup:
-  cmd.run:
-    - name: ifup {{publicport}}
-    - require:
-      - cmd: eth0
+#eth0 ifup:
+#  cmd.run:
+#    - name: ifup {{publicport}}
+#    - require:
+#      - cmd: eth0

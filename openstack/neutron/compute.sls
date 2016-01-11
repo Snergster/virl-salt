@@ -7,8 +7,8 @@
 {% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
 {% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
 {% set controllerhname = salt['grains.get']('internalnet_controller_hostname', 'controller') %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
-{% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
+{% set neutronpassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 
 neutron-pkgs:
   pkg.installed:

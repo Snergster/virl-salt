@@ -1,0 +1,20 @@
+#interface: {{ salt['grains.get']('static_ip', '127.0.0.1' ) }}
+open_mode: True
+state_aggregate: True
+worker_threads: 3
+job_cache: False
+timeout: 60
+minion_data_cache: False
+file_roots:
+  base:
+    - /srv/salt
+pillar_roots:
+  base:
+    - /srv/pillar
+gitfs_remotes:
+  - https://github.com/Snergster/virl-salt.git
+
+gitfs_provider: pygit2
+fileserver_backend:
+  - git
+  - roots
