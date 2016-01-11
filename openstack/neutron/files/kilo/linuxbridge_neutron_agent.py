@@ -83,7 +83,6 @@ class NetworkSegment(object):
 
 class LinuxBridgeManager(object):
     def __init__(self, interface_mappings):
-        self.bridge_fwd_mask = BRIDGE_FWD_MASK_ALL
         self.interface_mappings = interface_mappings
         self.ip = ip_lib.IPWrapper()
         # VXLAN related parameters:
@@ -550,7 +549,7 @@ class LinuxBridgeManager(object):
                           port_id, dom_id, hw_addr, state)
             return False
 
-    def set_bridge_group_fwd_mask(self, bridge_name):
+    def set_bridge_group_fwd_mask(self, bridge_name, mask=BRIDGE_FWD_MASK_ALL):
         """Set bridge group_fwd_mask to let reserved multicast frames through"""
 
         # Forward all available multicast frames prohibited by 802.1d
@@ -558,15 +557,15 @@ class LinuxBridgeManager(object):
                                BRIDGE_NAME_PLACEHOLDER, bridge_name)
         try:
             utils.execute(['tee', bridge_mask_path],
-                          process_input=self.bridge_fwd_mask,
+                          process_input=mask,
                           run_as_root=True)
         except RuntimeError:
-            if self.bridge_fwd_mask == BRIDGE_FWD_MASK_ALL:
+            if mask == BRIDGE_FWD_MASK_ALL:
                 LOG.warning('Cannot unmask all mcast forwarding on bridge %s',
                             bridge_name)
                 LOG.warning('Some frames (LACP, LLDP) will be dropped')
-                self.bridge_fwd_mask = BRIDGE_FWD_MASK
-                self.set_bridge_group_fwd_mask(bridge_name)
+                self.set_bridge_group_fwd_mask(bridge_name,
+                                               mask=BRIDGE_FWD_MASK)
             else:
                 LOG.error('Cannot unmask any mcast forwarding on bridge %s',
                           bridge_name)
