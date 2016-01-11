@@ -50,16 +50,16 @@ adding source to interfaces:
               address {{l2_address}}
               netmask {{l2_mask}}
               post-up ip link set {{l2_port}} promisc on
-          auto dummy2
-          iface dummy2 inet static
-              address 172.16.2.254/24
-              netmask 255.255.255.0
-              post-up ip link set dummy2 promisc on
-          auto dummy3
-          iface dummy3 inet static
-              address 172.16.3.254/24
-              netmask 255.255.255.0
-              post-up ip link set dummy3 promisc on
+          auto {{l2_port2}}
+          iface {{l2_port2}} inet static
+              address {{l2_address2}}
+              netmask {{l2_mask2}}
+              post-up ip link set {{l2_port2}} promisc on
+          auto {{l3_port}}
+          iface {{l3_port}} inet static
+              address {{l3_address}}
+              netmask {{l3_mask}}
+              post-up ip link set {{l3_port}} promisc on
           auto {{int_port}}
           iface {{int_port}} inet static
               address {{int_ip}}
