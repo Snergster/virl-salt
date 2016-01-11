@@ -31,10 +31,8 @@ base:
     - match: pcre
     - common.users
     - common.get-pip
-    - virl.ini-writeout
+    - virl.basics
     - common.salt-minion
-    - virl.ntp
-    - virl.web
     - common.virl
 
   'appcat.virl.qa$':

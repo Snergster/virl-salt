@@ -1,6 +1,17 @@
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 {% set kernvers = salt['grains.get']('kernels_to_bridge_patch', [salt['cmd.run']('uname -r')]) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
+
+{% if packet %}
+update sourcelist to include sources:
+  file.append:
+    - file: /etc/apt/sources.list
+    - text:
+      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu trusty main universe'
+      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu trusty-updates main universe'
+      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu trusty-security main universe'
+{% endif %}
 
 {% for kernver in kernvers %}
 

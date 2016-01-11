@@ -33,7 +33,6 @@ adding source to interfaces:
   cmd.run:
     - names: 
       - 'chattr -i /etc/network/interfaces'
-      - 'chattr +i /etc/network/interfaces | at now + 1 min'
   file.append:
     - name: /etc/network/interfaces
     - text: source /etc/network/interfaces.d/*.cfg
