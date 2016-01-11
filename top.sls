@@ -31,9 +31,10 @@ base:
     - match: pcre
     - common.users
     - common.get-pip
-    - virl.basics
     - common.salt-minion
     - common.virl
+    - virl.basics
+    - common.bridge
 
   'appcat.virl.qa$':
     - match: pcre
