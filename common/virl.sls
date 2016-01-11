@@ -51,7 +51,6 @@ vinstall wheels:
 {{ pyreq }}:
   pip.installed:
     - require:
-      - pkg: pip on the box
       - file: /usr/local/bin/vinstall
       {% if not masterless %}
       - file: vinstall wheels

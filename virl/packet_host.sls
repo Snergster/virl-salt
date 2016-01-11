@@ -66,3 +66,11 @@ adding source to interfaces:
               mtu 1500
               post-up ip link set {{int_port}} promisc on
 
+get your dummy on:
+  cmd.run:
+    - names:
+      - ifup {{l2_port}}
+      - ifup {{l2_port2}}
+      - ifup {{l3_port}}
+      - ifup {{int_port}}
+
