@@ -54,8 +54,10 @@ pip symlink:
 python-pip ugly hold:
   file.managed:
     - name: /etc/apt/preferences.d/python-pip
+{% if not packet %}
     - require:
       - pkg: python-pip
+{% endif %}
     - contents: |
         Package: python-pip
         Pin: release *
