@@ -2,7 +2,6 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 
-{% if not packet %}
 pip on the box:
   pkg.installed:
     - name: python-pip
@@ -35,17 +34,14 @@ python-pip:
     - require:
       - pip: pip hard up
 
-{% endif %}
 
 pip symlink:
   file.symlink:
     - name: /usr/bin/pip
     - target: /usr/local/bin/pip
     - mode: 0755
-{% if not packet %}
     - require:
       - pkg: python-pip
-{% endif %}
     - onlyif:
       - 'test -e /usr/local/bin/pip'
       - 'test ! -e /usr/bin/pip'
@@ -54,10 +50,8 @@ pip symlink:
 python-pip ugly hold:
   file.managed:
     - name: /etc/apt/preferences.d/python-pip
-{% if not packet %}
     - require:
       - pkg: python-pip
-{% endif %}
     - contents: |
         Package: python-pip
         Pin: release *
