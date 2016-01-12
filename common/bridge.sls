@@ -6,7 +6,7 @@
 {% if packet %}
 update sourcelist to include sources:
   file.append:
-    - file: /etc/apt/sources.list
+    - name: /etc/apt/sources.list
     - text:
       - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu trusty main universe'
       - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu trusty-updates main universe'
