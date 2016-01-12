@@ -20,7 +20,7 @@
 {% set l2_port2 = salt['pillar.get']('virl:l2_port2', salt['grains.get']('l2_port2', 'eth2' )) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set flat_dns = salt['pillar.get']('virl:first_flat_nameserver',salt['grains.get']('first_flat_nameserver', '8.8.8.8')) %}
 {% set flat_dns2 = salt['pillar.get']('virl:second_flat_nameserver',salt['grains.get']('second_flat_nameserver', '8.8.4.4')) %}
 {% set flat1_dns = salt['pillar.get']('virl:first_flat2_nameserver',salt['grains.get']('first_flat2_nameserver', '8.8.8.8')) %}

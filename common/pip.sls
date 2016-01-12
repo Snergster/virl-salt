@@ -1,5 +1,6 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 
 pip on the box:
   pkg.installed:
@@ -32,6 +33,7 @@ python-pip:
     - hold: True
     - require:
       - pip: pip hard up
+
 
 pip symlink:
   file.symlink:
