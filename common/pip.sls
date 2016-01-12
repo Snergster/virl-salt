@@ -1,6 +1,8 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 
+{% if not packet %}
 pip on the box:
   pkg.installed:
     - name: python-pip
@@ -33,13 +35,17 @@ python-pip:
     - require:
       - pip: pip hard up
 
+{% endif %}
+
 pip symlink:
   file.symlink:
     - name: /usr/bin/pip
     - target: /usr/local/bin/pip
     - mode: 0755
+{% if not packet %}
     - require:
       - pkg: python-pip
+{% endif %}
     - onlyif:
       - 'test -e /usr/local/bin/pip'
       - 'test ! -e /usr/bin/pip'

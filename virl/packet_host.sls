@@ -26,8 +26,8 @@
 {% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 
-#include:
-#  - virl.hostname
+include:
+  - virl.hostname
 
 adding source to interfaces:
   cmd.run:

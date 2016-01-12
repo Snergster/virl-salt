@@ -34,7 +34,6 @@ base:
     - common.salt-minion
     - common.virl
     - virl.basics
-    - common.bridge
 
   'appcat.virl.qa$':
     - match: pcre
