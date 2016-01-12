@@ -11,6 +11,10 @@ update sourcelist to include sources:
       - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu trusty main universe'
       - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu trusty-updates main universe'
       - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu trusty-security main universe'
+  cmd.run:
+    - name: 'apt-get update -qq'
+    - onchanges:
+      - file: update sourcelist to include sources
 {% endif %}
 
 {% for kernver in kernvers %}
@@ -28,6 +32,10 @@ run bridgebuilder.sh {{ kernver }}:
       - version: {{ kernver }}
     - onfail:
       - file: /lib/modules/{{ kernver }}/kernel/net/bridge/bridge.ko
+{% if packet %}
+    - require:
+      - cmd: update sourcelist to include sources
+{% endif %}
 
 run bridge.sh {{ kernver }}:
   cmd.script:
