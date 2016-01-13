@@ -76,8 +76,6 @@ adding source to interfaces:
 
 {% endif %}
 
-{% if not cluster %}
-
 get your dummy on:
   cmd.run:
     - names:
