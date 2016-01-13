@@ -1,7 +1,6 @@
 {% set publicport = salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')) %}
 
 include:
-  - common.salt-master.no-auto-start
   - common.salt-master.cluster-config
 
 salt-master config:
