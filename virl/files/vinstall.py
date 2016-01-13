@@ -282,9 +282,10 @@ def building_salt_extra():
                 extra.write("""retry_dns: 0 \n""")
             else:
                 extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
-            extra.write("""verify_master_pubkey_sign: True \n""")
             extra.write("""state_output: mixed \n""")
-            extra.write("""always_verify_signature: True \n""")
+            if controller:
+              extra.write("""verify_master_pubkey_sign: True \n""")
+              extra.write("""always_verify_signature: True \n""")
         else:
             if path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
                 extra.write("""gitfs_provider: pygit2\n""")
