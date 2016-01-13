@@ -5,7 +5,7 @@
 
 {% macro loop(cmd) %}
     {% for eth in [ l2_port, l2_port2, l3_port ] %}
-        {{ cmd }} {{ eth }}
+        ifquery --state {{ eth }} && {{ cmd }} {{ eth }}
     {% endfor %}
 {% endmacro %}
 
