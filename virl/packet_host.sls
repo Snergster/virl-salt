@@ -25,6 +25,8 @@
 {% set l2_mask2 = salt['pillar.get']('virl:l2_mask2', salt['grains.get']('l2_mask2', '255.255.255.0' )) %}
 {% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
+{% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
+{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
 
 include:
   - virl.hostname
@@ -59,6 +61,12 @@ adding source to interfaces:
               address {{l3_address}}
               netmask {{l3_mask}}
               post-up ip link set {{l3_port}} promisc on
+
+{% if not cluster %}
+
+/etc/network/interfaces.d/internal.cfg:
+  file.managed:
+    - contents:  |
           auto {{int_port}}
           iface {{int_port}} inet static
               address {{int_ip}}
@@ -66,11 +74,16 @@ adding source to interfaces:
               mtu 1500
               post-up ip link set {{int_port}} promisc on
 
+{% endif %}
+
+{% if not cluster %}
+
 get your dummy on:
   cmd.run:
     - names:
       - ifup {{l2_port}}
       - ifup {{l2_port2}}
       - ifup {{l3_port}}
+{% if not cluster %}
       - ifup {{int_port}}
-
+{% endif %}
