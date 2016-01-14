@@ -10,6 +10,7 @@
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set neutronpassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set iscontroller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', False)) %}
+{% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 
 neutron-pkgs:
   pkg.installed:
