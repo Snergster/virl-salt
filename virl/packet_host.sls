@@ -27,6 +27,7 @@
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 {% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
+{% set ip = salt['cmd.run']("/usr/local/bin/getip") %}
 
 include:
   - virl.hostname
@@ -73,6 +74,24 @@ adding source to interfaces:
               netmask {{int_mask}}
               mtu 1500
               post-up ip link set {{int_port}} promisc on
+
+{% else %}
+  {% if controller %}
+
+controller int in virl.ini:
+  openstack_config.present:
+    - filename: /etc/virl.ini
+    - section: 'DEFAULT'
+    - parameter: 'internalnet_controller_IP'
+    - value: {{ip}}
+  {% endif %}
+
+int in virl.ini:
+  openstack_config.present:
+    - filename: /etc/virl.ini
+    - section: 'DEFAULT'
+    - parameter: 'internalnet_IP'
+    - value: {{ip}}
 
 {% endif %}
 
