@@ -74,6 +74,16 @@ neutron-mtu:
       - file: /etc/neutron/neutron.conf
 {% endif %}
 
+neutron rabbit host:
+  openstack_config.present:
+    - filename: /etc/neutron/neutron.conf
+    - section: 'DEFAULT'
+    - parameter: 'rabbit_host'
+    - value: '{{ controllerip }}'
+    - require:
+      - file: /etc/neutron/neutron.conf
+
+
 {% if iscontroller %}
 neutron-dhcp-nameserver:
   openstack_config.present:

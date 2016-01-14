@@ -4,6 +4,8 @@
     - makedirs: true
     - contents: |
         base:
+          '*':
+            - users
           'compute1*':
             - compute1
           'compute2*':
@@ -13,6 +15,12 @@
           'compute4*':
             - compute4
 
+/srv/pillar/users/init.sls:
+  file.managed:
+    - makedirs: true
+    - template: jinja
+    - source: salt://common/salt-master/files/virluser.jinja
+    
 /srv/pillar/compute1/init.sls:
   file.managed:
     - makedirs: true
