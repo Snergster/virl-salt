@@ -67,7 +67,7 @@ ns-cert-type server
 ;http-proxy-retry # retry on connection failures
 ;http-proxy [proxy server] [proxy port #]
 
-remote $(ip -f inet addr show {{ public_port }} | sed -n 's,.*inet \([0-9.]*\)/.*,\1,p')
+remote $(ip -f inet addr show {{ public_port }} | sed -n '/inet/{s,.*inet \([0-9.]*\)/.*,\1,p;q}')
 
 <ca>
 $(sed -n '/^-----BEGIN/,/^-----END/p' "{{ openvpn_dir }}/ca.crt")
