@@ -36,3 +36,13 @@
     - makedirs: true
     - template: jinja
     - source: salt://common/salt-master/files/compute4.ini.jinja
+
+salt-master restarting for config:
+  service.running:
+    - name: salt-master
+    - onchanges:
+      - file: /srv/pillar/compute1/init.sls
+      - file: /srv/pillar/compute2/init.sls
+      - file: /srv/pillar/compute3/init.sls
+      - file: /srv/pillar/compute4/init.sls
+

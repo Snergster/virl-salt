@@ -26,6 +26,16 @@ port block salt-master:
   file.directory:
     - makedirs: true
 
+remove salt-master override:
+  file.absent:
+    - name: /etc/init/salt-master.override
+
+verify salt-master enabled:
+  service.enabled:
+    - name: salt-master
+    - onchanges:
+      - file: remove salt-master override
+
 salt-master restarting for config:
   service.running:
     - name: salt-master
