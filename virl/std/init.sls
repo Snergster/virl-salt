@@ -23,6 +23,7 @@
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 {% set ram_overcommit = salt['pillar.get']('virl:ram_overcommit', salt['grains.get']('ram_overcommit', '2')) %}
+{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
 
 include:
   - .clients
@@ -301,6 +302,14 @@ web editor alpha:
 {% endif %}
     - require:
       - pip: VIRL_CORE
+
+{% if cluster %}
+enable cluster in std :
+  cmd.run:
+    - name: 'crudini --set /etc/virl/common.cfg host cluster_mode True'
+    - require:
+      - pip: VIRL_CORE
+{% endif %}
 
 webmux_port change:
   cmd.run:

@@ -1,12 +1,10 @@
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set iscontroller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True)) %}
 
 include:
-  {% if not kilo %}
-  - common.pip-conflicts
-  {% endif %}
   - virl.openrc
   - openstack.nova.keystone
   - openstack.neutron.changes
+{% if iscontroller %}
   - openstack.neutron.create-basic
   - openstack.cinder.create
-  
+{% endif %}
