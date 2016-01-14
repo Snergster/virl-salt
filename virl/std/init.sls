@@ -23,6 +23,9 @@
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 {% set ram_overcommit = salt['pillar.get']('virl:ram_overcommit', salt['grains.get']('ram_overcommit', '2')) %}
+{% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
+{% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
+{% set download_proxy_user = salt['pillar.get']('virl:download_proxy_user', salt['grains.get']('download_proxy_user', '')) %}
 
 include:
   - .clients
@@ -280,6 +283,9 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_webmux_port {{ virl_webmux }}
       - crudini --set /etc/virl/common.cfg host webmux_port {{ virl_webmux }}
       - crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}
+      - crudini --set /etc/virl/common.cfg host download_proxy {{ download_proxy }}
+      - crudini --set /etc/virl/common.cfg host download_no_proxy {{ download_no_proxy }}
+      - crudini --set /etc/virl/common.cfg host download_proxy_user {{ download_proxy_user }}
     {% if kilo %}
       - crudini --set /etc/virl/common.cfg host ram_overcommit {{ ram_overcommit }}
     {% endif %}

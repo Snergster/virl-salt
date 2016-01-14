@@ -181,6 +181,9 @@ onedev = safeparser.getboolean('DEFAULT', 'onedev', fallback=False)
 dummy_int = safeparser.getboolean('DEFAULT', 'dummy_int', fallback=False)
 jumbo_frames = safeparser.getboolean('DEFAULT', 'jumbo_frames', fallback=False)
 ram_overcommit = safeparser.get('DEFAULT', 'ram_overcommit', fallback='2')
+download_proxy = safeparser.get('DEFAULT', 'download_proxy', fallback='')
+download_no_proxy = safeparser.get('DEFAULT', 'download_no_proxy', fallback='')
+download_proxy_user = safeparser.get('DEFAULT', 'download_proxy_user', fallback='')
 
 #Testing Section
 icehouse = safeparser.getboolean('DEFAULT', 'icehouse', fallback=True)
