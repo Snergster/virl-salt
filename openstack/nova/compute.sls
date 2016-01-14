@@ -8,6 +8,7 @@
 {% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
 {% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', True)) %}
+{% set internalnetip = salt['pillar.get']('virl:internalnet_ip',salt['grains.get']('internalnet_ip', '172.16.10.250')) %}
 
 
 compute-pkgs:
@@ -37,5 +38,50 @@ controller_hostname:
   host.present:
     - name: {{ controllerhname }}
     - ip: {{ controllerip }}
+
+serial_console tune:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'serial_console'
+    - parameter: 'proxyclient_address'
+    - value: {{ internalnetip }}
+    - require:
+      - file: /etc/nova/nova.conf
+
+serial_console tune2:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'serial_console'
+    - parameter: 'serial_port_proxyclient_address'
+    - value: {{ internalnetip }}
+    - require:
+      - file: /etc/nova/nova.conf
+
+glance tune:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'glance'
+    - parameter: 'host'
+    - value: {{ controllerip }}
+    - require:
+      - file: /etc/nova/nova.conf
+
+vncserver tune:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'vncserver_listen'
+    - value: '0.0.0.0'
+    - require:
+      - file: /etc/nova/nova.conf
+
+vncserver tune2:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'vncserver_proxyclient_address'
+    - value: {{ internalnetip }}
+    - require:
+      - file: /etc/nova/nova.conf
 
 
