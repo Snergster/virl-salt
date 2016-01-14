@@ -1,5 +1,6 @@
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
+{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
 
 rabbitmq-server:
   pkg.installed:
@@ -28,6 +29,18 @@ rabbitmq restart:
     - makedirs: True
     - contents: |
         RABBITMQ_NODE_IP_ADDRESS=0.0.0.0
+
+{% if cluster %}
+/etc/rabbitmq/rabbitmq.config:
+  file.managed:
+    - require:
+      - pkg: rabbitmq-server
+    - makedirs: True
+    - contents: |
+        [{rabbit, [{loopback_users, []}]}].
+
+{% endif %}
+
 
 
 

@@ -1,8 +1,9 @@
 {% set heat = salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false )) %}
 {% set cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false )) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
 
-
+{% if controller %}
 
 all-restart:
   cmd.run:
@@ -29,20 +30,30 @@ all-restart:
         {% endif %}
 
 
-{% if cinder %}
+  {% if cinder %}
 cinder-restart all:
   cmd.run:
     - name: |
         service cinder-api restart
         service cinder-scheduler restart
         service cinder-volume restart
-{% endif %}
+  {% endif %}
 
-{% if heat == true %}
+  {% if heat == true %}
 heat-restart all:
   cmd.run:
     - name: |
         service heat-api restart
         service heat-api-cfn restart
         service heat-engine restart
+  {% endif %}
+
+{% else %}
+
+all-restart:
+  cmd.run:
+    - name: |
+        service nova-compute restart
+        service neutron-plugin-linuxbridge-agent restart
+
 {% endif %}

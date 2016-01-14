@@ -8,4 +8,5 @@ export OS_AUTH_URL=http://{{ salt['pillar.get']('virl:internalnet_controller_ip'
 export OS_SERVICE_TOKEN={{ salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) }}
 export OS_SERVICE_ENDPOINT=http://{{ salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('hostname', 'virl')) }}:35357/v2.0
 export OS_IMAGE_API_VERSION=2
+export OS_ENDPOINT_TYPE=internalURL
 

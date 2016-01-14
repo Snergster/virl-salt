@@ -123,6 +123,7 @@ export OS_SERVICE_ENDPOINT=http://controller:35357/v2.0
 export OS_SERVICE_TOKEN=OS_TOKEN
 export OS_IMAGE_API_VERSION=2
 export no_proxy="controller,virl,localhost,127.0.1.1,127.0.0.1,localaddress,.localdomain.com"
+export OS_ENDPOINT_TYPE=internalURL
 
 export LIBVIRT_DEFAULT_URI='qemu:///system'
 #End virl section
