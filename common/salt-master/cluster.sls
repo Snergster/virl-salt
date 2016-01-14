@@ -25,3 +25,9 @@ port block salt-master:
 /srv/pillar:
   file.directory:
     - makedirs: true
+
+salt-master restarting for config:
+  service.running:
+    - name: salt-master
+    - watch:
+      - file: salt-master config
