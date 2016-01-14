@@ -41,3 +41,8 @@ salt-master restarting for config:
     - name: salt-master
     - watch:
       - file: salt-master config
+      - file: /srv/pillar/compute1/init.sls
+      - file: /srv/pillar/compute2/init.sls
+      - file: /srv/pillar/compute3/init.sls
+      - file: /srv/pillar/compute4/init.sls
+
