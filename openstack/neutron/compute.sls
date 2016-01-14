@@ -111,16 +111,6 @@ neutron-mtu:
       - file: /etc/neutron/neutron.conf
 {% endif %}
 
-/etc/neutron/plugins/ml2/ml2_conf.ini:
-  file.managed:
-    - mode: 755
-    - template: jinja
-    - makedirs: True
-    - source: "salt://openstack/neutron/files/plugins/ml2/kilo.ml2_conf.ini"
-    - require:
-      - pkg: neutron-pkgs
-
-
 {% if iscontroller %}
 neutron-dhcp-nameserver:
   openstack_config.present:
