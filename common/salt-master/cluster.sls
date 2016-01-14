@@ -1,4 +1,5 @@
 {% set publicport = salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')) %}
+{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 
 include:
   - common.salt-master.cluster-config
@@ -10,6 +11,18 @@ salt-master config:
     - makedirs: true
     - template: jinja
 
+{% if packet %}
+
+port block salt-master:
+  file.blockreplace:
+    - name: /etc/rc.local
+    - marker_start: "# 004s"
+    - marker_end: "# 004e"
+    - content: |
+             /sbin/iptables -A INPUT -s 10/8 -p tcp --dport 4505:4506 -j ACCEPT
+             /sbin/iptables -A INPUT -p tcp --dport 4505:4506 -i {{ publicport }} -j DROP
+{% else %}
+
 port block salt-master:
   file.blockreplace:
     - name: /etc/rc.local
@@ -17,6 +30,8 @@ port block salt-master:
     - marker_end: "# 004e"
     - content: |
              /sbin/iptables -A INPUT -p tcp --dport 4505:4506 -i {{ publicport }} -j DROP
+
+{% endif %}
 
 /srv/salt:
   file.directory:
