@@ -63,43 +63,6 @@ neutron-sysctlforward:
     - pattern: '#net.ipv4.ip_forward=1'
     - repl: 'net.ipv4.ip_forward=1'
 
-
-/etc/neutron/plugins/ml2/ml2_conf.ini:
-  file.managed:
-    - mode: 755
-    - template: jinja
-    - makedirs: True
-    - source: "salt://openstack/neutron/files/plugins/ml2/kilo.ml2_conf.ini"
-    - require:
-      - pkg: neutron-pkgs
-
-/etc/init/neutron-server.conf:
-  file.managed:
-    - mode: 644
-    - makedirs: True
-    - source: "salt://openstack/neutron/files/kilo.neutron-server.conf"
-    - require:
-      - pkg: neutron-pkgs
-
-neutron-sysctl:
-  file.replace:
-    - name: /etc/sysctl.conf
-    - pattern: '#net.ipv4.conf.default.rp_filter=1'
-    - repl: 'net.ipv4.conf.default.rp_filter=0'
-
-neutron-sysctl2:
-  file.replace:
-    - name: /etc/sysctl.conf
-    - pattern: '#net.ipv4.conf.all.rp_filter=1'
-    - repl: 'net.ipv4.conf.all.rp_filter=0'
-
-neutron-sysctlforward:
-  file.replace:
-    - name: /etc/sysctl.conf
-    - pattern: '#net.ipv4.ip_forward=1'
-    - repl: 'net.ipv4.ip_forward=1'
-
-
 {% if jumbo_frames == True %}
 neutron-mtu:
   openstack_config.present:
