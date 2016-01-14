@@ -110,56 +110,17 @@ neutron-mtu:
       - file: /etc/neutron/neutron.conf
 {% endif %}
 
-{% if iscontroller == False %}
-
-neutron-hostname:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'DEFAULT'
-    - parameter: 'nova_url'
-    - value: 'http://{{ controllerhostname }}:8774/v2'
+/etc/neutron/plugins/ml2/ml2_conf.ini:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - makedirs: True
+    - source: "salt://openstack/neutron/files/plugins/ml2/kilo.ml2_conf.ini"
     - require:
-      - file: /etc/neutron/neutron.conf
-
-neutron-hostname2:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'DEFAULT'
-    - parameter: 'nova_admin_auth_url'
-    - value: 'http://{{ controllerhostname }}:35357/v2.0'
-    - require:
-      - file: /etc/neutron/neutron.conf
-
-neutron-hostname3:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'keystone_authtoken'
-    - parameter: 'auth_uri'
-    - value: 'http://{{ controllerhostname }}:35357/v2.0/'
-    - require:
-      - file: /etc/neutron/neutron.conf
-
-neutron-hostname-indentity:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'keystone_authtoken'
-    - parameter: 'identity_uri'
-    - value: 'http://{{ controllerhostname }}:5000'
-    - require:
-      - file: /etc/neutron/neutron.conf
-
-neutron-hostname4:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'keystone_authtoken'
-    - parameter: 'auth_host'
-    - value: '{{ controllerhostname }}'
-    - require:
-      - file: /etc/neutron/neutron.conf
+      - pkg: neutron-pkgs
 
 
-{% endif %}
-
+{% if iscontroller %}
 neutron-dhcp-nameserver:
   openstack_config.present:
     - filename: /etc/neutron/dhcp_agent.ini
@@ -295,6 +256,8 @@ l3-gateway:
     - value: ' '
     - require:
       - pkg: neutron-pkgs
+
+{% endif %}
 
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
   file.managed:
