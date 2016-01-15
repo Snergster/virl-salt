@@ -63,7 +63,7 @@ adding source to interfaces:
               netmask {{l3_mask}}
               post-up ip link set {{l3_port}} promisc on
 
-{% if not cluster %}
+{% if not cluster or not controller %}
 
 /etc/network/interfaces.d/internal.cfg:
   file.managed:
@@ -101,6 +101,6 @@ get your dummy on:
       - ifup {{l2_port}}
       - ifup {{l2_port2}}
       - ifup {{l3_port}}
-{% if not cluster %}
+{% if not cluster or not controller %}
       - ifup {{int_port}}
 {% endif %}
