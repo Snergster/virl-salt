@@ -27,7 +27,7 @@
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 {% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
-{% set ip = salt['cmd.run']("/usr/local/bin/getip") %}
+{% set ip = salt['cmd.run']("/usr/local/bin/getintip") %}
 
 include:
   - virl.hostname

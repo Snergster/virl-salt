@@ -68,6 +68,18 @@ oslo messaging 11 prevent:
     - require:
       - pkg: nova-pkgs
 
+{% if cluster %}
+compute filter for cluster:
+  openstack_config.present:
+    - filename: /etc/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'scheduler_default_filters'
+    - value: 'AllHostsFilter,ComputeFilter'
+    - require:
+      - file: /etc/nova/nova.conf
+
+{% endif %}
+
 add libvirt-qemu to nova:
   group.present:
     - name: nova
