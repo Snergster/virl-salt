@@ -1,6 +1,6 @@
 /usr/local/bin/noprompt-ssh-keygen:
   file.managed:
-    - source: salt://virl/files/noprompt-ssh-keygen
+    - source: salt://common/files/noprompt-ssh-keygen
     - mode: 0755
 
 create key for virl:
