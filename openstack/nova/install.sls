@@ -71,7 +71,7 @@ oslo messaging 11 prevent:
 {% if cluster %}
 compute filter for cluster:
   openstack_config.present:
-    - filename: /etc/nova.conf
+    - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
     - parameter: 'scheduler_default_filters'
     - value: 'AllHostsFilter,ComputeFilter'
