@@ -19,7 +19,7 @@ virl:
   l2_port2: {{salt['grains.get']('compute3_l2_port2', 'eth2')}}
   l2_address2: {{salt['grains.get']('compute3_l2_address2', '172.16.2.250')}}
   l2_mask2: {{salt['grains.get']('l2_mask2', '255.255.255.0')}}
-  l3_port: {{salt['grains.get']('compute3_l3port', 'eth3')}}
+  l3_port: {{salt['grains.get']('compute3_l3_port', 'eth3')}}
   l3_address: {{salt['grains.get']('compute3_l3_address', '172.16.3.250')}}
   l3_mask: {{salt['grains.get']('l3_mask', '255.255.255.0')}}
   internalnet_port: {{salt['grains.get']('compute3_internalnet_port', 'eth4')}}
