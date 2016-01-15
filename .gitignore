@@ -10,3 +10,4 @@ atlassian-ide-plugin.xml
 *~
 
 *.sw[op]
+.DS_Store
