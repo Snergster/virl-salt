@@ -5,3 +5,4 @@ include:
   - openstack.neutron.compute
   - openstack.setup
   - openstack.restart
+  - openstack.compute-key

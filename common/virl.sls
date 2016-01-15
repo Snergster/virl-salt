@@ -12,6 +12,7 @@ include:
   - common.ksm
   - virl.scripts
   - virl.vextra
+  - virl.cluster_key
 
 mypkgs:
   pkg.installed:
