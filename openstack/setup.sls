@@ -2,9 +2,9 @@
 
 include:
   - virl.openrc
+{% if iscontroller %}
   - openstack.nova.keystone
   - openstack.neutron.changes
-{% if iscontroller %}
   - openstack.neutron.create-basic
   - openstack.cinder.create
 {% endif %}
