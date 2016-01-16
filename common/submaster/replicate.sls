@@ -1,18 +1,6 @@
 include:
   - common.salt-master.reactor
-
-first attempt:
-  git.latest:
-    - name: https://github.com/Snergster/virl-salt.git
-    - target: /srv/salt
-
-just in case:
-  git.latest:
-    - target: /srv/salt
-    - name: https://github.com/Snergster/virl-salt.git
-    - force: True
-    - onfail:
-      - git: first attempt
+  - common.salt-master.salt_sync
 
 {% for each in 'vmm','ank','std' %}
 /srv/salt2/{{ each }}/stable:
