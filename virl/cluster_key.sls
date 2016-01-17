@@ -2,7 +2,7 @@ virl_ssh_key to grains:
   cmd.run:
     - name: /usr/local/bin/ssh_to_grain
     - require:
-      - file: foobar
+      - file: virl_ssh_key to grains
   file.managed:
     - name: /usr/local/bin/ssh_to_grain
     - mode: 0755
