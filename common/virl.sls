@@ -2,6 +2,7 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set ifproxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', false)) %}
 
 include:
   - common.ubuntu
@@ -12,7 +13,9 @@ include:
   - common.ksm
   - virl.scripts
   - virl.vextra
+  {% if cluster %}
   - virl.cluster_key
+  {% endif %}
 
 mypkgs:
   pkg.installed:
