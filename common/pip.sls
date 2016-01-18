@@ -6,6 +6,7 @@ pip on the box:
   pkg.installed:
     - name: python-pip
     - refresh: True
+    - aggregate: False
     - unless: ls /usr/local/bin/pip
     - require:
       - file: remove ugly hold
