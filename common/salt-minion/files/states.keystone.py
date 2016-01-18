@@ -82,6 +82,7 @@ def user_present(name,
                  enabled=True,
                  roles=None,
                  profile=None,
+                 password_reset=True,
                  **connection_args):
     '''
     Ensure that the keystone user is present with the specified properties.
@@ -91,6 +92,9 @@ def user_present(name,
 
     password
         The password to use for this user
+
+    password_reset
+        Whether or not to reset password after initial set
 
     email
         The email address for this user
@@ -102,7 +106,16 @@ def user_present(name,
         Availability state for this user
 
     roles
-        The roles the user should have under tenants
+        The roles the user should have under given tenants.
+        Passed as a dictionary mapping tenant names to a list
+        of roles in this tenant, i.e.::
+
+            roles:
+                admin:   # tenant
+                  - admin  # role
+                service:
+                  - admin
+                  - Member
     '''
     ret = {'name': name,
            'changes': {},
@@ -158,10 +171,11 @@ def user_present(name,
                                              **connection_args)
             ret['comment'] = 'User "{0}" has been updated'.format(name)
             ret['changes']['Tenant'] = 'Added to "{0}" tenant'.format(tenant)
-        if not __salt__['keystone.user_verify_password'](name=name,
-                                                         password=password,
-                                                         profile=profile,
-                                                         **connection_args):
+        if (password_reset is True and
+              not __salt__['keystone.user_verify_password'](name=name,
+                                                            password=password,
+                                                            profile=profile,
+                                                            **connection_args)):
             if __opts__['test']:
                 ret['result'] = None
                 ret['changes']['Password'] = 'Will be updated'
@@ -173,11 +187,11 @@ def user_present(name,
             ret['comment'] = 'User "{0}" has been updated'.format(name)
             ret['changes']['Password'] = 'Updated'
         if roles:
-            for tenant_role in roles:
+            for tenant in roles.keys():
                 args = dict({'user_name': name, 'tenant_name':
-                             tenant_role, 'profile': profile}, **connection_args)
+                             tenant, 'profile': profile}, **connection_args)
                 tenant_roles = __salt__['keystone.user_role_list'](**args)
-                for role in roles[tenant_role]:
+                for role in roles[tenant]:
                     if role not in tenant_roles:
                         if __opts__['test']:
                             ret['result'] = None
@@ -187,7 +201,7 @@ def user_present(name,
                                 ret['changes']['roles'] = [role]
                             continue
                         addargs = dict({'user': name, 'role': role,
-                                        'tenant': tenant_role,
+                                        'tenant': tenant,
                                         'profile': profile},
                                        **connection_args)
                         newrole = __salt__['keystone.user_role_add'](**addargs)
@@ -195,7 +209,7 @@ def user_present(name,
                             ret['changes']['roles'].append(newrole)
                         else:
                             ret['changes']['roles'] = [newrole]
-                roles_to_remove = list(set(tenant_roles) - set(roles[tenant_role]))
+                roles_to_remove = list(set(tenant_roles) - set(roles[tenant]))
                 for role in roles_to_remove:
                     if __opts__['test']:
                         ret['result'] = None
@@ -205,7 +219,7 @@ def user_present(name,
                             ret['changes']['roles'] = [role]
                         continue
                     addargs = dict({'user': name, 'role': role,
-                                    'tenant': tenant_role,
+                                    'tenant': tenant,
                                     'profile': profile},
                                    **connection_args)
                     oldrole = __salt__['keystone.user_role_remove'](**addargs)
@@ -228,11 +242,11 @@ def user_present(name,
                                          profile=profile,
                                          **connection_args)
         if roles:
-            for tenant_role in roles:
-                for role in roles[tenant_role]:
+            for tenant in roles.keys():
+                for role in roles[tenant]:
                     __salt__['keystone.user_role_add'](user=name,
                                                        role=role,
-                                                       tenant=tenant_role,
+                                                       tenant=tenant,
                                                        profile=profile,
                                                        **connection_args)
         ret['comment'] = 'Keystone user {0} has been added'.format(name)
