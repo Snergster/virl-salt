@@ -1,7 +1,8 @@
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 {% set kernvers = salt['grains.get']('kernels_to_bridge_patch', [salt['cmd.run']('uname -r')]) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
+{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
 
 {% if packet %}
 update sourcelist to include sources:
@@ -47,20 +48,4 @@ run bridge.sh {{ kernver }}:
       - version: {{ kernver }}
 
 {% endfor %}
-
-{% if not kilo %}
-lacp_linuxbridge_neutron_agent:
-  file.managed:
-    - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.py"
-    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-  cmd.wait:
-    - watch:
-      - file: lacp_linuxbridge_neutron_agent
-    - name:  |
-         service neutron-server restart
-         service neutron-plugin-linuxbridge-agent restart
-{% endif %}
-
-
-
 
