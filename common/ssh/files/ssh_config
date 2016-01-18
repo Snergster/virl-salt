@@ -48,6 +48,8 @@ Host *
 #   ProxyCommand ssh -q -W %h:%p gateway.example.com
 #   RekeyLimit 1G 1h
     SendEnv LANG LC_*
+    UseRoaming no
+    StrictHostKeyChecking no
     HashKnownHosts yes
     GSSAPIAuthentication yes
     GSSAPIDelegateCredentials no

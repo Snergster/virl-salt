@@ -5,7 +5,7 @@ include:
   - common.pip
   - common.distuptodate
   - common.rc-local
-  - common.ssh-keygen
+  - common.ssh.keygen
 
 commonpkgs:
   pkg.installed:
