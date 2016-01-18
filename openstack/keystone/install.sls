@@ -2,24 +2,21 @@
 {% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 
-{% if kilo %}
 keystone no upstart:
   file.managed:
     - name: /etc/init/keystone.override
     - contents: |
         start on manual
         stop on manual
-{% endif %}
 
 keystone-pkgs:
   pkg.installed:
+    - aggregate: False
     - names:
       - keystone
-{% if kilo %}
       - apache2
       - libapache2-mod-wsgi
       - memcached
@@ -35,20 +32,14 @@ keystone-pkgs:
   {% endif %}
     - names:
       - python-memcached
-{% endif %}
 
 /etc/keystone/keystone.conf:
   file.managed:
-    {% if kilo %}
     - source: "salt://openstack/keystone/files/kilo.keystone.conf.jinja"
-    {% else %}
-    - source: "salt://openstack/keystone/files/keystone.conf.jinja"
-    {% endif %}
     - template: jinja
     - require:
       - pkg: keystone-pkgs
 
-{% if kilo %}
 /usr/local/bin/admin-openrc:
   file.managed:
     - source: "salt://openstack/keystone/files/admin-openrc.jinja"
@@ -104,7 +95,6 @@ apache die2:
 apache restart keystone:
   cmd.run:
     - name: 'service apache2 start'
-{% endif %}
 
 keystone db-sync:
   cmd.run:
