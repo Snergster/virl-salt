@@ -59,13 +59,6 @@ libvirt install:
     - skip_verify: True
     - refresh: False
 
-kvm virl version:
-  file.managed:
-    - name: /usr/bin/kvm
-    - onlyif: ls /usr/bin/kvm.real
-    - source: "salt://openstack/nova/files/kvm"
-    - mode: 0755
-
 uncomment min vnc port:
   file.uncomment:
     - name: /etc/libvirt/qemu.conf
