@@ -31,6 +31,7 @@ qemu prime:
   pkg.installed:
     - force_conf_new: True
     - force_yes: True
+    - aggregate: False
     - refresh: True
     - version: 2.0.0+dfsg-2ubuntu1.21
     - name: qemu-kvm
@@ -39,6 +40,7 @@ qemu-system:
   pkg.installed:
     - force_conf_new: True
     - force_yes: True
+    - aggregate: False
     - refresh: False
     - version: 2.0.0+dfsg-2ubuntu1.21
     - name: qemu-system-x86
@@ -48,6 +50,7 @@ qemu:
     - force_conf_new: True
     - force_yes: True
     - refresh: False
+    - aggregate: False
     - onfail:
       - pkg: qemu-system
       - pkg: qemu prime
@@ -58,6 +61,7 @@ qemu:
 libvirt install:
   pkg.installed:
     - name: libvirt-bin
+    - aggregate: False
     - skip_verify: True
     - refresh: False
 
