@@ -114,10 +114,6 @@ keystone db-sync:
 key-db-sync:
   cmd.run:
     - names:
-    {% if kilo %}
       - 'service apache2 restart'
-    {% else %}
-      - 'service keystone restart'
-    {% endif %}
       - 'sleep 15'
 
