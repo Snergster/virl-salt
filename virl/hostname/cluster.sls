@@ -37,8 +37,7 @@ compute2 config block:
     - name: accumulater-compute
     - require_in:
       - file: hostnames-for-cluster-block
-    - text: |
-        {{ salt['grains.get']('compute2_internalnet_ip', '172.16.10.252' )}} compute2 compute2.{{ domain_name }}
+    - text: {{ salt['grains.get']('compute2_internalnet_ip', '172.16.10.252' )}} compute2 compute2.{{ domain_name }}
   {% endif %}
 
   {% if salt['grains.get']('compute3_active', true)%}
@@ -48,8 +47,7 @@ compute3 config block:
     - name: accumulater-compute
     - require_in:
       - file: hostnames-for-cluster-block
-    - text: |
-        {{ salt['grains.get']('compute3_internalnet_ip', '172.16.10.252' )}} compute3 compute3.{{ domain_name }}
+    - text: {{ salt['grains.get']('compute3_internalnet_ip', '172.16.10.253' )}} compute3 compute3.{{ domain_name }}
   {% endif %}
 
   {% if salt['grains.get']('compute4_active', true)%}
@@ -59,8 +57,7 @@ compute4 config block:
     - name: accumulater-compute
     - require_in:
       - file: hostnames-for-cluster-block
-    - text: |
-        {{ salt['grains.get']('compute4_internalnet_ip', '172.16.10.252' )}} compute4 compute4.{{ domain_name }}
+    - text: {{ salt['grains.get']('compute4_internalnet_ip', '172.16.10.254' )}} compute4 compute4.{{ domain_name }}
   {% endif %}
 #
 
