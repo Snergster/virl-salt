@@ -14,7 +14,7 @@ hostnames-for-cluster-block:
     - append_if_not_found: True
     - marker_start: '# VIRL cluster start block'
     - marker_end: '# VIRL cluster end block'
-    - contents: "{{controllerip}}  controller  controller.{{ domain_name }}"
+    - content: "{{controllerip}}  controller  controller.{{ domain_name }}"
     - show_changes: True
     - backup: '.bak'
 
