@@ -5,7 +5,7 @@
 
 {% if virl_cluster %}
 include:
-  virl.hostname.cluster
+  - virl.hostname.cluster
 {% endif %}
 
 vhost:
