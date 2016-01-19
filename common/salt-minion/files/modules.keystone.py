@@ -49,25 +49,14 @@ Module for handling openstack keystone calls.
         salt '*' keystone.tenant_list profile=openstack1
 '''
 
-# Import Python libs
-from __future__ import absolute_import
-import logging
-
-# Import Salt Libs
-import salt.ext.six as six
-
 # Import third party libs
 HAS_KEYSTONE = False
 try:
-    # pylint: disable=import-error
     from keystoneclient.v2_0 import client
     import keystoneclient.exceptions
-    # pylint: enable=import-error
     HAS_KEYSTONE = True
 except ImportError:
     pass
-
-log = logging.getLogger(__name__)
 
 
 def __virtual__():
@@ -77,20 +66,16 @@ def __virtual__():
     '''
     if HAS_KEYSTONE:
         return 'keystone'
-    return (False, 'keystone execution module cannot be loaded: keystoneclient python library not available.')
+    return False
 
 __opts__ = {}
 
 
 def auth(profile=None, **connection_args):
     '''
-    Set up keystone credentials. Only intended to be used within Keystone-enabled modules.
+    Set up keystone credentials
 
-    CLI Example:
-
-    .. code-block:: bash
-
-        salt '*' keystone.auth
+    Only intended to be used within Keystone-enabled modules
     '''
 
     if profile:
@@ -344,9 +329,7 @@ def endpoint_delete(service, profile=None, **connection_args):
 
 def role_create(name, profile=None, **connection_args):
     '''
-    Create a named role.
-
-    CLI Example:
+    Create named role
 
     .. code-block:: bash
 
@@ -710,13 +693,7 @@ def user_get(user_id=None, name=None, profile=None, **connection_args):
                 break
     if not user_id:
         return {'Error': 'Unable to resolve user id'}
-    try:
-        user = kstone.users.get(user_id)
-    except keystoneclient.exceptions.NotFound:
-        msg = 'Could not find user \'{0}\''.format(user_id)
-        log.error(msg)
-        return {'Error': msg}
-
+    user = kstone.users.get(user_id)
     ret[user.name] = {'id': user.id,
                       'name': user.name,
                       'email': user.email,
@@ -807,9 +784,9 @@ def user_update(user_id=None, name=None, email=None, enabled=None,
         enabled = user.enabled
     kstone.users.update(user=user_id, name=name, email=email, enabled=enabled)
     if tenant:
-        for tnt in kstone.tenants.list():
-            if tnt.name == tenant:
-                tenant_id = tnt.id
+        for t in kstone.tenants.list():
+            if t.name == tenant:
+                tenant_id = t.id
                 break
         kstone.users.update_tenant(user_id, tenant_id)
     ret = 'Info updated for user ID {0}'.format(user_id)
@@ -902,8 +879,8 @@ role_id=ce377245c4ec9b70e1c639c89e8cead4
         user_id = user_get(name=user, profile=profile,
                            **connection_args)[user]['id']
     else:
-        user = next(six.iterkeys(user_get(user_id, profile=profile,
-                                          **connection_args)))['name']
+        user = user_get(user_id, profile=profile,
+                        **connection_args).iterkeys().next()['name']
     if not user_id:
         return {'Error': 'Unable to resolve user id'}
 
@@ -911,8 +888,8 @@ role_id=ce377245c4ec9b70e1c639c89e8cead4
         tenant_id = tenant_get(name=tenant, profile=profile,
                                **connection_args)[tenant]['id']
     else:
-        tenant = next(six.iterkeys(tenant_get(tenant_id, profile=profile,
-                                              **connection_args)))['name']
+        tenant = tenant_get(tenant_id, profile=profile,
+                            **connection_args).iterkeys().next()['name']
     if not tenant_id:
         return {'Error': 'Unable to resolve tenant id'}
 
@@ -920,8 +897,8 @@ role_id=ce377245c4ec9b70e1c639c89e8cead4
         role_id = role_get(name=role, profile=profile,
                            **connection_args)[role]['id']
     else:
-        role = next(six.iterkeys(role_get(role_id, profile=profile,
-                                          **connection_args)))['name']
+        role = role_get(role_id, profile=profile,
+                        **connection_args).iterkeys().next()['name']
     if not role_id:
         return {'Error': 'Unable to resolve role id'}
 
@@ -951,8 +928,8 @@ role_id=ce377245c4ec9b70e1c639c89e8cead4
         user_id = user_get(name=user, profile=profile,
                            **connection_args)[user]['id']
     else:
-        user = next(six.iterkeys(user_get(user_id, profile=profile,
-                                          **connection_args)))['name']
+        user = user_get(user_id, profile=profile,
+                        **connection_args).iterkeys().next()['name']
     if not user_id:
         return {'Error': 'Unable to resolve user id'}
 
@@ -960,8 +937,8 @@ role_id=ce377245c4ec9b70e1c639c89e8cead4
         tenant_id = tenant_get(name=tenant, profile=profile,
                                **connection_args)[tenant]['id']
     else:
-        tenant = next(six.iterkeys(tenant_get(tenant_id, profile=profile,
-                                              **connection_args)))['name']
+        tenant = tenant_get(tenant_id, profile=profile,
+                            **connection_args).iterkeys().next()['name']
     if not tenant_id:
         return {'Error': 'Unable to resolve tenant id'}
 
@@ -969,7 +946,7 @@ role_id=ce377245c4ec9b70e1c639c89e8cead4
         role_id = role_get(name=role, profile=profile,
                            **connection_args)[role]['id']
     else:
-        role = next(six.iterkeys(role_get(role_id)))['name']
+        role = role_get(role_id).iterkeys().next()['name']
     if not role_id:
         return {'Error': 'Unable to resolve role id'}
 
@@ -1035,12 +1012,12 @@ def _item_list(profile=None, **connection_args):
         #        }
     return ret
 
-    # The following is a list of functions that need to be incorporated in the
-    # keystone module. This list should be updated as functions are added.
+    #The following is a list of functions that need to be incorporated in the
+    #keystone module. This list should be updated as functions are added.
     #
-    # endpoint-create     Create a new endpoint associated with a service
-    # endpoint-delete     Delete a service endpoint
-    # discover            Discover Keystone servers and show authentication
-    #                     protocols and
-    # bootstrap           Grants a new role to a new user on a new tenant, after
-    #                     creating each.
+    #endpoint-create     Create a new endpoint associated with a service
+    #endpoint-delete     Delete a service endpoint
+    #discover            Discover Keystone servers and show authentication
+    #                    protocols and
+    #bootstrap           Grants a new role to a new user on a new tenant, after
+    #                    creating each.
