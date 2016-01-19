@@ -28,6 +28,8 @@
 {% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
 {% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
 {% set download_proxy_user = salt['pillar.get']('virl:download_proxy_user', salt['grains.get']('download_proxy_user', '')) %}
+{% set host_simulation_port_min_tcp = salt['pillar.get']('virl:host_simulation_port_min_tcp', salt['grains.get']('host_simulation_port_min_tcp', '10000')) %}
+{% set host_simulation_port_max_tcp = salt['pillar.get']('virl:host_simulation_port_max_tcp', salt['grains.get']('host_simulation_port_max_tcp', '17000')) %}
 
 include:
   - .clients
@@ -288,6 +290,8 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg host download_proxy {{ download_proxy }}
       - crudini --set /etc/virl/common.cfg host download_no_proxy {{ download_no_proxy }}
       - crudini --set /etc/virl/common.cfg host download_proxy_user {{ download_proxy_user }}
+      - crudini --set /etc/virl/common.cfg limits host_simulation_port_min_tcp {{ host_simulation_port_min_tcp }}
+      - crudini --set /etc/virl/common.cfg limits host_simulation_port_max_tcp {{ host_simulation_port_max_tcp }}
     {% if kilo %}
       - crudini --set /etc/virl/common.cfg host ram_overcommit {{ ram_overcommit }}
       - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ cpu_overcommit }}
