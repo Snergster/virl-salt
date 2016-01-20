@@ -318,7 +318,7 @@ web editor alpha:
 {% if cluster %}
 enable cluster in std :
   cmd.run:
-    - name: 'crudini --set /etc/virl/common.cfg host cluster_mode True'
+    - name: 'crudini --set /etc/virl/common.cfg orchestration cluster_mode True'
     - require:
       - pip: VIRL_CORE
 {% endif %}

@@ -58,7 +58,7 @@ oslo messaging 11 prevent:
 
 /etc/nova:
   file.directory:
-    - dir_mode: 755
+    - dir_mode: 750
 
 /etc/nova/nova.conf:
   file.managed:
