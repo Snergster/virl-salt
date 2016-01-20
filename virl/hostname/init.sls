@@ -6,6 +6,11 @@
 {% if virl_cluster %}
 include:
   - virl.hostname.cluster
+
+vhostname foo:
+  file.managed:
+    - name: /tmp/hostname
+    - contents: {{ hostname }}
 {% endif %}
 
 vhost:
