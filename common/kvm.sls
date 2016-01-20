@@ -79,7 +79,7 @@ qemu hold:
   apt.held:
     - name: qemu-kvm
 
-qemu hold:
+qemu-system hold:
   apt.held:
     - name: qemu-system-x86
 
