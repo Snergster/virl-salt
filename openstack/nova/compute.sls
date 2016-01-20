@@ -20,6 +20,10 @@ compute-pkgs:
       - python-novaclient
       - nova-serialproxy
 
+/etc/nova permissions check:
+  file.directory:
+    - dir_mode: 755
+
 /etc/nova/nova.conf:
   file.managed:
     - mode: 755
