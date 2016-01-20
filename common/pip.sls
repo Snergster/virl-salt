@@ -19,14 +19,12 @@ remove ugly hold:
 
 pip hard up:
   pip.installed:
-    - name: pip
+    - name: pip < 8
     {% if proxy == true %}
     - proxy: {{ http_proxy }}
     {% endif %}
     - upgrade: True
-    - unless: ls /usr/local/bin/pip
-    - require:
-      - pkg: pip on the box
+
 
 python-pip:
   pkg.purged:
@@ -57,3 +55,13 @@ python-pip ugly hold:
         Package: python-pip
         Pin: release *
         Pin-Priority: -1
+
+python-pip trashy defaults:
+  file.managed:
+    - name: /etc/pip.conf
+    - contents: |
+        [global]
+        cache-dir = /tmp
+        disable-pip-version-check = true
+
+
