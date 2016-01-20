@@ -1,6 +1,6 @@
 include:
   - common.salt-master.reactor
-  - common.salt-master.salt_sync
+  - common.submaster.salt_sync
 
 {% for each in 'vmm','ank','std' %}
 /srv/salt2/{{ each }}/stable:
