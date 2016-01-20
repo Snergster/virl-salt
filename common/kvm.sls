@@ -8,6 +8,12 @@ qemu_kvm unhold:
     - m_name: qemu-kvm
     - onlyif: ls /usr/bin/qemu-system-x86_64
 
+qemu-system-x86 unhold:
+  module.run:
+    - name: pkg.unhold
+    - m_name: qemu-system-x86
+    - onlyif: ls /usr/bin/qemu-system-x86_64
+
 
 qemu prime:
   pkg.installed:
