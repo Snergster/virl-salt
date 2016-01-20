@@ -1,3 +1,3 @@
 include:
-  - install
-  - virl_packet
+  - virl.terraform.install
+  - virl.terraform.virl_packet
