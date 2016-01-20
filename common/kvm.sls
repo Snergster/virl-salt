@@ -8,18 +8,6 @@ qemu_kvm unhold:
     - m_name: qemu-kvm
     - onlyif: ls /usr/bin/qemu-system-x86_64
 
-/usr/bin/kvm:
-  file.managed:
-    - source: "salt://openstack/nova/files/kilo.kvm"
-    - force: True
-    - mode: 0755
-
-/usr/bin/kvm.real:
-  file.symlink:
-    - target: /usr/bin/qemu-system-x86_64
-    - mode: 0755
-    - require:
-      - file: /usr/bin/kvm
 
 qemu prime:
   pkg.installed:
@@ -52,6 +40,19 @@ qemu:
       - qemu-system-x86=2.0.0+dfsg-2ubuntu1.21
       - qemu-kvm=2.0.0+dfsg-2ubuntu1.21
 
+/usr/bin/kvm:
+  file.managed:
+    - source: "salt://openstack/nova/files/kilo.kvm"
+    - force: True
+    - mode: 0755
+
+/usr/bin/kvm.real:
+  file.symlink:
+    - target: /usr/bin/qemu-system-x86_64
+    - mode: 0755
+    - require:
+      - file: /usr/bin/kvm
+
 libvirt install:
   pkg.installed:
     - name: libvirt-bin
@@ -77,4 +78,9 @@ alter min vnc port:
 qemu hold:
   apt.held:
     - name: qemu-kvm
+
+qemu hold:
+  apt.held:
+    - name: qemu-system-x86
+
 
