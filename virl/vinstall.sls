@@ -35,12 +35,17 @@
     - makedirs: True
     - mode: 0755
 
-/srv/salt/virl/hostname.sls:
+/srv/salt/virl/hostname/init.sls:
   file.managed:
-    - source: salt://virl/hostname.sls
+    - source: salt://virl/hostname/init.sls
     - makedirs: True
     - mode: 0755
 
+/srv/salt/virl/hostname/cluster.sls:
+  file.managed:
+    - source: salt://virl/hostname/cluster.sls
+    - makedirs: True
+    - mode: 0755
 
 /srv/salt/virl/files/virl.jpg:
   file.managed:
