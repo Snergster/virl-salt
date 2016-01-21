@@ -41,7 +41,40 @@ port block salt-master:
   file.directory:
     - makedirs: true
 
-/etc/init/salt-master:
+/usr/local/bin/noprompt-ssh-keygen:
+  file.managed:
+    - source: salt://common/files/noprompt-ssh-keygen
+    - mode: 0755
+
+create key for virl:
+  cmd.run:
+    - user: virl
+    - group: virl
+    - name: /usr/local/bin/noprompt-ssh-keygen
+    - require:
+      - file: /usr/local/bin/noprompt-ssh-keygen
+    - onlyif: test ! -e ~virl/.ssh/id_rsa.pub
+
+point std at key:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
+    - onlyif: test -e ~virl/.ssh/id_rsa.pub
+
+virl_ssh_key to grains:
+  cmd.run:
+    - name: /usr/local/bin/ssh_to_grain
+    - require:
+      - file: virl_ssh_key to grains
+  file.managed:
+    - name: /usr/local/bin/ssh_to_grain
+    - mode: 0755
+    - contents:  |
+            #!/bin/bash
+            value=`cat ~virl/.ssh/id_rsa.pub`
+            salt-call --local grains.setval  virl_ssh_key "$value"
+
+
+/etc/init/salt-master.conf:
   file.managed:
     - source: salt://common/salt-master/files/salt-master.conf
 

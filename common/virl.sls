@@ -13,9 +13,6 @@ include:
   - common.ksm
   - virl.scripts
   - virl.vextra
-  {% if cluster %}
-  - virl.cluster_key
-  {% endif %}
 
 mypkgs:
   pkg.installed:
