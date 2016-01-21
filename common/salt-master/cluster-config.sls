@@ -1,7 +1,7 @@
-{% set compute1 = salt['grains.get']('compute1_hostname', 'compute1' )) %}
-{% set compute2 = salt['grains.get']('compute2_hostname', 'compute2' )) %}
-{% set compute3 = salt['grains.get']('compute3_hostname', 'compute3' )) %}
-{% set compute4 = salt['grains.get']('compute4_hostname', 'compute4' )) %}
+{% set compute1 = salt['grains.get']('compute1_hostname', 'compute1' ) %}
+{% set compute2 = salt['grains.get']('compute2_hostname', 'compute2' ) %}
+{% set compute3 = salt['grains.get']('compute3_hostname', 'compute3' ) %}
+{% set compute4 = salt['grains.get']('compute4_hostname', 'compute4' ) %}
 
 /srv/pillar/top.sls:
   file.managed:
