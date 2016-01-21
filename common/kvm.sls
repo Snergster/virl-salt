@@ -14,37 +14,11 @@ qemu-system-x86 unhold:
     - m_name: qemu-system-x86
     - onlyif: ls /usr/bin/qemu-system-x86_64
 
-
-qemu prime:
-  pkg.installed:
-    - force_conf_new: True
-    - force_yes: True
-    - aggregate: False
-    - refresh: True
-    - version: 2.0.0+dfsg-2ubuntu1.21
-    - name: qemu-kvm
-
-qemu-system:
-  pkg.installed:
-    - force_conf_new: True
-    - force_yes: True
-    - aggregate: False
-    - refresh: False
-    - version: 2.0.0+dfsg-2ubuntu1.21
-    - name: qemu-system-x86
-
-qemu:
-  pkg.installed:
-    - force_conf_new: True
-    - force_yes: True
-    - refresh: False
-    - aggregate: False
-    - onfail:
-      - pkg: qemu-system
-      - pkg: qemu prime
-    - pkgs:
-      - qemu-system-x86=2.0.0+dfsg-2ubuntu1.21
-      - qemu-kvm=2.0.0+dfsg-2ubuntu1.21
+qemu install:
+  cmd.run:
+    - names: 
+      - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-system-x86=2.0.0+dfsg-2ubuntu1.21'
+      - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-kvm=2.0.0+dfsg-2ubuntu1.21'
 
 /usr/bin/kvm:
   file.managed:

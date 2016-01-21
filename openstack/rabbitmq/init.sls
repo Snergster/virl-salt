@@ -21,6 +21,9 @@ rabbitmq restart:
     - watch:
       - cmd: rabbit_pass
       - file: /etc/rabbitmq/rabbitmq-env.conf
+{% if cluster %}
+      - file: /etc/rabbitmq/rabbitmq.config
+{% endif %}
 
 /etc/rabbitmq/rabbitmq-env.conf:
   file.managed:

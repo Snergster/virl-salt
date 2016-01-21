@@ -41,6 +41,57 @@ port block salt-master:
   file.directory:
     - makedirs: true
 
+/usr/local/bin/noprompt-ssh-keygen:
+  file.managed:
+    - source: salt://common/files/noprompt-ssh-keygen
+    - mode: 0755
+
+create sshdir for virl:
+  cmd.run:
+    - user: virl
+    - group: virl
+    - name: mkdir ~/.ssh
+
+create key for virl:
+  cmd.run:
+    - user: virl
+    - group: virl
+    - name: /usr/local/bin/noprompt-ssh-keygen
+    - require:
+      - file: /usr/local/bin/noprompt-ssh-keygen
+      - cmd: create sshdir for virl
+    - onlyif: test ! -e ~virl/.ssh/id_rsa.pub
+
+point std at key:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
+    - onlyif: test -e ~virl/.ssh/id_rsa.pub
+
+virl_ssh_key to grains:
+  cmd.run:
+    - name: /usr/local/bin/ssh_to_grain
+    - require:
+      - file: virl_ssh_key to grains
+  file.managed:
+    - name: /usr/local/bin/ssh_to_grain
+    - mode: 0755
+    - contents:  |
+            #!/bin/bash
+            value=`cat ~virl/.ssh/id_rsa.pub`
+            salt-call --local grains.setval  virl_ssh_key "$value"
+
+compute filter for cluster controller:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'scheduler_default_filters'
+    - value: 'AllHostsFilter,ComputeFilter'
+    - onlyif: test -e /etc/nova/nova.conf
+
+/etc/init/salt-master.conf:
+  file.managed:
+    - source: salt://common/salt-master/files/salt-master.conf
+
 remove salt-master override:
   file.absent:
     - name: /etc/init/salt-master.override
@@ -50,6 +101,15 @@ verify salt-master enabled:
     - name: salt-master
     - onchanges:
       - file: remove salt-master override
+
+open rabbitmq guest security:
+  file.managed:
+    - name: /etc/rabbitmq/rabbitmq.config
+    - require:
+      - pkg: rabbitmq-server
+    - makedirs: True
+    - contents: |
+        [{rabbit, [{loopback_users, []}]}].
 
 salt-master restarting for config:
   service.running:
