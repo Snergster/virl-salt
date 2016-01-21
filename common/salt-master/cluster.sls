@@ -41,6 +41,10 @@ port block salt-master:
   file.directory:
     - makedirs: true
 
+/etc/init/salt-master:
+  file.managed:
+    - source: salt://common/salt-master/files/salt-master.conf
+
 remove salt-master override:
   file.absent:
     - name: /etc/init/salt-master.override
