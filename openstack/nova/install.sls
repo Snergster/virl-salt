@@ -306,7 +306,7 @@ nova-{{each}} conf:
 
 /usr/share/nova-serial/serial.html:
   file.managed:
-    - source: "salt://openstack/nova/files/kilo.serial.html"
+    - source: "salt://openstack/nova/files/serial.html"
     - makedirs: True
     - user: nova
     - group: nova
@@ -316,7 +316,7 @@ nova-{{each}} conf:
 
 /usr/lib/python2.7/dist-packages/nova/console/serial.html:
   file.managed:
-    - source: "salt://openstack/nova/files/kilo.serial.html"
+    - source: "salt://openstack/nova/files/serial.html"
     - user: nova
     - group: nova
     - mode: 0644
