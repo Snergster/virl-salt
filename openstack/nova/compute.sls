@@ -283,3 +283,11 @@ vncserver tune2:
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
 
+nova-compute restart:
+  cmd.run:
+    - order: last
+    - require:
+      - pkg: nova-compute
+      - file: /etc/nova/nova.conf
+    - name: |
+        service nova-compute restart
