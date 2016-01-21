@@ -11,6 +11,7 @@ vextra install and run:
 {% if not packet %}
   cmd.run:
     - name: /usr/local/bin/vextra
+    - onlyif: test -e /etc/virl.ini
     - require:
       - file: vextra install and run
       - pip: docopt prereq

@@ -46,6 +46,12 @@ port block salt-master:
     - source: salt://common/files/noprompt-ssh-keygen
     - mode: 0755
 
+create sshdir for virl:
+  cmd.run:
+    - user: virl
+    - group: virl
+    - name: mkdir ~/.ssh
+
 create key for virl:
   cmd.run:
     - user: virl
@@ -53,6 +59,7 @@ create key for virl:
     - name: /usr/local/bin/noprompt-ssh-keygen
     - require:
       - file: /usr/local/bin/noprompt-ssh-keygen
+      - cmd: create sshdir for virl
     - onlyif: test ! -e ~virl/.ssh/id_rsa.pub
 
 point std at key:
