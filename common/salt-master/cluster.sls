@@ -80,6 +80,13 @@ virl_ssh_key to grains:
             value=`cat ~virl/.ssh/id_rsa.pub`
             salt-call --local grains.setval  virl_ssh_key "$value"
 
+compute filter for cluster controller:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'scheduler_default_filters'
+    - value: 'AllHostsFilter,ComputeFilter'
+    - onlyif: test -e /etc/nova/nova.conf
 
 /etc/init/salt-master.conf:
   file.managed:
@@ -94,6 +101,15 @@ verify salt-master enabled:
     - name: salt-master
     - onchanges:
       - file: remove salt-master override
+
+open rabbitmq guest security:
+  file.managed:
+    - name: /etc/rabbitmq/rabbitmq.config
+    - require:
+      - pkg: rabbitmq-server
+    - makedirs: True
+    - contents: |
+        [{rabbit, [{loopback_users, []}]}].
 
 salt-master restarting for config:
   service.running:
