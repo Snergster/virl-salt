@@ -88,7 +88,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/serialproxy.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
@@ -99,7 +99,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/baseproxy.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/baseproxy.py
@@ -111,7 +111,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/consoles.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/contrib/consoles.py
@@ -122,7 +122,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/plugin.remote_consoles.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/plugins/v3/remote_consoles.py
@@ -133,7 +133,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/schemas.remote_consoles.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/schemas/v3/remote_consoles.py
@@ -144,7 +144,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/api.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/compute/api.py
@@ -155,7 +155,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/cells_api.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/compute/cells_api.py
@@ -166,7 +166,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/manager.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/compute/manager.py
@@ -177,7 +177,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/rpcapi.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/compute/rpcapi.py
@@ -188,7 +188,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/websocketproxy.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/console/websocketproxy.py
@@ -199,7 +199,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/exception.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/exception.py
@@ -210,7 +210,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/model.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/network/model.py
@@ -221,7 +221,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/configdrive.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/configdrive.py
@@ -232,7 +232,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/virt.driver.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/driver.py
@@ -243,7 +243,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/libvirt.driver.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
@@ -254,7 +254,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/hardware.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/hardware.py
@@ -265,7 +265,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/config.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/config.py
@@ -276,7 +276,7 @@ vncserver tune2:
   file.managed:
     - source: salt://openstack/nova/files/kilo/vif.py
     - require:
-      - pkg: nova-pkgs
+      - pkg: compute-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
