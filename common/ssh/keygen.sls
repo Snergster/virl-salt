@@ -11,3 +11,7 @@ create key for virl:
     - require:
       - file: /usr/local/bin/noprompt-ssh-keygen
     - onlyif: test ! -e ~virl/.ssh/id_rsa.pub
+
+point std at key:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'

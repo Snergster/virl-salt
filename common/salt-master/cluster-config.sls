@@ -1,3 +1,7 @@
+{% set compute1 = salt['grains.get']('compute1_hostname', 'compute1' )) %}
+{% set compute2 = salt['grains.get']('compute2_hostname', 'compute2' )) %}
+{% set compute3 = salt['grains.get']('compute3_hostname', 'compute3' )) %}
+{% set compute4 = salt['grains.get']('compute4_hostname', 'compute4' )) %}
 
 /srv/pillar/top.sls:
   file.managed:
@@ -44,4 +48,9 @@
     - makedirs: true
     - template: jinja
     - source: salt://common/salt-master/files/compute4.ini.jinja
+
+add cluster hostnames to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+    - onlyif: test -e /etc/virl/common.cfg
 
