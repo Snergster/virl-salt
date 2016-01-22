@@ -168,4 +168,14 @@ dummy modprobe default:
     - name: modprobe dummy numdummies=5
     - unless: grep "^dummy" /proc/modules
 
+{% if packet %}
+l2tpv3 modprobe default:
+  file.append:
+    - name: /etc/modules
+    - text: l2tp_eth
+    - unless: grep l2tp /etc/modules
+  cmd.run:
+    - name: modprobe l2tp_eth
+    - unless: grep "^l2tp_eth" /proc/modules
 
+{% endif %}
