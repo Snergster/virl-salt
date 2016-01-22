@@ -864,7 +864,7 @@ if __name__ == "__main__":
 
     if varg['salt']:
         building_salt_all()
-        if virl_cluster:
+        if virl_cluster and controller:
             call_salt_quiet('common.salt-master.cluster-config')
     if varg['users']:
         User_Creator(user_list, user_list_limited)
