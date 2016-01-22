@@ -14,6 +14,12 @@ qemu-system-x86 unhold:
     - m_name: qemu-system-x86
     - onlyif: ls /usr/bin/qemu-system-x86_64
 
+qemu-system-common unhold:
+  module.run:
+    - name: pkg.unhold
+    - m_name: qemu-system-common
+    - onlyif: ls /usr/bin/qemu-system-x86_64
+
 qemu install:
   cmd.run:
     - names: 
@@ -63,4 +69,7 @@ qemu-system hold:
   apt.held:
     - name: qemu-system-x86
 
+qemu-system-common hold:
+  apt.held:
+    - name: qemu-system-common
 
