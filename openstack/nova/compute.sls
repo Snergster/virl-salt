@@ -307,5 +307,4 @@ nova-compute restart:
     - require:
       - pkg: nova-compute
       - file: /etc/nova/nova.conf
-    - name: |
-        service nova-compute restart
+    - name: service nova-compute restart
