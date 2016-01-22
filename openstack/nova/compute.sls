@@ -83,6 +83,24 @@ vncserver tune2:
     - require:
       - file: /etc/nova/nova.conf
 
+compute filter for compute paranoia:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'scheduler_default_filters'
+    - value: 'AllHostsFilter,ComputeFilter'
+    - require:
+      - file: /etc/nova/nova.conf
+
+my_ip compute paranoia:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'my_ip'
+    - value: '{{  salt['pillar.get']('virl:internalnet_ip', '172.16.10.250' ) }}''
+    - require:
+      - file: /etc/nova/nova.conf
+
 
 /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py:
   file.managed:
