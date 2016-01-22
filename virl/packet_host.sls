@@ -27,7 +27,13 @@
 {% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
 {% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set ip = salt['cmd.run']("/usr/local/bin/getintip") %}
+{% set compute1 = salt['grains.get']('compute1_internalnet_ip', '10.100.3.2' ) %}
+{% set compute2 = salt['grains.get']('compute2_internalnet_ip', '10.100.3.3' ) %}
+{% set compute3 = salt['grains.get']('compute3_internalnet_ip', '10.100.3.4' ) %}
+{% set compute4 = salt['grains.get']('compute4_internalnet_ip', '10.100.3.5' ) %}
+
 
 include:
   - virl.hostname
@@ -84,6 +90,39 @@ controller int in virl.ini:
     - section: 'DEFAULT'
     - parameter: 'internalnet_controller_IP'
     - value: {{ip}}
+
+tunnel controller side to compute1:
+  file.managed:
+    - name: /etc/network/interfaces.d/l2tp.cfg
+    - contents:  |
+          auto brl2tp
+          iface brl2tp inet static
+             address 172.16.9.1
+             netmask 255.255.255.240
+             bridge_ports tun1
+             pre-up ip l2tp add tunnel remote {{compute1}} local {{ip}} tunnel_id 1000 peer_tunnel_id 1000 encap udp udp_sport 4201 udp_dport 4201
+             pre-up ip l2tp add session name tun1 tunnel_id 1000 session_id 1000 peer_session_id 1000
+             post-up ip link set dev tun1 master brl2tp up
+             pre-down ip l2tp del session tunnel_id 1000 session_id 1000
+             pre-down ip l2tp del tunnel tunnel_id 1000
+
+  {% else %}
+
+tunnel compute1 side:
+  file.managed:
+    - name: /etc/network/interfaces.d/l2tp.cfg
+    - contents:  |
+          auto brl2tp
+          iface brl2tp inet static
+             address 172.16.9.2
+             netmask 255.255.255.240
+             bridge_ports tun1
+             pre-up ip l2tp add tunnel remote {{controllerip}} local {{int_ip}} tunnel_id 1000 peer_tunnel_id 1000 encap udp udp_sport 4201 udp_dport 4201
+             pre-up ip l2tp add session name tun1 tunnel_id 1000 session_id 1000 peer_session_id 1000
+             post-up ip link set dev tun1 master brl2tp up
+             pre-down ip l2tp del session tunnel_id 1000 session_id 1000
+             pre-down ip l2tp del tunnel tunnel_id 1000
+
   {% endif %}
 
 int in virl.ini:
@@ -93,6 +132,16 @@ int in virl.ini:
     - parameter: 'internalnet_IP'
     - value: {{ip}}
 
+{% endif %}
+
+{% if cluster %}
+compute restart for packet weirdness:
+  file.blockreplace:
+    - name: /etc/rc.local
+    - marker_start: "# 003s"
+    - marker_end: "# 003e"
+    - content: |
+             service nova-compute restart
 {% endif %}
 
 get your dummy on:
