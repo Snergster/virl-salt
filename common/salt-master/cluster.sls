@@ -50,7 +50,7 @@ create sshdir for virl:
   cmd.run:
     - user: virl
     - group: virl
-    - name: mkdir -f ~/.ssh
+    - name: mkdir -p ~/.ssh
 
 create key for virl:
   cmd.run:
