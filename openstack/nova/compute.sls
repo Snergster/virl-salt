@@ -97,7 +97,7 @@ my_ip compute paranoia:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
     - parameter: 'my_ip'
-    - value: '{{  salt['pillar.get']('virl:internalnet_ip', '172.16.10.250' ) }}''
+    - value: '{{  salt['pillar.get']('virl:internalnet_ip', '172.16.10.250' ) }}'
     - require:
       - file: /etc/nova/nova.conf
 
