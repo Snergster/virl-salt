@@ -50,7 +50,7 @@ create sshdir for virl:
   cmd.run:
     - user: virl
     - group: virl
-    - name: mkdir ~/.ssh
+    - name: mkdir -f ~/.ssh
 
 create key for virl:
   cmd.run:
@@ -105,8 +105,6 @@ verify salt-master enabled:
 open rabbitmq guest security:
   file.managed:
     - name: /etc/rabbitmq/rabbitmq.config
-    - require:
-      - pkg: rabbitmq-server
     - makedirs: True
     - contents: |
         [{rabbit, [{loopback_users, []}]}].
