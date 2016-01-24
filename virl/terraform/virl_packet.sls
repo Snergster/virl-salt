@@ -96,18 +96,6 @@ domain replace:
     - pattern: '= "virl.info"'
     - repl: '= "{{salt_domain}}"'
 
-
-add ssh section:
-  file.blockreplace:
-    - name: /home/virl/virl_packet/virl.tf
-    - marker_start: '#ssh key addition block start'
-    - marker_end: '#ssh key addition block end'
-    - content:  |
-         resource "packet_ssh_key" "virlkey" {
-         name = "virlkey"
-         public_key = "${file("/home/virl/.ssh/id_rsa.pub")}"
-         }
-
 virl tf ownership fix:
   file.managed:
     - name: /home/virl/virl_packet/virl.tf
