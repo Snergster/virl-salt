@@ -97,8 +97,8 @@ id replace:
 domain replace:
   file.replace:
     - name: /home/virl/virl_packet/variables.tf
-    - pattern: 'virl.info'
-    - repl: '{{salt_domain}}'
+    - pattern: '= "virl.info"'
+    - repl: '= "{{salt_domain}}"'
 
 
 add ssh section:
