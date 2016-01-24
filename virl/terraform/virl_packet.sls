@@ -49,7 +49,7 @@ sign minion key copy:
 working variable file:
   file.copy:
     - name: /home/virl/virl_packet/variables.tf
-    - source: /home/virl/virl_packet/orig.variables.tf
+    - source: /home/virl/virl_packet/variables.tf.orig
     - force: true
 
 guest pass replace:
