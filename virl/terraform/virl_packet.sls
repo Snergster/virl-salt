@@ -4,12 +4,6 @@
 include:
   - common.salt-master.cluster-key
 
-remove altered virl template:
-  cmd.run:
-    - user: virl
-    - cwd: /home/virl/virl_packet
-    - name: 'git checkout -- virl.tf'
-    - onlyif: test -e /home/virl/virl_packet
 
 virl_packet repo:
   git.latest:
