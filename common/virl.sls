@@ -3,6 +3,7 @@
 {% set ifproxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', false)) %}
+{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 
 include:
   - common.ubuntu
