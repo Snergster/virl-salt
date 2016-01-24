@@ -142,6 +142,37 @@ compute restart for packet weirdness:
     - marker_end: "# 003e"
     - content: |
              service nova-compute restart
+
+marker for top of bond0:
+  file.replace:
+    - name: /etc/network/interfaces
+    - pattern: 'auto bond0:0'
+    - repl: '#start of dead block'
+
+marker for bottom of bond0::
+  file.replace:
+    - name: /etc/network/interfaces
+    - pattern: 'post-down route del -net 10.0.0.0/8'
+    - repl: '#end of dead block'
+
+blank the mid:
+  file.blockreplace:
+    - marker_start: '#start of dead block'
+    - marker_end: '#end of dead block'
+    - content: '#'
+
+bond00 new:
+  file.managed:
+    - name: /etc/network/interfaces.d/bond00.cfg
+    - contents:  |
+          auto bond0:0
+          iface bond0:0 inet manual
+          up ip addr add 10.100.3.9/31 broadcast 255.255.255.255 dev bond0
+          post-up route add -net 10.0.0.0/8 gw 10.100.3.8
+          post-up ip addr del 10.100.3.9/24 dev bond0
+          post-down route del -net 10.0.0.0/8 gw 10.100.3.8
+
+
 {% endif %}
 
 get your dummy on:
