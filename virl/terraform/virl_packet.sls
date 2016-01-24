@@ -48,6 +48,8 @@ sign minion key copy:
 
 working variable file:
   file.copy:
+    - user: virl
+    - group: virl
     - name: /home/virl/virl_packet/variables.tf
     - source: /home/virl/virl_packet/variables.tf.orig
     - force: true
@@ -112,5 +114,32 @@ add ssh section:
          public_key = "${file("/home/virl/.ssh/id_rsa.pub")}"
          }
 
+virl tf ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/virl.tf
+    - create: false
+    - user: virl
+    - group: virl
+
+virl tf backup ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/virl.tf.bak
+    - create: false
+    - user: virl
+    - group: virl
+
+variables tf ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/variables.tf
+    - create: false
+    - user: virl
+    - group: virl
+
+variables tf backup ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/variables.tf.bak
+    - create: false
+    - user: virl
+    - group: virl
 
 
