@@ -15,7 +15,7 @@ install pwgen:
 pem minion key copy:
   file.copy:
     - name: /home/virl/virl_packet/keys/minion.pem
-    - source: file://etc/salt/pki/minion/minion.pem
+    - source: /etc/salt/pki/minion/minion.pem
     - user: virl
     - group: virl
     - mode: 0555
@@ -23,7 +23,7 @@ pem minion key copy:
 pub minion key copy:
   file.copy:
     - name: /home/virl/virl_packet/keys/minion.pub
-    - source: file://etc/salt/pki/minion/minion.pub
+    - source: /etc/salt/pki/minion/minion.pub
     - user: virl
     - group: virl
     - mode: 0755
@@ -31,7 +31,7 @@ pub minion key copy:
 sign minion key copy:
   file.copy:
     - name: /home/virl/virl_packet/keys/master_sign.pub
-    - source: file://etc/salt/pki/minion/master_sign.pub
+    - source: /etc/salt/pki/minion/master_sign.pub
     - user: virl
     - group: virl
     - mode: 0755
@@ -39,7 +39,7 @@ sign minion key copy:
 working variable file:
   file.copy:
     - name: /home/virl/virl_packet/variables.tf
-    - source: file:///home/virl/virl_packet/orig.variables.tf
+    - source: /home/virl/virl_packet/orig.variables.tf
 
 guest pass replace:
   file.replace:

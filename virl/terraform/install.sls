@@ -9,3 +9,9 @@ install terraform:
     - unless: terraform --version  | grep 'v0.6.9'
     - require:
       - file: download terraform
+
+remove dead zipfile:
+  file.absent:
+    - name: /home/virl/terraform_0.6.9_linux_amd64.zip
+    - require:
+      - cmd: install terraform
