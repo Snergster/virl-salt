@@ -9,7 +9,7 @@ remove altered virl template:
     - user: virl
     - cwd: /home/virl/virl_packet
     - name: 'git checkout -- virl.tf'
-    - onlyif: test -e /home/virl/virl_packet/virl.tf
+    - onlyif: test -e /home/virl/virl_packet
 
 virl_packet repo:
   git.latest:
