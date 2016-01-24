@@ -5,17 +5,21 @@ include:
   - common.salt-master.cluster-key
 
 remove altered virl template:
-  file.absent:
-    - name: /home/virl/virl_packet/virl.tf
+  cmd.run:
+    - user: virl
+    - cwd: /home/virl/virl_packet
+    - name: 'git checkout -- virl.tf'
     - onlyif: test -e /home/virl/virl_packet/virl.tf
 
 virl_packet repo:
   git.latest:
+    - user: virl
     - name: https://github.com/Snergster/virl_packet.git
     - target: /home/virl/virl_packet
 
 install pwgen:
   pkg.installed:
+    - refresh: false
     - name: pwgen
 
 pem minion key copy:
