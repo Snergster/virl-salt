@@ -46,6 +46,7 @@ working variable file:
   file.copy:
     - name: /home/virl/virl_packet/variables.tf
     - source: /home/virl/virl_packet/orig.variables.tf
+    - force: true
 
 guest pass replace:
   file.replace:
