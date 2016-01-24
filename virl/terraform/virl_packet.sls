@@ -1,7 +1,13 @@
 {% set hostname = salt['grains.get']('salt_id', 'virltest') %}
+{% set salt_domain = salt['grains.get']('append_domain', 'virl.info') %}
 
 include:
   - common.salt-master.cluster-key
+
+remove altered virl template:
+  file.absent:
+    - name: /home/virl/virl_packet/virl.tf
+    - onlyif: test -e /home/virl/virl_packet/virl.tf
 
 virl_packet repo:
   git.latest:
@@ -71,13 +77,35 @@ os token replace:
     - pattern: '123token321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
 
-id replace:
+hostname replace:
   file.replace:
     - name: /home/virl/virl_packet/variables.tf
     - pattern: 'virltest'
     - repl: '{{hostname}}'
 
+id replace:
+  file.replace:
+    - name: /home/virl/virl_packet/variables.tf
+    - pattern: 'badsaltid'
+    - repl: '{{hostname}}'
 
+domain replace:
+  file.replace:
+    - name: /home/virl/virl_packet/variables.tf
+    - pattern: 'virl.info'
+    - repl: '{{salt_domain}}'
+
+
+add ssh section:
+  file.blockreplace:
+    - name: /home/virl/virl_packet/virl.tf
+    - marker_start: '#ssh key addition block start'
+    - marker_end: '#ssh key addition block end'
+    - content:  |
+         resource "packet_ssh_key" "virlkey" {
+         name = "virlkey"
+         public_key = "${file("/home/virl/.ssh/id_rsa.pub")}"
+         }
 
 
 
