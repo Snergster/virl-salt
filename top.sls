@@ -34,9 +34,7 @@ base:
 
   'appcat.virl.qa$':
     - match: pcre
-    - common.salt-minion
-    - virl.basics
     - common.virl
-    - openstack
-    - common.bridge
+    - virl.vinstall
+
 
