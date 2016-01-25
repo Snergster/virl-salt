@@ -4,12 +4,6 @@
 include:
   - common.salt-master.cluster-key
 
-remove altered virl template:
-  cmd.run:
-    - user: virl
-    - cwd: /home/virl/virl_packet
-    - name: 'git checkout -- virl.tf'
-    - onlyif: test -e /home/virl/virl_packet
 
 virl_packet repo:
   git.latest:
@@ -48,8 +42,10 @@ sign minion key copy:
 
 working variable file:
   file.copy:
+    - user: virl
+    - group: virl
     - name: /home/virl/virl_packet/variables.tf
-    - source: /home/virl/virl_packet/orig.variables.tf
+    - source: /home/virl/virl_packet/variables.tf.orig
     - force: true
 
 guest pass replace:
@@ -115,17 +111,38 @@ domain replace:
     - pattern: '= "virl.info"'
     - repl: '= "{{salt_domain}}"'
 
+saltkey replace:
+  file.replace:
+    - name: /home/virl/virl_packet/variables.tf
+    - pattern: './id_rsa'
+    - repl: '~/.ssh/id_rsa'
 
-add ssh section:
-  file.blockreplace:
+virl tf ownership fix:
+  file.managed:
     - name: /home/virl/virl_packet/virl.tf
-    - marker_start: '#ssh key addition block start'
-    - marker_end: '#ssh key addition block end'
-    - content:  |
-         resource "packet_ssh_key" "virlkey" {
-         name = "virlkey"
-         public_key = "${file("/home/virl/.ssh/id_rsa.pub")}"
-         }
+    - create: false
+    - user: virl
+    - group: virl
 
+virl tf backup ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/virl.tf.bak
+    - create: false
+    - user: virl
+    - group: virl
+
+variables tf ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/variables.tf
+    - create: false
+    - user: virl
+    - group: virl
+
+variables tf backup ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/variables.tf.bak
+    - create: false
+    - user: virl
+    - group: virl
 
 
