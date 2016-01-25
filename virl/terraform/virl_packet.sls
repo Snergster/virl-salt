@@ -111,12 +111,6 @@ domain replace:
     - pattern: '= "virl.info"'
     - repl: '= "{{salt_domain}}"'
 
-saltkey replace:
-  file.replace:
-    - name: /home/virl/virl_packet/variables.tf
-    - pattern: './id_rsa'
-    - repl: '~/.ssh/id_rsa'
-
 virl tf ownership fix:
   file.managed:
     - name: /home/virl/virl_packet/virl.tf
