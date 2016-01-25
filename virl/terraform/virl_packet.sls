@@ -13,7 +13,7 @@ virl_packet repo:
 
 install pwgen:
   pkg.installed:
-    - refresh: false
+    - refresh: true
     - name: pwgen
 
 pem minion key copy:
@@ -53,30 +53,45 @@ guest pass replace:
     - name: /home/virl/virl_packet/variables.tf
     - pattern: 321guest123
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
+    - require:
+      - pkg: install pwgen
+
 
 uwmadmin pass replace:
   file.replace:
     - name: /home/virl/virl_packet/variables.tf
     - pattern: '321uwmp123'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
+    - require:
+      - pkg: install pwgen
+
 
 os pass replace:
   file.replace:
     - name: /home/virl/virl_packet/variables.tf
     - pattern: '123pass321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
+    - require:
+      - pkg: install pwgen
+
 
 mysql pass replace:
   file.replace:
     - name: /home/virl/virl_packet/variables.tf
     - pattern: '123mysq321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
+    - require:
+      - pkg: install pwgen
+
 
 os token replace:
   file.replace:
     - name: /home/virl/virl_packet/variables.tf
     - pattern: '123token321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
+    - require:
+      - pkg: install pwgen
+
 
 hostname replace:
   file.replace:
@@ -95,12 +110,6 @@ domain replace:
     - name: /home/virl/virl_packet/variables.tf
     - pattern: '= "virl.info"'
     - repl: '= "{{salt_domain}}"'
-
-saltkey replace:
-  file.replace:
-    - name: /home/virl/virl_packet/variables.tf
-    - pattern: './id_rsa'
-    - repl: '~/.ssh/id_rsa'
 
 virl tf ownership fix:
   file.managed:
