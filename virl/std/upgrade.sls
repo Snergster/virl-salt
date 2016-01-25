@@ -23,6 +23,8 @@
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
 
+include:
+  - common.ifb
 
 /var/cache/virl/std:
   file.recurse:
@@ -138,14 +140,6 @@ virl_webmux_init:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
 
-ifb modprobe:
-  file.append:
-    - name: /etc/modules
-    - text: ifb numifbs=32
-    - unless: grep ifb /etc/modules
-  cmd.run:
-    - name: modprobe ifb numifbs=32
-    - unless: grep "^ifb" /proc/modules
 
 std uwm port replace:
   file.replace:

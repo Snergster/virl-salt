@@ -33,6 +33,7 @@
 
 include:
   - .clients
+  - common.ifb
 
 std prereq pkgs:
   pkg.installed:
@@ -153,15 +154,6 @@ std_prereq_webmux:
   file.symlink:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
-
-ifb modprobe:
-  file.append:
-    - name: /etc/modules
-    - text: ifb numifbs=32
-    - unless: grep ifb /etc/modules
-  cmd.run:
-    - name: modprobe ifb numifbs=32
-    - unless: grep "^ifb" /proc/modules
 
 std uwm port replace:
   file.replace:
