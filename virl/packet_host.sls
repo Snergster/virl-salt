@@ -42,9 +42,6 @@ adding source to interfaces:
   cmd.run:
     - names: 
       - 'chattr -i /etc/network/interfaces'
-  file.append:
-    - name: /etc/network/interfaces
-    - text: source /etc/network/interfaces.d/*.cfg
 
 /etc/network/interfaces.d/dummy.cfg:
   file.managed:
@@ -150,10 +147,9 @@ marker for top of bond0:
     - repl: '#start of dead block'
 
 marker for bottom of bond0::
-  file.replace:
+  file.append:
     - name: /etc/network/interfaces
-    - pattern: 'post-down route del -net 10.0.0.0/8'
-    - repl: '#end of dead block'
+    - text: '#end of dead block'
 
 blank the mid:
   file.blockreplace:
@@ -174,6 +170,12 @@ bond00 new:
 
 
 {% endif %}
+
+additional interfaces:
+  file.append:
+    - name: /etc/network/interfaces
+    - text: source /etc/network/interfaces.d/*.cfg
+
 
 get your dummy on:
   cmd.run:
