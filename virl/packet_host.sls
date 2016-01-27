@@ -150,6 +150,7 @@ marker for bottom of bond0::
   file.append:
     - name: /etc/network/interfaces
     - text: '#end of dead block'
+    - unless: grep 'end of dead' /etc/network/interfaces
 
 blank the mid:
   file.blockreplace:
