@@ -153,6 +153,7 @@ marker for bottom of bond0::
 
 blank the mid:
   file.blockreplace:
+    - name: /etc/network/interfaces
     - marker_start: '#start of dead block'
     - marker_end: '#end of dead block'
     - content: '#'
