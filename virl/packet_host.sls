@@ -40,8 +40,7 @@ include:
 
 adding source to interfaces:
   cmd.run:
-    - names: 
-      - 'chattr -i /etc/network/interfaces'
+    - name: 'chattr -i /etc/network/interfaces'
 
 /etc/network/interfaces.d/dummy.cfg:
   file.managed:
