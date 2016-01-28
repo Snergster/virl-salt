@@ -34,7 +34,7 @@ adding nat to ufw:
         *nat
         :POSTROUTING ACCEPT [0:0]
         # translate outbound traffic from internal networks
-        -A POSTROUTING -s 172.16.0.0/22 -o  -j MASQUERADE
+        -A POSTROUTING -s 172.16.0.0/22 -o bond0 -j MASQUERADE
         # don't delete the 'COMMIT' line or these nat table rules won't
         # be processed
         COMMIT
