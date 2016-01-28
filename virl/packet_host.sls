@@ -40,8 +40,7 @@ include:
 
 adding source to interfaces:
   cmd.run:
-    - names: 
-      - 'chattr -i /etc/network/interfaces'
+    - name: 'chattr -i /etc/network/interfaces'
 
 /etc/network/interfaces.d/dummy.cfg:
   file.managed:
@@ -150,9 +149,11 @@ marker for bottom of bond0::
   file.append:
     - name: /etc/network/interfaces
     - text: '#end of dead block'
+    - unless: grep 'end of dead' /etc/network/interfaces
 
 blank the mid:
   file.blockreplace:
+    - name: /etc/network/interfaces
     - marker_start: '#start of dead block'
     - marker_end: '#end of dead block'
     - content: '#'

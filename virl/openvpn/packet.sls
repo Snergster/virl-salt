@@ -12,11 +12,28 @@ vpn maximize:
       - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat --gateway_ip 172.16.1.254
       - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat1 --gateway_ip 172.16.2.254
       - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update ext-net --gateway_ip 172.16.3.254
+
+ufw accepted ports:
+  cmd.run:
+    - unless: "/usr/sbin/ufw status | grep 4506/tcp"
+    - names:
       - ufw allow in on bond0 to any port 22 proto tcp
-      - ufw allow in on bond0 to any port 443 proto tcp
+      - ufw allow in on bond0 to any port 443 proto tcp      
+      - ufw allow in on bond0 to any port 1194 proto tcp
       - ufw allow in on bond0 to any port 4505 proto tcp
       - ufw allow in on bond0 to any port 4506 proto tcp
-      - ufw deny in on bond0 l3_network_gateway
+
+ufw deny bond0:
+  cmd.run:
+    - require:
+      - cmd: ufw accepted ports
+    - name: ufw deny in on bond0 to any
+
+ufw accept all:
+  cmd.run:
+    - require:
+      - cmd: ufw deny bond0
+    - names: 
       - ufw allow from any to any
       - ufw default allow routed
 
@@ -28,12 +45,12 @@ adding local route to openvpn:
 
 adding nat to ufw:
   file.prepend:
-    - name: /etc/uwm/before.rules
+    - name: /etc/ufw/before.rules
     - text:  |
         *nat
         :POSTROUTING ACCEPT [0:0]
         # translate outbound traffic from internal networks
-        -A POSTROUTING -s 172.16.0.0/22 -o  -j MASQUERADE
+        -A POSTROUTING -s 172.16.0.0/22 -o bond0 -j MASQUERADE
         # don't delete the 'COMMIT' line or these nat table rules won't
         # be processed
         COMMIT

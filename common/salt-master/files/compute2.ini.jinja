@@ -30,4 +30,6 @@ virl:
   controller_ip: {{salt['grains.get']('internalnet_controller_ip', '172.16.10.250')}}
   internalnet_controller_ip: {{salt['grains.get']('internalnet_controller_ip', '172.16.10.250')}}
   virl_ssh_key: {{salt['grains.get']('virl_ssh_key', '')}}
-
+  proxy: {{salt['grains.get']('proxy', False )}}
+  http_proxy: {{ salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/') }}
+  
