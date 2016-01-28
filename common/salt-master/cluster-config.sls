@@ -24,7 +24,7 @@
     - makedirs: true
     - template: jinja
     - source: salt://common/salt-master/files/virluser.jinja
-    
+
 /srv/pillar/compute1/init.sls:
   file.managed:
     - makedirs: true
