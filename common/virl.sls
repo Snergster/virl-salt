@@ -14,6 +14,7 @@ include:
   - common.ksm
   - virl.scripts
   - virl.vextra
+  - virl.network.dummy
 
 mypkgs:
   pkg.installed:
@@ -159,15 +160,6 @@ lxc bridge off in default:
     - name: /etc/default/lxc-net
     - pattern: '^USE_LXC_BRIDGE="true"'
     - repl: 'USE_LXC_BRIDGE="false"'
-
-dummy modprobe default:
-  file.append:
-    - name: /etc/modules
-    - text: dummy numdummies=5
-    - unless: grep dummy /etc/modules
-  cmd.run:
-    - name: modprobe dummy numdummies=5
-    - unless: grep "^dummy" /proc/modules
 
 {% if packet %}
 l2tpv3 modprobe default:
