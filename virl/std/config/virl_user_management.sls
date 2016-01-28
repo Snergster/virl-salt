@@ -1,5 +1,9 @@
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 
+include:
+  - virl.std.config.std_restart
+  - virl.std.config.uwm_restart
+
 std uwm port replace:
   file.replace:
       - name: /var/www/html/index.html
@@ -13,7 +17,4 @@ set_config:
       - crudini --set /etc/virl/virl.cfg env virl_uwm_port {{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ uwmport }}
 
-include:
-  - .std_restart
-  - .uwm_restart
 
