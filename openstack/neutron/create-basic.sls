@@ -27,7 +27,7 @@
 {% set flat1_dns2 = salt['pillar.get']('virl:second_flat2_nameserver',salt['grains.get']('second_flat2_nameserver', '8.8.4.4')) %}
 {% set snat_dns = salt['pillar.get']('virl:first_snat_nameserver',salt['grains.get']('first_snat_nameserver', '8.8.8.8')) %}
 {% set snat_dns2 = salt['pillar.get']('virl:second_snat_nameserver',salt['grains.get']('second_snat_nameserver', '8.8.4.4')) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
 include:
   - openstack.neutron.changes
@@ -55,7 +55,7 @@ create flat1 net:
 
 {% endif %}
 
-{% if kilo %}
+
 create snat net:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create ext-net --shared --provider:network_type flat --router:external --provider:physical_network ext-net
@@ -70,15 +70,6 @@ create snat net external:
       - cmd: neutron lives
       - cmd: create snat net
 
-{% else %}
-create snat net:
-  cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create ext-net --shared --provider:network_type flat --router:external true --provider:physical_network ext-net
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show ext-net
-    - require:
-      - cmd: neutron lives
-
-{% endif %}
 create flat subnet:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create flat {{ l2_network }} --allocation-pool start={{l2_start_address}},end={{l2_end_address}} --gateway {{ l2_gateway }} --name flat --dns-nameservers list=true {{ flat_dns }} {{ flat_dns2 }}

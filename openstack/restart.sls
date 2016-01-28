@@ -1,6 +1,6 @@
 {% set heat = salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false )) %}
 {% set cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false )) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 {% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
 
 {% if controller %}
@@ -25,9 +25,6 @@ all-restart:
         service neutron-plugin-linuxbridge-agent restart
         service glance-api restart
         service glance-registry restart
-        {% if not kilo %}
-        service keystone restart
-        {% endif %}
 
 
   {% if cinder %}

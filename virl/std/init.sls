@@ -21,7 +21,7 @@
 {% set web_editor = salt['pillar.get']('virl:web_editor', salt['grains.get']('web_editor', False)) %}
 {% set fdns = salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )) %}
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 {% set ram_overcommit = salt['pillar.get']('virl:ram_overcommit', salt['grains.get']('ram_overcommit', '2')) %}
 {% set cpu_overcommit = salt['pillar.get']('virl:cpu_overcommit', salt['grains.get']('cpu_overcommit', '3')) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
@@ -161,7 +161,7 @@ std uwm port replace:
       - pattern: :\d{2,}"
       - repl: :{{ uwmport }}"
       - unless: grep {{ uwmport }} /var/www/html/index.html
-{% if kilo %}
+
 std nova-compute serial:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
@@ -169,15 +169,6 @@ std nova-compute serial:
     - parameter: 'port_range'
     - value: '{{ serstart }}:{{ serend }}'
 
-{% else %}
-std nova-compute serial:
-  openstack_config.present:
-    - filename: /etc/nova/nova-compute.conf
-    - section: 'libvirt'
-    - parameter: 'serial_port_range'
-    - value: '{{ serstart }}:{{ serend }}'
-
-{% endif %}
 
 std_prereq:
   pip.installed:
@@ -208,11 +199,7 @@ std_prereq:
       - Werkzeug >= 0.10.1
       - wsgiref
       - WTForms >= 2.0.2
-{% if kilo %}
       - tornado >= 3.2.2
-{% else %}
-      - tornado >= 3.2.2, < 4.0.0
-{% endif %}
       - require:
         - pkg: 'std prereq pkgs'
 
@@ -284,10 +271,8 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg host download_proxy_user {{ download_proxy_user }}
       - crudini --set /etc/virl/common.cfg limits host_simulation_port_min_tcp {{ host_simulation_port_min_tcp }}
       - crudini --set /etc/virl/common.cfg limits host_simulation_port_max_tcp {{ host_simulation_port_max_tcp }}
-    {% if kilo %}
       - crudini --set /etc/virl/common.cfg host ram_overcommit {{ ram_overcommit }}
       - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ cpu_overcommit }}
-    {% endif %}
 
 ank_live_port change:
   cmd.run:

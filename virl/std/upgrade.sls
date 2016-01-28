@@ -21,7 +21,7 @@
 {% set web_editor = salt['pillar.get']('virl:web_editor', salt['grains.get']('web_editor', False)) %}
 {% set fdns = salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )) %}
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
 include:
   - common.ifb
@@ -92,25 +92,6 @@ virl_webmux_init:
     - source: "salt://virl/std/files/virl-webmux.conf"
     - mode: 0755
 
-# std_prereq_webmux:
-#   pip.installed:
-#   {% if proxy == true %}
-#     - proxy: {{ http_proxy }}
-#   {% endif %}
-#     - require:
-#       - pkg: std prereq pkgs
-#     - names:
-#       - Twisted >= 13.2.0
-#       - parse >= 1.4.1
-#       - stuf >= 0.9.4
-#       - txsockjs >= 1.2.1
-#       - zope.interface >= 4.1.0
-#       - SQLObject >= 1.5.1
-#       - service_identity
-#       - docker-py >= 1.3.1
-#       - lxml >= 3.4.1
-#   {% endif %}
-
 /etc/virl directory:
   file.directory:
     - name: /etc/virl
@@ -147,7 +128,7 @@ std uwm port replace:
       - pattern: :\d{2,}"
       - repl: :{{ uwmport }}"
       - unless: grep {{ uwmport }} /var/www/html/index.html
-{% if kilo %}
+
 std nova-compute serial:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
@@ -155,52 +136,6 @@ std nova-compute serial:
     - parameter: 'port_range'
     - value: '{{ serstart }}:{{ serend }}'
 
-{% else %}
-std nova-compute serial:
-  openstack_config.present:
-    - filename: /etc/nova/nova-compute.conf
-    - section: 'libvirt'
-    - parameter: 'serial_port_range'
-    - value: '{{ serstart }}:{{ serend }}'
-
-{% endif %}
-
-# std_prereq:
-#   pip.installed:
-# {% if proxy == true %}
-#     - proxy: {{ http_proxy }}
-# {% endif %}
-#     - names:
-#       - ipaddr >= 2.1.11
-#       - flask-sqlalchemy >= 2.0
-#       - Flask >= 0.10.1
-#       - Flask_Login == 0.2.11
-#       - Flask_RESTful >= 0.3.2
-#       - Flask_WTF >= 0.11
-#       - Flask_Breadcrumbs >= 0.3.0
-#       - Flask_Swagger >= 0.2.10
-#       - itsdangerous >= 0.24
-#       - Jinja2 >= 2.7.3
-#       - lxml >= 3.4.1
-#       - MarkupSafe >= 0.23
-#       - mock >= 1.0.1
-#       - paramiko >= 1.15.2
-#       - pycrypto >= 2.6.1
-#       - Pygments
-#       - requests == 2.7.0
-#       - simplejson >= 3.6.5
-#       - sqlalchemy == 0.9.9
-#       - websocket_client >= 0.26.0
-#       - Werkzeug >= 0.10.1
-#       - wsgiref
-#       - WTForms >= 2.0.2
-# {% if kilo %}
-#       - tornado >= 3.2.2
-# {% else %}
-#       - tornado >= 3.2.2, < 4.0.0
-# {% endif %}
-#       - require:
-#         - pkg: 'std prereq pkgs'
 
 VIRL_CORE:
   pip.installed:

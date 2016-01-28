@@ -3,68 +3,8 @@
 {% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
 {% set enable_horizon = salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
-{% if not kilo %}
-/usr/local/bin/update-images:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/update_images
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-images:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/add-images
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-images-auto:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/add-images-auto
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/add-servers:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/add-servers
-    - user: virl
-    - group: virl
-    - mode: 755
-
-/usr/local/bin/adduser_openstack:
-  file.managed:
-    - order: 1
-    - source: salt://virl/files/adduser_openstack
-    - user: virl
-    - group: virl
-    - mode: 755
-
-
-/opt/support/add-images:
-  file.symlink:
-    - target: /usr/local/bin/add-images
-    - makedirs: true
-    - mode: 0755
-
-/opt/support/add-images-auto:
-  file.symlink:
-    - target: /usr/local/bin/add-images-auto
-    - makedirs: true
-    - mode: 0755
-
-/opt/support/add-servers:
-  file.symlink:
-    - target: /usr/local/bin/add-servers
-    - makedirs: true
-    - mode: 0755
-{% endif %}
 
 /etc/settings.ini:
   file.symlink:
@@ -100,7 +40,6 @@
 
 
 
-{% if kilo %}
 
 /etc/apparmor.d/libvirt/TEMPLATE.qemu:
   file.managed:
@@ -111,23 +50,6 @@
     - name: service apparmor reload
     - watch:
       - file: /etc/apparmor.d/libvirt/TEMPLATE.qemu
-{% else %}
-/etc/apparmor.d/libvirt/TEMPLATE:
-  {% if not masterless %}
-  file.managed:
-    - source: salt://virl/files/libvirt.template
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/libvirt.template
-    - force: true
-  {% endif %}
-    - makedirs: true
-    - mode: 644
-  cmd.wait:
-    - name: service apparmor reload
-    - watch:
-      - file: /etc/apparmor.d/libvirt/TEMPLATE
-{% endif %}
 
 
 /etc/modprobe.d/kvm-intel.conf:

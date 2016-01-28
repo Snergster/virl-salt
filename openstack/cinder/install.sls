@@ -11,7 +11,7 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
 cinder-pkgs:
   pkg.installed:
@@ -69,27 +69,11 @@ cinder-reinstall:
     - source: "salt://openstack/cinder/files/lvm.conf"
 
     {% endif %}
-{% if not kilo %}
-
-/etc/cinder/api-paste.ini:
-  file.managed:
-    - mode: 755
-    - template: jinja
-    {% if masterless %}
-    - source: "file:///srv/salt/openstack/cinder/files/api-paste.ini"
-    {% else %}
-    - source: "salt://openstack/cinder/files/api-paste.ini"
-    - source_hash: md5=cb35402b781e545c611649db5f3fff78
-    {% endif %}
-{% endif %}
 
 cinder-restart:
   cmd.run:
     - require:
       - file: /etc/cinder/cinder.conf
-{% if not kilo %}
-      - pip: oslo cinder prereq
-{% endif %}
     - name: |
         cinder-manage db sync
         service cinder-volume restart

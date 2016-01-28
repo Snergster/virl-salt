@@ -33,7 +33,7 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
 include:
   - openstack.keystone.setup
@@ -47,7 +47,6 @@ neutron-pkgs:
   pkg.installed:
     - force_yes: True
     - pkgs:
-    {% if kilo %}
       - neutron-common: '1:2015.1.2-0ubuntu2~cloud0'
       - neutron-dhcp-agent: '1:2015.1.2-0ubuntu2~cloud0'
       - neutron-l3-agent: '1:2015.1.2-0ubuntu2~cloud0'
@@ -57,77 +56,26 @@ neutron-pkgs:
       - neutron-plugin-ml2: '1:2015.1.2-0ubuntu2~cloud0'
       - neutron-server: '1:2015.1.2-0ubuntu2~cloud0'
       - python-neutron: '1:2015.1.2-0ubuntu2~cloud0'
-    {% else %}
-      - neutron-common: '=1:2014.1.3-0ubuntu1.1'
-      - neutron-dhcp-agent: '=1:2014.1.3-0ubuntu1.1'
-      - neutron-l3-agent: '=1:2014.1.3-0ubuntu1.1'
-      - neutron-metadata-agent: '=1:2014.1.3-0ubuntu1.1'
-      - neutron-plugin-linuxbridge-agent: '=1:2014.1.3-0ubuntu1.1'
-      - neutron-plugin-linuxbridge: '=1:2014.1.3-0ubuntu1.1'
-      - neutron-plugin-ml2: '=1:2014.1.3-0ubuntu1.1'
-      - neutron-server: '=1:2014.1.3-0ubuntu1.1'
-      - python-neutron: '=1:2014.1.3-0ubuntu1.1'
-    {% endif %}
   apt.held:
     - name: neutron-plugin-linuxbridge-agent
 
-{% if not kilo %}
-
-oslo prereq pin of hate:
-  pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
-{% endif %}
-    - require:
-      - pkg: neutron-pkgs
-    - names:
-      - oslo.messaging == 1.6.0
-      - oslo.config == 1.6.0
-      - pbr == 0.10.8
-      - netaddr==0.7.15
-
-{% endif %}
 
 /etc/neutron/neutron.conf:
   file.managed:
     - template: jinja
     - makedirs: True
     - mode: 755
-    {% if kilo %}
     - source: "salt://openstack/neutron/files/kilo.neutron.conf"
-    {% else %}
-    - source: "salt://openstack/neutron/files/neutron.conf"
-    {% endif %}
     - require:
       - pkg: neutron-pkgs
 
-{% if not kilo %}
-
-/etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini:
-  file.managed:
-    - template: jinja
-    - mode: 755
-    - makedirs: True
-    {% if masterless %}
-    - source: "file:///srv/salt/openstack/neutron/files/plugins/linuxbridge/linuxbridge_conf.ini"
-    {% else %}
-    - source: "salt://openstack/neutron/files/plugins/linuxbridge/linuxbridge_conf.ini"
-    {% endif %}
-    - require:
-      - pkg: neutron-pkgs
-
-{% endif %}
 
 /etc/neutron/plugins/ml2/ml2_conf.ini:
   file.managed:
     - mode: 755
     - template: jinja
     - makedirs: True
-    {% if kilo %}
     - source: "salt://openstack/neutron/files/plugins/ml2/kilo.ml2_conf.ini"
-    {% else %}
-    - source: "salt://openstack/neutron/files/plugins/ml2/ml2_conf.ini"
-    {% endif %}
     - require:
       - pkg: neutron-pkgs
 
@@ -135,11 +83,7 @@ oslo prereq pin of hate:
   file.managed:
     - mode: 644
     - makedirs: True
-    {% if kilo %}
     - source: "salt://openstack/neutron/files/kilo.neutron-server.conf"
-    {% else %}
-    - source: "salt://openstack/neutron/files/neutron-server.conf"
-    {% endif %}
     - require:
       - pkg: neutron-pkgs
 
@@ -177,11 +121,7 @@ neutron-mtu:
 {% if l2_port2_enabled == false %}
 neutron-provider-networks:
   openstack_config.present:
-  {% if kilo %}
     - filename: /etc/neutron/neutron.conf
-  {% else %}
-    - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
-  {% endif %}
     - section: 'vlans'
     - parameter: 'network_vlan_ranges'
     - value: 'flat,ext-net'
@@ -190,11 +130,7 @@ neutron-provider-networks:
 
 neutron-provider-networks-phymap:
   openstack_config.present:
-  {% if kilo %}
     - filename: /etc/neutron/neutron.conf
-  {% else %}
-    - filename: /etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini
-  {% endif %}
     - section: 'linux_bridge'
     - parameter: 'physical_interface_mappings'
     - value: 'flat:{{ l2_port }},ext-net:{{ l3_port }}'
@@ -226,15 +162,11 @@ neutron-hostname3:
     - filename: /etc/neutron/neutron.conf
     - section: 'keystone_authtoken'
     - parameter: 'auth_uri'
-    {% if kilo %}
     - value: 'http://{{ controllerhostname }}:35357/v2.0/'
-    {% else %}
-    - value: 'http://{{ controllerhostname }}:5000'
-    {% endif %}
     - require:
       - file: /etc/neutron/neutron.conf
 
-  {% if kilo %}
+
 neutron-hostname-indentity:
   openstack_config.present:
     - filename: /etc/neutron/neutron.conf
@@ -243,7 +175,7 @@ neutron-hostname-indentity:
     - value: 'http://{{ controllerhostname }}:5000'
     - require:
       - file: /etc/neutron/neutron.conf
-  {% endif %}
+
 
 neutron-hostname4:
   openstack_config.present:
@@ -393,7 +325,6 @@ l3-gateway:
     - require:
       - pkg: neutron-pkgs
 
-{% if kilo %}
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
   file.managed:
     - source: "salt://openstack/neutron/files/kilo.linuxbridge-plugin.filters"
@@ -463,171 +394,6 @@ neutron-{{each}} conf:
     - repl: 'start on (rabbitmq-server-running or started rabbitmq-server)'
 {% endfor %}
 
-{% else %}
-
-/srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff:
-  file.managed:
-    - makedirs: True
-    - mode: 755
-    - contents: |
-        102a103,105
-        >                      'device_id': port['device_id'],
-        >                      'device_owner': port['device_owner'],
-        >                      'mac_address': port['mac_address'],
-        112a116
-        >         LOG.info('RPC returning %s', entry)
-
-
-/srv/salt/openstack/neutron/files/l3.py.diff:
-  file.managed:
-    - makedirs: True
-    - mode: 755
-    - contents: |
-        --- a/extensions/l3.py  2014-07-10 12:28:49.715740324 +0200
-        +++ b/extensions/l3.py  2014-07-03 15:15:51.414240207 +0200
-        @@ -107,7 +107,8 @@
-                        'validate': {'type:uuid': None},
-                        'is_visible': True,
-                        'primary_key': True},
-        -        'floating_ip_address': {'allow_post': False, 'allow_put': False,
-        +        'floating_ip_address': {'allow_post': True, 'allow_put': False,
-        +                                'default': attr.ATTR_NOT_SPECIFIED,
-                                         'validate': {'type:ip_address_or_none': None},
-                                         'is_visible': True},
-                 'floating_network_id': {'allow_post': True, 'allow_put': False,
-
-
-/srv/salt/openstack/neutron/files/l3_db.diff:
-  file.managed:
-    - makedirs: True
-    - mode: 755
-    - contents: |
-        --- a/db/l3_db.py       2014-07-10 12:27:57.230986451 +0200
-        +++ b/db/l3_db.py       2014-07-03 15:15:52.438764715 +0200
-        @@ -614,6 +614,10 @@
-                     msg = _("Network %s is not a valid external network") % f_net_id
-                     raise n_exc.BadRequest(resource='floatingip', msg=msg)
-
-        +        floating_ip_address = fip['floating_ip_address']
-        +        if floating_ip_address is not attributes.ATTR_NOT_SPECIFIED:
-        +            floating_ip_address = [{'ip_address': floating_ip_address}]
-        +
-                 with context.session.begin(subtransactions=True):
-                     # This external port is never exposed to the tenant.
-                     # it is used purely for internal system and admin use when
-        @@ -623,7 +627,7 @@
-                         {'tenant_id': '',  # tenant intentionally not set
-                          'network_id': f_net_id,
-                          'mac_address': attributes.ATTR_NOT_SPECIFIED,
-        -                 'fixed_ips': attributes.ATTR_NOT_SPECIFIED,
-        +                 'fixed_ips': floating_ip_address,
-                          'admin_state_up': True,
-                          'device_id': fip_id,
-                          'device_owner': DEVICE_OWNER_FLOATINGIP,
-
-
-
-/srv/salt/openstack/neutron/files/ml2_rpc.diff:
-  file.managed:
-    - makedirs: True
-    - mode: 755
-    - contents: |
-        149a150,152
-        >                      'device_id': port.device_id,
-        >                      'device_owner': port.device_owner,
-        >                      'mac_address': port.mac_address,
-
-
-/usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py:
-  file.patch:
-    - source: file:///srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff
-    - hash: md5=7560254626099a5dec158518f47b2d87
-  cmd.wait:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py
-    - watch:
-      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/lb_neutron_plugin.py
-    - require:
-      - pkg: neutron-pkgs
-      - file: /srv/salt/openstack/neutron/files/lb_neutron_plugin.py.diff
-
-
-/usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py:
-  file.managed:
-    - source: salt://openstack/neutron/files/plugins/ml2/rpc.py
-  cmd.wait:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py
-    - watch:
-      - file: /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py
-    - require:
-      - pkg: neutron-pkgs
-
-
-/etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
-  file.managed:
-    - source: "salt://openstack/neutron/files/linuxbridge-plugin.filters"
-    - require:
-      - pkg: neutron-pkgs
-
-linuxbridge_neutron_agent:
-  file.managed:
-    - source: "salt://openstack/neutron/files/linuxbridge_neutron_agent.py"
-    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-
-ip_lib for mtu:
-  file.managed:
-    - source: "salt://openstack/neutron/files/ip_lib.py"
-    - name: /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
-  cmd.run:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
-
-config.py for multicast bridge:
-  file.managed:
-    - source: "salt://openstack/neutron/files/plugins/linuxbridge/config.py"
-    - name: /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/common/config.py
-  cmd.run:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/common/config.py
-
-
-compile linuxbridge:
-  cmd.run:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
-    - onchanges:
-      - file: linuxbridge_neutron_agent
-
-
-/usr/lib/python2.7/dist-packages/neutron/extensions/l3.py:
-  file.patch:
-    - source: file:///srv/salt/openstack/neutron/files/l3.py.diff
-    - hash: md5=3739e6a7463a3e2102b76d1cc3ebeff6
-    - require:
-      - pkg: neutron-pkgs
-      - file: /srv/salt/openstack/neutron/files/l3.py.diff
-  cmd.wait:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
-    - watch:
-      - file: /usr/lib/python2.7/dist-packages/neutron/extensions/l3.py
-
-
-
-/usr/lib/python2.7/dist-packages/neutron/db/l3_db.py:
-  file.patch:
-    - source: file:///srv/salt/openstack/neutron/files/l3_db.diff
-    - hash: md5=c99c80ba6aa209fcd046a972af51a914
-    - require:
-      - pkg: neutron-pkgs
-      - file: /srv/salt/openstack/neutron/files/l3_db.diff
-  cmd.wait:
-    - names:
-      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-    - watch:
-      - file: /usr/lib/python2.7/dist-packages/neutron/db/l3_db.py
-{% endif %}
 
 linuxbridge hold:
   apt.held:
@@ -647,7 +413,6 @@ neutron lxc bridge off in default:
     - pattern: '^USE_LXC_BRIDGE="true"'
     - repl: 'USE_LXC_BRIDGE="false"'
 
-{% if kilo %}
 
 neutron restart:
   cmd.run:
@@ -660,17 +425,7 @@ neutron restart:
         service neutron-metadata-agent restart | at now + 1 min
         service neutron-plugin-linuxbridge-agent restart | at now + 1 min
         sleep 65
-{% else %}
-neutron restart:
-  cmd.run:
-    - order: last
-    - name: |
-        service neutron-server restart
-        service neutron-dhcp-agent restart
-        service neutron-l3-agent restart
-        service neutron-metadata-agent restart
-        service neutron-plugin-linuxbridge-agent restart
-{% endif %}
+
 neutron sysctl:
   cmd.run:
     - name: 'sysctl -p'

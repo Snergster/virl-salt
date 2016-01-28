@@ -3,7 +3,7 @@
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
 include:
   - virl.web
@@ -20,22 +20,6 @@ horizon-pkgs:
       - libapache2-mod-wsgi
       - openstack-dashboard
 
-{% if not kilo %}
-openstack-dashboard-ubuntu-theme:
-  pkg.removed:
-    - order: 2
-    - purge: True
-
-openstack-dash:
-  file.append:
-    - order: 3
-    - name: /etc/apt/preferences.d/cisco-openstack
-    - text: |
-        Package: openstack-dashboard-ubuntu-theme
-        Pin: release *
-        Pin-Priority: -1
-
-{% endif %}
 horizon-allowed:
   file.replace:
     - name: /etc/openstack-dashboard/local_settings.py
@@ -68,9 +52,6 @@ horizon-restart:
       - file: horizon-hosts
       - file: horizon-allowed
       - pkg: horizon-pkgs
-      {% if not kilo %}
-      - file: openstack-dash
-      {% endif %}
     - name: |
         service apache2 restart
         service memcached restart
