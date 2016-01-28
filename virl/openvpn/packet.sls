@@ -1,4 +1,7 @@
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
+{% set openvpn_enable = salt['pillar.get']('virl:openvpn_enable', salt['grains.get']('openvpn_enable', False)) %}
+
+{% if openvpn_enable %}
 
 vpn maximize:
   cmd.run:
@@ -67,3 +70,4 @@ ufw force enable:
       - ufw --force enable
       - ufw status verbose
 
+{% endif %}
