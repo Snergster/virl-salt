@@ -2,7 +2,6 @@
 
 include:
   - virl.std.config.std_restart
-  - virl.std.config.uwm_restart
 
 set_config:
   cmd.run:
