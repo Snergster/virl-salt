@@ -13,25 +13,13 @@
     - mode: 0755
 
 /usr/bin/telnet_front:
-  {% if not masterless %}
   file.managed:
     - source: salt://virl/files/telnet_front
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/telnet_front
-    - force: true
-  {% endif %}
     - mode: 755
 
 /etc/apparmor.d/local/telnet_front:
-  {% if not masterless %}
   file.managed:
     - source: salt://virl/files/telnet_front.aa
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/telnet_front.aa
-    - force: true
-  {% endif %}
     - mode: 644
   cmd.wait:
     - name: service apparmor reload
@@ -53,25 +41,13 @@
 
 
 /etc/modprobe.d/kvm-intel.conf:
-  {% if not masterless %}
   file.managed:
     - source: salt://virl/files/kvm-intel.conf
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/kvm-intel.conf
-    - force: true
-  {% endif %}
     - mode: 755
 
 /home/virl/.virl.jpg:
-  {% if not masterless %}
   file.managed:
     - source: salt://virl/files/virl.jpg
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/virl.jpg
-    - force: true
-  {% endif %}
     - user: virl
     - group: virl
 
@@ -85,12 +61,6 @@
 {% endif %}
 
 /etc/init/failsafe.conf:
-  {% if not masterless %}
   file.managed:
     - source: salt://virl/files/failsafe.conf
-  {% else %}
-  file.copy:
-    - source: /srv/salt/virl/files/failsafe.conf
-    - force: true
-  {% endif %}
     - mode: 644
