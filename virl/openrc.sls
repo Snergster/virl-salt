@@ -21,11 +21,7 @@ include:
 /home/virl/.bashrc:
   file.managed:
     - order: 1
-    {% if kilo %}
     - source: salt://virl/files/kilo.bashrc
-    {% else %}
-    - source: salt://virl/files/bashrc
-    {% endif %}
     - user: virl
     - group: virl
     - mode: 755
