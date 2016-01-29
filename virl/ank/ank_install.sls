@@ -27,13 +27,8 @@ ank prereq pkgs:
     - source: "salt://fixed/ank"
     - name: /var/cache/virl/fixed/ank
     {% else %}
-      {% if cml %}
-    - name: /var/cache/virl/ank
-    - source: "salt://cml/ank/{{ venv }}/"
-      {% else %}
     - name: /var/cache/virl/ank
     - source: "salt://ank/{{ venv }}/"
-      {% endif %}
     {% endif %}
     - user: virl
     - group: virl
