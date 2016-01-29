@@ -1,4 +1,4 @@
-{% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
+{% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', True )) %}
 
 {% if dummy_int %}
 
