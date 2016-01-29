@@ -6,7 +6,7 @@ download terraform:
     - unless: terraform --version  | grep 'v0.6.10'
 install terraform:
   cmd.run:
-    - name: unzip /home/virl/terraform_0.6.10_linux_amd64.zip -d /usr/local/bin
+    - name: unzip -o /home/virl/terraform_0.6.10_linux_amd64.zip -d /usr/local/bin
     - unless: terraform --version  | grep 'v0.6.10'
     - require:
       - file: download terraform
