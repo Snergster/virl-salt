@@ -22,15 +22,9 @@ oslo glance prereq:
     - require:
       - pkg: glance-pkgs
     - names:
-    {% if not kilo %}
-      - oslo.messaging == 1.6.0
-      - oslo.config == 1.6.0
-      - pbr == 0.10.8
-    {% else %}
       - oslo.i18n == 1.6.0
-    {% endif %}
 
-{% if kilo %}
+
 glance-api user token:
   file.replace:
     - name: /etc/glance/glance-api.conf
@@ -81,7 +75,6 @@ glance-api auth url:
       - pkg: glance-pkgs
 
 
-{% endif %}
 
 glance-api:
   file.replace:
@@ -229,7 +222,6 @@ glance-reg-flavor:
     - require:
       - pkg: glance-pkgs
 
-{% if kilo %}
 
 glance-api-user-token:
   openstack_config.present:
@@ -241,7 +233,6 @@ glance-api-user-token:
     - require:
       - pkg: glance-pkgs
 
-{% endif %}
 
 glance db-sync:
   cmd.run:
