@@ -5,24 +5,24 @@
 {% set int_port = salt['pillar.get']('virl:internalnet_port', salt['grains.get']('internalnet_port', 'eth4' )) %}
 {% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
 
-{% macro loop(cmd) %}
+{% macro loop_ifdown() %}
     {% for eth in [ l2_port, l2_port2, l3_port, int_port ] %}
-        ifquery --state {{ eth }} && {{ cmd }} {{ eth }}
+        ifquery --state {{ eth }} && ifdown {{ eth }}
     {% endfor %}
 {% endmacro %}
 
-{% macro loopup(cmd) %}
+{% macro loop_ifup() %}
     {% for eth in [ l2_port, l2_port2, l3_port, int_port ] %}
-        {{ cmd }} {{ eth }}
+        ifquery --state {{ eth }} || ifup {{ eth }}
     {% endfor %}
 {% endmacro %}
 
 
 if [ -z $version ] || [ $version == `uname -r` ]; then
     depmod
-    {{ loop('ifdown') }}
+    {{ loop_ifdown() }}
     rmmod bridge
-    {{ loopup('ifup') }}
+    {{ loop_ifup() }}
     modprobe bridge
     service neutron-plugin-linuxbridge-agent restart
 {% if controller %}
