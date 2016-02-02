@@ -1,5 +1,3 @@
-{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-
 kilo_base:
   cmd.run:
     - name: 'apt-add-repository cloud-archive:kilo -y'
