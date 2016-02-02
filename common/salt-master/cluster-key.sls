@@ -22,7 +22,9 @@ create key for virl:
 point std at key:
   cmd.run:
     - name: crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
-    - onlyif: test -e ~virl/.ssh/id_rsa.pub
+    - onlyif: 
+      - test -e ~virl/.ssh/id_rsa.pub
+      - test -e /etc/virl/common.cfg
 
 virl_ssh_key to grains:
   cmd.run:
