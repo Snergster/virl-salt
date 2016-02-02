@@ -77,6 +77,10 @@ adding source to interfaces:
               netmask {{l3_mask}}
               post-up ip link set {{l3_port}} promisc on
 
+remove dummy crud:
+  file.absent:
+    - name: /etc/network/interfaces.d/dummy.cfg
+
 {% if not cluster %}
 
 /etc/network/interfaces.d/internal.cfg:
@@ -94,7 +98,7 @@ remove cluster crud:
     - name: /etc/network/interfaces.d/brl2tp.cfg
 
 {% else %}
-remove cluster crud:
+remove non cluster crud:
   file.absent:
     - name: /etc/network/interfaces.d/internal.cfg
 
@@ -185,9 +189,9 @@ bond00 new:
     - contents:  |
           auto bond0:0
           iface bond0:0 inet manual
-          up ip addr add 10.100.3.9/31 broadcast 255.255.255.255 dev bond0
+          up ip addr add {{ip}}/31 broadcast 255.255.255.255 dev bond0
           post-up route add -net 10.0.0.0/8 gw 10.100.3.8
-          post-up ip addr del 10.100.3.9/24 dev bond0
+          post-up ip addr del {{ip}}/31 dev bond0
           post-down route del -net 10.0.0.0/8 gw 10.100.3.8
 
 
