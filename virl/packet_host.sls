@@ -121,9 +121,9 @@ tunnel controller side to compute1:
              address 172.16.9.1
              netmask 255.255.255.240
              bridge_ports tun1
-             pre-up ip l2tp add tunnel remote {{compute1}} local {{ip}} tunnel_id 1000 peer_tunnel_id 1000 encap udp udp_sport 4201 udp_dport 4201
-             pre-up ip l2tp add session name tun1 tunnel_id 1000 session_id 1000 peer_session_id 1000
-             post-up ip link set dev tun1 master brl2tp up
+             pre-up ip l2tp add tunnel remote {{compute1}} local {{ip}} tunnel_id 1000 peer_tunnel_id 1000 encap udp udp_sport 4201 udp_dport 4201 || true
+             pre-up ip l2tp add session name tun1 tunnel_id 1000 session_id 1000 peer_session_id 1000 || true
+             post-up ip link set dev tun1 master brl2tp up || true
              pre-down ip l2tp del session tunnel_id 1000 session_id 1000
              pre-down ip l2tp del tunnel tunnel_id 1000
 
@@ -138,9 +138,9 @@ tunnel compute1 side:
              address 172.16.9.2
              netmask 255.255.255.240
              bridge_ports tun1
-             pre-up ip l2tp add tunnel remote {{controllerip}} local {{int_ip}} tunnel_id 1000 peer_tunnel_id 1000 encap udp udp_sport 4201 udp_dport 4201
-             pre-up ip l2tp add session name tun1 tunnel_id 1000 session_id 1000 peer_session_id 1000
-             post-up ip link set dev tun1 master brl2tp up
+             pre-up ip l2tp add tunnel remote {{controllerip}} local {{int_ip}} tunnel_id 1000 peer_tunnel_id 1000 encap udp udp_sport 4201 udp_dport 4201 || true
+             pre-up ip l2tp add session name tun1 tunnel_id 1000 session_id 1000 peer_session_id 1000 || true
+             post-up ip link set dev tun1 master brl2tp up || true
              pre-down ip l2tp del session tunnel_id 1000 session_id 1000
              pre-down ip l2tp del tunnel tunnel_id 1000
 
