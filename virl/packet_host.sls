@@ -42,30 +42,42 @@ adding source to interfaces:
   cmd.run:
     - name: 'chattr -i /etc/network/interfaces'
 
-/etc/network/interfaces.d/dummy.cfg:
+/etc/network/interfaces.d/loop.cfg:
   file.managed:
     - contents:  |
           auto lo:1
           iface lo:1 inet loopback
               address 127.0.1.1
               netmask 255.0.0.0
+
+/etc/network/interfaces.d/flat.cfg:
+  file.managed:
+    - contents:  |
           auto {{l2_port}}
           iface {{l2_port}} inet static
               address {{l2_address}}
               netmask {{l2_mask}}
               post-up ip link set {{l2_port}} promisc on
+
+/etc/network/interfaces.d/flat1.cfg:
+  file.managed:
+    - contents:  |
           auto {{l2_port2}}
           iface {{l2_port2}} inet static
               address {{l2_address2}}
               netmask {{l2_mask2}}
               post-up ip link set {{l2_port2}} promisc on
+
+/etc/network/interfaces.d/snat.cfg:
+  file.managed:
+    - contents:  |
           auto {{l3_port}}
           iface {{l3_port}} inet static
               address {{l3_address}}
               netmask {{l3_mask}}
               post-up ip link set {{l3_port}} promisc on
 
-{% if not cluster or not controller %}
+{% if not cluster %}
 
 /etc/network/interfaces.d/internal.cfg:
   file.managed:
@@ -77,7 +89,16 @@ adding source to interfaces:
               mtu 1500
               post-up ip link set {{int_port}} promisc on
 
+remove cluster crud:
+  file.absent:
+    - name: /etc/network/interfaces.d/brl2tp.cfg
+
 {% else %}
+remove cluster crud:
+  file.absent:
+    - name: /etc/network/interfaces.d/internal.cfg
+
+
   {% if controller %}
 
 controller int in virl.ini:
@@ -89,7 +110,7 @@ controller int in virl.ini:
 
 tunnel controller side to compute1:
   file.managed:
-    - name: /etc/network/interfaces.d/l2tp.cfg
+    - name: /etc/network/interfaces.d/brl2tp.cfg
     - contents:  |
           auto brl2tp
           iface brl2tp inet static
@@ -106,7 +127,7 @@ tunnel controller side to compute1:
 
 tunnel compute1 side:
   file.managed:
-    - name: /etc/network/interfaces.d/l2tp.cfg
+    - name: /etc/network/interfaces.d/brl2tp.cfg
     - contents:  |
           auto brl2tp
           iface brl2tp inet static
