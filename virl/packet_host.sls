@@ -41,15 +41,19 @@
 {% set localhost = salt['grains.get']('localhost', 'badlocalhost' ) %}
 {% if localhost == 'compute1' %}
   {% set tunnelid = '1001' %}
+  {% set udpport = '4201' %}
 {% endif %}
 {% if localhost == 'compute2' %}
   {% set tunnelid = '1002' %}
+  {% set udpport = '4202' %}
 {% endif %}
 {% if localhost == 'compute3' %}
   {% set tunnelid = '1003' %}
+  {% set udpport = '4203' %}
 {% endif %}
 {% if localhost == 'compute4' %}
   {% set tunnelid = '1004' %}
+  {% set udpport = '4204' %}
 {% endif %}
 
 include:
@@ -176,7 +180,7 @@ tunnel compute side:
              address {{ salt['pillar.get']('virl:neutron_local_ip', '172.16.9.5')}}
              netmask 255.255.255.240
              bridge_ports tun1
-             pre-up ip l2tp add tunnel remote {{controllerip}} local {{int_ip}} tunnel_id {{ tunnelid }} peer_tunnel_id {{ tunnelid }} encap udp udp_sport 4201 udp_dport 4201 || true
+             pre-up ip l2tp add tunnel remote {{controllerip}} local {{int_ip}} tunnel_id {{ tunnelid }} peer_tunnel_id {{ tunnelid }} encap udp udp_sport {{udpport}} udp_dport {{udpport}} || true
              pre-up ip l2tp add session name tun1 tunnel_id {{ tunnelid }} session_id {{ tunnelid }} peer_session_id {{ tunnelid }} || true
              post-up ip link set dev tun1 master brl2tp up || true
              pre-down ip l2tp del session tunnel_id {{ tunnelid }} session_id {{ tunnelid }}
@@ -229,7 +233,7 @@ bond00 new:
           iface bond0:0 inet manual
           up ip addr add {{ip}}/31 broadcast 255.255.255.255 dev bond0
           post-up route add -net 10.0.0.0/8 gw {{ int_gateway }}
-          post-up ip addr del {{ip}}/31 dev bond0
+          #post-up ip addr del {{ip}}/31 dev bond0
           post-down route del -net 10.0.0.0/8 gw {{ int_gateway }}
 
 
