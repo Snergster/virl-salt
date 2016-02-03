@@ -38,22 +38,21 @@
 {% set compute2_active = salt['pillar.get']('virl:compute2_active', salt['grains.get']('compute2_active', False )) %}
 {% set compute3_active = salt['pillar.get']('virl:compute3_active', salt['grains.get']('compute3_active', False )) %}
 {% set compute4_active = salt['pillar.get']('virl:compute4_active', salt['grains.get']('compute4_active', False )) %}
-{% set localhost = salt['grains.get']('localhost', 'badlocalhost' ) %}
-{% if localhost startswith 'compute1' %}
+{% if salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute1') %}
   {% set tunnelid = '1001' %}
   {% set udpport = '4201' %}
-{% endif %}
-{% if localhost startswith 'compute2' %}
+{% elif salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute1') %}
   {% set tunnelid = '1002' %}
   {% set udpport = '4202' %}
-{% endif %}
-{% if localhost == 'compute3' %}
+{% elif salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute1') %}
   {% set tunnelid = '1003' %}
   {% set udpport = '4203' %}
-{% endif %}
-{% if localhost == 'compute4' %}
+{% elif salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute4') %}
   {% set tunnelid = '1004' %}
   {% set udpport = '4204' %}
+{% else %}
+  {% set tunnelid = '1010' %}
+  {% set udpport = '4210' %}
 {% endif %}
 
 include:
