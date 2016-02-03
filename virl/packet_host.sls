@@ -39,11 +39,11 @@
 {% set compute3_active = salt['pillar.get']('virl:compute3_active', salt['grains.get']('compute3_active', False )) %}
 {% set compute4_active = salt['pillar.get']('virl:compute4_active', salt['grains.get']('compute4_active', False )) %}
 {% set localhost = salt['grains.get']('localhost', 'badlocalhost' ) %}
-{% if localhost == 'compute1' %}
+{% if localhost startswith 'compute1' %}
   {% set tunnelid = '1001' %}
   {% set udpport = '4201' %}
 {% endif %}
-{% if localhost == 'compute2' %}
+{% if localhost startswith 'compute2' %}
   {% set tunnelid = '1002' %}
   {% set udpport = '4202' %}
 {% endif %}
