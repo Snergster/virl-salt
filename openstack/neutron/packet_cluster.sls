@@ -7,7 +7,7 @@ packet tunnel specific localip:
     - filename: /etc/neutron/neutron.conf
     - section: 'vxlan'
     - parameter: 'local_ip'
-    - value: '{{ salt['pillar.get']('virl:neutron_local_ip', salt['grains.get']('neutron_local_ip', '172.16.9.5')) }}'
+    - value: '{{ salt['pillar.get']('virl:neutron_local_ip', salt['grains.get']('neutron_local_ip', '172.16.9.10')) }}'
 
 {% else %}
 
