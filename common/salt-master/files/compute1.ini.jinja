@@ -2,6 +2,7 @@ virl:
   kilo: true
   this_node_is_the_controller: False
   virl_cluster: True
+  neutron_local_ip: 172.16.9.1
   keystone_service_token: {{salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')}}
   password: {{salt['grains.get']('password', 'password')}}
   mysql_password: {{salt['grains.get']('mysql_password', 'password')}}

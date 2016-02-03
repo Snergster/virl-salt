@@ -118,7 +118,7 @@ tunnel controller side to compute1:
     - contents:  |
           auto brl2tp
           iface brl2tp inet static
-             address 172.16.9.1
+             address 172.16.9.10
              netmask 255.255.255.240
              bridge_ports tun1
              pre-up ip l2tp add tunnel remote {{compute1}} local {{ip}} tunnel_id 1000 peer_tunnel_id 1000 encap udp udp_sport 4201 udp_dport 4201 || true
@@ -129,13 +129,13 @@ tunnel controller side to compute1:
 
   {% else %}
 
-tunnel compute1 side:
+tunnel compute side:
   file.managed:
     - name: /etc/network/interfaces.d/brl2tp.cfg
     - contents:  |
           auto brl2tp
           iface brl2tp inet static
-             address 172.16.9.2
+             address {{ salt['pillar.get']('virl:neutron_local_ip', '172.16.9.5')}}
              netmask 255.255.255.240
              bridge_ports tun1
              pre-up ip l2tp add tunnel remote {{controllerip}} local {{int_ip}} tunnel_id 1000 peer_tunnel_id 1000 encap udp udp_sport 4201 udp_dport 4201 || true
