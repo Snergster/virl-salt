@@ -48,50 +48,66 @@ working variable file:
     - source: /home/virl/virl_packet/variables.tf.orig
     - force: true
 
+working password file:
+  file.copy:
+    - user: virl
+    - group: virl
+    - name: /home/virl/virl_packet/passwords.tf
+    - source: /home/virl/virl_packet/passwords.tf.orig
+    - force: true
+
+working api file:
+  file.copy:
+    - user: virl
+    - group: virl
+    - name: /home/virl/virl_packet/api.tf
+    - source: /home/virl/virl_packet/api.tf.orig
+    - force: false
+
 guest pass replace:
   file.replace:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: /home/virl/virl_packet/passwords.tf
     - pattern: 321guest123
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
       - pkg: install pwgen
-
+      - file: working password file
 
 uwmadmin pass replace:
   file.replace:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: /home/virl/virl_packet/passwords.tf
     - pattern: '321uwmp123'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
       - pkg: install pwgen
-
+      - file: working password file
 
 os pass replace:
   file.replace:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: /home/virl/virl_packet/passwords.tf
     - pattern: '123pass321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
       - pkg: install pwgen
-
+      - file: working password file
 
 mysql pass replace:
   file.replace:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: /home/virl/virl_packet/passwords.tf
     - pattern: '123mysq321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
       - pkg: install pwgen
-
+      - file: working password file
 
 os token replace:
   file.replace:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: /home/virl/virl_packet/passwords.tf
     - pattern: '123token321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
       - pkg: install pwgen
-
+      - file: working password file
 
 hostname replace:
   file.replace:
@@ -135,6 +151,20 @@ variables tf ownership fix:
 variables tf backup ownership fix:
   file.managed:
     - name: /home/virl/virl_packet/variables.tf.bak
+    - create: false
+    - user: virl
+    - group: virl
+
+passwords tf ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/passwords.tf
+    - create: false
+    - user: virl
+    - group: virl
+
+passwords tf backup ownership fix:
+  file.managed:
+    - name: /home/virl/virl_packet/passwords.tf.bak
     - create: false
     - user: virl
     - group: virl
