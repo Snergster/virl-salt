@@ -57,6 +57,7 @@
 
 include:
   - virl.hostname
+  - virl.hostname.packet
 
 adding source to interfaces:
   cmd.run:
