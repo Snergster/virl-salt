@@ -20,6 +20,13 @@ qemu-system-common unhold:
     - m_name: qemu-system-common
     - onlyif: ls /usr/bin/qemu-system-x86_64
 
+libvirt install:
+  pkg.installed:
+    - name: libvirt-bin
+    - aggregate: False
+    - skip_verify: True
+    - refresh: True
+
 qemu install:
   cmd.run:
     - names: 
@@ -38,13 +45,6 @@ qemu install:
     - mode: 0755
     - require:
       - file: /usr/bin/kvm
-
-libvirt install:
-  pkg.installed:
-    - name: libvirt-bin
-    - aggregate: False
-    - skip_verify: True
-    - refresh: False
 
 uncomment min vnc port:
   file.uncomment:
