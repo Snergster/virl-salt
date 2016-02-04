@@ -41,10 +41,10 @@
 {% if salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute1') %}
   {% set tunnelid = '1001' %}
   {% set udpport = '4201' %}
-{% elif salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute1') %}
+{% elif salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute2') %}
   {% set tunnelid = '1002' %}
   {% set udpport = '4202' %}
-{% elif salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute1') %}
+{% elif salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute3') %}
   {% set tunnelid = '1003' %}
   {% set udpport = '4203' %}
 {% elif salt['grains.get']('localhost', 'badlocalhost' ).startswith('compute4') %}
