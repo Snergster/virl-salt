@@ -2,6 +2,7 @@ virl:
   kilo: true
   this_node_is_the_controller: False
   virl_cluster: True
+  neutron_local_ip: 172.16.9.4
   keystone_service_token: {{salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')}}
   password: {{salt['grains.get']('password', 'password')}}
   mysql_password: {{salt['grains.get']('mysql_password', 'password')}}
@@ -26,7 +27,7 @@ virl:
   internalnet_port: {{salt['grains.get']('compute4_internalnet_port', 'eth4')}}
   internalnet_ip: {{salt['grains.get']('compute4_internalnet_ip', '172.16.10.251')}}
   internalnet_netmask: {{salt['grains.get']('internalnet_netmask', '255.255.255.0')}}
-  internalnet_gateway: {{salt['grains.get']('internalnet_gateway', '172.16.10.250')}}
+  internalnet_gateway: {{salt['grains.get']('compute4_internalnet_gateway', '172.16.10.250')}}
   controller_ip: {{salt['grains.get']('internalnet_controller_ip', '172.16.10.250')}}
   internalnet_controller_ip: {{salt['grains.get']('internalnet_controller_ip', '172.16.10.250')}}
   virl_ssh_key: {{salt['grains.get']('virl_ssh_key', '')}}
