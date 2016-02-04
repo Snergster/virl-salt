@@ -23,8 +23,8 @@ qemu-system-common unhold:
 qemu install:
   cmd.run:
     - names: 
-      - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-system-x86=2.0.0+dfsg-2ubuntu1.21'
-      - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-kvm=2.0.0+dfsg-2ubuntu1.21'
+      - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-system-x86=2.0.0+dfsg-2ubuntu1.22'
+      - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-kvm=2.0.0+dfsg-2ubuntu1.22'
 
 /usr/bin/kvm:
   file.managed:
