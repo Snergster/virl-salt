@@ -60,8 +60,8 @@ working api file:
   file.copy:
     - user: virl
     - group: virl
-    - name: /home/virl/virl_packet/api.tf
-    - source: /home/virl/virl_packet/api.tf.orig
+    - name: /home/virl/virl_packet/settings.tf
+    - source: /home/virl/virl_packet/settings.tf.orig
     - force: false
 
 guest pass replace:
