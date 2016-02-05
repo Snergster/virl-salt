@@ -188,12 +188,6 @@ tunnel compute side:
 
   {% endif %}
 
-int in virl.ini:
-  openstack_config.present:
-    - filename: /etc/virl.ini
-    - section: 'DEFAULT'
-    - parameter: 'internalnet_IP'
-    - value: {{ip}}
 
 {% endif %}
 
