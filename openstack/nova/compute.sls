@@ -22,7 +22,7 @@ compute-pkgs:
 
 /etc/nova permissions check:
   file.directory:
-    - dir_mode: 755
+    - dir_mode: 0755
 
 /etc/nova/nova.conf:
   file.managed:
