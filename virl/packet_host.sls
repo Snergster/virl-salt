@@ -227,7 +227,6 @@ bond00 new:
           iface bond0:0 inet manual
           up ip addr add {{ip}}/31 broadcast 255.255.255.255 dev bond0
           post-up route add -net 10.0.0.0/8 gw {{ int_gateway }}
-          #post-up ip addr del {{ip}}/31 dev bond0
           post-down route del -net 10.0.0.0/8 gw {{ int_gateway }}
 
 
