@@ -18,7 +18,7 @@ vpn maximize:
 
 ufw accepted ports:
   cmd.run:
-    - unless: "/usr/sbin/ufw status | grep 4506/tcp"
+    - unless: "/usr/sbin/ufw status | grep 1194/tcp"
     - names:
       - ufw allow in on bond0 to any port 22 proto tcp
       - ufw allow in on bond0 to any port 443 proto tcp      
