@@ -21,7 +21,9 @@ ufw accepted ports:
     - unless: "/usr/sbin/ufw status | grep 1194/tcp"
     - names:
       - ufw allow in on bond0 to any port 22 proto tcp
-      - ufw allow in on bond0 to any port 443 proto tcp      
+      - ufw allow in on bond0 to any port 443 proto tcp
+      - ufw allow in on bond0 to any port 4505 proto tcp
+      - ufw allow in on bond0 to any port 4506 proto tcp      
       - ufw allow in on bond0 to any port 1194 proto tcp
       - ufw allow from 10.0.0.0/8
 
