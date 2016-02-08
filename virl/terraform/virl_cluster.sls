@@ -70,8 +70,8 @@ cluster guest pass replace:
     - pattern: 321guest123
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
-      - pkg: install pwgen
-      - file: working password file
+      - pkg: cluster install pwgen
+      - file: cluster working password file
 
 cluster uwmadmin pass replace:
   file.replace:
@@ -79,8 +79,8 @@ cluster uwmadmin pass replace:
     - pattern: '321uwmp123'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
-      - pkg: install pwgen
-      - file: working password file
+      - pkg: cluster install pwgen
+      - file: cluster working password file
 
 cluster os pass replace:
   file.replace:
@@ -88,8 +88,8 @@ cluster os pass replace:
     - pattern: '123pass321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
-      - pkg: install pwgen
-      - file: working password file
+      - pkg: cluster install pwgen
+      - file: cluster working password file
 
 cluster mysql pass replace:
   file.replace:
@@ -97,8 +97,8 @@ cluster mysql pass replace:
     - pattern: '123mysq321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
-      - pkg: install pwgen
-      - file: working password file
+      - pkg: cluster install pwgen
+      - file: cluster working password file
 
 cluster os token replace:
   file.replace:
@@ -106,8 +106,8 @@ cluster os token replace:
     - pattern: '123token321'
     - repl: '{{ salt['cmd.run']('/usr/bin/pwgen -c -n 10 1')}}'
     - require:
-      - pkg: install pwgen
-      - file: working password file
+      - pkg: cluster install pwgen
+      - file: cluster working password file
 
 cluster hostname replace:
   file.replace:
