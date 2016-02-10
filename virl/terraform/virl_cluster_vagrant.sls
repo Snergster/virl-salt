@@ -129,14 +129,14 @@ cluster domain replace:
 
 cluster virl tf ownership fix:
   file.managed:
-    - name: /home/vagrant/virl_cluster/virl.tf
+    - name: /home/vagrant/virl_cluster/virl2node.tf
     - create: false
     - user: vagrant
     - group: vagrant
 
 cluster virl tf backup ownership fix:
   file.managed:
-    - name: /home/vagrant/virl_cluster/virl.tf.bak
+    - name: /home/vagrant/virl_cluster/virl2node.tf.bak
     - create: false
     - user: vagrant
     - group: vagrant

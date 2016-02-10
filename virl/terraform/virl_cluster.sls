@@ -129,14 +129,14 @@ cluster domain replace:
 
 cluster virl tf ownership fix:
   file.managed:
-    - name: /home/virl/virl_cluster/virl.tf
+    - name: /home/virl/virl_cluster/virl2node.tf
     - create: false
     - user: virl
     - group: virl
 
 cluster virl tf backup ownership fix:
   file.managed:
-    - name: /home/virl/virl_cluster/virl.tf.bak
+    - name: /home/virl/virl_cluster/virl2node.tf.bak
     - create: false
     - user: virl
     - group: virl
