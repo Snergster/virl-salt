@@ -414,6 +414,14 @@ neutron lxc bridge off in default:
     - repl: 'USE_LXC_BRIDGE="false"'
 
 
+fixed ips allowed for all:
+  file.replace:
+    - name: /etc/neutron/policy.json
+    - pattern: '^    "create_port:fixed_ips": "rule:admin_or_network_owner or rule:context_is_advsvc",' 
+    - repl: '    "create_port:fixed_ips": "rule:admin_or_network_owner or rule:context_is_advsvc or rule:shared or rule:external",'
+    - require:
+      - pkg: neutron-pkgs
+
 neutron restart:
   cmd.run:
     - order: last
