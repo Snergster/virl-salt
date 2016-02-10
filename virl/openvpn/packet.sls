@@ -1,18 +1,19 @@
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set openvpn_enable = salt['pillar.get']('virl:openvpn_enable', salt['grains.get']('openvpn_enable', False)) %}
+{% set l2_gateway = salt['pillar.get']('virl:l2_network_gateway', salt['grains.get']('l2_network_gateway', '172.16.1.254' )) %}
 
 {% if openvpn_enable %}
 
 vpn maximize:
   cmd.run:
     - names:
-      - crudini --set /etc/virl.ini DEFAULT l2_network_gateway 172.16.1.254
+      - crudini --set /etc/virl.ini DEFAULT l2_network_gateway {{ l2_gateway }}
       - crudini --set /etc/virl.ini DEFAULT l2_network_gateway2 172.16.2.254
       - crudini --set /etc/virl.ini DEFAULT l3_network_gateway 172.16.3.254
-      - crudini --set /etc/virl/virl.cfg env virl_local_ip 172.16.1.254
-      - crudini --set /etc/nova/nova.conf serial_console proxyclient_address 172.16.1.254
-      - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address 172.16.1.254
-      - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat --gateway_ip 172.16.1.254
+      - crudini --set /etc/virl/virl.cfg env virl_local_ip {{ l2_gateway }}
+      - crudini --set /etc/nova/nova.conf serial_console proxyclient_address {{ l2_gateway }}
+      - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address {{ l2_gateway }}
+      - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat --gateway_ip {{ l2_gateway }}
       - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat1 --gateway_ip 172.16.2.254
       - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update ext-net --gateway_ip 172.16.3.254
 
@@ -45,7 +46,7 @@ ufw accept all:
 adding local route to openvpn:
   file.append:
     - name: /etc/openvpn/server.conf
-    - text: push "route 172.16.0.0 255.255.252.0 172.16.1.254"
+    - text: push "route 172.16.0.0 255.255.224.0 {{ l2_gateway }}"
 
 adding nat to ufw:
   file.prepend:
@@ -54,7 +55,7 @@ adding nat to ufw:
         *nat
         :POSTROUTING ACCEPT [0:0]
         # translate outbound traffic from internal networks
-        -A POSTROUTING -s 172.16.0.0/22 -o bond0 -j MASQUERADE
+        -A POSTROUTING -s 172.16.0.0/19 -o bond0 -j MASQUERADE
         # don't delete the 'COMMIT' line or these nat table rules won't
         # be processed
         COMMIT
