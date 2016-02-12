@@ -36,6 +36,7 @@ mypkgs:
       - python-dulwich
       - virt-what
       - virtinst
+      - pwgen
 
 qemu common virl hold:
   apt.held:
