@@ -8,6 +8,7 @@ include:
 virl_packet repo:
   git.latest:
     - user: vagrant
+    - depth: 1
     - name: https://github.com/Snergster/virl_packet.git
     - target: /home/vagrant/virl_packet
 
