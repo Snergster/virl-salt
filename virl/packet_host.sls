@@ -156,14 +156,14 @@ tunnel controller side to compute:
             {% endif %}
             {% if compute3_active %}
              pre-up ip l2tp add tunnel remote {{compute3}} local {{ip}} tunnel_id 1003 peer_tunnel_id 1003 encap udp udp_sport 4203 udp_dport 4203 || true
-             pre-up ip l2tp add session name tun1 tunnel_id 1003 session_id 1003 peer_session_id 1003 || true
+             pre-up ip l2tp add session name tun3 tunnel_id 1003 session_id 1003 peer_session_id 1003 || true
              post-up ip link set dev tun3 master brl2tp up || true
              pre-down ip l2tp del session tunnel_id 1003 session_id 1003
              pre-down ip l2tp del tunnel tunnel_id 1003
             {% endif %}
             {% if compute4_active %}
              pre-up ip l2tp add tunnel remote {{compute4}} local {{ip}} tunnel_id 1004 peer_tunnel_id 1004 encap udp udp_sport 4204 udp_dport 4204 || true
-             pre-up ip l2tp add session name tun1 tunnel_id 1004 session_id 1004 peer_session_id 1004 || true
+             pre-up ip l2tp add session name tun4 tunnel_id 1004 session_id 1004 peer_session_id 1004 || true
              post-up ip link set dev tun4 master brl2tp up || true
              pre-down ip l2tp del session tunnel_id 1004 session_id 1004
              pre-down ip l2tp del tunnel tunnel_id 1004
