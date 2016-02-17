@@ -7,3 +7,8 @@ include:
   - openstack.setup
   - openstack.restart
   - openstack.compute-key
+
+salt minion running:
+  service.running:
+    - name: salt-minion
+    - enable: true
