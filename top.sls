@@ -37,4 +37,9 @@ base:
     - common.virl
     - virl.vinstall
 
+  '.*virl.qa$':
+    - match: pcre
+    - common.virl
+    - virl.vinstall
+
 
