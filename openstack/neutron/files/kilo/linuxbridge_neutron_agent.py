@@ -72,6 +72,8 @@ BRIDGE_FWD_MASK = hex(0xffff ^ (1 << 0x0 | 1 << 0x1 | 1 << 0x2 | 1 << 0xe))
 BRIDGE_FWD_MASK_ALL = hex(0xffff)
 # Check that instance exists before trying to execute virsh on it
 NOVA_INSTANCE_DIR = '/var/lib/nova/instances/%s'
+# Check that lxc exists before trying to execute virsh on it
+LXC_INSTANCE_DIR = '/var/lib/lxc/%s'
 
 
 class NetworkSegment(object):
@@ -525,24 +527,33 @@ class LinuxBridgeManager(object):
             int_vxlan.link.delete()
             LOG.debug("Done deleting vxlan interface %s", interface)
 
-    def update_device_link(self, port_id, dom_id, hw_addr, owner, state):
+    def update_device_link(self, port_id, dom_id, hw_addr, owner, state, device):
         """Set link state of interface based on admin state in libvirt/kvm"""
-        if not owner or not owner.startswith('compute:'):
-            return None
         if not hw_addr or not dom_id:
             return False
-        if not os.path.isdir(NOVA_INSTANCE_DIR % dom_id):
+        # For compatibility, treat all without owner starting with virl- as lxcs
+        is_lxc = owner == 'virl:lxc' or not owner and dom_id.startswith('virl-')
+        if not (is_lxc or (owner and owner.startswith('compute:'))):
+            return None
+
+        state = 'up' if state else 'down'
+        if is_lxc:
+            instance_dir = LXC_INSTANCE_DIR
+            cmd = ['ip', 'link', 'set', 'dev', device, state]
+        else:
+            instance_dir = NOVA_INSTANCE_DIR
+            cmd = ['virsh', 'domif-setlink', '--domain', dom_id,
+                   '--interface', hw_addr, '--state', state]
+
+        if not os.path.isdir(instance_dir % dom_id):
             LOG.warning('Cannot update device %s link %s on missing domain %s',
                         port_id, hw_addr, dom_id)
             return None
 
-        state = 'up' if state else 'down'
         LOG.debug('Bringing port %s with %s of domain %s %s',
                   port_id, hw_addr, dom_id, state)
         try:
-            utils.execute(['virsh', 'domif-setlink', '--domain', dom_id,
-                           '--interface', hw_addr, '--state', state],
-                          run_as_root=True)
+            utils.execute(cmd, run_as_root=True)
             return True
         except RuntimeError:
             LOG.exception('Failed to update port %s of domain %s mac %s to %s',
@@ -970,7 +981,8 @@ class LinuxBridgeNeutronAgentRPC(object):
                                      dom_id=device_details.get('device_id'),
                                      hw_addr=device_details.get('mac_address'),
                                      owner=device_details.get('device_owner'),
-                                     state=device_details['admin_state_up'])
+                                     state=device_details['admin_state_up'],
+                                     device=device)
 
                 if device_details['admin_state_up']:
                     # create the networking for the port
