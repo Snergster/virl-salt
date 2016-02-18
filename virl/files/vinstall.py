@@ -377,8 +377,9 @@ gitfs_remotes:
 fileserver_backend:
   - roots\n""")
         extra.write("""log_level: quiet \n""")
-        extra.write("""id: '{salt_id2}'\n""".format(salt_id=salt_id))
-        extra.write("""append_domain: {salt_domain2}\n""".format(salt_domain=salt_domain))
+        extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id2))
+        extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain2))
+    subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt2/minion.d'])
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra2'), '/etc/salt2/minion.d/extra.conf'])
 
 def building_salt_all():
