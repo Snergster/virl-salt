@@ -379,8 +379,11 @@ fileserver_backend:
         extra.write("""log_level: quiet \n""")
         extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id2))
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain2))
+        extra.write("""pki_dir /etc/salt2/pki \n""")
+    subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt2/pki/minion'])
     subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt2/minion.d'])
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra2'), '/etc/salt2/minion.d/extra.conf'])
+    subprocess.call(['sudo', 'cp', '-f', '/etc/salt/pki/minion/master_sign.pub', '/etc/salt2/pki/minion/master_sign.pub'])
 
 def building_salt_all():
     if not path.exists('/etc/salt/virl'):
