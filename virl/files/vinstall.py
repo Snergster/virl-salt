@@ -174,6 +174,9 @@ salt = safeparser.getboolean('DEFAULT', 'salt', fallback=True)
 salt_master = safeparser.get('DEFAULT', 'salt_master', fallback='')
 salt_id = safeparser.get('DEFAULT', 'salt_id', fallback='virl')
 salt_domain = safeparser.get('DEFAULT', 'salt_domain', fallback='virl.info')
+multi_salt_key = safeparser.getboolean('DEFAULT', 'multi_salt_key', fallback=False)
+salt_id2 = safeparser.get('DEFAULT', 'salt_id2', fallback='virl')
+salt_domain2 = safeparser.get('DEFAULT', 'salt_domain2', fallback='virl.info')
 salt_env = safeparser.get('DEFAULT', 'salt_env', fallback='none')
 virl_type = safeparser.get('DEFAULT', 'Is_this_a_stable_or_testing_server', fallback='stable')
 cisco_internal = safeparser.getboolean('DEFAULT', 'inside_cisco', fallback=False)
@@ -325,6 +328,59 @@ fileserver_backend:
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
 
+def building_salt_extra2():
+    with open(("/tmp/extra2"), "w") as extra:
+        if not masterless or vagrant_pre_fourth:
+            if len(salt_master.split(',')) >= 2:
+                extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
+                extra.write("""master_type: failover \n""")
+                extra.write("""master_shuffle: True \n""")
+                extra.write("""random_master: True \n""")
+                extra.write("""auth_tries: 1 \n""")
+                extra.write("""auth_timeout: 15 \n""")
+                extra.write("""master_alive_interval: 180 \n""")
+                extra.write("""retry_dns: 0 \n""")
+            else:
+                extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
+            extra.write("""state_output: mixed \n""")
+            if controller:
+              extra.write("""verify_master_pubkey_sign: True \n""")
+              extra.write("""always_verify_signature: True \n""")
+        else:
+            if path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
+                extra.write("""gitfs_provider: pygit2\n""")
+                extra.write("""file_client: local
+
+fileserver_backend:
+  - git
+  - roots
+
+state_output: mixed
+
+gitfs_remotes:
+  - https://github.com/Snergster/virl-salt.git\n""")
+            elif path.exists('/usr/local/lib/python2.7/dist-packages/dulwich'):
+                extra.write("""gitfs_provider: dulwich\n""")
+                extra.write("""file_client: local
+
+fileserver_backend:
+  - git
+  - roots
+
+state_output: mixed
+
+gitfs_remotes:
+  - https://github.com/Snergster/virl-salt.git\n""")
+            else:
+                extra.write("""file_client: local
+
+fileserver_backend:
+  - roots\n""")
+        extra.write("""log_level: quiet \n""")
+        extra.write("""id: '{salt_id2}'\n""".format(salt_id=salt_id))
+        extra.write("""append_domain: {salt_domain2}\n""".format(salt_domain=salt_domain))
+    subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra2'), '/etc/salt2/minion.d/extra.conf'])
+
 def building_salt_all():
     if not path.exists('/etc/salt/virl'):
         subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt/virl'])
@@ -352,6 +408,8 @@ def building_salt_all():
     else:
         neutron_extnet_id = ''
     building_salt_extra()
+    if multi_salt_key:
+      building_salt_extra2()
     with open(("/tmp/openstack"), "w") as openstack:
         openstack.write("""keystone.user: admin
 keystone.password: {ospassword}
