@@ -20,9 +20,9 @@ port block salt-master:
     - marker_start: "# 004s"
     - marker_end: "# 004e"
     - content: |
-             /sbin/iptables -A INPUT -s 10/8 -p tcp --dport 4505:4506 -j ACCEPT
-             /sbin/iptables -A INPUT -s 172.16/16 -p tcp --dport 4505:4506 -j ACCEPT
-             /sbin/iptables -A INPUT -p tcp --dport 4505:4506 -i {{ publicport }} -j DROP
+             /sbin/iptables -I INPUT 1 -s 10/8 -p tcp --dport 4505:4506 -j ACCEPT
+             /sbin/iptables -I INPUT 2 -s 172.16/16 -p tcp --dport 4505:4506 -j ACCEPT
+             /sbin/iptables -I INPUT 3 -p tcp --dport 4505:4506 -i {{ publicport }} -j DROP
 {% else %}
 
 port block salt-master:
@@ -31,7 +31,7 @@ port block salt-master:
     - marker_start: "# 004s"
     - marker_end: "# 004e"
     - content: |
-             /sbin/iptables -A INPUT -p tcp --dport 4505:4506 -i {{ publicport }} -j DROP
+             /sbin/iptables -I INPUT 1 -p tcp --dport 4505:4506 -i {{ publicport }} -j DROP
 
 {% endif %}
 
