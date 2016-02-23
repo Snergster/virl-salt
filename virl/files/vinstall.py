@@ -190,8 +190,8 @@ download_no_proxy = safeparser.get('DEFAULT', 'download_no_proxy', fallback='')
 download_proxy_user = safeparser.get('DEFAULT', 'download_proxy_user', fallback='')
 
 #Testing Section
-icehouse = safeparser.getboolean('DEFAULT', 'icehouse', fallback=True)
-kilo = safeparser.getboolean('DEFAULT', 'kilo', fallback=False)
+icehouse = safeparser.getboolean('DEFAULT', 'icehouse', fallback=False)
+kilo = safeparser.getboolean('DEFAULT', 'kilo', fallback=True)
 
 testingank = safeparser.getboolean('DEFAULT', 'testing_ank', fallback=False)
 testingstd = safeparser.getboolean('DEFAULT', 'testing_std', fallback=False)
