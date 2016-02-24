@@ -37,12 +37,19 @@ mypkgs:
       - virt-what
       - virtinst
       - pwgen
+      - tinyproxy
 
 qemu common virl hold:
   apt.held:
     - name: qemu-kvm
     - require:
       - pkg: mypkgs
+
+tinyproxy no auto start:
+  service.dead:
+    - name: tinyproxy
+    - enable: false
+    - sig: tinyproxy
 
 {% if not masterless %}
 vinstall wheels:
