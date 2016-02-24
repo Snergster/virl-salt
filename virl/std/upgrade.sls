@@ -28,17 +28,12 @@ include:
 
 /var/cache/virl/std:
   file.recurse:
-    {% if std_ver_fixed %}
-    - name: /var/cache/virl/fixed/std
-    - source: "salt://fixed/std"
-    {% else %}
-      {% if cml %}
+    {% if cml %}
     - source: "salt://cml/std/{{venv}}/"
     - name: /var/cache/virl/std
-      {% else %}
+    {% else %}
     - source: "salt://std/{{venv}}/"
     - name: /var/cache/virl/std
-      {% endif %}
     {% endif %}
     - clean: true
     - show_diff: False
@@ -85,7 +80,6 @@ std docs:
       - file: std doc cleaner
 {% endif %}
 
-#   {% if not cml %}
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
@@ -144,22 +138,12 @@ VIRL_CORE:
     - pre_releases: True
     - no_deps: True
     {% if cml %}
-     {% if std_ver_fixed %}
-    - name: CML_CORE  == {{ std_ver }}
-    - find_links: "file:///var/cache/virl/fixed/std"
-     {% else %}
     - find_links: "file:///var/cache/virl/std"
     - name: CML_CORE
-     {% endif %}
-    {% else %}
-    {% if std_ver_fixed %}
-    - name: VIRL_CORE  == {{ std_ver }}
-    - find_links: "file:///var/cache/virl/fixed/std"
     {% else %}
     - name: VIRL_CORE
     - find_links: "file:///var/cache/virl/std"
     - upgrade: True
-    {% endif %}
     {% endif %}
   service.dead:
     - names:
