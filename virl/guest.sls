@@ -7,6 +7,7 @@ create guest account:
   module.run:
     - name: virl_core.project_present
     - m_name: guest
+    - quota_instances: 200
     - description: guest project
     - require:
       - cmd: virl-std start
