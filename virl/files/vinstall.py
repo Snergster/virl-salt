@@ -174,9 +174,13 @@ salt = safeparser.getboolean('DEFAULT', 'salt', fallback=True)
 salt_master = safeparser.get('DEFAULT', 'salt_master', fallback='')
 salt_id = safeparser.get('DEFAULT', 'salt_id', fallback='virl')
 salt_domain = safeparser.get('DEFAULT', 'salt_domain', fallback='virl.info')
-multi_salt_key = safeparser.getboolean('DEFAULT', 'multi_salt_key', fallback=False)
+multi_salt_key = safeparser.getint('DEFAULT', 'multi_salt_key', fallback=1)
 salt_id2 = safeparser.get('DEFAULT', 'salt_id2', fallback='virl')
 salt_domain2 = safeparser.get('DEFAULT', 'salt_domain2', fallback='virl.info')
+salt_id3 = safeparser.get('DEFAULT', 'salt_id3', fallback='virl')
+salt_domain3 = safeparser.get('DEFAULT', 'salt_domain3', fallback='virl.info')
+salt_id4 = safeparser.get('DEFAULT', 'salt_id4', fallback='virl')
+salt_domain4 = safeparser.get('DEFAULT', 'salt_domain4', fallback='virl.info')
 salt_env = safeparser.get('DEFAULT', 'salt_env', fallback='none')
 virl_type = safeparser.get('DEFAULT', 'Is_this_a_stable_or_testing_server', fallback='stable')
 cisco_internal = safeparser.getboolean('DEFAULT', 'inside_cisco', fallback=False)
@@ -328,8 +332,8 @@ fileserver_backend:
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
 
-def building_salt_extra2():
-    with open(("/tmp/extra2"), "w") as extra:
+def building_salt_extras(count):
+    with open(("/tmp/extra{count}".format(count=count)), "w") as extra:
         if not masterless or vagrant_pre_fourth:
             if len(salt_master.split(',')) >= 2:
                 extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
@@ -377,13 +381,21 @@ gitfs_remotes:
 fileserver_backend:
   - roots\n""")
         extra.write("""log_level: quiet \n""")
-        extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id2))
-        extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain2))
-        extra.write("""pki_dir: /etc/salt2/pki/minion \n""")
-    subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt2/pki/minion'])
-    subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt2/minion.d'])
-    subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra2'), '/etc/salt2/minion.d/extra.conf'])
-    subprocess.call(['sudo', 'cp', '-f', '/etc/salt/pki/minion/master_sign.pub', '/etc/salt2/pki/minion/master_sign.pub'])
+        if count == 2:
+          extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id2))
+          extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain2))
+        elif count == 3:
+          extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id3))
+          extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain3))
+        elif count == 4:
+          extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id4))
+          extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain4))          
+        extra.write("""pki_dir: /etc/salt{count}/pki/minion \n""".format(count=count))
+    subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt{count}/pki/minion'.format(count=count)])
+    subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt{count}/minion.d'.format(count=count)])
+    subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra{count}'.format(count=count)), '/etc/salt{count}/minion.d/extra.conf'.format(count=count)])
+    subprocess.call(['sudo', 'cp', '-f', '/etc/salt/pki/minion/master_sign.pub', '/etc/salt{count}/pki/minion/master_sign.pub'.format(count=count)])
+    subprocess.call(['sudo', 'cp', '-f', '/etc/salt/minion', '/etc/salt{count}/minion'.format(count=count)])
 
 def building_salt_all():
     if not path.exists('/etc/salt/virl'):
@@ -412,8 +424,7 @@ def building_salt_all():
     else:
         neutron_extnet_id = ''
     building_salt_extra()
-    if multi_salt_key:
-      building_salt_extra2()
+
     with open(("/tmp/openstack"), "w") as openstack:
         openstack.write("""keystone.user: admin
 keystone.password: {ospassword}
@@ -926,6 +937,10 @@ if __name__ == "__main__":
 
     if varg['salt']:
         building_salt_all()
+        if multi_salt_key:
+          while multi_salt_key > 1:
+            building_salt_extras(multi_salt_key)
+            multi_salt_key = multi_salt_key -1
         if virl_cluster and controller:
             call_salt_quiet('common.salt-master.cluster-config')
     if varg['users']:
