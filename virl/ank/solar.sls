@@ -7,7 +7,7 @@
 
 ank remove:
   pip.removed:
-    - names: virl-collection
+    - name: virl-collection
 
 
 ank cache cleanup:
