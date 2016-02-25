@@ -11,7 +11,7 @@ uninstall tool:
 download tools:
   cmd.run:
     - cwd: /tmp/vmware-tools-patches
-    - name: ./download-tools.sh 8.0.2
+    - name: ./download-tools.sh latest
     - require:
       - git: rasa patches
 
