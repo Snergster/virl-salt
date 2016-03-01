@@ -195,6 +195,7 @@ std_prereq:
       - Flask_RESTful >= 0.3.2
       - Flask_WTF >= 0.11
       - Flask_Breadcrumbs >= 0.3.0
+      - flask-compress
       - itsdangerous >= 0.24
       - Jinja2 >= 2.7.3
       - lxml >= 3.4.1
@@ -210,6 +211,7 @@ std_prereq:
       - Werkzeug >= 0.10.1
       - wsgiref
       - WTForms >= 2.0.2
+      - WTForms-JSON >= 0.2.10
       - tornado >= 3.2.2
       - require:
         - pkg: 'std prereq pkgs'
