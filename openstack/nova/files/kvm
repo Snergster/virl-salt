@@ -42,11 +42,31 @@ for arg in "$@" ; do
         prev=none
         want+=("$arg")
         ;;
+    -machine)
+        prev=none
+        # kvm not available, get rid of kvm, qemu will be used
+        arg=${arg/,accel=kvm}
+        want+=("$arg")
+        want+=("-no-kvm")
+    ;;
     *)
         case "$arg" in
             -name|-uuid|-chardev)
                 want+=("$arg")
                 prev=$arg
+            ;;
+            -machine)
+                if [[ -c /dev/kvm ]] ; then
+                    rest+=("$arg")
+                else
+                    want+=("$arg")
+                    prev=$arg
+                fi
+            ;;
+            -enable-kvm)
+                if [[ -c /dev/kvm ]] ; then
+                    rest+=("$arg")
+                fi
             ;;
             *)
                 rest+=("$arg")

@@ -27,6 +27,14 @@ rclocal dummy append:
     - pattern: '# 005s start'
     - repl: '# 005s dummy'
 
+rclocal kvm append:
+  file.replace:
+    - name: /etc/rc.local
+    - marker_start: "# 001s Cinder"
+    - marker_end: "# 001e"
+    - content: |
+             touch /dev/kvm
+
 {%if salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 
 dummy-rclocal:
