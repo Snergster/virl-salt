@@ -14,6 +14,8 @@ rclocal replace buckets:
           # 004e end
           # 005s dummy
           # 005e end
+          # 006s kvm
+          # 006e end
 
 rclocal v6off append:
   file.replace:
@@ -28,10 +30,10 @@ rclocal dummy append:
     - repl: '# 005s dummy'
 
 rclocal kvm append:
-  file.replace:
+  file.blockreplace:
     - name: /etc/rc.local
-    - marker_start: "# 001s Cinder"
-    - marker_end: "# 001e"
+    - marker_start: "# 006s kvm"
+    - marker_end: "# 006e"
     - content: |
              touch /dev/kvm
 
