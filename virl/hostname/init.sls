@@ -32,3 +32,9 @@ vhostname:
     - contents: {{ hostname }}
   cmd.run:
     - name: /usr/bin/hostnamectl set-hostname {{ hostname }}
+
+vhostinternal:
+  host.present:
+    - name: {{ hostname }}-internal
+    - ip:
+      - {{ salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}}
