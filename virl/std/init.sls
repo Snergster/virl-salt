@@ -25,6 +25,13 @@
 {% set ram_overcommit = salt['pillar.get']('virl:ram_overcommit', salt['grains.get']('ram_overcommit', '2')) %}
 {% set cpu_overcommit = salt['pillar.get']('virl:cpu_overcommit', salt['grains.get']('cpu_overcommit', '3')) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
+{% set compute2_active = salt['pillar.get']('virl:compute2_active', salt['grains.get']('compute2_active', False )) %}
+{% set compute3_active = salt['pillar.get']('virl:compute3_active', salt['grains.get']('compute3_active', False )) %}
+{% set compute4_active = salt['pillar.get']('virl:compute4_active', salt['grains.get']('compute4_active', False )) %}
+{% set compute1 = salt['grains.get']('compute1_hostname', 'compute1' ) %}
+{% set compute2 = salt['grains.get']('compute2_hostname', 'compute2' ) %}
+{% set compute3 = salt['grains.get']('compute3_hostname', 'compute3' ) %}
+{% set compute4 = salt['grains.get']('compute4_hostname', 'compute4' ) %}
 {% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
 {% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
 {% set download_proxy_user = salt['pillar.get']('virl:download_proxy_user', salt['grains.get']('download_proxy_user', '')) %}
@@ -309,6 +316,50 @@ enable cluster in std :
     - name: 'crudini --set /etc/virl/common.cfg orchestration cluster_mode True'
     - require:
       - pip: VIRL_CORE
+
+point std at key:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
+    - onlyif:
+      - test -e ~virl/.ssh/id_rsa.pub
+      - test -e /etc/virl/common.cfg
+    - require:
+      - pip: VIRL_CORE
+
+  {% if compute4_active %}
+
+add up to cluster4 to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+    - require:
+      - pip: VIRL_CORE
+
+  {% elif compute3_active %}
+
+add up to cluster3 to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}}'
+    - require:
+      - pip: VIRL_CORE
+
+  {% elif compute2_active %}
+
+add up to cluster2 to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}}'
+    - require:
+      - pip: VIRL_CORE
+
+  {% else %}
+
+add only cluster1 to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}}'
+    - require:
+      - pip: VIRL_CORE
+
+  {% endif %}
+
 {% endif %}
 
 webmux_port change:
