@@ -111,7 +111,6 @@ std docs redo:
     - onfail: 
       - archive: std docs
 
-  {% if not cml %}
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
@@ -135,7 +134,6 @@ std_prereq_webmux:
       - service_identity
       - docker-py >= 1.3.1
       - lxml >= 3.4.1
-  {% endif %}
 
 /etc/virl directory:
   file.directory:
