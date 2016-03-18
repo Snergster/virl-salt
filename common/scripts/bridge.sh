@@ -21,8 +21,16 @@
 if [ -z $version ] || [ $version == `uname -r` ]; then
     depmod
     {{ loop_ifdown() }}
+    BROUTE=0
+    if lsmod | grep ebtable_broute; then
+        BROUTE=1
+        rmmod ebtable_broute
+    fi
     rmmod bridge
     {{ loop_ifup() }}
+    if [ $BROUTE -ne 0 ]; then
+        modprobe ebtable_broute
+    fi
     modprobe bridge
     service neutron-plugin-linuxbridge-agent restart
 {% if controller %}
