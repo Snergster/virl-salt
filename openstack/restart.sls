@@ -10,6 +10,7 @@ all-restart:
     - name: |
         su -s /bin/sh -c "glance-manage db_sync" glance
         su -s /bin/sh -c "nova-manage db sync" nova
+        service apache2 restart
         service nova-cert restart
         service nova-api restart
         service nova-consoleauth restart
