@@ -81,3 +81,10 @@ add only cluster1 to std:
     - onlyif: test -e /etc/virl/common.cfg
 
   {% endif %}
+
+point std at key if it exists:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
+    - onlyif:
+      - test -e ~virl/.ssh/id_rsa.pub
+      - test -e /etc/virl/common.cfg
