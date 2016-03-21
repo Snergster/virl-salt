@@ -140,7 +140,7 @@ std_prereq_webmux:
       - SQLObject >= 1.5.1
       - service_identity
       - docker-py >= 1.3.1
-      - lxml >= 3.4.1, <= 3.6.0
+      - lxml >= 3.4.1, < 3.6.0
 
 /etc/virl directory:
   file.directory:
@@ -203,7 +203,7 @@ std_prereq:
       - flask-compress
       - itsdangerous >= 0.24
       - Jinja2 >= 2.7.3
-      - lxml >= 3.4.1, <= 3.6.0
+      - lxml >= 3.4.1, < 3.6.0
       - MarkupSafe >= 0.23
       - mock >= 1.0.1
       - paramiko >= 1.15.2
