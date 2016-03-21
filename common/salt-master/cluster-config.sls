@@ -49,3 +49,8 @@
     - template: jinja
     - source: salt://common/salt-master/files/compute4.ini.jinja
 
+add cluster hostnames to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+    - onlyif: test -e /etc/virl/common.cfg
+
