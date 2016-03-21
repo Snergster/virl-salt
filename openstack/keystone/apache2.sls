@@ -1,3 +1,3 @@
 apache2 running:
-  service.enabled:
+  service.running:
     - name: apache2
