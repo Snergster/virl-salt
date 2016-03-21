@@ -5,6 +5,7 @@
 include:
   - virl.openrc
 {% if iscontroller %}
+  - openstack.keystone.apache2
   - openstack.nova.keystone
   - openstack.neutron.changes
   - openstack.neutron.create-basic
