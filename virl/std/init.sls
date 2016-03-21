@@ -140,7 +140,7 @@ std_prereq_webmux:
       - SQLObject >= 1.5.1
       - service_identity
       - docker-py >= 1.3.1
-      - lxml >= 3.4.1
+      - lxml >= 3.4.1, <= 3.6.0
 
 /etc/virl directory:
   file.directory:
