@@ -33,7 +33,7 @@ virl_tap_counter_conf:
         {% if controller == True %}
         TC_ADDRESS="localhost"
         {% else %}
-	TC_ADDRESS="{{ controller_ip }}"
+        TC_ADDRESS="{{ controller_ip }}"
         {% endif %}
         # Port of redis instance to send data to
         TC_PORT="6379"
