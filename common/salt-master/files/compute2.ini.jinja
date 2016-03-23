@@ -3,6 +3,7 @@ virl:
   this_node_is_the_controller: False
   virl_cluster: True
   neutron_local_ip: 172.16.9.2
+  ntp_server: {{salt['grains.get']('ntp_server', 'pool.ntp.org')}}
   keystone_service_token: {{salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')}}
   password: {{salt['grains.get']('password', 'password')}}
   mysql_password: {{salt['grains.get']('mysql_password', 'password')}}
