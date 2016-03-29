@@ -272,6 +272,17 @@ add libvirt-qemu to nova:
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
 
+/usr/lib/python2.7/dist-packages/nova/network/neutronv2/api.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/network.neutronv2.api.py
+    - require:
+      - pkg: nova-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/network/neutronv2/api.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/network/neutronv2/api.py
+
 {% for each in ['cert','api','serialproxy','conductor','compute','scheduler','novncproxy','consoleauth'] %}
 nova-{{each}} conf:
   file.replace:
