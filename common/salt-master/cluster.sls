@@ -62,7 +62,7 @@ remove salt-master override:
 verify salt-master enabled:
   service.enabled:
     - name: salt-master
-    - onchanges:
+    - require:
       - file: remove salt-master override
 
 open rabbitmq guest security:
