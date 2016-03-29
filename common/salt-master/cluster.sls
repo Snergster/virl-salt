@@ -4,6 +4,7 @@
 include:
   - common.salt-master.cluster-config
   - common.salt-master.cluster-key
+  - virl.hostname.cluster
 
 salt-master config:
   file.managed:
