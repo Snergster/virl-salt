@@ -421,6 +421,12 @@ fixed ips allowed for all:
     - repl: '    "create_port:fixed_ips": "rule:admin_or_network_owner or rule:context_is_advsvc or rule:shared or rule:external",'
     - require:
       - pkg: neutron-pkgs
+  file.replace:
+    - name: /etc/neutron/policy.json
+    - pattern: '^    "update_port:binding:host_id": "rule:admin_only",'
+    - repl: '    "update_port:binding:host_id": "rule:admin_or_owner",'
+    - require:
+      - pkg: neutron-pkgs
 
 neutron restart:
   cmd.run:
