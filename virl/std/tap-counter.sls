@@ -50,6 +50,14 @@ redis-server:
   pkg.installed:
     - pkg: redis-server
 
+redis-bind:
+  file.replace:
+    - name: /etc/redis/redis.conf
+    - pattern: '^bind .*'
+    - repl: ''
+    - require:
+      - pkg: redis-server
+
 redis-running:
   service.running:
     - name: redis-server
