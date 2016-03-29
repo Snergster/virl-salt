@@ -33,6 +33,13 @@ qemu install:
       - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-system-x86=2.0.0+dfsg-2ubuntu1.22'
       - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-kvm=2.0.0+dfsg-2ubuntu1.22'
 
+libvirt-bin insert /dev/kvm:
+  file.line:
+    - name: /etc/init/libvirt-bin.conf
+    - content: '[ -e /dev/kvm ] || touch /dev/kvm'
+    - mode: Ensure
+    - after: 'pre-start script'
+
 /usr/bin/kvm:
   file.managed:
     - source: "salt://openstack/nova/files/kilo.kvm"
