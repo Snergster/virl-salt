@@ -17,7 +17,7 @@ neutron-pkgs:
     - force_yes: True
     - refresh: False
     - pkgs:
-        - neutron-plugin-linuxbridge-agent: '1:2015.1.2-0ubuntu2~cloud0'
+        - neutron-plugin-linuxbridge-agent: '1:2015.1.3-0ubuntu1'
 
 /etc/neutron/neutron.conf:
   file.managed:
