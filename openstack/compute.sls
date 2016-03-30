@@ -9,3 +9,4 @@ include:
   - openstack.restart
   - openstack.compute-key
   - common.salt-minion.running
+  - common.bridge
