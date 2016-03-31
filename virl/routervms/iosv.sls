@@ -17,8 +17,8 @@ iosv:
     - min_ram: 0
     - is_public: True
   {% if cml %}
-    - checksum: 6bad30d1961c5a460c173404c60432d6
-    - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.156-1.T
+    - checksum: 4e94f3e63ad2771e5662f614921c8c62
+    - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.156-2.T
   {% else %}
     - checksum: 83707e3cc93646da58ee6563a68002b5
     - copy_from: salt://images/salt/vios-adventerprisek9-m.vmdk.SPA.156-2.T
