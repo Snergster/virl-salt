@@ -21,7 +21,7 @@ asav:
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: ide
     - property-hw_vif_model: e1000
-    - property-release: 9.5.1-201
+    - property-release: 9.5.2-204
     - property-serial: 1
     - property-subtype: ASAv
 
