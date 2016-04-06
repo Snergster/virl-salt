@@ -6,7 +6,6 @@
     - makedirs: True
     - group: virl
     - file_mode: 755
-    - exclude_pat: xrv9k-fullk9-x.qcow2-6.0.0
     - include_empty: True
 
 /srv/salt2/images/bridge:
