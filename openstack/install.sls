@@ -12,7 +12,6 @@ include:
   - openstack.glance
   - openstack.neutron
   - openstack.nova
-  - virl.std.tap-counter
 {% if horizon %}
   - openstack.dash
 {% endif %}

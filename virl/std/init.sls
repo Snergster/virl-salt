@@ -41,6 +41,7 @@
 include:
   - .clients
   - common.ifb
+  - virl.std.tap-counter
 
 std prereq pkgs:
   pkg.installed:
