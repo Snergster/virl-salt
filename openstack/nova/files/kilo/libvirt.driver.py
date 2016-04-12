@@ -1336,10 +1336,23 @@ class LibvirtDriver(driver.ComputeDriver):
 
         snapshot = self._image_api.get(context, image_id)
 
-        disk_path = libvirt_utils.find_disk(virt_dom)
-        source_format = libvirt_utils.get_disk_type(disk_path)
+        # source_format is an on-disk format
+        # source_type is a backend type
+        disk_path, source_format = libvirt_utils.find_disk(virt_dom)
+        source_type = libvirt_utils.get_disk_type_from_path(disk_path)
 
-        image_format = CONF.libvirt.snapshot_image_format or source_format
+        # We won't have source_type for raw or qcow2 disks, because we can't
+        # determine that from the path. We should have it from the libvirt
+        # xml, though.
+        if source_type is None:
+            source_type = source_format
+        # For lxc instances we won't have it either from libvirt xml
+        # (because we just gave libvirt the mounted filesystem), or the path,
+        # so source_type is still going to be None. In this case,
+        # snapshot_backend is going to default to CONF.libvirt.images_type
+        # below, which is still safe.
+
+        image_format = CONF.libvirt.snapshot_image_format or source_type
 
         # NOTE(bfilippov): save lvm and rbd as raw
         if image_format == 'lvm' or image_format == 'rbd':
@@ -1365,7 +1378,7 @@ class LibvirtDriver(driver.ComputeDriver):
         if (self._host.has_min_version(MIN_LIBVIRT_LIVESNAPSHOT_VERSION,
                                        MIN_QEMU_LIVESNAPSHOT_VERSION,
                                        REQ_HYPERVISOR_LIVESNAPSHOT)
-             and source_format not in ('lvm', 'rbd')
+             and source_type not in ('lvm', 'rbd')
              and not CONF.ephemeral_storage_encryption.enabled
              and not CONF.workarounds.disable_libvirt_livesnapshot):
             live_snapshot = True
@@ -1400,7 +1413,7 @@ class LibvirtDriver(driver.ComputeDriver):
 
         snapshot_backend = self.image_backend.snapshot(instance,
                 disk_path,
-                image_type=source_format)
+                image_type=source_type)
 
         if live_snapshot:
             LOG.info(_LI("Beginning live snapshot process"),
@@ -1419,7 +1432,8 @@ class LibvirtDriver(driver.ComputeDriver):
                     # NOTE(xqueralt): libvirt needs o+x in the temp directory
                     os.chmod(tmpdir, 0o701)
                     self._live_snapshot(context, instance, virt_dom, disk_path,
-                                        out_path, image_format, base)
+                                        out_path, source_format, image_format,
+                                        base)
                 else:
                     snapshot_backend.snapshot_extract(out_path, image_format)
             finally:
@@ -1529,7 +1543,7 @@ class LibvirtDriver(driver.ComputeDriver):
         self._set_quiesced(context, instance, image_meta, False)
 
     def _live_snapshot(self, context, instance, domain, disk_path, out_path,
-                       image_format, image_meta):
+                       source_format, image_format, image_meta):
         """Snapshot an instance without downtime."""
         # Save a copy of the domain's persistent XML file
         xml = domain.XMLDesc(
@@ -1547,9 +1561,11 @@ class LibvirtDriver(driver.ComputeDriver):
         #             in QEMU 1.3. In order to do this, we need to create
         #             a destination image with the original backing file
         #             and matching size of the instance root disk.
-        src_disk_size = libvirt_utils.get_disk_size(disk_path)
+        src_disk_size = libvirt_utils.get_disk_size(disk_path,
+                                                    format=source_format)
         src_back_path = libvirt_utils.get_disk_backing_file(disk_path,
-                                                            basename=False)
+                                                        format=source_format,
+                                                        basename=False)
         disk_delta = out_path + '.delta'
         libvirt_utils.create_cow_image(src_back_path, disk_delta,
                                        src_disk_size)
