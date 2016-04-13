@@ -4,6 +4,6 @@ salt-master install:
     - mode: 0755
     - source: "salt://install_salt.sh"
   cmd.run:
-      - name: /tmp/install_salt.sh -M -X -P stable
+      - name: /tmp/install_salt.sh -M -P stable
       - unless:
         - ls /usr/bin/salt-master
