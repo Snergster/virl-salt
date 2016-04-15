@@ -89,8 +89,16 @@ point std at key if it exists:
       - test -e ~virl/.ssh/id_rsa.pub
       - test -e /etc/virl/common.cfg
 
-enable cluster in std :
+enable cluster in std via cluster config:
   cmd.run:
     - name: 'crudini --set /etc/virl/common.cfg orchestration cluster_mode True'
     - onlyif:
       - test -e /etc/virl/common.cfg
+
+
+
+
+
+
+
+
