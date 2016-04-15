@@ -6,6 +6,9 @@ import time
 import logging
 from logging.handlers import RotatingFileHandler
 from itertools import cycle
+from datetime import datetime
+from calendar import timegm
+
 
 import redis
 
@@ -102,7 +105,7 @@ class IfaceManager(object):
         self.glob_interval = glob_interval
         self.glob_ticker = cycle(range(1, self.glob_interval + 1))
         self.ttl = ttl
-        self.format_name = lambda name: "{}_{}".format(name, int(time.time()))
+        self.format_name = lambda name: "{}_{}".format(name, timegm(datetime.utcnow().utctimetuple()))
         self.host = redis_host
         self.port = redis_port
 
