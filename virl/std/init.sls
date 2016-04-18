@@ -298,6 +298,11 @@ ank_live_port change:
   cmd.run:
     - name: 'crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}'
 
+ank preview port:
+  cmd.run:
+    - name: 'crudini --set /etc/virl/common.cfg host ank_preview_port {{ topology_editor_port }}'
+    - require:
+      - pip: VIRL_CORE
 
 web editor alpha:
 {% if web_editor %}
