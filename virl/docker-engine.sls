@@ -1,12 +1,13 @@
 ## Install docker with registry running in container and docker-py for docker API
 {% set registry_ip = salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254/xx' )).split('/')[0] %}
 {% set registry_port = salt['pillar.get']('virl:docker_registry_port', salt['grains.get']('docker_registry_port', '19397' )) %}
+
 {% set docker_version = '1.9.1-0~trusty' %}
-{% set registry_version = '2.3.1' %}
-{% set registry_file = 'registry-2.3.1.tar' %}
-{% set registry_file_hash = '81fe4000d19021f6444c5e96704872d2' %}
+{% set registry_version = '2.4.0' %}
+{% set registry_file = 'registry-2.4.0.tar' %}
+{% set registry_file_hash = '0c79a98a8a2954c3bc04388be22ec0f5' %}
 # If updating registry load registry manually into docker and get its Docker ID by issue $docker images
-{% set registry_docker_ID = '53773d8552f0' %}
+{% set registry_docker_ID = '0f29f840cdef' %}
 
 {% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
 {% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
@@ -132,13 +133,14 @@ registry_remove:
 registry_load:
   # state docker.loaded is buggy -> file.managed and cmd.run
   file.managed:
-    - name: /usr/share/{{ registry_file }}
+    - name: /var/cache/virl/docker/registry.tar
+    - makedirs: True
     - source: salt://virl/files/{{ registry_file }}
     - source_hash: {{ registry_file_hash }}
     - unless: docker images -q | grep {{ registry_docker_ID }}
   cmd.run:
     - names:
-      - docker load -i /usr/share/{{ registry_file }} 
+      - docker load -i /var/cache/virl/docker/registry.tar
     - unless: docker images -q | grep '{{ registry_docker_ID }}'
 
 registry_tag:
@@ -153,7 +155,7 @@ registry_run:
   # dockerio.running replaced by cmd.run due to API problems of dockerio/docker-py used versions
   cmd.run:
     - names:
-      - docker run -d -p {{ registry_ip }}:{{ registry_port }}:5000 -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/var/lib/registry -v /var/local/virl/docker:/var/lib/registry --restart=always registry:{{ registry_version }}
+      - docker run -d -p {{ registry_ip }}:{{ registry_port }}:5000 -e REGISTRY_STORAGE_DELETE_ENABLED=true -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/var/lib/registry -v /var/local/virl/docker:/var/lib/registry --restart=always registry:{{ registry_version }}
     - require:
       - cmd: registry_tag
     # - unless: docker ps | grep "{{ registry_ip }}:{{ registry_port }}->5000/tcp"
