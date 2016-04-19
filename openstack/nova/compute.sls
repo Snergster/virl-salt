@@ -29,7 +29,7 @@ compute-pkgs:
   file.managed:
     - mode: 755
     - template: jinja
-    - source: "salt://openstack/nova/files/kilo.nova.conf"
+    - source: "salt://openstack/nova/files/compute.nova.conf"
     - require:
       - pkg: compute-pkgs
 
