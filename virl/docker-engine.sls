@@ -135,7 +135,7 @@ registry_load:
   file.managed:
     - name: /var/cache/virl/docker/registry.tar
     - makedirs: True
-    - source: salt://virl/files/{{ registry_file }}
+    - source: salt://images/salt/{{ registry_file }}
     - source_hash: {{ registry_file_hash }}
     - unless: docker images -q | grep {{ registry_docker_ID }}
   cmd.run:

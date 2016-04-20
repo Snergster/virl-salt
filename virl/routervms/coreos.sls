@@ -13,7 +13,7 @@ coreos:
     - checksum: 9b19d205a7274eb8fcba7bc5be723a91
     - protected: False
     - disk_format: qcow2
-    - copy_from: salt://virl/files/coreos-899-13-0.qcow2
+    - copy_from: salt://images/salt/coreos-899-13-0.qcow2
     - property-config_disk_type: cloud-init
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: ide
