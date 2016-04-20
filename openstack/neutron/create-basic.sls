@@ -89,7 +89,7 @@ create flat1 subnet:
 
 create snat subnet:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create ext-net {{ l3_network }} --allocation-pool start={{l3_start_address}},end={{l3_end_address}} --gateway {{ l3_gateway }} --name ext-net --dns-nameservers list=true {{ flat_dns }} {{ flat_dns2 }}
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create ext-net {{ l3_network }} --allocation-pool start={{l3_start_address}},end={{l3_end_address}} --gateway {{ l3_gateway }} --name ext-net --dns-nameservers list=true {{ snat_dns }} {{ snat_dns2 }}
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-show ext-net
     - require:
       - cmd: create snat net
