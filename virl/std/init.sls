@@ -48,6 +48,7 @@ std prereq pkgs:
       - pkgs:
         - libxml2-dev
         - libxslt1-dev
+        - libc6:i386
 
 /var/cache/virl/std:
   file.recurse:
