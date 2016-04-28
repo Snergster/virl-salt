@@ -54,6 +54,7 @@ case "$1" in
     fi
 
     $STOP_CMD >/dev/null 2>&1 &
+    initctl emit -n stopping JOB=virl-uwm
 
     echo "Thank you for waiting, your call is very important to us"
     WAIT=0
@@ -63,7 +64,6 @@ case "$1" in
 	PIDS=`getpids`
 	if [ -z "$PIDS" ]; then
 	    echo "$SERVICE was stopped."
-	    initctl emit -n stopping JOB=virl-uwm
 	    exit 0
 	fi 
     done
@@ -72,7 +72,12 @@ case "$1" in
         PID_LIST=`echo $PIDS | sed -e "s/ /, /g"`
         echo "$SERVICE is still running. Killing processes: $PID_LIST."
         kill -9 $PIDS
-        exit 1
+        sleep 1
+        PIDS=`getpids`
+        if [ -n "$PIDS" ]; then
+            echo "$SERVICE could not be killed."
+            exit 0
+        fi
     fi
     echo "$SERVICE was stopped."
     ;;
