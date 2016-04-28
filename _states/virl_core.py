@@ -173,9 +173,9 @@ def user_absent(name, clear_openstack=False):
     return ret
 
 
-def lxc_image_present(name, subtype, version, release=None):
+def lxc_image_present(name, subtype, version='', release=None):
     """Ensure that the UWM image `name` exists."""
-    name = '%s-%s' % (subtype, version)
+    name = '%s-%s' % (subtype, version) if version else subtype
     ret = {
         'name': name,
         'result': False,
@@ -203,9 +203,9 @@ def lxc_image_present(name, subtype, version, release=None):
     return ret
 
 
-def lxc_image_absent(name, subtype, version):
+def lxc_image_absent(name, subtype, version=''):
     """Ensure that there's no image `name` in UWM lxc images."""
-    name = '%s-%s' % (subtype, version)
+    name = '%s-%s' % (subtype, version) if version else subtype
     ret = {
         'name': name,
         'result': False,
@@ -213,6 +213,7 @@ def lxc_image_absent(name, subtype, version):
         'comment': '',
     }
 
+    result = dict()
     try:
         image = __get_function('lxc_image_show')(name=name)
         if 'name' in image and image['name'] == name:
@@ -220,7 +221,7 @@ def lxc_image_absent(name, subtype, version):
     except Exception as exc:
         ret['comment'] = str(exc)
     else:
-        image = result['image']
+        image = result.get('image', None)
         if image is not None:
             ret['changes']['image'] = {'old': image, 'new': None}
         ret['result'] = True
