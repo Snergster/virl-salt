@@ -163,7 +163,7 @@ registry_run:
 # Docker tap-counter
 {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest:
   dockerng.image_present:
-    - load: salt://virl/files/docker-tap-counter.tar
+    - load: salt://images/salt/docker-tap-counter.tar
     - force: True
   cmd.run:
     - names:
