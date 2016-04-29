@@ -1,4 +1,4 @@
-{% set iol2 = salt['pillar.get']('lxcimages:iol2', True) %}
+{% set iol2 = salt['pillar.get']('lxcimages:iol2', False) %}
 {% set iol2pref = salt['pillar.get']('virl:iol2', salt['grains.get']('iol2', True)) %}
 
 include:

@@ -1,6 +1,6 @@
 {% set onedev = salt['grains.get']('onedev', 'False') %}
-{% set iol = salt['pillar.get']('routervms:iol', True) %}
-{% set iol2 = salt['pillar.get']('routervms:iol2', True) %}
+{% set iol = salt['pillar.get']('routervms:iol', False) %}
+{% set iol2 = salt['pillar.get']('routervms:iol2', False) %}
 {% set iosv = salt['pillar.get']('routervms:iosv', False ) %}
 {% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
 {% set iosxrv = salt['pillar.get']('routervms:iosxrv', False ) %}
