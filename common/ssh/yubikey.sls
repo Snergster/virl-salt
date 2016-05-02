@@ -7,8 +7,9 @@ libpam-yubico:
 libykclient3:
   pkg.installed
 
-/etc/yubikeys:
+yubikey pillar fill:
   file.managed:
+    - name: /etc/yubikeys
     - makedirs: True
     - contents_pillar: yubikey:authorized
 
@@ -18,7 +19,7 @@ yubikey_backup:
     - makedirs: True
     - contents_grains: yubikey_authorized
     - onfail:
-      - file: /etc/yubikeys
+      - file: yubikey pillar fill
 
 common auth out:
   file.comment:
