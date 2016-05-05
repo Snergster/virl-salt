@@ -18,9 +18,52 @@
 #{% set salt_id = salt['grains.get']('salt_id', '') %}
 #{% set salt_domain = salt['grains.get']('salt_domain', '') %}
 
+{% set virl_packet_path = '/var/local/virl/virl_packet' %}
+
+include:
+  - common.salt-master.cluster-key
+
+create sshdir for root:
+  cmd.run:
+    - user: root
+    - group: staff
+    - mode: 0700
+    - name: mkdir -p ~/.ssh
+
+copy ssh key pem:
+  file.copy:
+    - user: root
+    - group: staff
+    - mode: 0600
+    - name: ~/.ssh/id_rsa
+    - source: ~virl/.ssh/id_rsa
+    - force: true
+
+copy ssh key pub:
+  file.copy:
+    - user: root
+    - group: staff
+    - mode: 0600
+    - name: ~/.ssh/id_rsa.pub
+    - source: ~virl/.ssh/id_rsa.pub
+    - force: true
+
+{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
+{% set ifproxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% if ifproxy == True %}
+https_proxy:
+  environ.setenv:
+    - value: {{ http_proxy }}
+{% endif %}
+
+virl_packet repo:
+  git.latest:
+    - name: https://github.com/Snergster/virl_packet.git
+    - target: {{ virl_packet_path }}
+
 pem minion key copy:
   file.copy:
-    - name: /home/virl/virl_packet/keys/minion.pem
+    - name: {{ virl_packet_path }}/keys/minion.pem
     - source: /etc/salt/pki/minion/minion.pem
     - user: virl
     - group: virl
@@ -29,7 +72,7 @@ pem minion key copy:
 
 pub minion key copy:
   file.copy:
-    - name: /home/virl/virl_packet/keys/minion.pub
+    - name: {{ virl_packet_path }}/keys/minion.pub
     - source: /etc/salt/pki/minion/minion.pub
     - user: virl
     - group: virl
@@ -38,7 +81,7 @@ pub minion key copy:
 
 sign minion key copy:
   file.copy:
-    - name: /home/virl/virl_packet/keys/master_sign.pub
+    - name: {{ virl_packet_path }}/keys/master_sign.pub
     - source: /etc/salt/pki/minion/master_sign.pub
     - user: virl
     - group: virl
@@ -49,30 +92,30 @@ working variable file:
   file.copy:
     - user: virl
     - group: virl
-    - name: /home/virl/virl_packet/variables.tf
-    - source: /home/virl/virl_packet/variables.tf.orig
+    - name: {{ virl_packet_path }}/variables.tf
+    - source: {{ virl_packet_path }}/variables.tf.orig
     - force: true
 
 working password file:
   file.copy:
     - user: virl
     - group: virl
-    - name: /home/virl/virl_packet/passwords.tf
-    - source: /home/virl/virl_packet/passwords.tf.orig
+    - name: {{ virl_packet_path }}/passwords.tf
+    - source: {{ virl_packet_path }}/passwords.tf.orig
     - force: true
 
 working api file:
   file.copy:
     - user: virl
     - group: virl
-    - name: /home/virl/virl_packet/settings.tf
-    - source: /home/virl/virl_packet/settings.tf.orig
+    - name: {{ virl_packet_path }}/settings.tf
+    - source: {{ virl_packet_path }}/settings.tf.orig
     - force: true
 
 # using user data
 guest pass replace:
   file.replace:
-    - name: /home/virl/virl_packet/passwords.tf
+    - name: {{ virl_packet_path }}/passwords.tf
     - pattern: 321guest123
     - repl: '{{ packet_guest_password }}'
     - require:
@@ -80,7 +123,7 @@ guest pass replace:
 
 uwmadmin pass replace:
   file.replace:
-    - name: /home/virl/virl_packet/passwords.tf
+    - name: {{ virl_packet_path }}/passwords.tf
     - pattern: '321uwmp123'
     - repl: '{{ packet_uwmadmin_password }}'
     - require:
@@ -88,7 +131,7 @@ uwmadmin pass replace:
 
 os pass replace:
   file.replace:
-    - name: /home/virl/virl_packet/passwords.tf
+    - name: {{ virl_packet_path }}/passwords.tf
     - pattern: '123pass321'
     - repl: '{{ packet_openstack_password }}'
     - require:
@@ -96,7 +139,7 @@ os pass replace:
 
 mysql pass replace:
   file.replace:
-    - name: /home/virl/virl_packet/passwords.tf
+    - name: {{ virl_packet_path }}/passwords.tf
     - pattern: '123mysq321'
     - repl: '{{ packet_mysql_password }}'
     - require:
@@ -104,7 +147,7 @@ mysql pass replace:
 
 os token replace:
   file.replace:
-    - name: /home/virl/virl_packet/passwords.tf
+    - name: {{ virl_packet_path }}/passwords.tf
     - pattern: '123token321'
     - repl: '{{ packet_openstack_token }}'
     - require:
@@ -112,7 +155,7 @@ os token replace:
 
 hostname replace:
   file.replace:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: {{ virl_packet_path }}/variables.tf
     - pattern: 'virltest'
     #- repl: '{{ salt_id }}'
     - repl: '{{ hostname }}'
@@ -121,7 +164,7 @@ hostname replace:
 
 id replace:
   file.replace:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: {{ virl_packet_path }}/variables.tf
     - pattern: 'badsaltid'
     - repl: '{{ salt_id }}'
     - require:
@@ -130,21 +173,21 @@ id replace:
 # no placeholders
 packet_machine_type replace:
   file.replace:
-    - name: /home/virl/virl_packet/settings.tf
+    - name: {{ virl_packet_path }}/settings.tf
     - pattern: 'default = "baremetal_1"'
     - repl: 'default = "{{ packet_machine_type }}"'
     - require:
       - file: working api file
 dead_mans_timer replace:
   file.replace:
-    - name: /home/virl/virl_packet/settings.tf
+    - name: {{ virl_packet_path }}/settings.tf
     - pattern: 'default = "4"'
     - repl: 'default = "{{ packet_dead_timer }}"'
     - require:
       - file: working api file
 packet_location replace:
   file.replace:
-    - name: /home/virl/virl_packet/settings.tf
+    - name: {{ virl_packet_path }}/settings.tf
     - pattern: 'default = "ewr1"'
     - repl: 'default = "{{ packet_location }}"'
     - require:
@@ -154,7 +197,7 @@ packet_location replace:
 {% set packet_location_num = packet_location[3:] %}
 salt_master replace:
   file.replace:
-    - name: /home/virl/virl_packet/settings.tf
+    - name: {{ virl_packet_path }}/settings.tf
     - pattern: 'default = "ewr-packet-1.virl.info"'
     - repl: 'default = "{{ packet_location_name }}-packet-{{ packet_location_num }}.virl.info"'
     - require:
@@ -162,7 +205,7 @@ salt_master replace:
 
 packet_api_key replace:
   file.replace:
-    - name: /home/virl/virl_packet/settings.tf
+    - name: {{ virl_packet_path }}/settings.tf
     - pattern: bad_api_key
     - repl: '{{ packet_api_key }}'
     - require:
@@ -170,7 +213,7 @@ packet_api_key replace:
 
 domain replace:
   file.replace:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: {{ virl_packet_path }}/variables.tf
     - pattern: '= "virl.info"'
     - repl: '= "{{ salt_domain }}"'
     - require:
@@ -178,42 +221,42 @@ domain replace:
 
 virl tf ownership fix:
   file.managed:
-    - name: /home/virl/virl_packet/virl.tf
+    - name: {{ virl_packet_path }}/virl.tf
     - create: false
     - user: virl
     - group: virl
 
 virl tf backup ownership fix:
   file.managed:
-    - name: /home/virl/virl_packet/virl.tf.bak
+    - name: {{ virl_packet_path }}/virl.tf.bak
     - create: false
     - user: virl
     - group: virl
 
 variables tf ownership fix:
   file.managed:
-    - name: /home/virl/virl_packet/variables.tf
+    - name: {{ virl_packet_path }}/variables.tf
     - create: false
     - user: virl
     - group: virl
 
 variables tf backup ownership fix:
   file.managed:
-    - name: /home/virl/virl_packet/variables.tf.bak
+    - name: {{ virl_packet_path }}/variables.tf.bak
     - create: false
     - user: virl
     - group: virl
 
 passwords tf ownership fix:
   file.managed:
-    - name: /home/virl/virl_packet/passwords.tf
+    - name: {{ virl_packet_path }}/passwords.tf
     - create: false
     - user: virl
     - group: virl
 
 passwords tf backup ownership fix:
   file.managed:
-    - name: /home/virl/virl_packet/passwords.tf.bak
+    - name: {{ virl_packet_path }}/passwords.tf.bak
     - create: false
     - user: virl
     - group: virl
