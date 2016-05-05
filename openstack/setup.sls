@@ -8,6 +8,7 @@ include:
   - openstack.keystone.apache2
   - openstack.nova.keystone
   - openstack.neutron.changes
+  - openstack.neutron.delete-basic
   - openstack.neutron.create-basic
   - openstack.cinder.create
 {% endif %}
