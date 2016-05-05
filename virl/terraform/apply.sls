@@ -5,6 +5,7 @@
 
 include:
   # update salt keys and configuration
+  - virl.terraform.upgrade
   - virl.terraform.save
 
 {% if ifproxy == True %}
