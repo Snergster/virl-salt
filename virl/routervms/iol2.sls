@@ -9,7 +9,7 @@ include:
 iol2:
   virl_core.lxc_image_present:
   - subtype: IOL2
-  - release: ms.dec23_2015_high_iron
+  - release: high_iron_010416
 
 {% else %}
 
