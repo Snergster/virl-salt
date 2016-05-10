@@ -112,7 +112,6 @@ docker_restart:
 docker-py:
   pip.installed:
     - name: docker-py
-    - upgrade: True
     {% if proxy == true %}
     - proxy: {{ http_proxy }}
     {% endif %}
