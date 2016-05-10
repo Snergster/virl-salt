@@ -56,7 +56,7 @@ https_proxy:
     - value: {{ http_proxy }}
 {% endif %}
 
-virl_packet repo:
+uwm virl_packet repo:
   git.latest:
     - name: https://github.com/Snergster/virl_packet.git
     - target: {{ virl_packet_path }}
