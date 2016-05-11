@@ -13,6 +13,9 @@ include:
     - file_mode: 755
     - include_empty: True
 
+/var/cache/salt/minion/files/base/virl/{{ each }}/stable:
+  file.directory:
+    - clean: True
 {% endfor %}
 
 {% if salt['pillar.get']('branch:qa', False) %}
@@ -27,6 +30,10 @@ include:
     - group: virl
     - file_mode: 755
     - include_empty: True
+
+/var/cache/salt/minion/files/base/virl/{{ each }}/qa:
+  file.directory:
+    - clean: True
 
   {% endfor %}
 {% endif %}

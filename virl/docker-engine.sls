@@ -160,3 +160,20 @@ registry_run:
       - cmd: registry_tag
     # - unless: docker ps | grep "{{ registry_ip }}:{{ registry_port }}->5000/tcp"
 
+# Docker tap-counter
+{{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest:
+  dockerng.image_present:
+    - load: salt://images/salt/docker-tap-counter.tar
+    - force: True
+  cmd.run:
+    - names:
+      - docker push {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
+    - require:
+      - cmd: registry_run
+
+virl_tap_counter_clean:
+  cmd.run:
+    - names:
+      - docker rmi {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
+    - require:
+      - cmd: {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest

@@ -48,6 +48,7 @@ std prereq pkgs:
       - pkgs:
         - libxml2-dev
         - libxslt1-dev
+        - libc6:i386
 
 /var/cache/virl/std:
   file.recurse:
@@ -223,6 +224,17 @@ std_prereq:
       - require:
         - pkg: 'std prereq pkgs'
 
+VIRL_CORE_dead:
+  service.dead:
+    - names:
+      - virl-std
+      - virl-uwm
+    - prereq:
+      - pip: VIRL_CORE
+    - require:
+      - file: /etc/rc2.d/S98virl-std
+      - file: /etc/rc2.d/S98virl-uwm
+
 VIRL_CORE:
   pip.installed:
     - use_wheel: True
@@ -247,12 +259,6 @@ VIRL_CORE:
     - upgrade: True
     {% endif %}
     {% endif %}
-  service.dead:
-    - names:
-      - virl-std
-      - virl-uwm
-    - prereq:
-      - pip: VIRL_CORE
   cmd.run:
     - names:
      {% if cml %}
