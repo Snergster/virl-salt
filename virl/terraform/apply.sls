@@ -21,6 +21,7 @@ validate:
 launch:
   cmd.run:
     - name: terraform apply -no-color {{ path }}
+    - cwd: {{ path }}
     - require:
       - cmd: validate
 
