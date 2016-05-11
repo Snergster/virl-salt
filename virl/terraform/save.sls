@@ -11,12 +11,8 @@
 
 # based on virl_packet.sls:
 {% set hostname = salt['grains.get']('salt_id', 'virltest') %}
-{% set id = salt['grains.get']('id', '') %}
-{% set salt_id = salt['grains.get']('salt_id', '').split('.', 1)[0] %}
-{% set salt_domain = salt['grains.get']('salt_domain', '').split('.', 1)[1] %}
-# these seem to go stale
-#{% set salt_id = salt['grains.get']('salt_id', '') %}
-#{% set salt_domain = salt['grains.get']('salt_domain', '') %}
+{% set salt_id = salt['grains.get']('salt_id', '') %}
+{% set salt_domain = salt['grains.get']('salt_domain', '') %}
 
 {% set virl_packet_path = '/var/local/virl/virl_packet' %}
 
@@ -56,7 +52,7 @@ https_proxy:
     - value: {{ http_proxy }}
 {% endif %}
 
-virl_packet repo:
+uwm virl_packet repo:
   git.latest:
     - name: https://github.com/Snergster/virl_packet.git
     - target: {{ virl_packet_path }}
