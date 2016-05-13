@@ -19,7 +19,7 @@ remove ugly hold:
 
 pip hard up:
   pip.installed:
-    - name: pip < 8
+    - name: pip == 7.1.2
     {% if proxy == true %}
     - proxy: {{ http_proxy }}
     {% endif %}
