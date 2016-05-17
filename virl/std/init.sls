@@ -208,7 +208,7 @@ std_prereq:
       - lxml >= 3.4.1, < 3.6.0
       - MarkupSafe >= 0.23
       - mock >= 1.0.1
-      - paramiko >= 1.15.2
+      - paramiko >= 1.15.2, < 2.0.0
       - pycrypto >= 2.6.1
       - Pygments
       - requests == 2.7.0
