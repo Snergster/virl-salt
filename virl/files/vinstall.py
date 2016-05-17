@@ -381,6 +381,7 @@ gitfs_remotes:
 fileserver_backend:
   - roots\n""")
         extra.write("""log_level: quiet \n""")
+        extra.write("""hash_type: md5 \n""")
         if count == 2:
           extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id2))
           extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain2))
