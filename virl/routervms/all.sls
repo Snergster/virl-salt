@@ -32,7 +32,7 @@
 include:
   - .csr1000v
   - .iol
-  - .iol2
+  - .iol-l2
   - .iosv
   - .iosxrv
   - .server
