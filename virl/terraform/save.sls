@@ -24,14 +24,16 @@ create sshdir for root:
     - user: root
     - group: staff
     - mode: 0700
-    - name: mkdir -p ~/.ssh
+    # hardcoded homedir for use with sudo
+    - name: mkdir -p /root/.ssh
 
 copy ssh key pem:
   file.copy:
     - user: root
     - group: staff
     - mode: 0600
-    - name: ~/.ssh/id_rsa
+    # hardcoded homedir for use with sudo
+    - name: /root/.ssh/id_rsa
     - source: ~virl/.ssh/id_rsa
     - force: true
 
@@ -40,7 +42,8 @@ copy ssh key pub:
     - user: root
     - group: staff
     - mode: 0600
-    - name: ~/.ssh/id_rsa.pub
+    # hardcoded homedir for use with sudo
+    - name: /root/.ssh/id_rsa.pub
     - source: ~virl/.ssh/id_rsa.pub
     - force: true
 
