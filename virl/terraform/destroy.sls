@@ -16,3 +16,4 @@ http_proxy:
 terminate:
   cmd.run:
     - name: terraform destroy -no-color -force {{ path }} || terraform destroy -no-color -force {{ path }}
+    - cwd: {{ path }}
