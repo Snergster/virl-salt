@@ -1,5 +1,5 @@
-{% set iol2 = salt['pillar.get']('lxcimages:iol-l2', False) %}
-{% set iol2pref = salt['pillar.get']('virl:iol-l2', salt['grains.get']('iol-l2', True)) %}
+{% set iol2 = salt['pillar.get']('lxcimages:iol_l2', False) %}
+{% set iol2pref = salt['pillar.get']('virl:iol_l2', salt['grains.get']('iol_l2', True)) %}
 
 include:
   - virl.routervms.virl-core-sync
