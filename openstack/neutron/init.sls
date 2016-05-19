@@ -47,18 +47,18 @@ neutron-pkgs:
   pkg.installed:
     - force_yes: True
     - pkgs:
-      - neutron-common: '1:2015.1.3-0ubuntu1'
-      - neutron-dhcp-agent: '1:2015.1.3-0ubuntu1'
-      - neutron-l3-agent: '1:2015.1.3-0ubuntu1'
-      - neutron-metadata-agent: '1:2015.1.3-0ubuntu1'
-      - neutron-plugin-linuxbridge-agent: '1:2015.1.3-0ubuntu1'
-      - neutron-plugin-linuxbridge: '1:2015.1.3-0ubuntu1'
-      - neutron-plugin-ml2: '1:2015.1.3-0ubuntu1'
-      - neutron-server: '1:2015.1.3-0ubuntu1'
-      - python-neutron: '1:2015.1.3-0ubuntu1'
-  apt.held:
-    - name: neutron-plugin-linuxbridge-agent
-
+      - neutron-common
+      - neutron-dhcp-agent
+      - neutron-l3-agent
+      - neutron-metadata-agent
+      - neutron-plugin-linuxbridge-agent
+      - neutron-plugin-linuxbridge
+      - neutron-plugin-ml2
+      - neutron-server
+      - python-neutron
+    - refresh: True
+    - hold: True
+    - fromrepo: trusty-updates/kilo
 
 /etc/neutron/neutron.conf:
   file.managed:
