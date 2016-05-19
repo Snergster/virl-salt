@@ -2,24 +2,6 @@
 include:
   - common.numa
 
-qemu_kvm unhold:
-  module.run:
-    - name: pkg.unhold
-    - m_name: qemu-kvm
-    - onlyif: ls /usr/bin/qemu-system-x86_64
-
-qemu-system-x86 unhold:
-  module.run:
-    - name: pkg.unhold
-    - m_name: qemu-system-x86
-    - onlyif: ls /usr/bin/qemu-system-x86_64
-
-qemu-system-common unhold:
-  module.run:
-    - name: pkg.unhold
-    - m_name: qemu-system-common
-    - onlyif: ls /usr/bin/qemu-system-x86_64
-
 libvirt install:
   pkg.installed:
     - name: libvirt-bin
@@ -28,10 +10,14 @@ libvirt install:
     - refresh: True
 
 qemu install:
-  cmd.run:
-    - names: 
-      - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-system-x86=2.0.0+dfsg-2ubuntu1.24'
-      - 'apt-get -q -y --force-yes -o DPkg::Options::=--force-confnew -o DPkg::Options::=--force-confdef install qemu-kvm=2.0.0+dfsg-2ubuntu1.24'
+  pkg.installed:
+    - pkgs:
+      - qemu-system-x86
+      - qemu-kvm
+      - qemu-system-common
+    - refresh: True
+    - hold: True
+    - fromrepo: trusty
 
 libvirt-bin insert /dev/kvm:
   file.line:
@@ -68,15 +54,5 @@ alter min vnc port:
     - require:
       - file: uncomment min vnc port
 
-qemu hold:
-  apt.held:
-    - name: qemu-kvm
 
-qemu-system hold:
-  apt.held:
-    - name: qemu-system-x86
-
-qemu-system-common hold:
-  apt.held:
-    - name: qemu-system-common
 
