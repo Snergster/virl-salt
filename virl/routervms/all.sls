@@ -1,6 +1,6 @@
 {% set onedev = salt['grains.get']('onedev', 'False') %}
 {% set iol = salt['pillar.get']('routervms:iol', False) %}
-{% set iol2 = salt['pillar.get']('routervms:iol2', False) %}
+{% set iol_l2 = salt['pillar.get']('routervms:iol_l2', False) %}
 {% set iosv = salt['pillar.get']('routervms:iosv', False ) %}
 {% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
 {% set iosxrv = salt['pillar.get']('routervms:iosxrv', False ) %}
@@ -15,7 +15,7 @@
 {% set lxcostinato = salt['pillar.get']('routervms:lxc_ostinato', True) %}
 
 {% set iolpref = salt['pillar.get']('virl:iol', salt['grains.get']('iol', True)) %}
-{% set iol2pref = salt['pillar.get']('virl:iol2', salt['grains.get']('iol2', True)) %}
+{% set iol_l2pref = salt['pillar.get']('virl:iol_l2', salt['grains.get']('iol_l2', True)) %}
 {% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
 {% set iosxrv432pref = salt['pillar.get']('virl:iosxrv432', salt['grains.get']('iosxrv432', True)) %}
 {% set iosxrvpref = salt['pillar.get']('virl:iosxrv', salt['grains.get']('iosxrv', True)) %}
@@ -32,7 +32,7 @@
 include:
   - .csr1000v
   - .iol
-  - .iol-l2
+  - .iol_l2
   - .iosv
   - .iosxrv
   - .server
