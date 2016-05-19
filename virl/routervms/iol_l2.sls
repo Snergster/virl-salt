@@ -6,14 +6,14 @@ include:
 
 {% if iol2 and iol2pref %}
 
-iol2:
+iol-l2:
   virl_core.lxc_image_present:
   - subtype: IOL-L2
   - release: high_iron_010416
 
 {% else %}
 
-iol2 gone:
+iol-l2 gone:
   virl_core.lxc_image_absent:
   - subtype: IOL-L2
 
