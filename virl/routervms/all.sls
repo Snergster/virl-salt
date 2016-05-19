@@ -36,7 +36,6 @@ include:
   - .iosv
   - .iosxrv
   - .server
-  - .lxc_server
   - .lxc_iperf
   - .lxc_routem
   - .lxc_ostinato
@@ -44,4 +43,5 @@ include:
   - .nxosv
   - .iosvl2
   - .asav
+  - .lxc_server
 
