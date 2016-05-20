@@ -342,6 +342,17 @@ l3-gateway:
     - require:
       - pkg: neutron-pkgs
 
+/usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py:
+  file.managed:
+    - source: salt://openstack/neutron/files/kilo/bridge_lib.py
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py
+    - require:
+      - pkg: neutron-pkgs
+
 /usr/lib/python2.7/dist-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py:
   file.managed:
     - source: salt://openstack/neutron/files/kilo/linuxbridge_neutron_agent.py
