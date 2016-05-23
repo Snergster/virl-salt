@@ -1,4 +1,4 @@
-{% set adapter1ip = salt['network.interface_ip']('eth1','127.0.0.1') %}
+{% set adapter1ip = salt['network.interface_ip']('eth1') %}
 
 adapter1 ghettoness:
   cmd.run:
