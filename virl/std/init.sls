@@ -203,6 +203,7 @@ std_prereq:
       - Flask_WTF >= 0.11
       - Flask_Breadcrumbs >= 0.3.0
       - flask-compress
+      - Flask_Cors
       - itsdangerous >= 0.24
       - Jinja2 >= 2.7.3
       - lxml >= 3.4.1, < 3.6.0
