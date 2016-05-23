@@ -33,7 +33,7 @@ coreos flavor create:
   module.run:
     - name: nova.flavor_create
     - m_name: 'coreos'
-    - ram: 1024
+    - ram: 2048
     - disk: 0
     - vcpus: 2
     - onchanges:
