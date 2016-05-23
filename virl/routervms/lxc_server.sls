@@ -12,6 +12,12 @@ lxc_server:
   - version: ubuntu-ci
   - release: 14.04.2
 
+remove dead tar:
+  cmd.run:
+    - order: last
+    - names:
+      - 'rm /var/local/virl/lxc/images/*.tar'
+
 {% else %}
 
 lxc_server gone:
