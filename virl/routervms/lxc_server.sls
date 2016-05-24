@@ -16,7 +16,7 @@ remove dead tar:
   cmd.run:
     - order: last
     - names:
-      - 'rm /var/local/virl/lxc/images/*.tar'
+      - 'rm /var/local/virl/lxc/images/*lxc-ubuntu-ci.tar'
 
 {% else %}
 
