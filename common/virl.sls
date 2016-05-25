@@ -172,12 +172,9 @@ l2tpv3 modprobe default:
     - name: modprobe l2tp_eth
     - unless: grep "^l2tp_eth" /proc/modules
 
-cloud_init in common disabled:
-  service.disabled:
-    - name: 'cloud-init'
-
-cloud_init_nonet in common disabled:
-  service.disabled:
-    - name: 'cloud-init-nonet'
+cloud conf hostname hack:
+  file.prepend:
+    - name: /etc/cloud/cloud.cfg
+    - text: 'preserve_hostname: true'
 
 {% endif %}
