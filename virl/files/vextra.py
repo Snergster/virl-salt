@@ -137,24 +137,23 @@ if __name__ == "__main__":
             ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
             admin_id = caller.sminion.functions['grains.get']('admin_id', ' ')
         else:
-            scaller = salt.client.Caller(mopts=sopts)
             try:
-                salt_master = scaller.sminion.functions['pillar.get']('virl:salt_master')
+                salt_master = caller.sminion.functions['pillar.get']('virl:salt_master')
                 if not salt_master:
                     salt_master = caller.sminion.functions['grains.get']('salt_master')
-                salt_id = scaller.sminion.functions['pillar.get']('virl:salt_id')
+                salt_id = caller.sminion.functions['pillar.get']('virl:salt_id')
                 if not salt_id:
                     salt_id = caller.sminion.functions['grains.get']('salt_id')
-                salt_domain = scaller.sminion.functions['pillar.get']('virl:salt_domain')
+                salt_domain = caller.sminion.functions['pillar.get']('virl:salt_domain')
                 if not salt_domain:
                     salt_domain = caller.sminion.functions['grains.get']('salt_domain')
-                ospassword = scaller.sminion.functions['pillar.get']('virl:password')
+                ospassword = caller.sminion.functions['pillar.get']('virl:password')
                 if not ospassword:
                     ospassword = caller.sminion.functions['grains.get']('password')
-                mypass = scaller.sminion.functions['pillar.get']('virl:mysql_password')
+                mypass = caller.sminion.functions['pillar.get']('virl:mysql_password')
                 if not mypass:
                     mypass = caller.sminion.functions['grains.get']('mysql_password')
-                ks_token = scaller.sminion.functions['pillar.get']('virl:keystone_service_token')
+                ks_token = caller.sminion.functions['pillar.get']('virl:keystone_service_token')
                 if not ks_token:
                     ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
                 admin_id = caller.sminion.functions['grains.get']('admin_id', ' ')
