@@ -505,9 +505,26 @@ class Ml2Plugin(db_base_plugin_v2.NeutronDbPluginV2,
         None,
         '_ml2_port_result_filter_hook')
 
+    def _detect_faked_port(self, mech_context):
+        port = mech_context._port
+        host = port.get('binding:host_id')
+        owner = port.get('device_owner')
+        port = mech_context._original_port
+        if port:
+            if not host:
+                host = port.get('binding:host_id')
+            if not owner:
+                owner = port.get('device_owner')
+        return host if owner == 'virl:coreos' else None
+
     def _notify_port_updated(self, mech_context):
         port = mech_context._port
         segment = mech_context.bottom_bound_segment
+        faked = self._detect_faked_port(mech_context)
+        if faked:
+            self.notifier.port_update(mech_context._plugin_context, port,
+                                      None, None, None, faked)
+            return
         if not segment:
             # REVISIT(rkukura): This should notify agent to unplug port
             network = mech_context.network.current
@@ -1137,6 +1154,8 @@ class Ml2Plugin(db_base_plugin_v2.NeutronDbPluginV2,
             self._portsec_ext_port_update_processing(updated_port, context,
                                                      port, id)
 
+            if original_port['device_id'] != updated_port['device_id']:
+                need_port_update_notify = True
             if (psec.PORTSECURITY in attrs) and (
                         original_port[psec.PORTSECURITY] !=
                         updated_port[psec.PORTSECURITY]):
