@@ -38,3 +38,9 @@ vhostinternal:
     - name: {{ hostname }}
     - ip:
       - {{ salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}}
+
+vhost dash internal:
+  host.absent:
+    - name: {{ hostname }}-internal
+    - ip:
+      - {{ salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}}
