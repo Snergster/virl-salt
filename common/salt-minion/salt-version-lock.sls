@@ -9,8 +9,8 @@
 2015 salt reintroduction:
   pkg.installed:
     - pkgs:
-      - salt-minion: 2015.8.10
-      - salt-master: 2015.8.10
-      - salt-common: 2015.8.10
+      - salt-minion: '2015.8.10+ds-1'
+      - salt-master: '2015.8.10+ds-1'
+      - salt-common: '2015.8.10+ds-1'
 
 {% endif %}
