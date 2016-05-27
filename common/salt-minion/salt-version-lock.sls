@@ -6,18 +6,11 @@
 
 {% if '2016' in salt['grains.get']('saltversion') %}
 
-2016 salt removal:
-  pkg.removed:
-    - pkgs:
-      - salt-minion
-      - salt-master
-      - salt-common
-
 2015 salt reintroduction:
   pkg.installed:
     - pkgs:
-      - salt-minion
-      - salt-master
-      - salt-common
+      - salt-minion: 2015.8.10
+      - salt-master: 2015.8.10
+      - salt-common: 2015.8.10
 
 {% endif %}
