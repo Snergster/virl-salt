@@ -8,6 +8,7 @@
 
 2015 salt reintroduction:
   pkg.installed:
+    - refresh: true
     - pkgs:
       - salt-minion: '2015.8.10+ds-1'
       - salt-master: '2015.8.10+ds-1'
