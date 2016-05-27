@@ -769,6 +769,11 @@ class LinuxBridgeRpcCallbacks(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
 
     def port_update(self, context, **kwargs):
         port_id = kwargs['port']['id']
+        if cfg.CONF.host == kwargs.get('faked'):
+            self.agent.faked_devices.append(kwargs['port'])
+            LOG.error('port_update RPC received for faked port %s', kwargs)
+            return
+
         tap_name = self.agent.br_mgr.get_tap_device_name(port_id)
         # Put the tap name in the updated_devices set.
         # Do not store port details, as if they're used for processing
@@ -877,6 +882,8 @@ class LinuxBridgeNeutronAgentRPC(object):
 
         # stores received port_updates for processing by the main loop
         self.updated_devices = set()
+        # stores received port_update parameters for faked ports
+        self.faked_devices = []
         self.context = context.get_admin_context_without_session()
         self.plugin_rpc = agent_rpc.PluginApi(topics.PLUGIN)
         self.sg_plugin_rpc = sg_rpc.SecurityGroupServerRpcApi(topics.PLUGIN)
@@ -961,6 +968,7 @@ class LinuxBridgeNeutronAgentRPC(object):
 
         if device_info.get('removed'):
             resync_b = self.treat_devices_removed(device_info['removed'])
+        self.treat_devices_faked(device_info.get('faked'))
 
         self.br_mgr.prune_known_bridges()
         # If one of the above operations fails => resync with plugin
@@ -1106,6 +1114,24 @@ class LinuxBridgeNeutronAgentRPC(object):
                 if previous_timestamps.get(device) and
                 timestamp != previous_timestamps.get(device)}
 
+    def treat_devices_faked(self, devices):
+        """Handle devices that aren't really on this host, but are attached"""
+        if not devices:
+            return
+        for port in devices:
+            device = self.br_mgr.get_tap_device_name(port['id'])
+
+            if port['device_id']:
+                self.plugin_rpc.update_device_up(self.context,
+                                                 device,
+                                                 self.agent_id,
+                                                 cfg.CONF.host)
+            else:
+                self.plugin_rpc.update_device_down(self.context,
+                                                   device,
+                                                   self.agent_id,
+                                                   cfg.CONF.host)
+
     def scan_devices(self, previous, sync):
         device_info = {}
 
@@ -1114,6 +1140,9 @@ class LinuxBridgeNeutronAgentRPC(object):
         # between these two statements.
         updated_devices = self.updated_devices
         self.updated_devices = set()
+        if self.faked_devices:
+            device_info['faked'] = self.faked_devices
+            self.faked_devices = []
 
         current_devices = self.br_mgr.get_tap_devices()
         device_info['current'] = current_devices
@@ -1168,6 +1197,7 @@ class LinuxBridgeNeutronAgentRPC(object):
     def _device_info_has_changes(self, device_info):
         return (device_info.get('added')
                 or device_info.get('updated')
+                or device_info.get('faked')
                 or device_info.get('removed'))
 
     def daemon_loop(self):
