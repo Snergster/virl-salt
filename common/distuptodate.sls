@@ -2,6 +2,7 @@
 
 include:
   - common.kvm
+  - common.salt-minion.salt-version-lock
 
 dist upgrade host:
   module.run:
