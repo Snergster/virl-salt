@@ -41,7 +41,9 @@
 include:
   - .clients
   - common.ifb
+{% if not cml %}
   - virl.std.tap-counter
+{% endif %}
 
 std prereq pkgs:
   pkg.installed:

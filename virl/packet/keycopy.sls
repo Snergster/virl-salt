@@ -1,3 +1,5 @@
+include:
+  - virl.packet.cloud_config_hostname
 
 /home/virl/.ssh permission check:
   file.directory:
