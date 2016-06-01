@@ -1,5 +1,6 @@
 {% set ifproxy = salt['grains.get']('proxy', 'False') %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set proxy = salt['grains.get']('http_proxy', 'None') %}
 
 include:
   - openstack.repo
@@ -24,21 +25,13 @@ virl-user:
 
 /etc/sudoers.d/virl:
   file.managed:
-    - order: 3
     - mode: 0440
     - create: True
-
-sudoer-defaults:
-    file.append:
-        - order: 4
-        - name: /etc/sudoers.d/virl
-        - require:
-          - user: virl-user
-        - text:
-          - virl ALL=(root) NOPASSWD:ALL
-          - Defaults:virl secure_path=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/opt:/opt/bin:/opt/support
-          - Defaults env_keep += "http_proxy https_proxy HTTP_PROXY HTTPS_PROXY OS_TENANT_NAME OS_USERNAME OS_PASSWORD OS_AUTH_URL"
-
+    - contents: |
+         virl ALL=(root) NOPASSWD:ALL
+         Defaults:virl secure_path=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/opt:/opt/bin:/opt/support
+         Defaults env_keep += "http_proxy https_proxy HTTP_PROXY HTTPS_PROXY OS_TENANT_NAME OS_USERNAME OS_PASSWORD OS_AUTH_URL"
+  
 openssh-server:
   pkg.installed:
    - refresh: False
@@ -53,30 +46,25 @@ crudini:
     - require:
       - file: first-vinstall
     {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http_proxy', 'None') %}
     - proxy: {{ proxy }}
     {% endif %}
 {% endfor %}
 
 configparserus:
   pip.installed:
-    {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http_proxy', 'None') %}
+    {% if ifproxy %}
     - proxy: {{ proxy }}
     {% endif %}
     - name: configparser>=3.3.0r2
 
 configparser fallback:
   pip.installed:
-    {% if ifproxy == True %}
-    {% set proxy = salt['grains.get']('http_proxy', 'None') %}
+    {% if ifproxy %}
     - proxy: {{ proxy }}
     {% endif %}
     - name: configparser>=3.3.0.post2
     - onfail:
       - pip: configparserus
-
-
 
 /usr/local/bin/openstack-config:
   file.symlink:
@@ -86,18 +74,9 @@ configparser fallback:
       - pkg: crudini
 
 first-vinstall:
-{% if not masterless %}
   file.managed:
     - name: /usr/local/bin/vinstall
     - source: salt://virl/files/vinstall.py
     - user: virl
     - group: virl
     - mode: 0755
-{% else %}
-  file.symlink:
-    - name: /usr/local/bin/vinstall
-    - target: /srv/salt/virl/files/vinstall.py
-    - mode: 0755
-    - force: true
-    - onlyif: 'test -e /srv/salt/virl/files/vinstall.py'
-{% endif %}
