@@ -37,6 +37,11 @@ base:
     - common.virl
     - virl.vinstall
 
+  '.*cisco300.com$':
+    - match: pcre
+    - common.virl
+    - virl.vinstall
+
   '.*packet.net$':
     - match: pcre
     - common.virl
