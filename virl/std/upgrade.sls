@@ -234,6 +234,12 @@ virl init second:
     - onfail:
       - cmd: uwmadmin change
 
+virl db upgrade:
+  cmd.run:
+    - name: /usr/local/bin/virl_uwm_server upgrade
+    - require:
+      - pip: VIRL_CORE
+
 virl-std:
   service:
     - running
