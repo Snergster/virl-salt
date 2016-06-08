@@ -16,8 +16,10 @@ neutron-pkgs:
   pkg.installed:
     - force_yes: True
     - refresh: False
+    - hold: True
+    - fromrepo: trusty-updates/kilo
     - pkgs:
-        - neutron-plugin-linuxbridge-agent: '1:2015.1.3-0ubuntu1'
+        - neutron-plugin-linuxbridge-agent
 
 /etc/neutron/neutron.conf:
   file.managed:
