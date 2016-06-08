@@ -27,7 +27,7 @@ compute1 config block:
     - name: accumulater-compute
     - require_in:
       - file: hostnames-for-cluster-block
-    - text: "{{ salt['grains.get']('compute1_internalnet_ip', '172.16.10.251' )}} compute1 compute1.{{ domain_name }}\n"
+    - text: {{ salt['grains.get']('compute1_internalnet_ip', '172.16.10.251' )}} compute1 compute1.{{ domain_name }}
   {% endif %}
 
   {% if salt['grains.get']('compute2_active', true)%}
@@ -37,7 +37,7 @@ compute2 config block:
     - name: accumulater-compute
     - require_in:
       - file: hostnames-for-cluster-block
-    - text: "{{ salt['grains.get']('compute2_internalnet_ip', '172.16.10.252' )}} compute2 compute2.{{ domain_name }}\n"
+    - text: {{ salt['grains.get']('compute2_internalnet_ip', '172.16.10.252' )}} compute2 compute2.{{ domain_name }}
   {% endif %}
 
   {% if salt['grains.get']('compute3_active', true)%}
@@ -47,7 +47,7 @@ compute3 config block:
     - name: accumulater-compute
     - require_in:
       - file: hostnames-for-cluster-block
-    - text: "{{ salt['grains.get']('compute3_internalnet_ip', '172.16.10.253' )}} compute3 compute3.{{ domain_name }}\n"
+    - text: {{ salt['grains.get']('compute3_internalnet_ip', '172.16.10.253' )}} compute3 compute3.{{ domain_name }}
   {% endif %}
 
   {% if salt['grains.get']('compute4_active', true)%}
@@ -57,7 +57,7 @@ compute4 config block:
     - name: accumulater-compute
     - require_in:
       - file: hostnames-for-cluster-block
-    - text: "{{ salt['grains.get']('compute4_internalnet_ip', '172.16.10.254' )}} compute4 compute4.{{ domain_name }}\n"
+    - text: {{ salt['grains.get']('compute4_internalnet_ip', '172.16.10.254' )}} compute4 compute4.{{ domain_name }}
   {% endif %}
 #
 
@@ -67,7 +67,7 @@ compute config block:
   file.accumulated:
     - filename: /etc/hosts
     - name: accumulater-compute
-    - text: "{{ salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}} {{hostname}} {{hostname}}.{{ domain_name}}\n"
+    - text: "{{ salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}} {{hostname}} {{hostname}}.{{ domain_name}}"
     - require_in:
       - file: hostnames-for-cluster-block
 {% endif %}
