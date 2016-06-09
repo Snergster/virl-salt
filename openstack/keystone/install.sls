@@ -12,6 +12,10 @@ keystone no upstart:
         start on manual
         stop on manual
 
+keystone die die:
+  service.dead:
+    - name: keystone
+
 keystone-pkgs:
   pkg.installed:
     - aggregate: False
@@ -21,13 +25,13 @@ keystone-pkgs:
       - libapache2-mod-wsgi
       - memcached
   service.dead:
-    - name: keystone
+    - name: apache2
   cmd.run:
     - name: service apache2 restart
     - require:
-      - service: keystone
+      - service: keystone die die
   pip.installed:
-  {% if proxy == true %}
+  {% if proxy %}
     - proxy: {{ http_proxy }}
   {% endif %}
     - names:
