@@ -26,6 +26,7 @@ apache dir remove:
     - clean: True
   archive.extracted:
     - name: /var/www/html/
+    - archive_format: tar
     - source: salt://virl/files/virlweb.tar
     - source_hash: md5=706be2a49e1e38df8596c21121697cea
     - if_missing: /var/www/html/index.html
