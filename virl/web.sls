@@ -2,38 +2,24 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
 
-{% if cml %}
-/srv/salt/virl/files/cmlweb.tar:
-  file.managed:
-    - source: 'salt://virl/files/cmlweb.tar'
-    - mode: 755
-    - user: virl
-    - group: virl
 
-apache dir remove:
-  file.directory:
-    - name: /var/www/html
-    - clean: True
-  cmd.run:
-    - name: /bin/tar -xf /srv/salt/virl/files/cmlweb.tar -C /var/www/html
-    - onlyif: test ! -e /var/www/html/index.html
-
-{% else %}
-
-apache dir remove:
+apache dir reset:
   file.directory:
     - name: /var/www/html
     - clean: True
   archive.extracted:
     - name: /var/www/html/
     - archive_format: tar
+{% if cml %}
+    - source: salt://virl/files/cmlweb.tar
+    - source_hash: md5=d67f85b69bc80bb1ac4e2592d20a4c83
+{% else %}
     - source: salt://virl/files/virlweb.tar
     - source_hash: md5=706be2a49e1e38df8596c21121697cea
+{% endif %}
     - if_missing: /var/www/html/index.html
     - require:
-      - file: apache dir remove
-
-{% endif %}
+      - file: apache dir reset
 
 /etc/apache2/sites-enabled/apache.conf:
   file.managed:
@@ -59,6 +45,7 @@ restart apache:
       - file: /etc/apache2/sites-enabled/apache.conf
       - file: /etc/apache2/ports.conf
       - file: /etc/apache2/sites-enabled/000-default.conf
+      - archive: apache dir reset
 
 apache failsafe killer:
   service.dead:
