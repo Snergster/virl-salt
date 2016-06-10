@@ -25,7 +25,9 @@ keystone-pkgs:
       - libapache2-mod-wsgi
       - memcached
   service.dead:
-    - name: apache2
+    - names:
+      - apache2
+      - keystone
   cmd.run:
     - name: service apache2 restart
     - require:
