@@ -21,6 +21,13 @@ apache dir reset:
     - require:
       - file: apache dir reset
 
+servername prepend:
+  file.replace:
+    - prepend_if_not_found: True
+    - name: /etc/apache2/apache2.conf
+    - pattern: ServerName.*
+    - repl: 'ServerName {{salt['grains.get']('hostname', 'virl')}}.{{salt['grains.get']('domain_name', 'virl.info')}}'
+
 /etc/apache2/sites-enabled/apache.conf:
   file.managed:
     - mode: 755

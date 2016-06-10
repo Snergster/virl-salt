@@ -7,6 +7,7 @@
 
 include:
   - common.ubuntu
+  - common.rc-local
   - common.salt-minion
   - virl.vinstall
   - openstack.repo
