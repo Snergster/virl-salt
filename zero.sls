@@ -62,7 +62,7 @@ configparser fallback:
     {% if ifproxy %}
     - proxy: {{ proxy }}
     {% endif %}
-    - name: configparser>=3.3.0.post2
+    - name: configparser
     - onfail:
       - pip: configparserus
 
