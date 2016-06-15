@@ -1,4 +1,4 @@
-{% set ifproxy = salt['grains.get']('proxy', 'False') %}
+{% set ifproxy = salt['grains.get']('proxy', false) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set proxy = salt['grains.get']('http_proxy', 'None') %}
 
@@ -45,7 +45,7 @@ crudini:
   pip.installed:
     - require:
       - file: first-vinstall
-    {% if ifproxy == True %}
+    {% if ifproxy %}
     - proxy: {{ proxy }}
     {% endif %}
 {% endfor %}
