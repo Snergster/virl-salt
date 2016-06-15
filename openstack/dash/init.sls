@@ -8,7 +8,7 @@
 include:
   - virl.web
   
-{% if enable_horizon == True %}
+{% if enable_horizon %}
 
 horizon-pkgs:
   pkg.installed:
@@ -43,16 +43,26 @@ a2enmod-enable:
     - name: a2enmod wsgi
     - unless: 'test -e /etc/apache2/mods-enabled/wsgi.load'
 
-horizon-restart:
-  cmd.run:
-    - order: last
-    - onchanges:
+horizon apache2 restart:
+  service.running:
+    - name: apache2
+    - watch:
       - cmd: a2enmod-enable
       - file: horizon-oshosts
       - file: horizon-hosts
       - file: horizon-allowed
       - pkg: horizon-pkgs
-    - name: |
-        service apache2 restart
-        service memcached restart
+
+horizon memcached restart:
+  service.running:
+    - name: memcached
+    - watch:
+      - cmd: a2enmod-enable
+      - file: horizon-oshosts
+      - file: horizon-hosts
+      - file: horizon-allowed
+      - pkg: horizon-pkgs
+
+
+
 {% endif %}
