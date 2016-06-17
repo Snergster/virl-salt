@@ -6,6 +6,11 @@
 http_proxy:
   environ.setenv:
     - value: {{ http_proxy }}
+
+https_proxy:
+  environ.setenv:
+    - value: {{ http_proxy }}
+
 {% endif %}
 
 pip on the box:

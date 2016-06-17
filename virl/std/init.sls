@@ -92,6 +92,11 @@ std doc cleaner:
     - name: /var/www/doc
     - clean: True
 
+uwm packet dir:
+  file.directory:
+    - name: /var/local/virl/virl_packet
+    - makedirs: True
+
 {% endif %}
 
 std docs:
