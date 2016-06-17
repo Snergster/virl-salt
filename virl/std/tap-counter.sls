@@ -43,7 +43,8 @@ virl_tap_counter_conf:
         TC_POLL_INTERVAL="1"
         # How long will each redis record last before expiry
         TC_TTL="600"
-	ULIMIT=16384
+	# Limit for open filehandles. One interface accounts for 4 filehandles
+	ULIMIT="16384"
 
 
 {% if controller == true %}
