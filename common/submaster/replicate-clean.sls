@@ -13,7 +13,7 @@ include:
     - file_mode: 755
     - include_empty: True
 
-/var/cache/salt/minion/files/base/virl/{{ each }}/stable:
+/var/cache/salt/minion/files/base/{{ each }}/stable:
   file.directory:
     - clean: True
 {% endfor %}
@@ -31,7 +31,7 @@ include:
     - file_mode: 755
     - include_empty: True
 
-/var/cache/salt/minion/files/base/virl/{{ each }}/qa:
+/var/cache/salt/minion/files/base/{{ each }}/qa:
   file.directory:
     - clean: True
 
