@@ -110,7 +110,7 @@ class LibvirtGenericVIFDriver(object):
             if vif_model is not None:
                 model = vif_model
             disable_csum = image_meta.get('properties',
-                                          {}).get('hw_vif_disable_csum', 'no')
+                                          {}).get('hw_vif_disable_csum', 'yes')
             if disable_csum.lower() in ('yes', '1', 'true'):
                 conf.disable_csum = True
 
