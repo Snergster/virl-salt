@@ -5,6 +5,12 @@
 {% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
 {% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
 
+docker_config:
+  file.managed:
+    - name: /etc/default/docker
+    - mode: 0644
+    - unless: test -e /etc/default/docker
+
 docker_config-opts:
   file.replace:
     - name: /etc/default/docker
