@@ -359,8 +359,8 @@ def lxc_image_show(id=None, name=None):
     raise TypeError('at least one of `id` or `name` have to be specified')
 
 
-def lxc_image_create(subtype, version, release=None, **properties):
-    name = '%s-%s' % (subtype, version)
+def lxc_image_create(subtype, version='', release=None, **properties):
+    name = '%s-%s' % (subtype, version) if version else subtype
     img_salt_path = 'salt://images/salt/%s.tar.gz' % name
     img_path = __salt__['cp.cache_file'](img_salt_path)
     if not img_path:

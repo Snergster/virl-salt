@@ -1,5 +1,5 @@
 {% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
-{% set domain = salt['pillar.get']('virl:domain', salt['grains.get']('domain_name', 'cisco.com')) %}
+{% set domain = salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'cisco.com')) %}
 {% set public_ip = salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )) %}
 {% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
@@ -32,28 +32,7 @@ include:
 blank what is there:
   cmd.run:
     - name: "mv /etc/network/interfaces /etc/network/interfaces.bak.$(date +'%Y%m%d_%H%M%S')"
-
-
-{% if dummy_int %}
-
-dummy modprobe:
-  file.append:
-    - name: /etc/modules
-    - text: dummy numdummies=5
-    - unless: grep dummy /etc/modules
-  cmd.run:
-    - name: modprobe dummy numdummies=5
-    - unless: grep "^dummy" /proc/modules
-
-special alias up:
-  file.blockreplace:
-    - name: /etc/rc.local
-    - marker_start: "# bits."
-    - marker_end: "# By default this script does nothing."
-    - content: "ifup {{int_port}}"
-    - append_if_not_found: True
-
-{% endif %}
+    - onlyif: test -e /etc/network/interfaces
 
 system:
   network.system:

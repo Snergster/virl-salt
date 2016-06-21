@@ -3,8 +3,9 @@
 {% set cinder_size = salt['pillar.get']('virl:cinder_size', salt['grains.get']('cinder_size', 20000 )) %}
 {% set cinder_safe = salt['pillar.get']('virl:cinder_safe', salt['grains.get']('cinder_safe', False )) %}
 {% set cinder_location = salt['pillar.get']('virl:cinder_location', salt['grains.get']('cinder_location', '/var/lib/cinder/cinder-volumes.lvm' )) %}
+{% set cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false )) %}
 
-
+{% if cinder %}
 
 {% if cinder_file %}
   {% if not cinder_safe %}
@@ -57,4 +58,5 @@ cinder-rclocal:
              # Cinder file doesnt exist
    {% endif %}
 
+{% endif %}
 {% endif %}

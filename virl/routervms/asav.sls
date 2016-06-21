@@ -13,15 +13,15 @@ asav:
     - min_disk: 9
     - min_ram: 0
     - is_public: True
-    - checksum: d8f35f310486878088c7e3f844ea6202
+    - checksum: 73a1126283de6b70c4cc12edfc46d547
     - protected: False
     - disk_format: qcow2
-    - copy_from: salt://images/salt/asav941-200.qcow2
+    - copy_from: salt://images/salt/asav952-204.qcow2
     - property-config_disk_type: cdrom
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: ide
     - property-hw_vif_model: e1000
-    - property-release: 9.4.1-200
+    - property-release: 9.5.2-204
     - property-serial: 1
     - property-subtype: ASAv
 

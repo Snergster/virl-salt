@@ -2,7 +2,9 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
+{% if not kilo %}
 include:
   - openstack.keystone
   - openstack.nova.install
@@ -16,9 +18,9 @@ libffi-dev for rackspace:
 
 oslo messaging first:
   pip.installed:
-{% if proxy == true %}
+  {% if proxy == true %}
     - proxy: {{ http_proxy }}
-{% endif %}
+  {% endif %}
     - require:
       - pkg: nova-pkgs
       - pkg: libffi-dev for rackspace
@@ -27,9 +29,9 @@ oslo messaging first:
 
 nova client:
   pip.installed:
-{% if proxy == true %}
+  {% if proxy == true %}
     - proxy: {{ http_proxy }}
-{% endif %}
+  {% endif %}
     - names:
       - oslo.middleware == 1.1.0
       - python-novaclient == 2.20.0
@@ -50,9 +52,9 @@ nova client:
 
 neutron client:
   pip.installed:
-{% if proxy == true %}
+  {% if proxy == true %}
     - proxy: {{ http_proxy }}
-{% endif %}
+  {% endif %}
     - require:
       - pkg: neutron-pkgs
       - pip: nova client
@@ -71,9 +73,9 @@ neutron client:
 
 glance client:
   pip.installed:
-{% if proxy == true %}
+  {% if proxy == true %}
     - proxy: {{ http_proxy }}
-{% endif %}
+  {% endif %}
     - require:
       - pkg: glance-pkgs
       - pip: nova client
@@ -90,9 +92,9 @@ glance client:
 
 keystone client:
   pip.installed:
-{% if proxy == true %}
+  {% if proxy == true %}
     - proxy: {{ http_proxy }}
-{% endif %}
+  {% endif %}
     - require:
       - pkg: keystone-pkgs
       - pip: nova client
@@ -117,15 +119,17 @@ middleware failsafe:
       - pip: keystone client
       - pip: glance client
       - pip: neutron client
-{% if proxy == true %}
+  {% if proxy == true %}
     - proxy: {{ http_proxy }}
-{% endif %}
+  {% endif %}
     - names:
       - oslo.middleware == 1.1.0
       - oslo.config == 1.6.0
       - oslo.rootwrap == 1.5.0
       - pbr == 0.10.8
       - netaddr==0.7.15
+
+{% else %}
 
 {% for symlink in ['keystone','neutron','glance','nova']%}
 /usr/bin/{{ symlink }}:
@@ -137,3 +141,4 @@ middleware failsafe:
       - 'test ! -e /usr/bin/{{ symlink }}'
 
 {% endfor %}
+{% endif %}

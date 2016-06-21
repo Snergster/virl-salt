@@ -1,0 +1,11 @@
+users:
+  virl:
+    fullname: virl
+    sudo: 'virl ALL=(root) NOPASSWD:ALL'
+    shell: /bin/bash
+    groups:
+      - adm
+      - sudo
+      - virl
+    crypt: {{salt['grains.get']('virl_hashed_password', '$6$UJ9wUHR3$EdEdD2G8rcE6LZs9hY54ilSrO5oDFWIpXCtNcyW8GMwrRwCDwh5p1Z.VCdmhCK1Z85vkeHAgO7yNQ7V.OUr3p0')}}
+

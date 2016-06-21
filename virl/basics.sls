@@ -1,8 +1,18 @@
+{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
+
 include:
+{% if packet %}
+  - virl.ini-writeout
+  - common.virluser
+{% endif %}
   - virl.vsalt
   - virl.vextra
+{% if packet %}
+  - virl.packet_host
+{% else %}
   - virl.host
   - virl.ntp
+{% endif %}
   - virl.web
 
 

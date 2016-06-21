@@ -1,0 +1,280 @@
+#!/usr/bin/python
+
+import os
+import sys
+import time
+import logging
+from logging.handlers import RotatingFileHandler
+from itertools import cycle
+from datetime import datetime
+from calendar import timegm
+
+
+import redis
+
+logger = logging.getLogger('virl_tap_counter')
+logger.setLevel(logging.INFO)
+handler = RotatingFileHandler('/var/log/virl_tap_counter.log',
+                              maxBytes=10485760, backupCount=5)
+handler.setFormatter(
+    logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
+logger.addHandler(handler)
+
+
+class IfaceInfo(object):
+    def __init__(self, iface):
+        """
+        Represents a single interface
+        :param iface: Interface Name
+        :return:
+        """
+        self.iface = iface
+        self._basepath = '/sys/class/net/{}/statistics/{}'
+        self.paths = [self._basepath.format(self.iface, direction + "_" + stat)
+                      for
+                      stat in 'packets', 'bytes' for direction in 'rx', 'tx']
+        self._generators = [self._line_generator(path) for path in self.paths]
+        self.last = None
+
+    def _line_generator(self, path):
+        """
+        Produces a generator which yields a line of a file each time
+        :param path: Path to the file to be read
+        :return: Generator
+        """
+        fhandle = open(path, 'r')
+        while True:
+            # Get a line and seek back before next read
+            yield fhandle.read()
+            fhandle.seek(0)
+
+    def get(self):
+        """
+        Read interface stats, return and remember them
+        :return: tuple of rx packets, tx packets, rx bytes, tx bytes
+        """
+        self.last = [generator.next().rstrip() for generator in
+                     self._generators]
+        return self.last
+
+    def get_diff(self):
+        """
+        Read interface stats, substract last readings, return and remember
+        :return: tuple of rx packets, tx packets, rx bytes, tx bytes
+        """
+        # Return blank datapoints and set the last reading if this is 1st call
+        if not self.last:
+            self.get()
+            return [None, ] * 4
+        old = self.last
+        new = self.get()
+        # Differences from the last readings
+        diffs = [int(_new) - int(_old) for _new, _old in zip(new, old)]
+        return diffs
+
+    def get_samples_rates(self):
+        return self.get_diff() + self.last
+
+
+class IfaceManager(object):
+    """
+    Manager class for collecting interface statistics
+    """
+    _basepath = '/sys/class/net/{}/statistics/{}'
+    _stats = ('rx_packets', 'tx_packets', 'rx_bytes', 'tx_bytes',
+              'rx_packets_total', 'tx_packets_total', 'rx_bytes_total',
+              'tx_bytes_total')
+
+    def __init__(self, prefix='tap', redis_host='localhost', redis_port=6379,
+                 refresh_interval=1, glob_interval=10, ttl=3600):
+        """
+        :param prefix: Collect interfaces starting with <prefix>
+        :param redis_host: Hostname or address of redis host
+        :param redis_port: Port of redis host
+        :param refresh_interval: How often to read stats
+        :param glob_interval: How often to look for new interfaces
+        :param ttl: Expire time for redis
+        :return:
+        """
+        self.ifaces = {iface: IfaceInfo(iface) for iface in
+                       os.listdir('/sys/class/net') if
+                       iface.startswith(prefix)}
+        self.redis = redis.StrictRedis(host=redis_host, port=redis_port)
+        self.prefix = prefix
+        self.refresh_interval = refresh_interval
+        self.glob_interval = glob_interval
+        self.glob_ticker = cycle(range(1, self.glob_interval + 1))
+        self.ttl = ttl
+        self.format_name = lambda name: "{}_{}".format(name, timegm(datetime.utcnow().utctimetuple()))
+        self.host = redis_host
+        self.port = redis_port
+
+        logger.info('Initialised with args: {}'.format(
+                [prefix, redis_host, redis_port, refresh_interval,
+                 glob_interval, ttl]))
+        logger.info('Starting interface monitoring for {} interfaces'.format(
+                len(self.ifaces)))
+
+    def _count(self):
+        """
+        Call interface refresh once in <glob interval>
+        :return:
+        """
+        if self.glob_ticker.next() == self.glob_interval:
+            self._refresh_interfaces()
+
+    def _refresh_interfaces(self):
+        """
+        Look for newly brought up interfaces since the last refresh
+        :return:
+        """
+        new_ifaces = {iface: IfaceInfo(iface) for iface in
+                      os.listdir('/sys/class/net')
+                      if iface.startswith(
+                self.prefix) and iface not in self.ifaces.keys()}
+        if new_ifaces:
+            self.ifaces.update(new_ifaces)
+            logger.info('New interfaces found: {}, '
+                        'now monitoring {} interfaces'.format(
+                    ",".join(new_ifaces.keys()), len(self.ifaces)))
+
+    def loop(self):
+        """
+        Main loop for interface stat collection
+
+        Collects all interface stats once per <poll interval> and pushes them
+        to the redis instance. Each loop is timed individually to keep the
+        intervals. Functions for new interface pickup, interface deletion are
+        called.
+        :return:
+        """
+        while True:
+            start_time = time.time()
+            # Refresh if necessary
+            self._count()
+            to_delete = []
+            for iface_name, interface in self.ifaces.iteritems():
+                try:
+                    new_vals = interface.get_samples_rates()
+                except IOError as E:
+                    # Cant mutate dict mid-iteration
+                    to_delete.append(iface_name)
+                    logger.info(
+                            "Interface {} brought down, now monitoring {} interfaces".format(
+                                    iface_name,
+                                    len(self.ifaces) - len(to_delete)
+                            ))
+                    continue
+                # Push to redis - or break the loop
+                if not self._push(iface_name, new_vals):
+                    logger.warning('Recovered from redis instance '
+                                   'being unreachable, skipping round...')
+                    logger.info(
+                            'Resuming interface monitoring for {} interfaces'.format(
+                                    len(self.ifaces)))
+                    self.edge_of_second()
+                    # Timing is off, skip this loop
+                    break
+            else:
+                for iface in to_delete:
+                    del (self.ifaces[iface])
+                post_time = time.time()
+                # Time the loop duration
+                time_diff = self.refresh_interval - (post_time - start_time)
+                if time_diff > 0:
+                    time.sleep(time_diff)
+
+    def _push(self, name, vals):
+        """
+        Try to push the values to redis
+
+        If the operation fails, _wait_for_redis is called - which polls for
+        connectivity until a definitive timeout exits the script. If
+        connectivity comes back before this happens, function returns False to
+        indicate the current reporting iteration should be skipped
+        :param name: redis key
+        :param vals: tuple/list of values
+        :return:
+        """
+        pipe = self.redis.pipeline()
+        key_name = self.format_name(name)
+        value = {key: value for key, value in
+                 zip(IfaceManager._stats, vals)}
+        pipe.hmset(key_name,
+                   value)
+        pipe.expire(key_name, self.ttl)
+        try:
+            pipe.execute()
+        except redis.exceptions.ConnectionError:
+            self._wait_for_redis()
+            return False
+        return True
+
+    def _wait_for_redis(self):
+        """
+        Try to re-establish connection to redis.
+
+        Gives up and exits script after a given timeout or returns True if
+        connection is made
+        :return:
+        """
+        time_started = time.time()
+        retry_counter = 1
+        while True:
+            logger.error('Redis instance at {}:{} not reachable [try number {}]'
+                         ' - will retry after 1 min'.format(
+                    self.host, self.port, retry_counter))
+            retry_counter += 1
+            try:
+                self.redis.ping()
+            except redis.exceptions.ConnectionError:
+                time.sleep(60)
+            else:
+                logger.warning(
+                        'Reconnected to redis instance on {}. try'.format(
+                                retry_counter))
+                return True
+
+    def edge_of_second(self):
+        while True:
+            t = time.time()
+            if t - int(t) <= 0.01:
+                break
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Reads interface statistics '
+                                                 'and reports them to redis')
+    parser.add_argument('-a', '--address', type=str, default='localhost',
+                        help='address or hostname of the redis instance. Defaults to \'localhost\'')
+    parser.add_argument('-p', '--port', type=int, default='6379',
+                        help='port of the redis instance. Defaults to 6379')
+    parser.add_argument('-g', '--glob-interval', type=int, default=15,
+                        help='Interval in seconds at which to glob for new interfaces. Defaults to 15')
+    parser.add_argument('-i', '--poll-interval', type=int, default=1,
+                        help='Interval in seconds at which to poll for statistics. Defaults to 1')
+    parser.add_argument('-t', '--ttl', type=int, default=600,
+                        help='TTL for redis records in seconds. Defaults to 600')
+    args = parser.parse_args()
+    if filter(lambda n: n < 1,
+              (args.glob_interval, args.poll_interval, args.port, args.ttl)):
+        print("Error: Intervals, port and TTL have to be positive integers")
+        sys.exit(1)
+
+    manager = IfaceManager(prefix='tap', redis_host=args.address,
+                           redis_port=args.port,
+                           refresh_interval=args.poll_interval,
+                           glob_interval=args.glob_interval, ttl=args.ttl)
+    # Wait until start of a second to start processing
+    manager.edge_of_second()
+    try:
+        try:
+            manager.loop()
+        except KeyboardInterrupt:
+            logger.info('Shutting down...')
+            sys.exit(0)
+    except Exception as E:
+        logger.exception('Unexpected error - {}'.format(E))
+        sys.exit(1)

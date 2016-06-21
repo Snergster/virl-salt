@@ -145,7 +145,8 @@ class ConfigDriveBuilder(object):
             path = os.path.normpath(os.path.join("/", path))
             # Convert this to a relative path by removing the leading '/'
             path = path[1:]
-            self._add_file(path, value)
+            # Reuse mdfiles list to write the files at the correct time
+            self.mdfiles.append((path, value))
             LOG.debug('Added %(filepath)s to config drive',
                       {'filepath': path})
 
@@ -201,8 +202,11 @@ class ConfigDriveBuilder(object):
                 # because the destination directory already
                 # exists. This is annoying.
                 for ent in os.listdir(tmpdir):
-                    shutil.copytree(os.path.join(tmpdir, ent),
-                                    os.path.join(mountdir, ent))
+                    src = os.path.join(tmpdir, ent)
+                    if os.path.isfile(src):
+                        shutil.copy(src, mountdir)
+                    else:
+                        shutil.copytree(src, os.path.join(mountdir, ent))
 
             finally:
                 if mounted:

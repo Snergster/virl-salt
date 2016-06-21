@@ -1,0 +1,37 @@
+virl:
+  kilo: true
+  this_node_is_the_controller: False
+  virl_cluster: True
+  neutron_local_ip: 172.16.9.2
+  ntp_server: {{salt['grains.get']('ntp_server', 'pool.ntp.org')}}
+  keystone_service_token: {{salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')}}
+  password: {{salt['grains.get']('password', 'password')}}
+  mysql_password: {{salt['grains.get']('mysql_password', 'password')}}
+  hostname: {{salt['grains.get']('compute2_hostname', 'compute2')}}
+  domain_name: {{salt['grains.get']('domain_name', 'virl.info')}}
+  public_port: {{salt['grains.get']('compute2_public_port', 'eth0')}}
+  using_dhcp_on_the_public_port: {{salt['grains.get']('compute2_using_dhcp_on_the_public_port', True )}}
+  static_ip: {{salt['grains.get']('compute2_static_ip', '127.0.0.1')}}
+  public_netmask: {{salt['grains.get']('compute2_public_netmask', '255.255.255.0')}}
+  public_gateway: {{salt['grains.get']('compute2_public_gateway', '127.0.0.1')}}
+  first_nameserver: {{salt['grains.get']('compute2_first_nameserver', '8.8.8.8')}}
+  second_nameserver: {{salt['grains.get']('compute2_second_nameserver', '8.8.4.4')}}
+  l2_port: {{salt['grains.get']('compute2_l2port', 'eth1')}}
+  l2_address: {{salt['grains.get']('compute2_l2_address', '172.16.1.250')}}
+  l2_mask: {{salt['grains.get']('l2_mask', '255.255.255.0')}}
+  l2_port2: {{salt['grains.get']('compute2_l2_port2', 'eth2')}}
+  l2_address2: {{salt['grains.get']('compute2_l2_address2', '172.16.2.250')}}
+  l2_mask2: {{salt['grains.get']('l2_mask2', '255.255.255.0')}}
+  l3_port: {{salt['grains.get']('compute2_l3_port', 'eth3')}}
+  l3_address: {{salt['grains.get']('compute2_l3_address', '172.16.3.250')}}
+  l3_mask: {{salt['grains.get']('l3_mask', '255.255.255.0')}}
+  internalnet_port: {{salt['grains.get']('compute2_internalnet_port', 'eth4')}}
+  internalnet_ip: {{salt['grains.get']('compute2_internalnet_ip', '172.16.10.251')}}
+  internalnet_netmask: {{salt['grains.get']('internalnet_netmask', '255.255.255.0')}}
+  internalnet_gateway: {{salt['grains.get']('compute2_internalnet_gateway', '172.16.10.250')}}
+  controller_ip: {{salt['grains.get']('internalnet_controller_ip', '172.16.10.250')}}
+  internalnet_controller_ip: {{salt['grains.get']('internalnet_controller_ip', '172.16.10.250')}}
+  virl_ssh_key: {{salt['grains.get']('virl_ssh_key', '')}}
+  proxy: {{salt['grains.get']('proxy', False )}}
+  http_proxy: {{ salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/') }}
+  

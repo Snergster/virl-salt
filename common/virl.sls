@@ -1,16 +1,21 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set ifproxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
+{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', false)) %}
+{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 
 include:
   - common.ubuntu
+  - common.rc-local
   - common.salt-minion
   - virl.vinstall
   - openstack.repo
   - common.kvm
+  - common.ksm
   - virl.scripts
   - virl.vextra
+  - virl.network.dummy
 
 mypkgs:
   pkg.installed:
@@ -32,6 +37,7 @@ mypkgs:
       - python-dulwich
       - virt-what
       - virtinst
+      - pwgen
 
 qemu common virl hold:
   apt.held:
@@ -50,7 +56,6 @@ vinstall wheels:
 {{ pyreq }}:
   pip.installed:
     - require:
-      - pkg: pip on the box
       - file: /usr/local/bin/vinstall
       {% if not masterless %}
       - file: vinstall wheels
@@ -106,11 +111,6 @@ salt-minion nohold:
   file.absent:
     - name: /etc/apt/preferences.d/salt-minion
 
-/proc/sys/kernel/numa_balancing:
-  cmd.run:
-    - name: echo 0 > /proc/sys/kernel/numa_balancing
-    - onlyif: grep 1 /proc/sys/kernel/numa_balancing
-
 /usr/local/bin/v6off jinja:
   file.managed:
     - name: /usr/local/bin/adjust-ipv6-sysctl.sh
@@ -163,5 +163,19 @@ lxc bridge off in default:
     - pattern: '^USE_LXC_BRIDGE="true"'
     - repl: 'USE_LXC_BRIDGE="false"'
 
+{% if packet %}
+l2tpv3 modprobe default:
+  file.append:
+    - name: /etc/modules
+    - text: l2tp_eth
+    - unless: grep l2tp /etc/modules
+  cmd.run:
+    - name: modprobe l2tp_eth
+    - unless: grep "^l2tp_eth" /proc/modules
 
+cloud conf hostname hack:
+  file.prepend:
+    - name: /etc/cloud/cloud.cfg
+    - text: 'preserve_hostname: true'
 
+{% endif %}

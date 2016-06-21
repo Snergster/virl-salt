@@ -1,4 +1,4 @@
-{% set iosv = salt['pillar.get']('routervms:iosv', False ) %}
+{% set iosv = salt['pillar.get']('routervms:iosv', True ) %}
 {% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
 {% set cml_iosv = salt['pillar.get']('routervms:cml_iosv', False ) %}
@@ -6,7 +6,7 @@
 include:
   - virl.routervms.virl-core-sync
 
-{% if iosv or cml_iosv %}
+{% if iosvpref or cml_iosv %}
 
 iosv:
   glance.image_present:
@@ -17,11 +17,11 @@ iosv:
     - min_ram: 0
     - is_public: True
   {% if cml %}
-    - checksum: d38cecec672522313c60d20edfea9773
-    - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.155-3.M
+    - checksum: 4e94f3e63ad2771e5662f614921c8c62
+    - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.156-2.T
   {% else %}
-    - checksum: 79f613ac3b179d5a64520730925130b2
-    - copy_from: salt://images/salt/vios-adventerprisek9-m.vmdk.SPA.155-3.M
+    - checksum: 83707e3cc93646da58ee6563a68002b5
+    - copy_from: salt://images/salt/vios-adventerprisek9-m.vmdk.SPA.156-2.T
   {% endif %}
     - protected: False
     - disk_format: qcow2
@@ -29,7 +29,7 @@ iosv:
     - property-hw_cdrom_type: ide
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
-    - property-release: 15.5.3.M
+    - property-release: 15.6.2.T
     - property-serial: 2
     - property-subtype: IOSv
 

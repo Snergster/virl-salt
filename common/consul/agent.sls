@@ -23,8 +23,8 @@ consul agent init:
 consul webui:
   file.managed:
     - name: /tmp/consulwebui.zip
-    - source: https://dl.bintray.com/mitchellh/consul/0.5.2_web_ui.zip
-    - source_hash: md5=eb98ba602bc7e177333eb2e520881f4f
+    - source: https://releases.hashicorp.com/consul/0.6.0/consul_0.6.0_web_ui.zip
+    - source_hash: sha256=73c5e7ee50bb4a2efe56331d330e6d7dbf46335599c028344ccc4031c0c32eb0
   module.run:
     - name: archive.unzip
     - zip_file: /tmp/consulwebui.zip

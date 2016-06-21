@@ -1,6 +1,6 @@
 include:
-  - virl.ank
-  - virl.std
+  - virl.ank.upgrade
+  - virl.std.upgrade
   - virl.guest
 
 /usr/local/bin/vislink:

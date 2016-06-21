@@ -2,19 +2,10 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 
 include:
+  - common.salt-master.install
   - common.salt-master.gitpython
   - common.salt-master.python-consul
   - common.salt-master.psutil
-
-salt-master install:
-  file.managed:
-    - name: /home/ubuntu/install_salt.sh
-    - mode: 0755
-    - source: "salt://install_salt.sh"
-  cmd.run:
-      - name: /home/ubuntu/install_salt.sh -M -X git 2015.5
-      - unless:
-        - ls /usr/bin/salt-master
 
 pip backup only:
   pkg.installed:
@@ -42,39 +33,4 @@ msgpack-python backup:
     - require:
       - pkg: pip backup only
 
-/etc/salt/pki:
-  file.directory:
-    - makedirs: true
-  mount.mounted:
-    - device: ramdisk
-    - fstype: tmpfs
-    - opts: rw,relatime
-    - dump: 0
-    - pass_num: 0
-    - require:
-      - file: /etc/salt/pki
-
-/srv/pillar:
-  file.directory:
-    - makedirs: true
-  mount.mounted:
-    - device: ramdisk
-    - fstype: tmpfs
-    - opts: rw,relatime
-    - dump: 0
-    - pass_num: 0
-    - require:
-      - file: /srv/pillar
-
-/var/cache/salt/minion/files/base/pillar:
-  file.directory:
-    - makedirs: true
-  mount.mounted:
-    - device: ramdisk
-    - fstype: tmpfs
-    - opts: rw,relatime
-    - dump: 0
-    - pass_num: 0
-    - require:
-      - file: /var/cache/salt/minion/files/base/pillar
 

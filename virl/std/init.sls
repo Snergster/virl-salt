@@ -21,7 +21,36 @@
 {% set web_editor = salt['pillar.get']('virl:web_editor', salt['grains.get']('web_editor', False)) %}
 {% set fdns = salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )) %}
 {% set sdns = salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
+{% set ram_overcommit = salt['pillar.get']('virl:ram_overcommit', salt['grains.get']('ram_overcommit', '2')) %}
+{% set cpu_overcommit = salt['pillar.get']('virl:cpu_overcommit', salt['grains.get']('cpu_overcommit', '3')) %}
+{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
+{% set compute2_active = salt['pillar.get']('virl:compute2_active', salt['grains.get']('compute2_active', False )) %}
+{% set compute3_active = salt['pillar.get']('virl:compute3_active', salt['grains.get']('compute3_active', False )) %}
+{% set compute4_active = salt['pillar.get']('virl:compute4_active', salt['grains.get']('compute4_active', False )) %}
+{% set compute1 = salt['grains.get']('compute1_hostname', 'compute1' ) %}
+{% set compute2 = salt['grains.get']('compute2_hostname', 'compute2' ) %}
+{% set compute3 = salt['grains.get']('compute3_hostname', 'compute3' ) %}
+{% set compute4 = salt['grains.get']('compute4_hostname', 'compute4' ) %}
+{% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
+{% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
+{% set download_proxy_user = salt['pillar.get']('virl:download_proxy_user', salt['grains.get']('download_proxy_user', '')) %}
+{% set host_simulation_port_min_tcp = salt['pillar.get']('virl:host_simulation_port_min_tcp', salt['grains.get']('host_simulation_port_min_tcp', '10000')) %}
+{% set host_simulation_port_max_tcp = salt['pillar.get']('virl:host_simulation_port_max_tcp', salt['grains.get']('host_simulation_port_max_tcp', '17000')) %}
+
+include:
+  - .clients
+  - common.ifb
+{% if not cml %}
+  - virl.std.tap-counter
+{% endif %}
+
+std prereq pkgs:
+  pkg.installed:
+      - pkgs:
+        - libxml2-dev
+        - libxslt1-dev
+        - libc6:i386
 
 /var/cache/virl/std:
   file.recurse:
@@ -63,18 +92,21 @@ std doc cleaner:
     - name: /var/www/doc
     - clean: True
 
+uwm packet dir:
+  file.directory:
+    - name: /var/local/virl/virl_packet
+    - makedirs: True
+
 {% endif %}
 
 std docs:
-  archive:
-    - extracted
+  archive.extracted:
     - name: /var/www/doc/
     {% if cml %}
     - source: "salt://cml/std/{{venv}}/doc/html_ext.tar.gz"
     {% else %}
     - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
     {% endif %}
-{#    - source_hash: md5=d44c6584a80aea1af377868636ac0383 #}
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
 {% if not cml %}
@@ -82,7 +114,19 @@ std docs:
       - file: std doc cleaner
 {% endif %}
 
-  {% if not cml %}
+std docs redo:
+  archive.extracted:
+    - name: /var/www/doc/
+    {% if cml %}
+    - source: "salt://cml/std/{{venv}}/doc/html_ext.tar.gz"
+    {% else %}
+    - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
+    {% endif %}
+    - archive_format: tar
+    - if_missing: /var/www/doc/index.html
+    - onfail: 
+      - archive: std docs
+
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
@@ -94,6 +138,8 @@ std_prereq_webmux:
   {% if proxy == true %}
     - proxy: {{ http_proxy }}
   {% endif %}
+    - require:
+      - pkg: std prereq pkgs
     - names:
       - Twisted >= 13.2.0
       - parse >= 1.4.1
@@ -103,8 +149,7 @@ std_prereq_webmux:
       - SQLObject >= 1.5.1
       - service_identity
       - docker-py >= 1.3.1
-      - lxml >= 3.4.1
-  {% endif %}
+      - lxml >= 3.4.1, < 3.6.0
 
 /etc/virl directory:
   file.directory:
@@ -135,22 +180,13 @@ std_prereq_webmux:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
 
-ifb modprobe:
-  file.append:
-    - name: /etc/modules
-    - text: ifb numifbs=32
-    - unless: grep ifb /etc/modules
-  cmd.run:
-    - name: modprobe ifb numifbs=32
-    - unless: grep "^ifb" /proc/modules
-
 std uwm port replace:
   file.replace:
       - name: /var/www/html/index.html
       - pattern: :\d{2,}"
       - repl: :{{ uwmport }}"
       - unless: grep {{ uwmport }} /var/www/html/index.html
-{% if kilo %}
+
 std nova-compute serial:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
@@ -158,15 +194,6 @@ std nova-compute serial:
     - parameter: 'port_range'
     - value: '{{ serstart }}:{{ serend }}'
 
-{% else %}
-std nova-compute serial:
-  openstack_config.present:
-    - filename: /etc/nova/nova-compute.conf
-    - section: 'libvirt'
-    - parameter: 'serial_port_range'
-    - value: '{{ serstart }}:{{ serend }}'
-
-{% endif %}
 
 std_prereq:
   pip.installed:
@@ -174,33 +201,48 @@ std_prereq:
     - proxy: {{ http_proxy }}
 {% endif %}
     - names:
+      - docker-py >= 1.3.1
       - ipaddr >= 2.1.11
       - flask-sqlalchemy >= 2.0
       - Flask >= 0.10.1
-      - Flask_Login == 0.2.11
+      - Flask_Login >= 0.3.0
       - Flask_RESTful >= 0.3.2
       - Flask_WTF >= 0.11
       - Flask_Breadcrumbs >= 0.3.0
+      - flask-compress
+      - Flask_Cors
       - itsdangerous >= 0.24
       - Jinja2 >= 2.7.3
-      - lxml >= 3.4.1
+      - lxml >= 3.4.1, < 3.6.0
       - MarkupSafe >= 0.23
       - mock >= 1.0.1
-      - paramiko >= 1.15.2
+      - paramiko >= 1.15.2, < 2.0.0
       - pycrypto >= 2.6.1
       - Pygments
       - requests == 2.7.0
+      - redis >= 2.10.5
       - simplejson >= 3.6.5
       - sqlalchemy == 0.9.9
       - websocket_client >= 0.26.0
       - Werkzeug >= 0.10.1
       - wsgiref
       - WTForms >= 2.0.2
-{% if kilo %}
+      - WTForms-JSON >= 0.2.10
       - tornado >= 3.2.2
-{% else %}
-      - tornado >= 3.2.2, < 4.0.0
-{% endif %}
+      - require:
+        - pkg: 'std prereq pkgs'
+
+VIRL_CORE_dead:
+  service.dead:
+    - names:
+      - virl-std
+      - virl-uwm
+    - prereq:
+      - pip: VIRL_CORE
+    - require:
+      - file: /etc/rc2.d/S98virl-std
+      - file: /etc/rc2.d/S98virl-uwm
+
 VIRL_CORE:
   pip.installed:
     - use_wheel: True
@@ -225,12 +267,6 @@ VIRL_CORE:
     - upgrade: True
     {% endif %}
     {% endif %}
-  service.dead:
-    - names:
-      - virl-std
-      - virl-uwm
-    - prereq:
-      - pip: VIRL_CORE
   cmd.run:
     - names:
      {% if cml %}
@@ -264,11 +300,23 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg env virl_webmux_port {{ virl_webmux }}
       - crudini --set /etc/virl/common.cfg host webmux_port {{ virl_webmux }}
       - crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}
+      - crudini --set /etc/virl/common.cfg host download_proxy {{ download_proxy }}
+      - crudini --set /etc/virl/common.cfg host download_no_proxy {{ download_no_proxy }}
+      - crudini --set /etc/virl/common.cfg host download_proxy_user {{ download_proxy_user }}
+      - crudini --set /etc/virl/common.cfg limits host_simulation_port_min_tcp {{ host_simulation_port_min_tcp }}
+      - crudini --set /etc/virl/common.cfg limits host_simulation_port_max_tcp {{ host_simulation_port_max_tcp }}
+      - crudini --set /etc/virl/common.cfg host ram_overcommit {{ ram_overcommit }}
+      - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ cpu_overcommit }}
 
 ank_live_port change:
   cmd.run:
     - name: 'crudini --set /etc/virl/common.cfg host ank_live_port {{ ank_live }}'
 
+ank preview port:
+  cmd.run:
+    - name: 'crudini --set /etc/virl/common.cfg host ank_preview_port {{ topology_editor_port }}'
+    - require:
+      - pip: VIRL_CORE
 
 web editor alpha:
 {% if web_editor %}
@@ -282,6 +330,58 @@ web editor alpha:
 {% endif %}
     - require:
       - pip: VIRL_CORE
+
+{% if cluster %}
+enable cluster in std :
+  cmd.run:
+    - name: 'crudini --set /etc/virl/common.cfg orchestration cluster_mode True'
+    - require:
+      - pip: VIRL_CORE
+
+point std at key:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
+    - onlyif:
+      - test -e ~virl/.ssh/id_rsa.pub
+      - test -e /etc/virl/common.cfg
+    - require:
+      - pip: VIRL_CORE
+
+  {% if compute4_active %}
+
+add up to cluster4 to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+    - require:
+      - pip: VIRL_CORE
+
+  {% elif compute3_active %}
+
+add up to cluster3 to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}}'
+    - require:
+      - pip: VIRL_CORE
+
+  {% elif compute2_active %}
+
+add up to cluster2 to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}}'
+    - require:
+      - pip: VIRL_CORE
+
+  {% else %}
+
+add only cluster1 to std:
+  cmd.run:
+    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}}'
+    - require:
+      - pip: VIRL_CORE
+
+  {% endif %}
+
+{% endif %}
 
 webmux_port change:
   cmd.run:
@@ -313,6 +413,12 @@ virl init second:
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ uwmpassword }} -U uwmadmin -P {{ uwmpassword }} -T uwmadmin
     - onfail:
       - cmd: uwmadmin change
+
+virl db upgrade init:
+  cmd.run:
+    - name: /usr/local/bin/virl_uwm_server upgrade
+    - require:
+      - pip: VIRL_CORE
 
 virl-std:
   service:

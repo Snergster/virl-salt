@@ -2,12 +2,12 @@
 {% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
 {% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
-{% set cml_iosvl2 = salt['pillar.get']('virl:cml_iosvl2', salt['grains.get']('cml_iosvl2', True)) %}
+{% set cml_iosvl2 = salt['pillar.get']('virl:cml_iosvl2', salt['grains.get']('cml_iosvl2', False )) %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if iosvl2 or cml_iosvl2 %}
+{% if iosvl2pref or cml_iosvl2 %}
 
 IOSvL2:
   glance.image_present:

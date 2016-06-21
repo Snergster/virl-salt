@@ -3,12 +3,12 @@
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
 include:
   - virl.web
   
-{% if enable_horizon == True %}
+{% if enable_horizon %}
 
 horizon-pkgs:
   pkg.installed:
@@ -20,22 +20,6 @@ horizon-pkgs:
       - libapache2-mod-wsgi
       - openstack-dashboard
 
-{% if not kilo %}
-openstack-dashboard-ubuntu-theme:
-  pkg.removed:
-    - order: 2
-    - purge: True
-
-openstack-dash:
-  file.append:
-    - order: 3
-    - name: /etc/apt/preferences.d/cisco-openstack
-    - text: |
-        Package: openstack-dashboard-ubuntu-theme
-        Pin: release *
-        Pin-Priority: -1
-
-{% endif %}
 horizon-allowed:
   file.replace:
     - name: /etc/openstack-dashboard/local_settings.py
@@ -59,19 +43,26 @@ a2enmod-enable:
     - name: a2enmod wsgi
     - unless: 'test -e /etc/apache2/mods-enabled/wsgi.load'
 
-horizon-restart:
-  cmd.run:
-    - order: last
-    - onchanges:
+horizon apache2 restart:
+  service.running:
+    - name: apache2
+    - watch:
       - cmd: a2enmod-enable
       - file: horizon-oshosts
       - file: horizon-hosts
       - file: horizon-allowed
       - pkg: horizon-pkgs
-      {% if not kilo %}
-      - file: openstack-dash
-      {% endif %}
-    - name: |
-        service apache2 restart
-        service memcached restart
+
+horizon memcached restart:
+  service.running:
+    - name: memcached
+    - watch:
+      - cmd: a2enmod-enable
+      - file: horizon-oshosts
+      - file: horizon-hosts
+      - file: horizon-allowed
+      - pkg: horizon-pkgs
+
+
+
 {% endif %}

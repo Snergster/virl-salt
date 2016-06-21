@@ -3,194 +3,309 @@
 {% set serial_port = salt['pillar.get']('virl:serial_port',salt['grains.get']('serial_port', '19406')) %}
 {% set vnc_port = salt['pillar.get']('virl:vnc_port',salt['grains.get']('vnc_port', '19407')) %}
 {% set controllerhname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set novapassword = salt['pillar.get']('virl:novapassword', salt['grains.get']('password', 'password')) %}
 {% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
 {% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)) %}
+{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', True)) %}
+{% set internalnetip = salt['pillar.get']('virl:internalnet_ip',salt['grains.get']('internalnet_ip', '172.16.10.250')) %}
+{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
 
-nova-common:
-  pkg.installed:
-    - order: 1
-    - name: nova-compute
-    - refresh: true
 
 compute-pkgs:
   pkg.installed:
-    - order: 2
-    - refresh: False
+    - refresh: True
     - names:
+      - nova-compute
       - python-novaclient
       - nova-serialproxy
 
-
-controller_hostname:
-  host.present:
-    - name: {{ controllerhname }}
-    - ip: {{ controllerip }}
-
-/etc/nova:
+/etc/nova permissions check:
   file.directory:
-    - dir_mode: 755
+    - name: /etc/nova
+    - dir_mode: 0755
 
 /etc/nova/nova.conf:
   file.managed:
     - mode: 755
-    - source: "salt://files/nova.conf"
+    - template: jinja
+    - source: "salt://openstack/nova/files/compute.nova.conf"
+    - require:
+      - pkg: compute-pkgs
 
-nova-conn:
+add libvirt-qemu to nova:
+  group.present:
+    - name: nova
+    - delusers:
+      - libvirt-qemu
+
+serial_console tune:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
-    - section: 'database'
-    - parameter: 'connection'
-    - value: ' mysql://nova:{{ novapassword }}@{{ controllerip }}/nova'
+    - section: 'serial_console'
+    - parameter: 'proxyclient_address'
+    - value: {{ internalnetip }}
+    - require:
+      - file: /etc/nova/nova.conf
 
-
-nova-rabbitpass:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: 'rabbit_password = RABBIT_PASS'
-    - repl: 'rabbit_password = {{ rabbitpassword }}'
-
-
-nova-hostname:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: 'controller'
-    - repl: '{{ controllerip }}'
-
-nova-publicip:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: 'PUBLICIP'
-    - repl: '{{ controllerip }}'
-
-nova-verbose:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: 'verbose=True'
-    - repl: 'verbose=False'
-
-nova-password:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: 'NOVA_PASS'
-    - repl: '{{ novapassword }}'
-
-neut-password:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: 'NEUTRON_PASS'
-    - repl: '{{ neutronpassword }}'
-
-serial-start-stop:
-  file.replace:
-    - name: /etc/nova/nova.conf
-    - pattern: '17000:18000'
-    - repl: '{{ serstart }}:{{ serend }}'
-
-
-nova-compute-libvirt-serport:
-  openstack_config.present:
-    - filename: /etc/nova/nova-compute.conf
-    - section: 'libvirt'
-    - parameter: 'serial_port_range'
-    - value: ' {{ serstart }}:{{ serend }}'
-
-proxyclient-address:
+serial_console tune2:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
-    - section: 'DEFAULT'
-    - parameter: 'vncserver_proxyclient_address'
-    - value: ' {{ controllerip }}'
+    - section: 'serial_console'
+    - parameter: 'serial_port_proxyclient_address'
+    - value: {{ internalnetip }}
+    - require:
+      - file: /etc/nova/nova.conf
 
-vncserver_listen:
+glance tune:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'glance'
+    - parameter: 'host'
+    - value: {{ controllerip }}
+    - require:
+      - file: /etc/nova/nova.conf
+
+vncserver tune:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
     - parameter: 'vncserver_listen'
-    - value: ' 0.0.0.0'
+    - value: '0.0.0.0'
+    - require:
+      - file: /etc/nova/nova.conf
 
-glance_host:
+vncserver tune2:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
-    - parameter: 'glance_host'
-    - value: ' {{ controllerip }}'
+    - parameter: 'vncserver_proxyclient_address'
+    - value: {{ internalnetip }}
+    - require:
+      - file: /etc/nova/nova.conf
 
-novncproxy_base:
+compute filter for compute paranoia:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
-    - parameter: 'novncproxy_base_url'
-    - value: ' http://{{ controllerip }}:{{ vnc_port }}/vnc_auto.html'
+    - parameter: 'scheduler_default_filters'
+    - value: 'AllHostsFilter,ComputeFilter'
+    - require:
+      - file: /etc/nova/nova.conf
 
-novncproxy_port:
+my_ip compute paranoia:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
-    - parameter: 'novncproxy_port'
-    - value: ' {{ vnc_port }}'
+    - parameter: 'my_ip'
+    - value: '{{  salt['pillar.get']('virl:internalnet_ip', '172.16.10.250' ) }}'
+    - require:
+      - file: /etc/nova/nova.conf
 
-{% if kilo %}
-serialproxy_base:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'serial_console'
-    - parameter: 'base_url'
-    - value: ' http://{{ controllerip }}:{{ serial_port }}/serial.html'
 
-serialproxy_port:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'serial_console'
-    - parameter: 'serialproxy_port'
-    - value: ' {{ serial_port }}'
-{% else %}
-serialproxy_base:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'DEFAULT'
-    - parameter: 'serial_port_base_url'
-    - value: ' http://{{ controllerip }}:{{ serial_port }}/serial.html'
-
-serialproxy_port:
-  openstack_config.present:
-    - filename: /etc/nova/nova.conf
-    - section: 'DEFAULT'
-    - parameter: 'serialproxy_port'
-    - value: ' {{ serial_port }}'
-{% endif %}
-
-/etc/init.d/nova-serialproxy:
+/usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py:
   file.managed:
-    - order: 4
-    - source: "salt://files/nova-serialproxy"
-    - mode: 0755
-
-/etc/rc2.d/S98nova-serialproxy:
-  file.symlink:
+    - source: salt://openstack/nova/files/kilo/serialproxy.py
     - require:
-      - file: /etc/init.d/nova-serialproxy
-    - target: /etc/init.d/nova-serialproxy
-    - mode: 0755
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
 
-/usr/bin/kvm:
+/usr/lib/python2.7/dist-packages/nova/cmd/baseproxy.py:
   file.managed:
-    - order: 4
-    - source: "salt://files/install_scripts/kvm"
-    - mode: 0755
-
-/usr/bin/kvm.real:
-  file.symlink:
-    - target: /usr/bin/qemu-system-x86_64
-    - mode: 0755
+    - source: salt://openstack/nova/files/kilo/baseproxy.py
     - require:
-      - file: /usr/bin/kvm
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/baseproxy.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/cmd/baseproxy.py
 
-/usr/local/bin/nova:
-  file.symlink:
+
+/usr/lib/python2.7/dist-packages/nova/api/openstack/compute/contrib/consoles.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/consoles.py
     - require:
-      - pkg: nova-common
-    - target: /usr/bin/nova
-    - mode: 0755
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/contrib/consoles.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/contrib/consoles.py
+
+/usr/lib/python2.7/dist-packages/nova/api/openstack/compute/plugins/v3/remote_consoles.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/plugin.remote_consoles.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/plugins/v3/remote_consoles.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/plugins/v3/remote_consoles.py
+
+/usr/lib/python2.7/dist-packages/nova/api/openstack/compute/schemas/v3/remote_consoles.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/schemas.remote_consoles.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/schemas/v3/remote_consoles.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/api/openstack/compute/schemas/v3/remote_consoles.py
+
+/usr/lib/python2.7/dist-packages/nova/compute/api.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/api.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/compute/api.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/compute/api.py
+
+/usr/lib/python2.7/dist-packages/nova/compute/cells_api.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/cells_api.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/compute/cells_api.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/compute/cells_api.py
+
+/usr/lib/python2.7/dist-packages/nova/compute/manager.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/manager.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/compute/manager.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/compute/manager.py
+
+/usr/lib/python2.7/dist-packages/nova/compute/rpcapi.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/rpcapi.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/compute/rpcapi.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/compute/rpcapi.py
+
+/usr/lib/python2.7/dist-packages/nova/console/websocketproxy.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/websocketproxy.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/console/websocketproxy.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/console/websocketproxy.py
+
+/usr/lib/python2.7/dist-packages/nova/exception.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/exception.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/exception.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/exception.py
+
+/usr/lib/python2.7/dist-packages/nova/network/model.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/model.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/network/model.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/network/model.py
+
+/usr/lib/python2.7/dist-packages/nova/virt/configdrive.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/configdrive.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/configdrive.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virt/configdrive.py
+
+/usr/lib/python2.7/dist-packages/nova/virt/driver.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/virt.driver.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/driver.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virt/driver.py
+
+/usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/libvirt.driver.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py
+
+/usr/lib/python2.7/dist-packages/nova/virt/hardware.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/hardware.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/hardware.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virt/hardware.py
+
+/usr/lib/python2.7/dist-packages/nova/virt/libvirt/config.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/config.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/config.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/config.py
+
+/usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/vif.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
+
+nova-compute restart:
+  cmd.run:
+    - order: last
+    - require:
+      - pkg: nova-compute
+      - file: /etc/nova/nova.conf
+    - name: service nova-compute restart

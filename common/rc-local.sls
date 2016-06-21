@@ -14,6 +14,8 @@ rclocal replace buckets:
           # 004e end
           # 005s dummy
           # 005e end
+          # 006s kvm
+          # 006e end
 
 rclocal v6off append:
   file.replace:
@@ -26,6 +28,14 @@ rclocal dummy append:
     - name: /etc/rc.local
     - pattern: '# 005s start'
     - repl: '# 005s dummy'
+
+rclocal kvm append:
+  file.blockreplace:
+    - name: /etc/rc.local
+    - marker_start: "# 006s kvm"
+    - marker_end: "# 006e"
+    - content: |
+             test -e /dev/kvm || touch /dev/kvm
 
 {%if salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 

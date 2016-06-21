@@ -18,6 +18,7 @@ import netaddr
 import os
 from oslo_config import cfg
 from oslo_log import log as logging
+import re
 
 from neutron.agent.common import utils
 from neutron.common import exceptions
@@ -160,6 +161,12 @@ class IPWrapper(SubProcessBase):
         if self.namespace:
             device.link.set_netns(self.namespace)
 
+    def add_vlan(self, name, physical_interface, vlan_id):
+        cmd = ['add', 'link', physical_interface, 'name', name,
+               'type', 'vlan', 'id', vlan_id]
+        self._as_root([], 'link', cmd)
+        return IPDevice(name, namespace=self.namespace)
+
     def add_vxlan(self, name, vni, group=None, dev=None, ttl=None, tos=None,
                   local=None, port=None, mtu=None, proxy=False):
         cmd = ['add', name]
@@ -189,7 +196,7 @@ class IPWrapper(SubProcessBase):
     @classmethod
     def get_namespaces(cls):
         output = cls._execute([], 'netns', ('list',))
-        return [l.strip() for l in output.split('\n')]
+        return [l.split()[0] for l in output.splitlines()]
 
 
 class IPDevice(SubProcessBase):
@@ -207,6 +214,37 @@ class IPDevice(SubProcessBase):
 
     def __str__(self):
         return self.name
+
+    def _sysctl(self, cmd):
+        """execute() doesn't return the exit status of the command it runs,
+        it returns stdout and stderr. Setting check_exit_code=True will cause
+        it to raise a RuntimeError if the exit status of the command is
+        non-zero, which in sysctl's case is an error. So we're normalizing
+        that into zero (success) and one (failure) here to mimic what
+        "echo $?" in a shell would be.
+
+        This is all because sysctl is too verbose and prints the value you
+        just set on success, unlike most other utilities that print nothing.
+
+        execute() will have dumped a message to the logs with the actual
+        output on failure, so it's not lost, and we don't need to print it
+        here.
+        """
+        cmd = ['sysctl', '-w'] + cmd
+        ip_wrapper = IPWrapper(self.namespace)
+        try:
+            ip_wrapper.netns.execute(cmd, run_as_root=True,
+                                     check_exit_code=True)
+        except RuntimeError:
+            LOG.exception(_LE("Failed running %s"), cmd)
+            return 1
+
+        return 0
+
+    def disable_ipv6(self):
+        sysctl_name = re.sub(r'\.', '/', self.name)
+        cmd = 'net.ipv6.conf.%s.disable_ipv6=1' % sysctl_name
+        return self._sysctl([cmd])
 
 
 class IpCommandBase(object):
@@ -345,7 +383,7 @@ class IpAddrCommand(IpDeviceCommandBase):
                 'scope', scope,
                 'dev', self.name]
         if net.version == 4:
-            args += ['brd', str(net.broadcast)]
+            args += ['brd', str(net[-1])]
         self._as_root([net.version], tuple(args))
 
     def delete(self, cidr):
@@ -567,7 +605,8 @@ class IpNetnsCommand(IpCommandBase):
         self._as_root([], ('delete', name), use_root_namespace=True)
 
     def execute(self, cmds, addl_env=None, check_exit_code=True,
-                extra_ok_codes=None, run_as_root=False):
+                log_fail_as_error=True, extra_ok_codes=None,
+                run_as_root=False):
         ns_params = []
         kwargs = {'run_as_root': run_as_root}
         if self._parent.namespace:
@@ -580,16 +619,25 @@ class IpNetnsCommand(IpCommandBase):
                           ['%s=%s' % pair for pair in addl_env.items()])
         cmd = ns_params + env_params + list(cmds)
         return utils.execute(cmd, check_exit_code=check_exit_code,
-                             extra_ok_codes=extra_ok_codes, **kwargs)
+                             extra_ok_codes=extra_ok_codes,
+                             log_fail_as_error=log_fail_as_error, **kwargs)
 
     def exists(self, name):
         output = self._parent._execute(
             ['o'], 'netns', ['list'],
             run_as_root=cfg.CONF.AGENT.use_helper_for_ns_read)
-        for line in output.split('\n'):
-            if name == line.strip():
+        for line in [l.split()[0] for l in output.splitlines()]:
+            if name == line:
                 return True
         return False
+
+
+def vlan_in_use(segmentation_id, namespace=None):
+    """Return True if VLAN ID is in use by an interface, else False."""
+    ip_wrapper = IPWrapper(namespace=namespace)
+    interfaces = ip_wrapper.netns.execute(["ip", "-d", "link", "list"],
+                                          check_exit_code=True)
+    return '802.1Q id %s ' % segmentation_id in interfaces
 
 
 def device_exists(device_name, namespace=None):
@@ -688,38 +736,24 @@ def _arping(ns_name, iface_name, address, count):
                             'ns': ns_name})
 
 
-def send_gratuitous_arp(ns_name, iface_name, address, count):
-    """Send a gratuitous arp using given namespace, interface, and address."""
+def send_ip_addr_adv_notif(ns_name, iface_name, address, config):
+    """Send advance notification of an IP address assignment.
+
+    If the address is in the IPv4 family, send gratuitous ARP.
+
+    If the address is in the IPv6 family, no advance notification is
+    necessary, since the Neighbor Discovery Protocol (NDP), Duplicate
+    Address Discovery (DAD), and (for stateless addresses) router
+    advertisements (RAs) are sufficient for address resolution and
+    duplicate address detection.
+    """
+    count = config.send_arp_for_ha
 
     def arping():
         _arping(ns_name, iface_name, address, count)
 
-    if count > 0:
+    if count > 0 and netaddr.IPAddress(address).version == 4:
         eventlet.spawn_n(arping)
-
-
-def send_garp_for_proxyarp(ns_name, iface_name, address, count):
-    """
-    Send a gratuitous arp using given namespace, interface, and address
-
-    This version should be used when proxy arp is in use since the interface
-    won't actually have the address configured.  We actually need to configure
-    the address on the interface and then remove it when the proxy arp has been
-    sent.
-    """
-    def arping_with_temporary_address():
-        # Configure the address on the interface
-        device = IPDevice(iface_name, namespace=ns_name)
-        net = netaddr.IPNetwork(str(address))
-        device.addr.add(str(net))
-
-        _arping(ns_name, iface_name, address, count)
-
-        # Delete the address from the interface
-        device.addr.delete(str(net))
-
-    if count > 0:
-        eventlet.spawn_n(arping_with_temporary_address)
 
 
 def add_namespace_to_cmd(cmd, namespace=None):

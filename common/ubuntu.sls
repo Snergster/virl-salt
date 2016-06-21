@@ -1,10 +1,7 @@
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 
 include:
   - common.pip
-  - common.uptodate
-  - common.rc-local
+  - common.distuptodate
 
 commonpkgs:
   pkg.installed:
@@ -28,6 +25,7 @@ commonpkgs:
       - libssl-dev
       - htop
       - gcc
+      - bc
 
 
 /usr/local/bin/openstack-config:
@@ -59,3 +57,9 @@ salt-common unhold:
     - name: pkg.unhold
     - m_name: salt-common
     - onlyif: ls /usr/bin/salt-minion
+
+/etc/apt/apt.conf.d/99force-ipv4:
+  file.managed:
+    - makedirs: true
+    - contents: |
+        Acquire::ForceIPv4 "true";
