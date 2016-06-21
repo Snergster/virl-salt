@@ -1,0 +1,79 @@
+{% set virl : {
+    'hostname' : salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')),
+	'domain_name' : salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'virl.info')),
+	'dhcp' : salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )),
+	'publicport' : salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')),
+	'public_ip' : salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )),
+	'public_network' : salt['pillar.get']('virl:public_network', salt['grains.get']('public_network', '172.16.6.0' )),
+	'public_netmask' : salt['pillar.get']('virl:public_netmask', salt['grains.get']('public_netmask, '255.255.255.0' )),
+	'public_gateway' : salt['pillar.get']('virl:public_gateway', salt['grains.get']('public_gateway', '172.16.6.0' )),
+	'proxy' : salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)),
+	'http_proxy' : salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')),
+	'ks_token' : salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')),
+	'ntp_server' : salt['pillar.get']('virl:ntp_server', salt['grains.get']('ntp_server', 'pool.ntp.org')),
+	'fdns' : salt['pillar.get']('virl:first_nameserver', salt['grains.get']('first_nameserver', '8.8.8.8' )),
+	'sdns' : salt['pillar.get']('virl:second_nameserver', salt['grains.get']('second_nameserver', '8.8.4.4' )),
+	'salt_master' : salt['pillar.get']('virl:salt_master', salt['grains.get']('salt_master', 'us-virl-salt.cisco.com')),
+    'salt_id' : salt['pillar.get']('virl:salt_id', salt['grains.get']('salt_id', 'virl')),
+    'salt_domain' : salt['pillar.get']('virl:salt_domain', salt['grains.get']('salt_domain', 'virl.info')),
+	'masterless' : salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)),
+    'l2_port' : salt['pillar.get']('virl:l2_port', salt['grains.get']('l2_port', 'eth1' )),
+    'l2_network' : salt['pillar.get']('virl:l2_network', salt['grains.get']('l2_network', '172.16.1.0/24' )),
+    'l2_mask' : salt['pillar.get']('virl:l2_mask', salt['grains.get']('l2_mask', '255.255.255.0' )),
+    'l2_gateway' : salt['pillar.get']('virl:l2_network_gateway', salt['grains.get']('l2_network_gateway', '172.16.1.254' )),
+    'l2_start_address' : salt['pillar.get']('virl:l2_start_address', salt['grains.get']('l2_start_address', '172.16.1.50' )),
+    'l2_end_address' : salt['pillar.get']('virl:l2_end_address', salt['grains.get']('l2_end_address', '172.16.1.253' )),
+    'l2_address' : salt['pillar.get']('virl:l2_address', salt['grains.get']('l2_address', '172.16.1.254' )),
+    'ffdns' : salt['pillar.get']('virl:first_flat_nameserver', salt['grains.get']('first_flat_nameserver', '8.8.8.8' )),
+    'sfdns' : salt['pillar.get']('virl:second_flat_nameserver', salt['grains.get']('second_flat_nameserver', '8.8.4.4' )),
+    'l2_port2_enabled' : salt['pillar.get']('virl:l2_port2_enabled', salt['grains.get']('l2_port2_enabled', 'True' )),
+    'l2_port2' : salt['pillar.get']('virl:l2_port2', salt['grains.get']('l2_port2', 'eth2' )),
+    'l2_network2' : salt['pillar.get']('virl:l2_network2', salt['grains.get']('l2_network2', '172.16.2.0/24' )),
+    'l2_mask2' : salt['pillar.get']('virl:l2_mask2', salt['grains.get']('l2_mask2', '255.255.255.0' )),
+    'l2_gateway2' : salt['pillar.get']('virl:l2_network_gateway2', salt['grains.get']('l2_network_gateway2', '172.16.2.1' )),
+    'l2_start_address2' : salt['pillar.get']('virl:l2_start_address2', salt['grains.get']('l2_start_address2', '172.16.2.50' )),
+    'l2_end_address2' : salt['pillar.get']('virl:l2_end_address2', salt['grains.get']('l2_end_address2', '172.16.2.253' )),
+    'l2_address2' : salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254' )),
+    'ff2dns' : salt['pillar.get']('virl:first_flat2_nameserver', salt['grains.get']('first_flat2_nameserver', '8.8.8.8' )),
+    'sf2dns' : salt['pillar.get']('virl:second_flat2_nameserver', salt['grains.get']('second_flat2_nameserver', '8.8.4.4' )),
+    'l3_port' : salt['pillar.get']('virl:l3_port', salt['grains.get']('l3_port', 'eth3' )),
+    'l3_network' : salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '172.16.3.0/24' )),
+    'l3_mask' : salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '255.255.255.0' )),
+    'l3_network_gateway' : salt['pillar.get']('virl:l3_network_gateway', salt['grains.get']('l3_network_gateway', '172.16.3.1' )),
+    'l3_floating_start_address' : salt['pillar.get']('virl:l3_floating_start_address', salt['grains.get']('l3_floating_start_address', '172.16.3.50' )),
+    'l3_floating_end_address' : salt['pillar.get']('virl:l3_floating_end_address', salt['grains.get']('l3_floating_end_address', '172.16.3.253' )),
+    'l3_address' : salt['pillar.get']('virl:l3_address', salt['grains.get']('l3_address', '172.16.3.254/24' )),
+    'snat_dns' : salt['pillar.get']('virl:first_snat_nameserver',salt['grains.get']('first_snat_nameserver', '8.8.8.8')),
+    'snat_dns2' : salt['pillar.get']('virl:second_snat_nameserver',salt['grains.get']('second_snat_nameserver', '8.8.4.4')),
+    'l3_port' : salt['pillar.get']('virl:l3_port', salt['grains.get']('l3_port', 'eth3' )),
+    'ramdisk' : salt['pillar.get']('virl:ramdisk', salt['grains.get']('ramdisk', False)),
+
+{% set ank = salt['pillar.get']('virl:ank', salt['grains.get']('ank', '19401')) %}
+{% set ank_live = salt['pillar.get']('virl:ank_live', salt['grains.get']('ank_live', '19402')) %}
+
+{% set stdport = salt['pillar.get']('virl:virl_webservices', salt['grains.get']('virl_webservices', '19399')) %}
+{% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
+{% set virl_webmux = salt['pillar.get']('virl:virl_webmux', salt['grains.get']('virl_webmux', '19403')) %}
+{% set serstart = salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')) %}
+{% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
+{% set serial_port = salt['pillar.get']('virl:serial_port',salt['grains.get']('serial_port', '19406')) %}
+{% set vnc_port = salt['pillar.get']('virl:vnc_port',salt['grains.get']('vnc_port', '19407')) %}
+{% set vnc = salt['pillar.get']('virl:vnc', salt['grains.get']('vnc', False)) %}
+{% set vnc_password = salt['pillar.get']('virl:vnc_password', salt['grains.get']('vnc_password', 'letmein')) %}
+{% set guestaccount = salt['pillar.get']('virl:guest_account', salt['grains.get']('guest_account', True)) %}
+{% set guestpassword = salt['pillar.get']('virl:guest_password', salt['grains.get']('guest_password', 'guest')) %}
+
+    'int_ip' : salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' )),
+    'int_port' : salt['pillar.get']('virl:internalnet_port', salt['grains.get']('internalnet_port', 'eth4' )),
+    'int_mask' : salt['pillar.get']('virl:internalnet_netmask', salt['grains.get']('internalnet_netmask', '255.255.255.0' )),
+    'l3_mask' : salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '255.255.255.0' )),
+
+	'enable_horizon' : salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)),
+	'uwmport' : salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')),
+
+	'kilo' : salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)),
+
+	'masterless' : salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)),
+    'hostname' : salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')),
+	'hostname' : salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')),
+}
