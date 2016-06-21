@@ -47,33 +47,96 @@
     'snat_dns2' : salt['pillar.get']('virl:second_snat_nameserver',salt['grains.get']('second_snat_nameserver', '8.8.4.4')),
     'l3_port' : salt['pillar.get']('virl:l3_port', salt['grains.get']('l3_port', 'eth3' )),
     'ramdisk' : salt['pillar.get']('virl:ramdisk', salt['grains.get']('ramdisk', False)),
-
-{% set ank = salt['pillar.get']('virl:ank', salt['grains.get']('ank', '19401')) %}
-{% set ank_live = salt['pillar.get']('virl:ank_live', salt['grains.get']('ank_live', '19402')) %}
-
-{% set stdport = salt['pillar.get']('virl:virl_webservices', salt['grains.get']('virl_webservices', '19399')) %}
-{% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
-{% set virl_webmux = salt['pillar.get']('virl:virl_webmux', salt['grains.get']('virl_webmux', '19403')) %}
-{% set serstart = salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')) %}
-{% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
-{% set serial_port = salt['pillar.get']('virl:serial_port',salt['grains.get']('serial_port', '19406')) %}
-{% set vnc_port = salt['pillar.get']('virl:vnc_port',salt['grains.get']('vnc_port', '19407')) %}
-{% set vnc = salt['pillar.get']('virl:vnc', salt['grains.get']('vnc', False)) %}
-{% set vnc_password = salt['pillar.get']('virl:vnc_password', salt['grains.get']('vnc_password', 'letmein')) %}
-{% set guestaccount = salt['pillar.get']('virl:guest_account', salt['grains.get']('guest_account', True)) %}
-{% set guestpassword = salt['pillar.get']('virl:guest_password', salt['grains.get']('guest_password', 'guest')) %}
-
-    'int_ip' : salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' )),
+    'ank' : salt['pillar.get']('virl:ank', salt['grains.get']('ank', '19401')),
+    'ank_live' : salt['pillar.get']('virl:ank_live', salt['grains.get']('ank_live', '19402')),
+    'stdport' : salt['pillar.get']('virl:virl_webservices', salt['grains.get']('virl_webservices', '19399')),
+    'uwmport' : salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')),
+    'virl_webmux' : salt['pillar.get']('virl:virl_webmux', salt['grains.get']('virl_webmux', '19403')),
+    'serstart' : salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')),
+    'serend' : salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')),
+    'serial_port' : salt['pillar.get']('virl:serial_port',salt['grains.get']('serial_port', '19406')),
+    'vnc_port' : salt['pillar.get']('virl:vnc_port',salt['grains.get']('vnc_port', '19407')),
+    'vnc' : salt['pillar.get']('virl:vnc', salt['grains.get']('vnc', False)),
+    'vnc_password' : salt['pillar.get']('virl:vnc_password', salt['grains.get']('vnc_password', 'letmein')),
+    'guestaccount' : salt['pillar.get']('virl:guest_account', salt['grains.get']('guest_account', True)),
+    'guestpassword' : salt['pillar.get']('virl:guest_password', salt['grains.get']('guest_password', 'guest')),
+    'user_list' : salt['pillar.get']('virl:user_list', salt['grains.get']('user_list', '')),
+    'desktop' : salt['pillar.get']('virl:desktop', salt['grains.get']('desktop', False)),
+    'desktop_manager' : salt['pillar.get']('virl:desktop_manager', salt['grains.get']('desktop_manager', 'lubuntu')),
+    'uwmpassword' : salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')),
+    'ospassword' : salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')),
+    'mypassword' : salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')),
+    'ks_token' : salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')),
+    'ganglia' : salt['pillar.get']('virl:ganglia', salt['grains.get']('ganglia', False)),
+    'debug' : salt['pillar.get']('virl:debug', salt['grains.get']('debug', False)),
+    'ceilometer' : salt['pillar.get']('virl:ceilometer', salt['grains.get']('ceilometer', False)),
+    'heat' : salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false)),
+    'cinder_enabled' : salt['pillar.get']('virl:cinder_enabled', salt['grains.get']('cinder_enabled', False)),
+    'cinder' : salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false )),
+    'cinder_file' : salt['pillar.get']('virl:cinder_file', salt['grains.get']('cinder_file', False )),
+    'cinder_size' : salt['pillar.get']('virl:cinder_size', salt['grains.get']('cinder_size', 20000 )),
+    'cinder_device' : salt['pillar.get']('virl:cinder_device', salt['grains.get']('cinder_device', False )),
+    'cinder_location' : salt['pillar.get']('virl:cinder_location', salt['grains.get']('cinder_location', '/var/lib/cinder/cinder-volumes.lvm' )),
+    'dummy_int' : salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )),
+    'controller' : salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )),
+    'controllerhostname' : salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')),
+    'controller_ip' : salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('internalnet_controller_IP', '172.16.10.250')),
     'int_port' : salt['pillar.get']('virl:internalnet_port', salt['grains.get']('internalnet_port', 'eth4' )),
+    'int_ip' : salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' )),
+    'int_network' : salt['pillar.get']('virl:internalnet_network', salt['grains.get']('internalnet_network', '172.16.10.0' )),
     'int_mask' : salt['pillar.get']('virl:internalnet_netmask', salt['grains.get']('internalnet_netmask', '255.255.255.0' )),
-    'l3_mask' : salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '255.255.255.0' )),
-
-	'enable_horizon' : salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', True)),
-	'uwmport' : salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')),
-
-	'kilo' : salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)),
-
-	'masterless' : salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)),
-    'hostname' : salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')),
-	'hostname' : salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')),
+    'int_gateway' : salt['pillar.get']('virl:internalnet_gateway', salt['grains.get']('internalnet_gateway', '172.16.10.1' )),
+    'onedev' : salt['grains.get']('onedev', 'False'),
+    'iol' : salt['pillar.get']('routervms:iol', False),
+    'iol_l2' : salt['pillar.get']('routervms:iol_l2', False),
+    'iosv' : salt['pillar.get']('routervms:iosv', False ),
+    'iosvl2' : salt['pillar.get']('routervms:iosvl2', False ),
+    'iosxrv' : salt['pillar.get']('routervms:iosxrv', False ),
+    'iosxrv432' : salt['pillar.get']('routervms:iosxrv432', False ),
+    'nxosv' : salt['pillar.get']('routervms:nxosv', False),
+    'csr1000v' : salt['pillar.get']('routervms:csr1000v', False),
+    'vpagent' : salt['pillar.get']('routervms:vpagent', False),
+    'server' : salt['pillar.get']('routervms:UbuntuServertrusty', True),
+    'lxc' : salt['pillar.get']('routervms:lxc_server', True),
+    'lxciperf' : salt['pillar.get']('routervms:lxc_iperf', True),
+    'lxcroutem' : salt['pillar.get']('routervms:lxc_routem', True),
+    'lxcostinato' : salt['pillar.get']('routervms:lxc_ostinato', True),
+    'iolpref' : salt['pillar.get']('virl:iol', salt['grains.get']('iol', True)),
+    'iol_l2pref' : salt['pillar.get']('virl:iol_l2', salt['grains.get']('iol_l2', True)),
+    'iosvpref' : salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)),
+    'iosxrv432pref' : salt['pillar.get']('virl:iosxrv432', salt['grains.get']('iosxrv432', True)),
+    'iosxrvpref' : salt['pillar.get']('virl:iosxrv', salt['grains.get']('iosxrv', True)),
+    'csr1000vpref' : salt['pillar.get']('virl:csr1000v', salt['grains.get']('csr1000v', True)),
+    'iosvl2pref' : salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)),
+    'nxosvpref' : salt['pillar.get']('virl:nxosv', salt['grains.get']('nxosv', True)),
+    'vpagentpref' : salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', True)),
+    'serverpref' : salt['pillar.get']('virl:server', salt['grains.get']('server', True)),
+    'lxcpref' : salt['pillar.get']('virl:lxc_server', salt['grains.get']('lxc_server', True)),
+    'lxciperfpref' : salt['pillar.get']('virl:lxc_iperf', salt['grains.get']('lxc_iperf', True)),
+    'lxcroutempref' : salt['pillar.get']('virl:lxc_routem', salt['grains.get']('lxc_routem', True)),
+    'lxcostinatopref' : salt['pillar.get']('virl:lxc_ostinato', salt['grains.get']('lxc_ostinato', True)),
+    'vmm_mac' : salt['pillar.get']('virl:vmm_mac', salt['grains.get']('vmm_mac', True)),
+    'vmm_win32' : salt['pillar.get']('virl:vmm_win32', salt['grains.get']('vmm_win32', True)),
+    'vmm_win64' : salt['pillar.get']('virl:vmm_win64', salt['grains.get']('vmm_win64', True)),
+    'vmm_linux' : salt['pillar.get']('virl:vmm_linux', salt['grains.get']('vmm_linux', True)),
+    'std_clients' : salt['pillar.get']('virl:virl_clients', salt['grains.get']('virl_clients', True)),
+    'cml' : salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )),
+    'dist_upgrade' : salt['pillar.get']('virl:dist_upgrade', salt['grains.get']('dist_upgrade', True)),
+    'no_upgrade' : salt['pillar.get']('virl:no_upgrade', salt['grains.get']('no_upgrade', True)),
+    'openvpn_enable' : salt['pillar.get']('virl:openvpn_enable', salt['grains.get']('openvpn_enable', False)),
+    'openvpn_tcp' : salt['grains.get']('openvpn_tcp', True),
+    'openvpn_client_ip_start' : salt['grains.get']('openvpn_client_ip_start', '172.16.1.20'),
+    'openvpn_client_ip_end' : salt['grains.get']('openvpn_client_ip_end', '172.16.1.39'),
+    'ram_overcommit' : salt['pillar.get']('virl:ram_overcommit', salt['grains.get']('ram_overcommit', '2')),
+    'cpu_overcommit' : salt['pillar.get']('virl:cpu_overcommit', salt['grains.get']('cpu_overcommit', '3')),
+    'web_editor' : salt['pillar.get']('virl:web_editor', salt['grains.get']('web_editor', False)),
+    'packet' : salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )),
+    'cluster' : salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )),
+    'compute1_active' : salt['pillar.get']('virl:compute1_active', salt['grains.get']('compute1_active', True )),
+    'compute2_active' : salt['pillar.get']('virl:compute2_active', salt['grains.get']('compute2_active', False )),
+    'compute3_active' : salt['pillar.get']('virl:compute3_active', salt['grains.get']('compute3_active', False )),
+    'compute4_active' : salt['pillar.get']('virl:compute4_active', salt['grains.get']('compute4_active', False )),
+	'kilo' : salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false))
 }
+%}
+
