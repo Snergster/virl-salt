@@ -20,7 +20,7 @@ coreos:
     - property-hw_vif_model: virtio
     - property-release: 899.13.0
     - property-serial: 1
-    - property-subtype: coreos
+    - property-subtype: CoreOS
 
 coreos flavor delete:
   cmd.run:
