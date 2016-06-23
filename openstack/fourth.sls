@@ -4,7 +4,7 @@ include:
   - virl.std
   - virl.guest
   - virl.routervms.iol
-  - virl.routervms.iol2
+  - virl.routervms.iol_l2
   - virl.routervms.iosv
   - virl.routervms.iosvl2
   - virl.routervms.lxc_server
