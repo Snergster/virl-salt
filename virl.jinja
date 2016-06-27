@@ -1,4 +1,4 @@
-{% set virl : {
+{% set virl = {
     'hostname' : salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')),
 	'domain_name' : salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'virl.info')),
 	'dhcp' : salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )),
