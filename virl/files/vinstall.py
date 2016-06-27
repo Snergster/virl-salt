@@ -824,7 +824,7 @@ if __name__ == "__main__":
         call_salt('openstack.restart')
         call_salt('virl.std')
         call_salt('virl.ank')
-        #call_salt('virl.docker')
+        call_salt('virl.docker')
 
         if masterless:
             subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'virl_core.project_absent', 'name=guest'])
