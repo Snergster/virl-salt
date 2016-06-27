@@ -5,7 +5,7 @@
 	'publicport' : salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')),
 	'public_ip' : salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )),
 	'public_network' : salt['pillar.get']('virl:public_network', salt['grains.get']('public_network', '172.16.6.0' )),
-	'public_netmask' : salt['pillar.get']('virl:public_netmask', salt['grains.get']('public_netmask, '255.255.255.0' )),
+	'public_netmask' : salt['pillar.get']('virl:public_netmask', salt['grains.get']('public_netmask', '255.255.255.0' )),
 	'public_gateway' : salt['pillar.get']('virl:public_gateway', salt['grains.get']('public_gateway', '172.16.6.0' )),
 	'proxy' : salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)),
 	'http_proxy' : salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')),
