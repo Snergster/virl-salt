@@ -145,7 +145,9 @@
     'download_no_proxy' : salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')),
     'download_proxy_user' : salt['pillar.get']('virl:download_proxy_user', salt['grains.get']('download_proxy_user', '')),
     'host_simulation_port_min_tcp' : salt['pillar.get']('virl:host_simulation_port_min_tcp', salt['grains.get']('host_simulation_port_min_tcp', '10000')),
-    'host_simulation_port_max_tcp' : salt['pillar.get']('virl:host_simulation_port_max_tcp', salt['grains.get']('host_simulation_port_max_tcp', '17000'))
+    'host_simulation_port_max_tcp' : salt['pillar.get']('virl:host_simulation_port_max_tcp', salt['grains.get']('host_simulation_port_max_tcp', '17000')),
+    'venv' : salt['pillar.get']('behave:environment', 'stable' ),
+    'virl_type' : salt['grains.get']('virl_type', 'stable' )
 }
 %}
 

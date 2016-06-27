@@ -1,15 +1,12 @@
-{% set virl_type = salt['grains.get']('virl_type', 'stable') %}
-{% set venv = salt['pillar.get']('behave:environment', 'stable') %}
-
 {% from "virl.jinja" import virl with context %}
 
 /var/cache/virl/std:
   file.recurse:
       {% if virl.cml %}
-    - source: "salt://cml/std/{{venv}}/"
+    - source: "salt://cml/std/{{virl.venv}}/"
     - name: /var/cache/virl/std
       {% else %}
-    - source: "salt://std/{{venv}}/"
+    - source: "salt://std/{{virl.venv}}/"
     - name: /var/cache/virl/std
       {% endif %}
     - clean: true
@@ -49,9 +46,9 @@ std docs:
   archive.extracted:
     - name: /var/www/doc/
     {% if virl.cml %}
-    - source: "salt://cml/std/{{venv}}/doc/html_ext.tar.gz"
+    - source: "salt://cml/std/{{virl.venv}}/doc/html_ext.tar.gz"
     {% else %}
-    - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
+    - source: "salt://std/{{virl.venv}}/doc/html_ext.tar.gz"
     {% endif %}
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
@@ -64,9 +61,9 @@ std docs redo:
   archive.extracted:
     - name: /var/www/doc/
     {% if virl.cml %}
-    - source: "salt://cml/std/{{venv}}/doc/html_ext.tar.gz"
+    - source: "salt://cml/std/{{virl.venv}}/doc/html_ext.tar.gz"
     {% else %}
-    - source: "salt://std/{{venv}}/doc/html_ext.tar.gz"
+    - source: "salt://std/{{virl.venv}}/doc/html_ext.tar.gz"
     {% endif %}
     - archive_format: tar
     - if_missing: /var/www/doc/index.html

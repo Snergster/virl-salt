@@ -2,22 +2,6 @@
 {% from "virl.jinja" import virl with context %}
 
 
-{% set std_ver_fixed = salt['pillar.get']('behave:std_ver_fixed', salt['grains.get']('std_ver_fixed', False)) %}
-{% set std_ver = salt['pillar.get']('behave:std_ver', salt['grains.get']('std_ver', '0.10.10.18')) %}
-{% set venv = salt['pillar.get']('behave:environment', 'stable') %}
-
-
-{% set compute1 = salt['grains.get']('compute1_hostname', 'compute1' ) %}
-{% set compute2 = salt['grains.get']('compute2_hostname', 'compute2' ) %}
-{% set compute3 = salt['grains.get']('compute3_hostname', 'compute3' ) %}
-{% set compute4 = salt['grains.get']('compute4_hostname', 'compute4' ) %}
-{% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
-{% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
-{% set download_proxy_user = salt['pillar.get']('virl:download_proxy_user', salt['grains.get']('download_proxy_user', '')) %}
-{% set host_simulation_port_min_tcp = salt['pillar.get']('virl:host_simulation_port_min_tcp', salt['grains.get']('host_simulation_port_min_tcp', '10000')) %}
-{% set host_simulation_port_max_tcp = salt['pillar.get']('virl:host_simulation_port_max_tcp', salt['grains.get']('host_simulation_port_max_tcp', '17000')) %}
-
-
 std prereq pkgs:
   pkg.installed:
       - pkgs:

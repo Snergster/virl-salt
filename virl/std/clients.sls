@@ -1,8 +1,8 @@
-{% set venv = salt['pillar.get']('behave:environment', 'stable') %}
-{% set std_clients = salt['pillar.get']('virl:std_clients', salt['grains.get']('std_clients', True)) %}
+
+{% from "virl.jinja" import virl with context %}
 
 virl_client download:
-{% if std_clients %}
+{% if virl.std_clients %}
   file.recurse:
     - name: /var/www/download
     - clean: true
@@ -11,7 +11,7 @@ virl_client download:
     - dir_mode: 755
     - include_pat: 'VIRL_CLIENTS*.whl'
     - exclude_pat:  E@(.*64.exe)|(.*32.exe$)|(.*dmg$)|(.*zip$)|(.*box$)
-    - source: "salt://std/{{ venv }}/"
+    - source: "salt://std/{{ virl.venv }}/"
 {% else %}
   module.run:
     - name: file.find

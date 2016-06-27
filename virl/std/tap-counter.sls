@@ -1,12 +1,11 @@
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set controller_ip = salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
-{% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+
+{% from "virl.jinja" import virl with context %}
+
 
 prereq_redis:
   pip.installed:
-  {% if proxy == True %}
-    - proxy: {{ http_proxy }}
+  {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
   {% endif %}
     - name: redis
 
@@ -30,10 +29,10 @@ virl_tap_counter_conf:
         # Defaults for virl_tap_counter
         # This file is sourced in /etc/init.d/virl-tap-counter
         # Address of redis instance to send data to
-        {% if controller == True %}
+        {% if virl.controller  %}
         TC_ADDRESS="localhost"
         {% else %}
-        TC_ADDRESS="{{ controller_ip }}"
+        TC_ADDRESS="{{ virl.controller_ip }}"
         {% endif %}
         # Port of redis instance to send data to
         TC_PORT="6379"
@@ -47,7 +46,7 @@ virl_tap_counter_conf:
         ULIMIT="16384"
 
 
-{% if controller == true %}
+{% if virl.controller %}
 redis-server:
   pkg.installed:
     - pkg: redis-server
