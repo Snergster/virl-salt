@@ -33,7 +33,7 @@ IOSvL2:
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
     - property-serial: 2
-    - property-subtype: IOSv
+    - property-subtype: IOSvL2
 
 IOSvL2 flavor delete:
   cmd.run:
