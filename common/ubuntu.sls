@@ -1,6 +1,8 @@
 
 include:
+{% if not 'xenial' in salt['grains.get']('oscodename') %}
   - common.pip
+{% endif %}
   - common.distuptodate
 
 commonpkgs:
