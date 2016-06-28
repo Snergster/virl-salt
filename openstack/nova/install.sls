@@ -1,21 +1,4 @@
-{% set public_ip = salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )) %}
-{% set serstart = salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')) %}
-{% set serend = salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')) %}
-{% set ramdisk = salt['pillar.get']('virl:ramdisk', salt['grains.get']('ramdisk', False)) %}
-{% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
-{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
-{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set rabbitpassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set neutronpassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set novapassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set iscontroller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True)) %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
-{% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
-{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
-{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.ramdisk
@@ -55,7 +38,7 @@ nova-pkgs:
     - require:
       - pkg: nova-pkgs
 
-{% if cluster %}
+{% if virl.cluster %}
 compute filter for cluster:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
@@ -353,7 +336,7 @@ nova-compute serial:
     - filename: /etc/nova/nova-compute.conf
     - section: 'libvirt'
     - parameter: 'serial_port_range'
-    - value: '{{ serstart }}:{{ serend }}'
+    - value: '{{ virl.serstart }}:{{ virl.serend }}'
     - require:
       - file: /etc/nova/nova.conf
 
