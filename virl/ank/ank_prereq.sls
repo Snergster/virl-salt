@@ -9,7 +9,7 @@ ank prereq pkgs:
 
 {% if not virl.masterless %}
 
-/var/cache/virl/ank files:
+/var/cache/virl/ank files prereq:
   file.recurse:
     - name: /var/cache/virl/ank
     - source: "salt://ank/{{ virl.venv }}/"
