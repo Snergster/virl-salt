@@ -147,6 +147,8 @@
     'host_simulation_port_min_tcp' : salt['pillar.get']('virl:host_simulation_port_min_tcp', salt['grains.get']('host_simulation_port_min_tcp', '10000')),
     'host_simulation_port_max_tcp' : salt['pillar.get']('virl:host_simulation_port_max_tcp', salt['grains.get']('host_simulation_port_max_tcp', '17000')),
     'venv' : salt['pillar.get']('behave:environment', 'stable' ),
+    'virlweb' : salt['pillar.get']('files_checksums:virlweb', '' ),
+    'cmlweb' : salt['pillar.get']('files_checksums:virlweb', '' ),
     'virl_type' : salt['grains.get']('virl_type', 'stable' )
 }
 %}

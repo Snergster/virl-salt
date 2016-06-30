@@ -1,6 +1,4 @@
-{% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
-{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
+{% from "virl.jinja" import virl with context %}
 
 
 apache dir reset:
@@ -10,12 +8,12 @@ apache dir reset:
   archive.extracted:
     - name: /var/www/html/
     - archive_format: tar
-{% if cml %}
+{% if virl.cml %}
     - source: salt://virl/files/cmlweb.tar
-    - source_hash: md5=d67f85b69bc80bb1ac4e2592d20a4c83
+    - source_hash: {{ virl.cmlweb }}
 {% else %}
     - source: salt://virl/files/virlweb.tar
-    - source_hash: md5=706be2a49e1e38df8596c21121697cea
+    - source_hash: {{ virl.virlweb }}
 {% endif %}
     - if_missing: /var/www/html/index.html
     - require:
@@ -23,10 +21,23 @@ apache dir reset:
 
 servername prepend:
   file.replace:
-    - prepend_if_not_found: True
+    - prepend_if_not_found: False
     - name: /etc/apache2/apache2.conf
     - pattern: ServerName.*
-    - repl: 'ServerName {{salt['grains.get']('hostname', 'virl')}}.{{salt['grains.get']('domain_name', 'virl.info')}}'
+    - repl: 'ServerName {{virl.hostname}}.{{ virl.domain_name }}'
+
+servername for apache in web:
+  file.managed:
+    - name: /etc/apache2/conf-available/servername.conf
+    - contents: |
+        ServerName '{{ virl.hostname }}.{{ virl.domain_name }}'
+
+servername symlink in web:
+  file.symlink:
+    - name: /etc/apache2/conf-enabled/servername.conf
+    - target: /etc/apache2/conf-available/servername.conf
+    - require:
+      - file: servername for apache in web
 
 /etc/apache2/sites-enabled/apache.conf:
   file.managed:

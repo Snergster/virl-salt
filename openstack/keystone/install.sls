@@ -1,9 +1,4 @@
-{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
-{% set ks_token = salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
-{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% from "virl.jinja" import virl with context %}
 
 keystone no upstart:
   file.managed:
@@ -12,9 +7,31 @@ keystone no upstart:
         start on manual
         stop on manual
 
+servername for apache:
+  file.managed:
+    - name: /etc/apache2/conf-available/servername.conf
+    - contents: |
+        ServerName '{{ virl.hostname }}.{{ virl.domain_name }}'
+
+servername symlink:
+  file.symlink:
+    - name: /etc/apache2/conf-enabled/servername.conf
+    - target: /etc/apache2/conf-available/servername.conf
+    - require:
+      - file: servername for apache
+
 keystone die die:
   service.dead:
     - name: keystone
+
+apache2 also needs to die die:
+  service.dead:
+    - name: apache2
+
+waiting patiently for apache:
+  module.run:
+    - name: test.sleep
+    - length: 10
 
 keystone-pkgs:
   pkg.installed:
@@ -32,9 +49,10 @@ keystone-pkgs:
     - name: service apache2 restart
     - require:
       - service: keystone die die
+      - module: waiting patiently for apache
   pip.installed:
-  {% if proxy %}
-    - proxy: {{ http_proxy }}
+  {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
   {% endif %}
     - names:
       - python-memcached
@@ -115,7 +133,6 @@ keystone db-sync:
     - hour: 5
     - require:
       - cmd: keystone db-sync
-
 
 key-db-sync:
   cmd.run:
