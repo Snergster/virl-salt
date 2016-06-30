@@ -1,10 +1,9 @@
-{% set iol2 = salt['pillar.get']('lxcimages:iol_l2', False) %}
 {% set iol2pref = salt['pillar.get']('virl:iol_l2', salt['grains.get']('iol_l2', True)) %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if iol2 and iol2pref %}
+{% if iol2pref %}
 
 iol-l2:
   virl_core.lxc_image_present:
