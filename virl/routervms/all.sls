@@ -12,4 +12,7 @@ include:
   - .iosvl2
   - .asav
   - .lxc_server
-
+{% if 'cisco.com' in salt['grains.get']('id') %}
+  - .iol
+  - .iol_l2
+{% endif %}
