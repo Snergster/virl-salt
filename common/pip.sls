@@ -1,15 +1,13 @@
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
+{% from "virl.jinja" import virl with context %}
 
-{% if proxy == True %}
+{% if virl.proxy %}
 http_proxy:
   environ.setenv:
-    - value: {{ http_proxy }}
+    - value: {{ virl.http_proxy }}
 
 https_proxy:
   environ.setenv:
-    - value: {{ http_proxy }}
+    - value: {{ virl.http_proxy }}
 
 {% endif %}
 
@@ -63,12 +61,22 @@ python-pip ugly hold:
         Pin: release *
         Pin-Priority: -1
 
-python-pip trashy defaults:
+python-pip mirror defaults:
   file.managed:
     - name: /etc/pip.conf
+{% if virl.pypi_mirror %}
+    - contents: |
+        [global]
+        cache-dir = /tmp
+        disable-pip-version-check = true
+        index-url = {{ virl.pypi_mirror_index }}
+        [install]
+        trusted-host = {{ virl.pypi_mirror_location }}
+
+{% else %}
     - contents: |
         [global]
         cache-dir = /tmp
         disable-pip-version-check = true
 
-
+{% endif %}
