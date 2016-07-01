@@ -13,8 +13,8 @@
 {% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
 {% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
 
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
+
+{% from "virl.jinja" import virl with context %}
 
 docker registry settings:
   cmd.run:
@@ -28,22 +28,12 @@ remove_wrong_docker:
   pkg.purged:
     - name: lxc-docker
 
-# this installs along docker-engine, using http repo instead
-# docker_repository_prereq:
-#   pkg.installed:
-#     - refresh: False
-#     - pkgs:
-#       - apt-transport-https
-#       - ca-certificates
-
 docker_repository:
   file.managed:
     - name: /etc/apt/sources.list.d/virl-docker.list
     - mode: 0755
     - contents: |
         deb http://apt.dockerproject.org/repo ubuntu-trusty main
-    # - require:
-    #   - pkg: docker_repository_prereq
 
 docker_repository_key:
   cmd.run:
@@ -83,8 +73,8 @@ include:
 docker-py:
   pip.installed:
     - name: docker-py
-    {% if proxy == true %}
-    - proxy: {{ http_proxy }}
+    {% if virl.proxy  %}
+    - proxy: {{ virl.http_proxy }}
     {% endif %}
 
 # add registry into docker:
@@ -150,5 +140,3 @@ virl_tap_counter_clean:
       - docker rmi {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
       - docker rmi virl-tap-counter:latest
       - docker rmi {{ tapcounter_docker_ID }} || true
-    #- require:
-    #  - cmd: virl-tap-counter:latest
