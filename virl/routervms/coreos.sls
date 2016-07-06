@@ -20,7 +20,7 @@ coreos:
     - property-hw_vif_model: virtio
     - property-release: 899.13.0
     - property-serial: 1
-    - property-subtype: coreos
+    - property-subtype: CoreOS
 
 coreos flavor delete:
   cmd.run:
@@ -33,7 +33,7 @@ coreos flavor create:
   module.run:
     - name: nova.flavor_create
     - m_name: 'coreos'
-    - ram: 1024
+    - ram: 2048
     - disk: 0
     - vcpus: 2
     - onchanges:

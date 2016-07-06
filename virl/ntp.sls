@@ -1,6 +1,4 @@
-{% set ntp_server = salt['pillar.get']('virl:ntp_server', salt['grains.get']('ntp_server', 'pool.ntp.org')) %}
-{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set dhcp = salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )) %}
+{% from "virl.jinja" import virl with context %}
 
 ntp:
   pkg:
@@ -21,7 +19,7 @@ ntpdate:
     - source: salt://virl/files/ntp.conf
     - template: jinja
 
-{% if not dhcp %}
+{% if not virl.dhcp %}
 ntp.conf interface lock:
   file.replace:
     - name: /etc/ntp.conf
@@ -37,7 +35,7 @@ ntp stop:
 
 ntpdate sync:
     cmd.run:
-      - name: ntpdate {{ ntp_server }}
+      - name: ntpdate {{ virl.ntp_server }}
 
 ntp start:
     cmd.run:

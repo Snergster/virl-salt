@@ -3,7 +3,7 @@
 include:
 {% if packet %}
   - virl.ini-writeout
-  - common.users
+  - common.virluser
 {% endif %}
   - virl.vsalt
   - virl.vextra

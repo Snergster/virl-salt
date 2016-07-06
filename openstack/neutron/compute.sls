@@ -18,10 +18,10 @@ neutron-pkgs:
     - force_yes: True
     - refresh: False
     - pkgs:
-{% if mitaka %}
         - neutron-plugin-linuxbridge-agent
-{% else %}
-        - neutron-plugin-linuxbridge-agent: '1:2015.1.3-0ubuntu1'
+{% if not mitaka %}
+    - hold: True
+    - fromrepo: trusty-updates/kilo
 {% endif %}
 
 {% if mitaka %}
@@ -306,6 +306,17 @@ l3-gateway:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
+    - require:
+      - pkg: neutron-pkgs
+
+/usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py:
+  file.managed:
+    - source: salt://openstack/neutron/files/kilo/bridge_lib.py
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py
     - require:
       - pkg: neutron-pkgs
 

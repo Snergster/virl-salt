@@ -14,15 +14,15 @@ iosxrv 9000:
   - min_disk: 55
   - min_ram: 0
   - is_public: True
-  - checksum: 64c538c34252aaeb4ed1ddb93d6803fd
+  - checksum: {{ salt['pillar.get']('routervm_checksums:iosxr9000')}}
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/salt/xrv9k-fullk9-x.qcow2-6.0.0
+  - copy_from: salt://images/salt/{{ salt['pillar.get']('routervm_files:iosxr9000')}}
   - property-config_disk_type: cdrom
   - property-hw_cdrom_type: id
   - property-hw_disk_bus: virtio
   - property-hw_vif_model: virtio
-  - property-release: 6.0.0
+  - property-release: {{ salt['pillar.get']('version:iosxr9000')}}
   - property-serial: 4
   - property-subtype: 'IOS XRv 9000'
 

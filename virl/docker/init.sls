@@ -8,12 +8,19 @@
 {% set registry_file_hash = '0c79a98a8a2954c3bc04388be22ec0f5' %}
 # If updating registry load registry manually into docker and get its Docker ID by issue $docker images
 {% set registry_docker_ID = '0f29f840cdef' %}
+{% set tapcounter_docker_ID = 'fd89e345206b' %}
 
 {% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
 {% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
 
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
+
+docker registry settings:
+  cmd.run:
+    - names:
+      - crudini --set /etc/virl/common.cfg host docker_registry_ip {{ registry_ip }}
+      - crudini --set /etc/virl/common.cfg host docker_registry_port {{ registry_port }}
 
 # Docker:
 
@@ -68,51 +75,14 @@ docker_install:
       - file: docker_pin
       - pkg: docker_remove
 
-docker_config-opts:
-  file.replace:
-    - name: /etc/default/docker
-    - pattern: '^DOCKER_OPTS.*$'
-    - repl: DOCKER_OPTS="--insecure-registry={{ registry_ip }}:{{ registry_port }}"
-               ## Sometimes docker service does not working OK:
-               # try play around with docker arg tlsverify=false
-    - flags: ['IGNORECASE', 'MULTILINE']
-    - append_if_not_found: True
-    - require_in:
-      - module: docker_restart
-docker_config-proxy:
-  file.replace:
-    - name: /etc/default/docker
-    - pattern: '^export http_proxy.*$'
-    - repl: export http_proxy={{ download_proxy }}
-    - flags: ['IGNORECASE', 'MULTILINE']
-    - append_if_not_found: True
-    - require_in:
-      - module: docker_restart
-docker_config-noproxy:
-  file.replace:
-    - name: /etc/default/docker
-    - pattern: '^export no_proxy.*$'
-    - repl: export no_proxy={{ registry_ip }},{{download_no_proxy}},$no_proxy
-    - flags: ['IGNORECASE', 'MULTILINE']
-    - append_if_not_found: True
-    - require_in:
-      - module: docker_restart
-
-docker_restart:
-  module.run:
-    - name: service.restart
-    - m_name: docker
-    - require:
-      - file: docker_config-opts
-      - file: docker_config-proxy
-      - file: docker_config-noproxy
+include:
+  - virl.docker.config
 
 # docker-py:
 
 docker-py:
   pip.installed:
     - name: docker-py
-    - upgrade: True
     {% if proxy == true %}
     - proxy: {{ http_proxy }}
     {% endif %}
@@ -161,12 +131,15 @@ registry_run:
     # - unless: docker ps | grep "{{ registry_ip }}:{{ registry_port }}->5000/tcp"
 
 # Docker tap-counter
-{{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest:
+virl-tap-counter:latest:
+  # this remembers previously used registry IP:port and restores it,
+  # don't include them or it will cause issues when IP/port changes
   dockerng.image_present:
     - load: salt://images/salt/docker-tap-counter.tar
     - force: True
   cmd.run:
     - names:
+      - docker tag -f {{ tapcounter_docker_ID }} {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
       - docker push {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
     - require:
       - cmd: registry_run
@@ -175,5 +148,7 @@ virl_tap_counter_clean:
   cmd.run:
     - names:
       - docker rmi {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
-    - require:
-      - cmd: {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
+      - docker rmi virl-tap-counter:latest
+      - docker rmi {{ tapcounter_docker_ID }} || true
+    #- require:
+    #  - cmd: virl-tap-counter:latest

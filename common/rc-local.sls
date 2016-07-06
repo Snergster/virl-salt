@@ -35,7 +35,7 @@ rclocal kvm append:
     - marker_start: "# 006s kvm"
     - marker_end: "# 006e"
     - content: |
-             touch /dev/kvm
+             test -e /dev/kvm || touch /dev/kvm
 
 {%if salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 

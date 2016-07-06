@@ -94,6 +94,11 @@ create snat subnet:
     - require:
       - cmd: create snat net
 
+create ext-net router-gateway:
+  cmd.run:
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 router-list -c id -f csv | grep -o '[a-fA-F0-9-]\{36\}' | xargs -IX -n 1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 router-gateway-set X ext-net
+    - onlyif: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-show ext-net
+
 create quota update:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 quota-update --router -1

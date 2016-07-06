@@ -2,6 +2,17 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 
+{% if proxy == True %}
+http_proxy:
+  environ.setenv:
+    - value: {{ http_proxy }}
+
+https_proxy:
+  environ.setenv:
+    - value: {{ http_proxy }}
+
+{% endif %}
+
 pip on the box:
   pkg.installed:
     - name: python-pip
@@ -18,12 +29,8 @@ remove ugly hold:
 
 
 pip hard up:
-  pip.installed:
-    - name: pip < 8
-    {% if proxy == true %}
-    - proxy: {{ http_proxy }}
-    {% endif %}
-    - upgrade: True
+  cmd.run:
+    - name: 'pip install pip==7.1.2'
 
 
 python-pip:
@@ -31,7 +38,7 @@ python-pip:
     - name: python-pip
     - hold: True
     - require:
-      - pip: pip hard up
+      - cmd: pip hard up
 
 
 pip symlink:

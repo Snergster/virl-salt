@@ -48,30 +48,20 @@ neutron-pkgs:
   pkg.installed:
     - force_yes: True
     - pkgs:
-{% if mitaka %}
       - neutron-common
       - neutron-dhcp-agent
       - neutron-l3-agent
       - neutron-metadata-agent
       - neutron-plugin-linuxbridge-agent
-#      - neutron-plugin-linuxbridge
       - neutron-plugin-ml2
       - neutron-server
       - python-neutron
-{% else %}
-      - neutron-common: '1:2015.1.3-0ubuntu1'
-      - neutron-dhcp-agent: '1:2015.1.3-0ubuntu1'
-      - neutron-l3-agent: '1:2015.1.3-0ubuntu1'
-      - neutron-metadata-agent: '1:2015.1.3-0ubuntu1'
-      - neutron-plugin-linuxbridge-agent: '1:2015.1.3-0ubuntu1'
-      - neutron-plugin-linuxbridge: '1:2015.1.3-0ubuntu1'
-      - neutron-plugin-ml2: '1:2015.1.3-0ubuntu1'
-      - neutron-server: '1:2015.1.3-0ubuntu1'
-      - python-neutron: '1:2015.1.3-0ubuntu1'
+{% if not mitaka %}
+      - neutron-plugin-linuxbridge
+    - refresh: True
+    - hold: True
+    - fromrepo: trusty-updates/kilo
 {% endif %}
-  apt.held:
-    - name: neutron-plugin-linuxbridge-agent
-
 
 {% if mitaka %}
 /etc/neutron/neutron.conf:
@@ -417,6 +407,17 @@ l3-gateway:
       - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/neutron/agent/linux/ip_lib.py
+    - require:
+      - pkg: neutron-pkgs
+
+/usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py:
+  file.managed:
+    - source: salt://openstack/neutron/files/kilo/bridge_lib.py
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/neutron/agent/linux/bridge_lib.py
     - require:
       - pkg: neutron-pkgs
 

@@ -3,9 +3,8 @@
 {% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 include:
-{% if kilo %}
-  - openstack.repo.kilo
-{% endif %}
-{% if mitaka %}
+  {% if mitaka %}
   - openstack.repo.mitaka
-{% endif %}
+  {% else %}
+  - openstack.repo.kilo
+  {% endif %}
