@@ -15,6 +15,7 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
 
 include:
@@ -47,6 +48,15 @@ nova-pkgs:
   file.directory:
     - dir_mode: 755
 
+{% if mitaka %}
+/etc/nova/nova.conf:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - source: "salt://openstack/nova/files/mitaka.nova.conf"
+    - require:
+      - pkg: nova-pkgs
+{% else %}
 /etc/nova/nova.conf:
   file.managed:
     - mode: 755
@@ -54,6 +64,7 @@ nova-pkgs:
     - source: "salt://openstack/nova/files/kilo.nova.conf"
     - require:
       - pkg: nova-pkgs
+{% endif %}
 
 {% if cluster %}
 compute filter for cluster:
@@ -72,6 +83,47 @@ add libvirt-qemu to nova:
     - name: nova
     - delusers:
       - libvirt-qemu
+
+{% if mitaka %}
+
+{% for basepath in [
+    'nova+api+openstack+compute+legacy_v2+contrib+consoles.py',
+    'nova+api+openstack+compute+remote_consoles.py',
+    'nova+api+openstack+compute+schemas+remote_consoles.py',
+    'nova+cmd+baseproxy.py',
+    'nova+cmd+serialproxy.py',
+    'nova+compute+api.py',
+    'nova+compute+cells_api.py',
+    'nova+compute+manager.py',
+    'nova+compute+rpcapi.py',
+    'nova+console+websocketproxy.py',
+    'nova+exception.py',
+    'nova+network+neutronv2+api.py',
+    'nova+virt+configdrive.py',
+    'nova+virt+driver.py',
+    'nova+virt+hardware.py',
+    'nova+virt+libvirt+config.py',
+    'nova+virt+libvirt+driver.py',
+    'nova+virt+libvirt+vif.py',
+    'nova+network+model.py',
+    'nova+objects+image_meta.py',
+] %}
+
+{% set realpath = '/usr/lib/python2.7/dist-packages/' + basepath.replace('+', '/') %}
+{{ realpath }}:
+  file.managed:
+    - source: salt://openstack/nova/files/mitaka/{{ basepath }}
+  cmd.wait:
+    - names:
+      - python -m compileall {{ realpath }}
+    - watch:
+      - file: {{ realpath }}
+    - require:
+      - pkg: nova-pkgs
+
+{% endfor %}
+
+{% else %}
 
 /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py:
   file.managed:
@@ -283,6 +335,8 @@ add libvirt-qemu to nova:
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/network/neutronv2/api.py
 
+{% endif %}
+
 {% for each in ['cert','api','serialproxy','conductor','compute','scheduler','novncproxy','consoleauth'] %}
 nova-{{each}} conf:
   file.replace:
@@ -387,6 +441,9 @@ nova-restart:
     - name: |
         su -s /bin/sh -c "glance-manage db_sync" glance
         su -s /bin/sh -c "nova-manage db sync" nova
+{% if mitaka %}
+        su -s /bin/sh -c "nova-manage api_db sync" nova
+{% endif %}
         'dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)'
         service nova-cert restart
         service nova-api restart

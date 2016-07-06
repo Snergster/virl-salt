@@ -44,14 +44,18 @@ include:
 
 uwm_init:
   file.managed:
-    - name: /etc/init.d/virl-uwm
-    - source: "salt://virl/std/files/virl-uwm.init"
+    #- name: /etc/init.d/virl-uwm
+    #- source: "salt://virl/std/files/virl-uwm.init"
+    - name: /etc/systemd/system/virl-uwm.service
+    - source: "salt://virl/std/files/virl-uwm.service"
     - mode: 0755
 
 std_init:
   file.managed:
-    - name: /etc/init.d/virl-std
-    - source: "salt://virl/std/files/virl-std.init"
+    #- name: /etc/init.d/virl-std
+    #- source: "salt://virl/std/files/virl-std.init"
+    - name: /etc/systemd/system/virl-std.service
+    - source: "salt://virl/std/files/virl-std.service"
     - mode: 0755
 
 {% if not cml %}
@@ -80,11 +84,19 @@ std docs:
       - file: std doc cleaner
 {% endif %}
 
+{% if mitaka %}
+virl_webmux_init:
+  file.managed:
+    - name: /etc/systemd/system/virl-webmux.service
+    - source: "salt://virl/std/files/virl-webmux.service"
+    - mode: 0755
+{% else %}
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
     - source: "salt://virl/std/files/virl-webmux.conf"
     - mode: 0755
+{% endif %}
 
 /etc/virl directory:
   file.directory:
@@ -105,6 +117,11 @@ virl_webmux_init:
     - mode: 0644
 
 
+{% if mitaka %}
+virl systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+{% else %}
 /etc/rc2.d/S98virl-std:
   file.symlink:
     - target: /etc/init.d/virl-std
@@ -114,7 +131,7 @@ virl_webmux_init:
   file.symlink:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
-
+{% endif %}
 
 std uwm port replace:
   file.replace:

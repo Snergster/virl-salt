@@ -8,6 +8,7 @@
 {% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
 {% set neutronpassword = salt['pillar.get']('virl:neutronpassword', salt['grains.get']('password', 'password')) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', True)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 {% set internalnetip = salt['pillar.get']('virl:internalnet_ip',salt['grains.get']('internalnet_ip', '172.16.10.250')) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
 
@@ -102,6 +103,47 @@ my_ip compute paranoia:
     - require:
       - file: /etc/nova/nova.conf
 
+
+{% if mitaka %}
+
+{% for basepath in [
+    'nova+api+openstack+compute+legacy_v2+contrib+consoles.py',
+    'nova+api+openstack+compute+remote_consoles.py',
+    'nova+api+openstack+compute+schemas+remote_consoles.py',
+    'nova+cmd+baseproxy.py',
+    'nova+cmd+serialproxy.py',
+    'nova+compute+api.py',
+    'nova+compute+cells_api.py',
+    'nova+compute+manager.py',
+    'nova+compute+rpcapi.py',
+    'nova+console+websocketproxy.py',
+    'nova+exception.py',
+    'nova+network+neutronv2+api.py',
+    'nova+virt+configdrive.py',
+    'nova+virt+driver.py',
+    'nova+virt+hardware.py',
+    'nova+virt+libvirt+config.py',
+    'nova+virt+libvirt+driver.py',
+    'nova+virt+libvirt+vif.py',
+    'nova+network+model.py',
+    'nova+objects+image_meta.py',
+] %}
+
+{% set realpath = '/usr/lib/python2.7/dist-packages/' + basepath.replace('+', '/') %}
+{{ realpath }}:
+  file.managed:
+    - source: salt://openstack/nova/files/mitaka/{{ basepath }}
+  cmd.wait:
+    - names:
+      - python -m compileall {{ realpath }}
+    - watch:
+      - file: {{ realpath }}
+    - require:
+      - pkg: neutron-pkgs
+
+{% endfor %}
+
+{% else %}
 
 /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py:
   file.managed:
@@ -301,6 +343,8 @@ my_ip compute paranoia:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
+
+{% endif %}
 
 nova-compute restart:
   cmd.run:

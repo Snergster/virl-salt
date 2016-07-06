@@ -5,12 +5,29 @@
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 
 include:
   - openstack.mysql.open
   - virl.scripts
 
+{% if mitaka %}
+/usr/local/bin/virl-openrc.sh:
+  file.managed:
+    - source: "salt://openstack/keystone/files/mitaka.admin-openrc.jinja"
+    - mode: 0755
+    - template: jinja
+
+
+/home/virl/.bashrc:
+  file.managed:
+    - order: 1
+    - source: salt://virl/files/mitaka.bashrc
+    - user: virl
+    - group: virl
+    - mode: 755
+{% else %}
 /usr/local/bin/virl-openrc.sh:
   file.managed:
     - source: "salt://openstack/keystone/files/admin-openrc.jinja"
@@ -25,6 +42,8 @@ include:
     - user: virl
     - group: virl
     - mode: 755
+{% endif %}
+
 
 /home/virl/.bash_profile:
   file.managed:

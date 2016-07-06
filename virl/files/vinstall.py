@@ -651,17 +651,17 @@ def Net_Creator(user, password):
 def call_salt(slsfile):
     print 'Please be patient file {slsfile} is running'.format(slsfile=slsfile)
     if masterless:
-        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', slsfile])
+        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'debug', 'state.sls', slsfile])
     else:
-        subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', slsfile])
+        subprocess.call(['sudo', 'salt-call', '-l', 'debug', 'state.sls', slsfile])
     sleep(5)
 
 def call_salt_quiet(slsfile):
     print 'Please be patient file {slsfile} is running'.format(slsfile=slsfile)
     if masterless:
-        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'quiet', 'state.sls', slsfile])
+        subprocess.call(['sudo', 'salt-call', '--local', '-l', 'debug', 'state.sls', slsfile])
     else:
-        subprocess.call(['sudo', 'salt-call', '--state-output=terse', '-l', 'quiet', 'state.sls', slsfile])
+        subprocess.call(['sudo', 'salt-call', '--state-output=terse', '-l', 'debug', 'state.sls', slsfile])
     sleep(5)
 
 if __name__ == "__main__":

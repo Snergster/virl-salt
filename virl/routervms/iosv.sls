@@ -20,8 +20,11 @@ iosv:
     - checksum: 4e94f3e63ad2771e5662f614921c8c62
     - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.156-2.T
   {% else %}
-    - checksum: 83707e3cc93646da58ee6563a68002b5
-    - copy_from: salt://images/salt/vios-adventerprisek9-m.vmdk.SPA.156-2.T
+    #- checksum: 83707e3cc93646da58ee6563a68002b5
+    #- copy_from: salt://images/salt/vios-adventerprisek9-m.vmdk.SPA.156-2.T
+    # only because I'm missing file
+    - checksum: e7cb1bbd0c59280dd946feefa68fa270
+    - copy_from: salt://images/salt/vios-adventerprisek9-m.vmdk.SPA.156-1.T
   {% endif %}
     - protected: False
     - disk_format: qcow2

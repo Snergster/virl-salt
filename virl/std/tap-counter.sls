@@ -2,6 +2,7 @@
 {% set controller_ip = salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
 {% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 prereq_redis:
   pip.installed:
@@ -10,11 +11,26 @@ prereq_redis:
   {% endif %}
     - name: redis
 
+{% if mitaka %}
+virl_tap_counter_init:
+  file.managed:
+    - name: /etc/systemd/system/virl-tap-counter.service
+    - source: "salt://virl/std/files/virl-tap-counter.service"
+    - mode: 0755
+
+virl_tap_counter systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+
+{% else %}
+
 virl_tap_counter_init:
   file.managed:
     - name: /etc/init.d/virl-tap-counter
     - source: "salt://virl/std/files/virl-tap-counter.init"
     - mode: 0755
+{% endif %}
+
 
 virl_tap_counter_exec:
   file.managed:

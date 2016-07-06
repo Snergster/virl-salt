@@ -1,8 +1,13 @@
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+
 nova-restart:
   cmd.run:
     - name: |
         su -s /bin/sh -c "glance-manage db_sync" glance
         su -s /bin/sh -c "nova-manage db sync" nova
+{% if mitaka %}
+        su -s /bin/sh -c "nova-manage api_db sync" nova
+{% endif %}
         'dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)'
         service nova-cert restart
         service nova-api restart

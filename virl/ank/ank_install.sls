@@ -12,6 +12,7 @@
 {% set ank_collector = salt['pillar.get']('virl:ank_collector', salt['grains.get']('ank_collector', '0.10.8')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 ank prereq pkgs:
   pkg.installed:
@@ -37,6 +38,45 @@ ank prereq pkgs:
 {% endif %}
 
 
+{% if mitaka %}
+/etc/systemd/system/virl-vis-processor.service:
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-processor.service"
+    - mode: 0755
+
+/etc/systemd/system/virl-vis-mux.service:
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-mux.service"
+    - mode: 0755
+
+/etc/systemd/system/virl-vis-webserver.service:
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-webserver.service"
+    - mode: 0755
+
+virl-vis-webserver port change:
+  file.replace:
+    - order: last
+    - name: /etc/systemd/system/virl-vis-webserver.service
+    - pattern: '.*--port.*"'
+    - repl: 'ExecStart=/usr/local/bin/virl_live_vis_webserver --port {{ ank_live }}'
+    - unless:
+      - grep {{ ank_live }} /etc/systemd/system/virl-vis-webserver.service
+      - 'test ! -e  /etc/systemd/system/virl-vis-webserver.service'
+
+
+ank init script:
+  file.managed:
+    - name: /etc/systemd/system/ank-cisco-webserver.service
+    - source: "salt://virl/ank/files/ank-cisco-webserver.service"
+    - mode: 0755
+
+ank systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+
+{% else %}
+
 /etc/init.d/virl-vis-processor:
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-processor.init"
@@ -46,7 +86,6 @@ ank prereq pkgs:
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-mux.init"
     - mode: 0755
-
 
 /etc/init.d/virl-vis-webserver:
   file.managed:
@@ -100,6 +139,7 @@ ank symlink:
     - mode: 0755
     - require:
       - pip: autonetkit_cisco
+{% endif %}
 
 
 ank prereq:
@@ -260,6 +300,24 @@ autonetkit_cisco.so remove:
   file.absent:
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
 
+{% if mitaka %}
+substitute ank port:
+  file.replace:
+    - order: last
+    - name: /etc/systemd/system/ank-cisco-webserver.service
+    - pattern: '.*--port.*"'
+    - repl: 'ExecStart=/usr/local/bin/ank_cisco_webserver --multi_user --port {{ ank }}'
+    - unless:
+      #- grep {{ ank }} /etc/init.d/ank-cisco-webserver
+      #- 'test ! -e /etc/init.d/ank-cisco-webserver'
+      - grep {{ ank }} /etc/systemd/system/ank-cisco-webserver.service
+      - 'test ! -e /etc/systemd/system/ank-cisco-webserver.service'
+  cmd.wait:
+    - names:
+      - service ank-cisco-webserver restart
+    - onchanges:
+      - file: substitute ank port
+{% else %}
 substitute ank port:
   file.replace:
     - order: last
@@ -274,6 +332,7 @@ substitute ank port:
       - service ank-cisco-webserver restart
     - onchanges:
       - file: substitute ank port
+{% endif %}
 
 
 ank-cisco-webserver:

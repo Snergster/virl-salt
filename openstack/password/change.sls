@@ -2,6 +2,7 @@
 {% set int_ip = salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' )) %}
 {% set accounts = ['root','keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
 {% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 debconf-change:
   file.managed:
@@ -10,8 +11,13 @@ debconf-change:
     - contents: |
         mysql-server mysql-server/root_password password MYPASS
         mysql-server mysql-server/root_password_again password MYPASS
+{% if mitaka %}
+        mysql-server-5.7 mysql-server/root_password password MYPASS
+        mysql-server-5.7 mysql-server/root_password_again password MYPASS
+{% else %}
         mysql-server-5.5 mysql-server/root_password password MYPASS
         mysql-server-5.5 mysql-server/root_password_again password MYPASS
+{% endif %}
 
 debconf-change-replace:
   file.replace:
@@ -31,13 +37,20 @@ debconf-change-set:
 
 debconf-change-noninteractive:
   cmd.run:
+{% if mitaka %}
+    - name: dpkg-reconfigure -f noninteractive mysql-server-5.7
+{% else %}
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
+{% endif %}
     - onchanges:
       - cmd: debconf-change-set
 
 {% for user in accounts %}
 {{ user }}-mysql:
   mysql_user.present:
+{% if mitaka %}
+    - password_column: authentication_string
+{% endif %}
     - name: {{ user }}
     - host: 'localhost'
     - password: {{ mypassword }}
@@ -51,6 +64,9 @@ debconf-change-noninteractive:
 
 {{ user }}-mysql-nonlocal:
   mysql_user.present:
+{% if mitaka %}
+    - password_column: authentication_string
+{% endif %}
     - name: {{ user }}
     - host: {{ int_ip }}
     - password: {{ mypassword }}

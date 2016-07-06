@@ -2,6 +2,7 @@
 {% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 # Copyright 2012-2013 Hewlett-Packard Development Company, L.P.
 # All Rights Reserved.
@@ -28,8 +29,13 @@
     - contents: |
         mysql-server mysql-server/root_password password MYPASS
         mysql-server mysql-server/root_password_again password MYPASS
+{% if mitaka %}
+        mysql-server-5.7 mysql-server/root_password password MYPASS
+        mysql-server-5.7 mysql-server/root_password_again password MYPASS
+{% else %}
         mysql-server-5.5 mysql-server/root_password password MYPASS
         mysql-server-5.5 mysql-server/root_password_again password MYPASS
+{% endif %}
 
 
 debconf-replace:
@@ -48,12 +54,17 @@ debconf-run:
         debconf-set-selections /tmp/debconf
         rm /tmp/debconf
 
-
+{% if mitaka %}
+mysql-client-5.7:
+  pkg.installed
+mysql-server-5.7:
+  pkg.installed
+{% else %}
 mysql-client-5.5:
   pkg.installed
-
 mysql-server-5.5:
   pkg.installed
+{% endif %}
 
 python-mysqldb:
   pkg.installed
@@ -65,8 +76,13 @@ debconf-change:
     - contents: |
         mysql-server mysql-server/root_password password {{ mypassword }}
         mysql-server mysql-server/root_password_again password {{ mypassword }}
+{% if mitaka %}
+        mysql-server-5.7 mysql-server/root_password password {{ mypassword }}
+        mysql-server-5.7 mysql-server/root_password_again password {{ mypassword }}
+{% else %}
         mysql-server-5.5 mysql-server/root_password password {{ mypassword }}
         mysql-server-5.5 mysql-server/root_password_again password {{ mypassword }}
+{% endif %}
 
 debconf-change-set:
   cmd.run:
@@ -78,8 +94,11 @@ debconf-change-set:
 
 debconf-change-noninteractive:
   cmd.run:
+{% if mitaka %}
+    - name: dpkg-reconfigure -f noninteractive mysql-server-5.7
+{% else %}
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
-    - onchanges:
+{% endif %}    - onchanges:
       - file: debconf-change
 
 
@@ -97,7 +116,11 @@ mysql:
     - name: /etc/mysql/my.cnf
     - require:
       - pkg: mysql-server
+{% if mitaka %}
+    - source: salt://openstack/mysql/files/mitaka.my.cnf
+{% else %}
     - source: salt://openstack/mysql/files/my.cnf
+{% endif %}
     - makedirs: True
   service:
     - running

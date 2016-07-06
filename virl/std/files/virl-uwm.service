@@ -1,0 +1,16 @@
+[Unit]
+Description=VIRL User Workspace Management
+After=syslog.target
+Wants=virl-webmux.service
+Before=virl-webmux.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/virl_uwm_server run
+ExecStop=/usr/local/bin/virl_uwm_server stop
+Restart=on-abort
+# workaround for hang
+TimeoutSec=20
+
+[Install]
+WantedBy=multi-user.target

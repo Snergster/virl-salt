@@ -6,6 +6,7 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 glance-pkgs:
   pkg.installed:
@@ -22,14 +23,22 @@ oslo glance prereq:
     - require:
       - pkg: glance-pkgs
     - names:
+{% if mitaka %}
+      - oslo.i18n
+{% else %}
       - oslo.i18n == 1.6.0
+{% endif %}
 
 
 glance-api user token:
   file.replace:
     - name: /etc/glance/glance-api.conf
     - pattern: '#use_user_token = True'
+{% if mitaka %}
+    - repl: 'use_user_token = True'
+{% else %}
     - repl: 'use_user_token = False'
+{% endif %}
     - require:
       - pkg: glance-pkgs
 
@@ -229,7 +238,11 @@ glance-api-user-token:
     - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'DEFAULT'
     - parameter: 'use_user_token'
+{% if mitaka %}
+    - value: 'True'
+{% else %}
     - value: 'False'
+{% endif %}
     - require:
       - pkg: glance-pkgs
 

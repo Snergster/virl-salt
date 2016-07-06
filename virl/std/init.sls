@@ -37,6 +37,8 @@
 {% set download_proxy_user = salt['pillar.get']('virl:download_proxy_user', salt['grains.get']('download_proxy_user', '')) %}
 {% set host_simulation_port_min_tcp = salt['pillar.get']('virl:host_simulation_port_min_tcp', salt['grains.get']('host_simulation_port_min_tcp', '10000')) %}
 {% set host_simulation_port_max_tcp = salt['pillar.get']('virl:host_simulation_port_max_tcp', salt['grains.get']('host_simulation_port_max_tcp', '17000')) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+
 
 include:
   - .clients
@@ -73,14 +75,24 @@ std prereq pkgs:
 
 uwm_init:
   file.managed:
+{% if mitaka %}
+    - name: /etc/systemd/system/virl-uwm.service
+    - source: "salt://virl/std/files/virl-uwm.service"
+{% else %}
     - name: /etc/init.d/virl-uwm
     - source: "salt://virl/std/files/virl-uwm.init"
+{% endif %}
     - mode: 0755
 
 std_init:
   file.managed:
+{% if mitaka %}
+    - name: /etc/systemd/system/virl-std.service
+    - source: "salt://virl/std/files/virl-std.service"
+{% else %}
     - name: /etc/init.d/virl-std
     - source: "salt://virl/std/files/virl-std.init"
+{% endif %}
     - mode: 0755
 
 {% if not cml %}
@@ -120,11 +132,19 @@ std docs redo:
     - onfail: 
       - archive: std docs
 
+{% if mitaka %}
+virl_webmux_init:
+  file.managed:
+    - name: /etc/systemd/system/virl-webmux.service
+    - source: "salt://virl/std/files/virl-webmux.service"
+    - mode: 0755
+{% else %}
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
     - source: "salt://virl/std/files/virl-webmux.conf"
     - mode: 0755
+{% endif %}
 
 std_prereq_webmux:
   pip.installed:
@@ -163,6 +183,11 @@ std_prereq_webmux:
     - mode: 0644
 
 
+{% if mitaka %}
+virl systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+{% else %}
 /etc/rc2.d/S98virl-std:
   file.symlink:
     - target: /etc/init.d/virl-std
@@ -172,6 +197,8 @@ std_prereq_webmux:
   file.symlink:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
+{% endif %}
+
 
 std uwm port replace:
   file.replace:
@@ -231,9 +258,11 @@ VIRL_CORE_dead:
       - virl-uwm
     - prereq:
       - pip: VIRL_CORE
+{% if not mitaka %}
     - require:
       - file: /etc/rc2.d/S98virl-std
       - file: /etc/rc2.d/S98virl-uwm
+{% endif %}
 
 VIRL_CORE:
   pip.installed:
@@ -311,9 +340,11 @@ ank preview port:
       - pip: VIRL_CORE
 
 web editor alpha:
-{% if web_editor %}
   cmd.run:
-    - name: 'crudini --set /etc/virl/common.cfg host topology_editor_port {{ topology_editor_port }}'
+    - names:
+      - crudini --set /etc/virl/common.cfg host ank_preview_port {{ topology_editor_port }}
+{% if web_editor %}
+      - crudini --set /etc/virl/common.cfg host topology_editor_port {{ topology_editor_port }}
 {% else %}
   file.replace:
     - name: /etc/virl/common.cfg

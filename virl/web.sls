@@ -1,6 +1,7 @@
 {% set uwmport = salt['pillar.get']('virl:virl_user_management', salt['grains.get']('virl_user_management', '19400')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
+{% set port = salt['grains.get']('virl_apache_port', '80') %}
 
 {% if cml %}
 /srv/salt/virl/files/cmlweb.tar:

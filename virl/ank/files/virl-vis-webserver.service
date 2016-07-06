@@ -1,0 +1,13 @@
+[Unit]
+Description=virl-vis-webserver
+After=syslog.target
+
+[Service]
+Type=simple
+StandardOutput=journal
+StandardError=inherit
+ExecStart=/usr/local/bin/virl_live_vis_webserver --port portnumber
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

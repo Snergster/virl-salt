@@ -23,7 +23,11 @@ start)
     fi
     #mkdir -p /tmp/nova-serial || true
     #echo "tmp/nova-serial created"
-    su virl -c "/usr/local/bin/nova-serialproxy >> /tmp/nova-serial.log 2>&1 &"
+    if [ -f /usr/local/bin/nova-serialproxy ]; then
+        su virl -c "/usr/local/bin/nova-serialproxy >> /tmp/nova-serial.log 2>&1 &"
+    else
+        su virl -c "/usr/bin/nova-serialproxy --log-file $LOGFILE >> /tmp/nova-serial.log 2>&1 &"
+    fi
     #su virl -c $RUNNING_CMD
     echo "$SERVICE started"
     ps aux | grep "$RUNNING_CMD" | grep -v grep

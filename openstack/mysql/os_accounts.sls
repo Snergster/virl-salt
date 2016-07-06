@@ -2,14 +2,22 @@
 {% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 include:
   - openstack.mysql.install
 
+{% if mitaka %}
+{% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat', 'nova_api' ] %}
+{% else %}
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
+{% endif %}
 {% for user in accounts %}
 {{ user }}-mysql:
   mysql_user.present:
+{% if mitaka %}
+    - password_column: authentication_string
+{% endif %}
     - name: {{ user }}
     - host: 'localhost'
     - password: {{ mypassword }}
@@ -33,6 +41,9 @@ include:
 
 {{ user }}-mysql-nonlocal:
   mysql_user.present:
+{% if mitaka %}
+    - password_column: authentication_string
+{% endif %}
     - name: {{ user }}
     - host: {{ controllerip }}
     - password: {{ mypassword }}
