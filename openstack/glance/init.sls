@@ -152,6 +152,22 @@ glance-api-rabbitpass:
       - pkg: glance-pkgs
 
 
+glance-api-identityuri:
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'identity_uri'
+    - value: 'http://{{ controllerip }}:35357'
+glance-reg-identityuri:
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
+    - section: 'keystone_authtoken'
+    - parameter: 'identity_uri'
+    - value: 'http://{{ controllerip }}:35357'
+
+
 glance-api-tenname:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf

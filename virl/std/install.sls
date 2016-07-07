@@ -151,7 +151,7 @@ VIRL_CORE_dead:
       - virl-uwm
     - prereq:
       - pip: VIRL_CORE
-{% if not mitaka %}
+{% if not virl.mitaka %}
     - require:
       - file: /etc/rc2.d/S98virl-std
       - file: /etc/rc2.d/S98virl-uwm

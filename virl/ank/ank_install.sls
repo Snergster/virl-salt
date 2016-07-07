@@ -35,9 +35,9 @@ virl-vis-webserver port change:
     - order: last
     - name: /etc/systemd/system/virl-vis-webserver.service
     - pattern: '.*--port.*"'
-    - repl: 'ExecStart=/usr/local/bin/virl_live_vis_webserver --port {{ ank_live }}'
+    - repl: 'ExecStart=/usr/local/bin/virl_live_vis_webserver --port {{ virl.ank_live }}'
     - unless:
-      - grep {{ ank_live }} /etc/systemd/system/virl-vis-webserver.service
+      - grep {{ virl.ank_live }} /etc/systemd/system/virl-vis-webserver.service
       - 'test ! -e  /etc/systemd/system/virl-vis-webserver.service'
 
 
@@ -224,11 +224,11 @@ substitute ank port:
     - order: last
     - name: /etc/systemd/system/ank-cisco-webserver.service
     - pattern: '.*--port.*"'
-    - repl: 'ExecStart=/usr/local/bin/ank_cisco_webserver --multi_user --port {{ ank }}'
+    - repl: 'ExecStart=/usr/local/bin/ank_cisco_webserver --multi_user --port {{ virl.ank }}'
     - unless:
-      #- grep {{ ank }} /etc/init.d/ank-cisco-webserver
+      #- grep {{ virl.ank }} /etc/init.d/ank-cisco-webserver
       #- 'test ! -e /etc/init.d/ank-cisco-webserver'
-      - grep {{ ank }} /etc/systemd/system/ank-cisco-webserver.service
+      - grep {{ virl.ank }} /etc/systemd/system/ank-cisco-webserver.service
       - 'test ! -e /etc/systemd/system/ank-cisco-webserver.service'
   cmd.wait:
     - names:
