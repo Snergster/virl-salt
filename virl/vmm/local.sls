@@ -14,9 +14,9 @@ VMMdircreate:
 VMMlinux:
   module.run:
     - name: archive.cmd_unzip
-    - zip_file: /var/www/download/{{ salt['pillar.get']('files:vmm_lx')}}
+    - zip_file: /var/www/download/{{ salt['pillar.get']('files:vmm_lx').split('/')[2]}}
     - dest: /home/virl/VMMaestro-linux
-    - onlyif: ls /var/www/download/{{ salt['pillar.get']('files:vmm_lx')}}
+    - onlyif: ls /var/www/download/{{ salt['pillar.get']('files:vmm_lx').split('/')[2]}}
     - require:
       - file: VMMdircreate
       - pkg: vmmpkgs
