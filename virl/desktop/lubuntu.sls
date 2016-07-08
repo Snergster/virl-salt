@@ -84,6 +84,18 @@ cml version because they dare to be different:
 
 {% else %}
 
+dep /home/virl/Desktop/Edit-settings.desktop:
+  file.absent:
+    - name: /home/virl/Desktop/Edit-settings.desktop
+
+dep /home/virl/Desktop/VIRL-rehost.desktop:
+  file.absent:
+    - name: /home/virl/Desktop/VIRL-rehost.desktop
+
+dep /home/virl/Desktop/README.desktop:
+  file.absent:
+    - name: /home/virl/Desktop/README.desktop
+
 /home/virl/Desktop/VMMaestro.desktop:
   file.managed:
     - mode: 0755
@@ -131,7 +143,7 @@ cml version because they dare to be different:
     - contents: |
          [Desktop Entry]
          Version=1.0
-         Name=2. REBOOT
+         Name=REBOOT
          Comment=To reboot
          Exec=sudo /sbin/reboot
          Icon=/usr/share/icons/gnome/48x48/status/computer-fail.png
@@ -148,7 +160,7 @@ cml version because they dare to be different:
     - contents: |
          [Desktop Entry]
          Version=1.0
-         Name=3. L2 Kernel Patch
+         Name=L2 Kernel Patch
          Comment=Applies kernel bridge patch
          Exec=xterm -e "/usr/local/bin/vinstall bridge | tee /var/tmp/virl-kernelpatch-log"
          Icon=/usr/share/icons/gnome/48x48/status/network-wired-disconnected.png
@@ -173,7 +185,11 @@ cml version because they dare to be different:
          Type=Application
          Categories=Utility;Application;
 
-/home/virl/Desktop/README.desktop:
+dep /home/virl/Desktop/README.desktop:
+  file.absent:
+    - name: /home/virl/Desktop/README.desktop
+
+/home/virl/.config/autostart/kvmchecker.desktop:
   file.managed:
     - mode: 0755
     - user: virl
@@ -181,14 +197,13 @@ cml version because they dare to be different:
     - makedirs: True
     - contents: |
          [Desktop Entry]
-         Version=1.0
-         Name=README
-         Comment=Readme for install
-         Exec=gedit /home/virl/.README
-         Icon=/usr/share/icons/Humanity/apps/48/accessories-dictionary.svg
-         Terminal=False
+         Name=kvmchecker
+         Comment=verify vt-x support
+         Exec=/usr/local/bin/kvmchecker
+         Hidden=false
+         NoDisplay=false
+         X-GNOME-Autostart-enabled=true
          Type=Application
-         Categories=Utility;Application;
 
 /home/virl/.config/autostart/screensaver-settings.desktop:
   file.managed:
