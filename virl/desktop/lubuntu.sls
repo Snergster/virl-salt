@@ -83,22 +83,6 @@ cml version because they dare to be different:
          Categories=Utility;Application;
 
 {% else %}
-/home/virl/Desktop/Edit-settings.desktop:
-  file.managed:
-    - mode: 0755
-    - user: virl
-    - group: virl
-    - makedirs: True
-    - contents: |
-         [Desktop Entry]
-         Version=1.0
-         Name=0. Edit virl.ini
-         Comment=To edit virl.ini file
-         Exec=sudo gedit /etc/virl.ini
-         Icon=/usr/share/icons/Humanity/apps/48/gedit-icon.svg
-         Terminal=False
-         Type=Application
-         Categories=Utility;Application;
 
 /home/virl/Desktop/VMMaestro.desktop:
   file.managed:
@@ -119,22 +103,6 @@ cml version because they dare to be different:
 
 {% endif %}
 
-/home/virl/Desktop/VIRL-rehost.desktop:
-  file.managed:
-    - mode: 0755
-    - user: virl
-    - group: virl
-    - makedirs: True
-    - contents: |
-         [Desktop Entry]
-         Version=1.0
-         Name=1. Upgrade or Rehost
-         Comment=To finish install
-         Exec=xterm -e "/usr/local/bin/vinstall rehost | tee /var/tmp/virl-rehost-log"
-         Icon=/usr/share/icons/gnome/48x48/status/network-wired-disconnected.png
-         Terminal=True
-         Type=Application
-         Categories=Utility;Application;
 
 
 /home/virl/Desktop/Logout.desktop:
@@ -221,23 +189,6 @@ cml version because they dare to be different:
          Terminal=False
          Type=Application
          Categories=Utility;Application;
-
-
-/home/virl/.config/autostart/kvmchecker.desktop:
-  file.managed:
-    - mode: 0755
-    - user: virl
-    - group: virl
-    - makedirs: True
-    - contents: |
-         [Desktop Entry]
-         Name=kvmchecker
-         Comment=verify vt-x support
-         Exec=/usr/local/bin/kvmchecker
-         Hidden=false
-         NoDisplay=false
-         X-GNOME-Autostart-enabled=true
-         Type=Application
 
 /home/virl/.config/autostart/screensaver-settings.desktop:
   file.managed:
