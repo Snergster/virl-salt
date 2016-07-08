@@ -38,6 +38,37 @@ nova-pkgs:
     - require:
       - pkg: nova-pkgs
 
+{% if virl.using_dhcp_on_the_public_port %}
+
+my ip for dhcp to static:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'my_ip'
+    - value: '127.0.0.1'
+    - require:
+      - file: /etc/nova/nova.conf
+
+vnc_server for dhcp to static:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'vncserver_listen'
+    - value: '127.0.0.1'
+    - require:
+      - file: /etc/nova/nova.conf
+
+vnc_server proxy for dhcp to static:
+  openstack_config.present:
+    - filename: /etc/nova/nova.conf
+    - section: 'DEFAULT'
+    - parameter: 'vncserver_proxyclient_address'
+    - value: '127.0.0.1'
+    - require:
+      - file: /etc/nova/nova.conf
+
+{% endif %}
+
 {% if virl.cluster %}
 compute filter for cluster:
   openstack_config.present:
