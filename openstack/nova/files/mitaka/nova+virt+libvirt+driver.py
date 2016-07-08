@@ -4612,8 +4612,8 @@ class LibvirtDriver(driver.ComputeDriver):
                 flavor, virt_type, self._host)
             guest.add_device(config)
 
-        #consolepty = self._create_consoles(virt_type, guest, instance, flavor,
-        #                                   image_meta, caps)
+        consolepty = self._create_consoles(virt_type, guest, instance, flavor,
+                                           image_meta, caps)
         #if virt_type != 'parallels':
         #    consolepty.type = "pty"
         #    guest.add_device(consolepty)
