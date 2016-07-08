@@ -27,7 +27,7 @@ VMMlinux:
 VMMlinux:
   module.run:
     - name: archive.unzip
-    - zipfile: /var/www/download/*linux*
+    - zip_file: /var/www/download/*linux*
     - dest: /home/virl/VMMaestro-linux
     - onlyif: ls /var/www/download/*linux.gtk.x86_64.zip
     - require:
