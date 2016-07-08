@@ -11,30 +11,15 @@ VMMdircreate:
     - require:
       - file: VMMdirpoof
 
-{% if '2015' in salt['grains.get']('saltversion') %}
 VMMlinux:
   module.run:
     - name: archive.cmd_unzip
-    - zip_file: /var/www/download/*linux*
+    - zip_file: /var/www/download/{{ salt['pillar.get']('files:vmm_lx')}}
     - dest: /home/virl/VMMaestro-linux
-    - onlyif: ls /var/www/download/*linux.gtk.x86_64.zip
+    - onlyif: ls /var/www/download/{{ salt['pillar.get']('files:vmm_lx')}}
     - require:
       - file: VMMdircreate
       - pkg: vmmpkgs
-
-{% else %}
-
-VMMlinux:
-  module.run:
-    - name: archive.unzip
-    - zip_file: /var/www/download/*linux*
-    - dest: /home/virl/VMMaestro-linux
-    - onlyif: ls /var/www/download/*linux.gtk.x86_64.zip
-    - require:
-      - file: VMMdircreate
-      - pkg: vmmpkgs
-
-{% endif %}
 
 VMMdir virl owned:
   cmd.run:
