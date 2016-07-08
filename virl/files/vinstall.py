@@ -811,6 +811,7 @@ if __name__ == "__main__":
         call_salt('common.pip')
         call_salt('common.salt-minion')
         building_salt_all()
+        subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls_id', 'vhostloop', 'virl.hostname'])
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.highstate'])
         call_salt('common.distuptodate')
         #call_salt('virl.network.int')
