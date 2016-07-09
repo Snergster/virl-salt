@@ -185,10 +185,6 @@ dep /home/virl/Desktop/README.desktop:
          Type=Application
          Categories=Utility;Application;
 
-dep /home/virl/Desktop/README.desktop:
-  file.absent:
-    - name: /home/virl/Desktop/README.desktop
-
 /home/virl/.config/autostart/kvmchecker.desktop:
   file.managed:
     - mode: 0755
