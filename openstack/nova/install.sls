@@ -38,7 +38,7 @@ nova-pkgs:
     - require:
       - pkg: nova-pkgs
 
-{% if virl.using_dhcp_on_the_public_port %}
+{% if virl.dhcp %}
 
 my ip for dhcp to static:
   openstack_config.present:

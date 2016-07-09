@@ -2,6 +2,7 @@
     'hostname' : salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')),
 	'domain_name' : salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'virl.info')),
 	'dhcp' : salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )),
+    'using_dhcp_on_the_public_port' : salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )),
 	'publicport' : salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')),
 	'public_ip' : salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )),
 	'public_network' : salt['pillar.get']('virl:public_network', salt['grains.get']('public_network', '172.16.6.0' )),
