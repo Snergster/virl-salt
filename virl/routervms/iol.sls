@@ -1,14 +1,13 @@
-{% set iolpref = salt['pillar.get']('virl:iol', salt['grains.get']('iol', True)) %}
-
+{% from "virl.jinja" import virl with context %}
 include:
   - virl.routervms.virl-core-sync
 
-{% if iolpref %}
+{% if virl.iolpref %}
 
 iol:
   virl_core.lxc_image_present:
   - subtype: IOL
-  - release: high_iron_010416
+  - release: {{ salt['pillar.get']('version:iol')}}
 
 {% else %}
 
