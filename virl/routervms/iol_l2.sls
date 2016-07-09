@@ -3,7 +3,7 @@
 include:
   - virl.routervms.virl-core-sync
 
-{% if virl.iol2pref %}
+{% if virl.iol_l2pref %}
 
 iol-l2:
   virl_core.lxc_image_present:
