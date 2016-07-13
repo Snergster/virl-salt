@@ -10,6 +10,15 @@ libvirt install:
     - skip_verify: True
     - refresh: True
 
+{% if mitaka %}
+/etc/apt/sources.list.d/virl-qemu-trusty.list:
+  file.managed:
+    - mode: 0644
+    - contents:  |
+          deb http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
+          deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
+{% endif %}
+
 qemu install:
   pkg.installed:
     - pkgs:
@@ -17,10 +26,11 @@ qemu install:
       - qemu-kvm
       - qemu-system-common
     - refresh: True
-{% if not mitaka %}
+# need to keep trusty version, xrv does not work with network
+#{% if not mitaka %}
+#{% endif %}
     - hold: True
     - fromrepo: trusty
-{% endif %}
 
 libvirt-bin insert /dev/kvm:
   file.line:
