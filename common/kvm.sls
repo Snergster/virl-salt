@@ -3,13 +3,6 @@
 include:
   - common.numa
 
-libvirt install:
-  pkg.installed:
-    - name: libvirt-bin
-    - aggregate: False
-    - skip_verify: True
-    - refresh: True
-
 {% if mitaka %}
 /etc/apt/sources.list.d/virl-qemu-trusty.list:
   file.managed:
@@ -34,6 +27,14 @@ qemu-kvm systemd reload:
   cmd.run:
     - name: systemctl daemon-reload
 {% endif %}
+
+libvirt install:
+  pkg.installed:
+    - name: libvirt-bin
+    - aggregate: False
+    - skip_verify: True
+    - refresh: True
+
 
 qemu install:
   pkg.installed:
