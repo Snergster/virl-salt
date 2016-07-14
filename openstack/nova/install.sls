@@ -25,6 +25,16 @@ nova-pkgs:
       - nova-serialproxy
       - python-novaclient
 
+{% if virl.mitaka %}
+/lib/systemd/system/nova-serialproxy.service:
+  file.absent
+/etc/systemd/system/multi-user.target.wants/nova-serialproxy.service:
+  file.absent
+nova-serialproxy systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+{% endif %}
+
 
 /etc/nova:
   file.directory:

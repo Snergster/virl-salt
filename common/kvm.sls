@@ -17,6 +17,22 @@ libvirt install:
     - contents:  |
           deb http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
           deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
+
+# sysv script for systemd to use
+/usr/share/qemu/init/qemu-kvm-init:
+  file.managed:
+    - makedirs: True
+    - mode: 755
+    - source: salt://common/files/qemu-kvm-init
+    - unless: test -e /usr/share/qemu/init/qemu-kvm-init
+/etc/init.d/qemu-kvm:
+  file.managed:
+    - mode: 755
+    - source: salt://common/files/qemu-kvm
+    - unless: test -e /etc/init.d/qemu-kvm
+qemu-kvm systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
 {% endif %}
 
 qemu install:
