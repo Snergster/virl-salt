@@ -6,6 +6,7 @@
 {% set registry_version = '2.4.0' %}
 {% set registry_file = 'registry-2.4.0.tar' %}
 {% set registry_file_hash = '0c79a98a8a2954c3bc04388be22ec0f5' %}
+{% set tap_counter_file_hash = 'a4eae90640eb3fd9983b4b93ad809c63' %}
 # If updating registry load registry manually into docker and get its Docker ID by issue $docker images
 {% set registry_docker_ID = '0f29f840cdef' %}
 {% set tapcounter_docker_ID = 'fd89e345206b' %}
@@ -28,6 +29,14 @@ docker-py:
     {% if proxy == true %}
     - proxy: {{ http_proxy }}
     {% endif %}
+
+# restart to make dockerng work
+docker-py docker_restart:
+  module.run:
+    - name: service.restart
+    - m_name: docker
+    - require:
+      - pip: docker-py
 
 # add registry into docker:
 
@@ -73,12 +82,44 @@ registry_run:
     # - unless: docker ps | grep "{{ registry_ip }}:{{ registry_port }}->5000/tcp"
 
 # Docker tap-counter
+tap_counter_remove:
+  cmd.run:
+    - names:
+      - docker rmi {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest || true
+      - docker rmi virl-tap-counter:latest || true
+      - docker rmi {{ tapcounter_docker_ID }} || true
+    - require:
+      - pkg: docker_install
+      - module: docker_restart
+
+tap_counter_load:
+  # state docker.loaded is buggy -> file.managed and cmd.run
+  file.managed:
+    - name: /var/cache/virl/docker/docker-tap-counter.tar
+    - makedirs: True
+    - source: salt://images/salt/docker-tap-counter.tar
+    - source_hash: {{ tap_counter_file_hash }}
+    - unless: docker images -q | grep {{ tapcounter_docker_ID }}
+  cmd.run:
+    - names:
+      - docker load -i /var/cache/virl/docker/docker-tap-counter.tar
+    - unless: docker images -q | grep '{{ tapcounter_docker_ID }}'
+
+tap_counter_tag:
+  cmd.run:
+    - names:
+      - docker tag {{ tapcounter_docker_ID }} virl-tap-counter:latest
+    - unless: docker images | grep '^virl-tap-counter *latest *{{ tapcounter_docker_ID }}'
+    - require:
+      - cmd: tap_counter_load
+
 virl-tap-counter:latest:
   # this remembers previously used registry IP:port and restores it,
   # don't include them or it will cause issues when IP/port changes
-  dockerng.image_present:
-    - load: salt://images/salt/docker-tap-counter.tar
-    - force: True
+# removed altogether, it dockerng is not available until later if docker-py was not installed
+#  dockerng.image_present:
+#    - load: salt://images/salt/docker-tap-counter.tar
+#    - force: True
   cmd.run:
     - names:
       - docker tag -f {{ tapcounter_docker_ID }} {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
