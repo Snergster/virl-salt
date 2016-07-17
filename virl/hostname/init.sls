@@ -9,22 +9,23 @@ include:
   - virl.hostname.cluster
 {% endif %}
 
+
+hosts new style:
+  file.managed:
+    - name: /etc/hosts
+    - mode: 644
+    - template: jinja
+    - source: "salt://virl/files/hosts.jinja"
+
+{% if not dhcp %}
+
 vhost:
   host.present:
     - name: {{ hostname }}.{{domain}}
     - ip:
-      - ::1
-{% if not dhcp %}
       -  {{ public_ip }}
+
 {% endif %}
-
-
-vhostloop:
-  host.present:
-    - name: {{ hostname }}
-    - ip:
-      - 127.0.1.1
-      - ::1
 
 vhostname:
   file.managed:
@@ -33,14 +34,3 @@ vhostname:
   cmd.run:
     - name: /usr/bin/hostnamectl set-hostname {{ hostname }}
 
-vhostinternal:
-  host.present:
-    - name: {{ hostname }}
-    - ip:
-      - {{ salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}}
-
-vhost dash internal:
-  host.absent:
-    - name: {{ hostname }}-internal
-    - ip:
-      - {{ salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}}
