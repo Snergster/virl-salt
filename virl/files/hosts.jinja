@@ -1,0 +1,7 @@
+127.0.0.1		localhost
+127.0.1.1		{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}	{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}.{{salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'virl.info'))}}
+# The following lines are desirable for IPv6 capable hosts
+::1		localhost ip6-localhost ip6-loopback {{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}	{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}.{{salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'virl.info'))}}
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters
+172.16.10.250		{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}
