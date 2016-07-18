@@ -133,5 +133,6 @@ virl_tap_counter_clean:
       - docker rmi {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
       - docker rmi virl-tap-counter:latest
       - docker rmi {{ tapcounter_docker_ID }} || true
-    #- require:
+    - require:
     #  - cmd: virl-tap-counter:latest
+       - cmd: tap_counter_tag
