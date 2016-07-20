@@ -2,7 +2,6 @@
 {% set registry_ip = salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254/xx' )).split('/')[0] %}
 {% set registry_port = salt['pillar.get']('virl:docker_registry_port', salt['grains.get']('docker_registry_port', '19397' )) %}
 
-{% set docker_version = '1.9.1-0~trusty' %}
 {% set registry_version = '2.4.0' %}
 {% set registry_file = 'registry-2.4.0.tar' %}
 {% set registry_file_hash = '0c79a98a8a2954c3bc04388be22ec0f5' %}
@@ -14,29 +13,23 @@
 {% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
 {% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
 
+{% from "virl.jinja" import virl with context %}
+
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')) %}
 
 include:
-  - .install
-  - .config
+  - virl.docker.install
+  - virl.docker.config
 
 # docker-py:
 
 docker-py:
   pip.installed:
     - name: docker-py
-    {% if proxy == true %}
-    - proxy: {{ http_proxy }}
+    {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
     {% endif %}
-
-# restart to make dockerng work
-docker-py docker_restart:
-  module.run:
-    - name: service.restart
-    - m_name: docker
-    - require:
-      - pip: docker-py
 
 # add registry into docker:
 
