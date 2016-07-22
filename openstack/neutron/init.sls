@@ -433,6 +433,14 @@ fixed ips allowed for all:
     - require:
       - pkg: neutron-pkgs
 
+fixed macs allowed for all:
+  file.replace:
+    - name: /etc/neutron/policy.json
+    - pattern: '^    "create_port:mac_address": "rule:admin_or_network_owner or rule:context_is_advsvc",'
+    - repl: '    "create_port:mac_address": "rule:admin_or_network_owner or rule:context_is_advsvc or rule:shared or rule:external",'
+    - require:
+      - pkg: neutron-pkgs
+
 port binding fix:
   file.replace:
     - name: /etc/neutron/policy.json
