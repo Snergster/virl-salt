@@ -1,17 +1,15 @@
 ## Install docker with registry running in container and docker-py for docker API
-{% set registry_ip = salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254/xx' )).split('/')[0] %}
-{% set registry_port = salt['pillar.get']('virl:docker_registry_port', salt['grains.get']('docker_registry_port', '19397' )) %}
+#{% set registry_ip = salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254/xx' )).split('/')[0] %}
+#{% set registry_port = salt['pillar.get']('virl:docker_registry_port', salt['grains.get']('docker_registry_port', '19397' )) %}
 
-{% set registry_version = '2.4.0' %}
-{% set registry_file = 'registry-2.4.0.tar' %}
-{% set registry_file_hash = '0c79a98a8a2954c3bc04388be22ec0f5' %}
-{% set tap_counter_file_hash = 'a4eae90640eb3fd9983b4b93ad809c63' %}
+{% set registry_version = salt['pillar.get']('version:docker_registry','2.4.0')%}
+{% set registry_file = salt['pillar.get']('docker:registry_file','registry-2.4.0.tar') %}
+{% set registry_file_hash = salt['pillar.get']('files_checksums:docker_registry','0c79a98a8a2954c3bc04388be22ec0f5') %}
+{% set tap_counter_file_hash = salt['pillar.get']('files_checksums:tap_counter','a4eae90640eb3fd9983b4b93ad809c63') %}
 # If updating registry load registry manually into docker and get its Docker ID by issue $docker images
-{% set registry_docker_ID = '0f29f840cdef' %}
-{% set tapcounter_docker_ID = 'fd89e345206b' %}
+{% set registry_docker_ID = salt['pillar.get']('docker:registry_id','0f29f840cdef') %}
+{% set tapcounter_docker_ID = salt['pillar.get']('docker:registry_id','fd89e345206b') %}
 
-{% set download_proxy = salt['pillar.get']('virl:download_proxy', salt['grains.get']('download_proxy', '')) %}
-{% set download_no_proxy = salt['pillar.get']('virl:download_no_proxy', salt['grains.get']('download_no_proxy', '')) %}
 
 {% from "virl.jinja" import virl with context %}
 
@@ -35,8 +33,8 @@ registry_remove:
     - source: salt://virl/files/remove_docker_registry.sh
     - env:
       REGISTRY_ID: {{ registry_docker_ID }}
-      REGISTRY_IP: {{ registry_ip }}
-      REGISTRY_PORT: {{ registry_port }}
+      REGISTRY_IP: {{ virl.registry_ip }}
+      REGISTRY_PORT: {{ virl.registry_port }}
     - require:
       - pkg: docker_install
       - module: docker_restart
@@ -66,7 +64,7 @@ registry_run:
   # dockerio.running replaced by cmd.run due to API problems of dockerio/docker-py used versions
   cmd.run:
     - names:
-      - docker run -d -p {{ registry_ip }}:{{ registry_port }}:5000 -e REGISTRY_STORAGE_DELETE_ENABLED=true -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/var/lib/registry -v /var/local/virl/docker:/var/lib/registry --restart=always registry:{{ registry_version }}
+      - docker run -d -p {{ virl.registry_ip }}:{{ virl.registry_port }}:5000 -e REGISTRY_STORAGE_DELETE_ENABLED=true -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/var/lib/registry -v /var/local/virl/docker:/var/lib/registry --restart=always registry:{{ registry_version }}
     - require:
       - cmd: registry_tag
     # - unless: docker ps | grep "{{ registry_ip }}:{{ registry_port }}->5000/tcp"
@@ -75,7 +73,7 @@ registry_run:
 tap_counter_remove:
   cmd.run:
     - names:
-      - docker rmi {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest || true
+      - docker rmi {{ virl.registry_ip }}:{{ virl.registry_port }}/virl-tap-counter:latest || true
       - docker rmi virl-tap-counter:latest || true
       - docker rmi {{ tapcounter_docker_ID }} || true
     - require:
@@ -112,15 +110,15 @@ virl-tap-counter:latest:
 #    - force: True
   cmd.run:
     - names:
-      - docker tag -f {{ tapcounter_docker_ID }} {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
-      - docker push {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
+      - docker tag -f {{ tapcounter_docker_ID }} {{ virl.registry_ip }}:{{ virl.registry_port }}/virl-tap-counter:latest
+      - docker push {{ virl.registry_ip }}:{{ virl.registry_port }}/virl-tap-counter:latest
     - require:
       - cmd: registry_run
 
 virl_tap_counter_clean:
   cmd.run:
     - names:
-      - docker rmi {{ registry_ip }}:{{ registry_port }}/virl-tap-counter:latest
+      - docker rmi {{ virl.registry_ip }}:{{ virl.registry_port }}/virl-tap-counter:latest
       - docker rmi virl-tap-counter:latest
       - docker rmi {{ tapcounter_docker_ID }} || true
     - require:
