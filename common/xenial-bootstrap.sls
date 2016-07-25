@@ -19,4 +19,9 @@ qemu purge:
       - qemu-system-x86
       - qemu-kvm
       - qemu-system-common
+
+disable upgrades:
+ pkg.removed:
+   - pkgs:
+      - unattended-upgrades
 {% endif %}
