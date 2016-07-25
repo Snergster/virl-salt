@@ -7,13 +7,13 @@
 vpn maximize:
   cmd.run:
     - names:
-      - crudini --set /etc/virl.ini DEFAULT l2_network_gateway 172.16.1.254
+      - crudini --set /etc/virl.ini DEFAULT l2_network_gateway 172.16.11.254
       - crudini --set /etc/virl.ini DEFAULT l2_network_gateway2 172.16.2.254
       - crudini --set /etc/virl.ini DEFAULT l3_network_gateway 172.16.3.254
-      - crudini --set /etc/virl/virl.cfg env virl_local_ip 172.16.1.254
-      - crudini --set /etc/nova/nova.conf serial_console proxyclient_address 172.16.1.254
-      - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address 172.16.1.254
-      - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat --gateway_ip 172.16.1.254
+      - crudini --set /etc/virl/virl.cfg env virl_local_ip 172.16.11.254
+      - crudini --set /etc/nova/nova.conf serial_console proxyclient_address 172.16.11.254
+      - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address 172.16.11.254
+      - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat --gateway_ip 172.16.11.254
       - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat1 --gateway_ip 172.16.2.254
       - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update ext-net --gateway_ip 172.16.3.254
 
@@ -46,7 +46,7 @@ ufw accept all:
 adding local route to openvpn:
   file.append:
     - name: /etc/openvpn/server.conf
-    - text: push "route 172.16.0.0 255.255.224.0 172.16.1.254"
+    - text: push "route 172.16.0.0 255.255.224.0 172.16.11.254"
 
 adding nat to ufw:
   file.prepend:
