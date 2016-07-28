@@ -17,7 +17,7 @@ std_prereq_webmux:
     - require:
       - pkg: std prereq pkgs
     - names:
-      - Twisted < 16.0
+      - Twisted < 16.3
       - parse >= 1.4.1
       - stuf >= 0.9.4
       - txsockjs >= 1.2.1
