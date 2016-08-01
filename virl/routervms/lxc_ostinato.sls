@@ -10,7 +10,7 @@ lxc_ostinato:
   virl_core.lxc_image_present:
   - subtype: lxc-ostinato
   - version: standard
-  - release: 0.7.1-2build1
+  - release: 0.8.1
 
 {% else %}
 
