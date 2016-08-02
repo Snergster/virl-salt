@@ -16,6 +16,9 @@ import configparser
 import subprocess
 import logging
 import envoy
+import json
+import sys
+import re
 from time import sleep
 from tempfile import mkstemp
 from shutil import move, copy, copystat
@@ -665,9 +668,124 @@ def call_salt_quiet(slsfile):
         subprocess.call(['sudo', 'salt-call', '--state-output=terse', '-l', 'quiet', 'state.sls', slsfile])
     sleep(5)
 
+
+def get_grains(variable_name):
+    proc = subprocess.Popen(['sudo', 'salt-call', '--out', 'json', 'grains.get', variable_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = proc.communicate()
+    if error:
+        print('Unable to load %s from grains:' % variable_name)
+        print(error)
+    output = json.loads(output)
+
+    return output.get('local')
+
+
+def get_pillar(variable_name):
+    proc = subprocess.Popen(['sudo', 'salt-call', '--out', 'json', 'pillar.get', variable_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = proc.communicate()
+    if error:
+        print('Unable to load %s from pillar:' % variable_name)
+        print(error)
+    output = json.loads(output)
+
+    return output.get('local')
+
+
+def parse_version_info(version_str):
+    """Parse version info from string, e.g. "0.1.2.3" ~> (0, 1, 2, 3)"""
+    version_str = version_str.strip()
+    version_info = []
+    for part in re.split(r'[\.-]', version_str):
+        try:
+            part = int(part)
+            version_info.append(part)
+        except ValueError:
+            pass
+    return tuple(version_info)
+
+
+def check_versions(new_version, old_version):
+    new_versions = parse_version_info(new_version)
+    old_versions = parse_version_info(old_version)
+    max_versions = max(len(new_versions), len(old_versions))
+    for id in range(max_versions):
+        new_ver = new_versions[id] if id < len(new_versions) else 0
+        old_ver = old_versions[id] if id < len(old_versions) else 0
+        if new_ver > old_ver:
+            return True
+        if new_ver < old_ver:
+            return False
+    return None
+
+
+def determine_upgrade_type():
+    # major.minor.maintenance
+    virl_current = get_grains('virl_release')
+    if virl_current:
+        virl_available = get_pillar('version:virl')
+        if not virl_available:
+            return None
+
+        check_result = check_versions(virl_available, virl_current)
+
+        if check_result is None:
+            return 'reinstall'
+
+        if not check_result:
+            return 'downgrade'
+
+        maj1 = re.match("([0-9]+)\.", virl_current)
+        maj2 = re.match("([0-9]+)\.", virl_available)
+        if maj1.group(1) != maj2.group(1):
+            # not upgradable
+            return 'major'
+
+        min1 = re.match("[0-9]+\.([0-9]+)\.", virl_current)
+        min2 = re.match("[0-9]+\.([0-9]+)\.", virl_available)
+        if min1.group(1) != min2.group(1):
+            return 'minor'
+
+        # not identical version and not major version change
+        return 'maintenance'
+
+    # no current version available, disallow upgrade
+    return None
+
 if __name__ == "__main__":
 
     varg = docopt(__doc__, version='vinstall .8')
+
+    if varg['upgrade']:
+        upgrade_type = determine_upgrade_type()
+
+        if upgrade_type is None:
+            virl_available = get_pillar('version:virl')
+            print(
+                'We are sorry, but in-place upgrades from/to an unknown '
+                'release are not supported. Please back up any data you wish '
+                'to keep (e.g. custom images, subtypes, LXC templates, '
+                'projects and users, the /etc/virl.ini initialization file, '
+                'topology files created in VMMaestro installed on the host). '
+                'You will need to download and install %s release from '
+                'scratch.' % virl_available
+            )
+            sys.exit(1)
+
+        if upgrade_type == 'major' or upgrade_type == 'downgrade':
+            virl_current = get_grains('virl_release')
+            virl_available = get_pillar('version:virl')
+            print(
+                'We are sorry, but in-place upgrades from the current release '
+                '%(current)s to release %(available)s are not supported '
+                'anymore. Please back up any data you wish to keep (e.g. '
+                'custom images, subtypes, LXC templates, projects and users, '
+                'the /etc/virl.ini initialization file, topology files '
+                'created in VMMaestro installed on the host). You will need '
+                'to download and install %(available)s release from scratch.'
+                % {'current': virl_current, 'available': virl_available}
+            )
+            sys.exit(1)
+
     if varg['zero']:
         if proxy:
             subprocess.call(['sudo', 'env', 'https_proxy={0}'.format(http_proxy),
