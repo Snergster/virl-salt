@@ -155,6 +155,13 @@
     'cmlweb' : salt['pillar.get']('files_checksums:virlweb', '' ),
     'registry_ip' : salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254/xx' )).split('/')[0],
     'registry_port' : salt['pillar.get']('virl:docker_registry_port', salt['grains.get']('docker_registry_port', '19397' )),
+    'docker_version' : salt['pillar.get']('version:docker','2.4.0'),
+    'registry_version' : salt['pillar.get']('version:docker_registry','2.4.0'),
+    'registry_file' : salt['pillar.get']('docker:registry_file','registry-2.4.0.tar'),
+    'registry_file_hash' : salt['pillar.get']('files_checksums:docker_registry','0c79a98a8a2954c3bc04388be22ec0f5'),
+    'tap_counter_file_hash' : salt['pillar.get']('files_checksums:tap_counter','a4eae90640eb3fd9983b4b93ad809c63'),
+    'registry_docker_ID' : salt['pillar.get']('docker:registry_id','0f29f840cdef'),
+    'tapcounter_docker_ID' : salt['pillar.get']('docker:registry_id','fd89e345206b'),
     'virl_type' : salt['grains.get']('virl_type', 'stable' )
 }
 %}
