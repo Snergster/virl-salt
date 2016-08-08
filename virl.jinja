@@ -24,7 +24,7 @@
     'l2_gateway' : salt['pillar.get']('virl:l2_network_gateway', salt['grains.get']('l2_network_gateway', '172.16.1.254' )),
     'l2_start_address' : salt['pillar.get']('virl:l2_start_address', salt['grains.get']('l2_start_address', '172.16.1.50' )),
     'l2_end_address' : salt['pillar.get']('virl:l2_end_address', salt['grains.get']('l2_end_address', '172.16.1.253' )),
-    'l2_address' : salt['pillar.get']('virl:l2_address', salt['grains.get']('l2_address', '172.16.1.254' )),
+    'l2_address' : salt['pillar.get']('virl:l2_address', salt['grains.get']('l2_address', '172.16.1.254/24' )),
     'ffdns' : salt['pillar.get']('virl:first_flat_nameserver', salt['grains.get']('first_flat_nameserver', '8.8.8.8' )),
     'sfdns' : salt['pillar.get']('virl:second_flat_nameserver', salt['grains.get']('second_flat_nameserver', '8.8.4.4' )),
     'l2_port2_enabled' : salt['pillar.get']('virl:l2_port2_enabled', salt['grains.get']('l2_port2_enabled', 'True' )),
@@ -34,11 +34,11 @@
     'l2_gateway2' : salt['pillar.get']('virl:l2_network_gateway2', salt['grains.get']('l2_network_gateway2', '172.16.2.1' )),
     'l2_start_address2' : salt['pillar.get']('virl:l2_start_address2', salt['grains.get']('l2_start_address2', '172.16.2.50' )),
     'l2_end_address2' : salt['pillar.get']('virl:l2_end_address2', salt['grains.get']('l2_end_address2', '172.16.2.253' )),
-    'l2_address2' : salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254' )),
+    'l2_address2' : salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254/24' )),
     'ff2dns' : salt['pillar.get']('virl:first_flat2_nameserver', salt['grains.get']('first_flat2_nameserver', '8.8.8.8' )),
     'sf2dns' : salt['pillar.get']('virl:second_flat2_nameserver', salt['grains.get']('second_flat2_nameserver', '8.8.4.4' )),
     'l3_port' : salt['pillar.get']('virl:l3_port', salt['grains.get']('l3_port', 'eth3' )),
-    'l3_network' : salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '172.16.3.0/24' )),
+    'l3_network' : salt['pillar.get']('virl:l3_network', salt['grains.get']('l3_network', '172.16.3.0/24' )),
     'l3_mask' : salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '255.255.255.0' )),
     'l3_network_gateway' : salt['pillar.get']('virl:l3_network_gateway', salt['grains.get']('l3_network_gateway', '172.16.3.1' )),
     'l3_floating_start_address' : salt['pillar.get']('virl:l3_floating_start_address', salt['grains.get']('l3_floating_start_address', '172.16.3.50' )),
@@ -162,6 +162,9 @@
     'tap_counter_file_hash' : salt['pillar.get']('files_checksums:tap_counter','a4eae90640eb3fd9983b4b93ad809c63'),
     'registry_docker_ID' : salt['pillar.get']('docker:registry_id','0f29f840cdef'),
     'tapcounter_docker_ID' : salt['pillar.get']('docker:registry_id','fd89e345206b'),
+    'l2_address2_iponly' : salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254/xx' )).split('/')[0],
+    'l2_address_iponly' : salt['pillar.get']('virl:l2_address', salt['grains.get']('l2_address', '172.16.1.254/xx' )).split('/')[0],
+    'l3_address_iponly' : salt['pillar.get']('virl:l3_address', salt['grains.get']('l3_address', '172.16.3.254/xx' )).split('/')[0],
     'virl_type' : salt['grains.get']('virl_type', 'stable' )
 }
 %}
