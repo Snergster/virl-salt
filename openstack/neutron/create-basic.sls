@@ -77,6 +77,13 @@ create flat subnet:
     - require:
       - cmd: create flat net
 
+create flat host port:
+  cmd.run:
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 port-create --fixed-ip ip_address={{ l2_address.split('/')[0] }} --name virl-host-flat flat
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 port-show virl-host-flat
+    - require:
+      - cmd: create flat subnet
+
 {% if l2_port2_enabled %}
 create flat1 subnet:
   cmd.run:
@@ -84,6 +91,13 @@ create flat1 subnet:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-show flat1
     - require:
       - cmd: create flat1 net
+
+create flat1 host port:
+  cmd.run:
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 port-create --fixed-ip ip_address={{ l2_address2.split('/')[0] }} --name virl-host-flat1 flat1
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 port-show virl-host-flat1
+    - require:
+      - cmd: create flat1 subnet
 
 {% endif %}
 
@@ -98,6 +112,12 @@ create ext-net router-gateway:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 router-list -c id -f csv | grep -o '[a-fA-F0-9-]\{36\}' | xargs -IX -n 1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 router-gateway-set X ext-net
     - onlyif: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-show ext-net
+
+create ext-net host port:
+  cmd.run:
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 floatingip-create --floating-ip-address {{ l3_address.split('/')[0] }} ext-net
+    - require:
+      - cmd: create snat subnet
 
 create quota update:
   cmd.run:
