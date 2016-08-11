@@ -1,3 +1,6 @@
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+
+{% if not mitaka %}
 /usr/lib/python2.7/dist-packages/salt/utils/openstack/nova.py:
   file.managed:
     - source: 'salt://common/salt-minion/files/nova.py'
@@ -46,3 +49,4 @@
     - name: salt-minion
     - watch:
       - file: /usr/lib/python2.7/dist-packages/salt/states/keystone.py
+{% endif %}

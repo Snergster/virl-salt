@@ -25,11 +25,30 @@ nova-pkgs:
       - nova-serialproxy
       - python-novaclient
 
+{% if virl.mitaka %}
+/lib/systemd/system/nova-serialproxy.service:
+  file.absent
+/etc/systemd/system/multi-user.target.wants/nova-serialproxy.service:
+  file.absent
+nova-serialproxy systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+{% endif %}
+
 
 /etc/nova:
   file.directory:
     - dir_mode: 755
 
+{% if virl.mitaka %}
+/etc/nova/nova.conf:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - source: "salt://openstack/nova/files/mitaka.nova.conf"
+    - require:
+      - pkg: nova-pkgs
+{% else %}
 /etc/nova/nova.conf:
   file.managed:
     - mode: 755
@@ -37,6 +56,7 @@ nova-pkgs:
     - source: "salt://openstack/nova/files/kilo.nova.conf"
     - require:
       - pkg: nova-pkgs
+{% endif %}
 
 {% if virl.dhcp %}
 
@@ -86,6 +106,47 @@ add libvirt-qemu to nova:
     - name: nova
     - delusers:
       - libvirt-qemu
+
+{% if virl.mitaka %}
+
+{% for basepath in [
+    'nova+api+openstack+compute+legacy_v2+contrib+consoles.py',
+    'nova+api+openstack+compute+remote_consoles.py',
+    'nova+api+openstack+compute+schemas+remote_consoles.py',
+    'nova+cmd+baseproxy.py',
+    'nova+cmd+serialproxy.py',
+    'nova+compute+api.py',
+    'nova+compute+cells_api.py',
+    'nova+compute+manager.py',
+    'nova+compute+rpcapi.py',
+    'nova+console+websocketproxy.py',
+    'nova+exception.py',
+    'nova+network+neutronv2+api.py',
+    'nova+virt+configdrive.py',
+    'nova+virt+driver.py',
+    'nova+virt+hardware.py',
+    'nova+virt+libvirt+config.py',
+    'nova+virt+libvirt+driver.py',
+    'nova+virt+libvirt+vif.py',
+    'nova+network+model.py',
+    'nova+objects+image_meta.py',
+] %}
+
+{% set realpath = '/usr/lib/python2.7/dist-packages/' + basepath.replace('+', '/') %}
+{{ realpath }}:
+  file.managed:
+    - source: salt://openstack/nova/files/mitaka/{{ basepath }}
+  cmd.wait:
+    - names:
+      - python -m compileall {{ realpath }}
+    - watch:
+      - file: {{ realpath }}
+    - require:
+      - pkg: nova-pkgs
+
+{% endfor %}
+
+{% else %}
 
 /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py:
   file.managed:
@@ -297,6 +358,8 @@ add libvirt-qemu to nova:
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/network/neutronv2/api.py
 
+{% endif %}
+
 {% for each in ['cert','api','serialproxy','conductor','compute','scheduler','novncproxy','consoleauth'] %}
 nova-{{each}} conf:
   file.replace:
@@ -401,6 +464,9 @@ nova-restart:
     - name: |
         su -s /bin/sh -c "glance-manage db_sync" glance
         su -s /bin/sh -c "nova-manage db sync" nova
+{% if virl.mitaka %}
+        su -s /bin/sh -c "nova-manage api_db sync" nova
+{% endif %}
         'dpkg-statoverride  --update --add root root 0644 /boot/vmlinuz-$(uname -r)'
         service nova-cert restart
         service nova-api restart

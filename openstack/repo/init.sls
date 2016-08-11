@@ -8,4 +8,3 @@ include:
   {% else %}
   - openstack.repo.kilo
   {% endif %}
-

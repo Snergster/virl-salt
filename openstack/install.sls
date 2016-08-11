@@ -4,7 +4,7 @@
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 
 include:
-  - openstack.repo.kilo
+  - openstack.repo
   - openstack.mysql
   - openstack.rabbitmq
   - openstack.keystone

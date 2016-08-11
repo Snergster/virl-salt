@@ -18,14 +18,24 @@
 
 uwm_init:
   file.managed:
+{% if virl.mitaka %}
+    - name: /etc/systemd/system/virl-uwm.service
+    - source: "salt://virl/std/files/virl-uwm.service"
+{% else %}
     - name: /etc/init.d/virl-uwm
     - source: "salt://virl/std/files/virl-uwm.init"
+{% endif %}
     - mode: 0755
 
 std_init:
   file.managed:
+{% if virl.mitaka %}
+    - name: /etc/systemd/system/virl-std.service
+    - source: "salt://virl/std/files/virl-std.service"
+{% else %}
     - name: /etc/init.d/virl-std
     - source: "salt://virl/std/files/virl-std.init"
+{% endif %}
     - mode: 0755
 
 {% if not virl.cml %}
@@ -70,11 +80,19 @@ std docs redo:
     - onfail: 
       - archive: std docs
 
+{% if virl.mitaka %}
+virl_webmux_init:
+  file.managed:
+    - name: /etc/systemd/system/virl-webmux.service
+    - source: "salt://virl/std/files/virl-webmux.service"
+    - mode: 0755
+{% else %}
 virl_webmux_init:
   file.managed:
     - name: /etc/init/virl-webmux.conf
     - source: "salt://virl/std/files/virl-webmux.conf"
     - mode: 0755
+{% endif %}
 
 /etc/virl directory:
   file.directory:
@@ -95,6 +113,11 @@ virl_webmux_init:
     - mode: 0644
 
 
+{% if virl.mitaka %}
+virl systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+{% else %}
 /etc/rc2.d/S98virl-std:
   file.symlink:
     - target: /etc/init.d/virl-std
@@ -104,6 +127,7 @@ virl_webmux_init:
   file.symlink:
     - target: /etc/init.d/virl-uwm
     - mode: 0755
+{% endif %}
 
 std uwm port replace:
   file.replace:
@@ -127,9 +151,11 @@ VIRL_CORE_dead:
       - virl-uwm
     - prereq:
       - pip: VIRL_CORE
+{% if not virl.mitaka %}
     - require:
       - file: /etc/rc2.d/S98virl-std
       - file: /etc/rc2.d/S98virl-uwm
+{% endif %}
 
 VIRL_CORE:
   pip.installed:

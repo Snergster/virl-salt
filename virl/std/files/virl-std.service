@@ -1,0 +1,14 @@
+[Unit]
+Description=VIRL Service Topology Director
+After=syslog.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/virl_std_server run
+ExecStop=/usr/local/bin/virl_std_server stop
+Restart=on-abort
+# workarkound for hang
+TimeoutSec=20
+
+[Install]
+WantedBy=multi-user.target

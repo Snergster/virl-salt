@@ -34,6 +34,7 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 include:
   - openstack.keystone.setup
@@ -52,14 +53,45 @@ neutron-pkgs:
       - neutron-l3-agent
       - neutron-metadata-agent
       - neutron-plugin-linuxbridge-agent
-      - neutron-plugin-linuxbridge
       - neutron-plugin-ml2
       - neutron-server
       - python-neutron
+{% if not mitaka %}
+      - neutron-plugin-linuxbridge
     - refresh: True
     - hold: True
     - fromrepo: trusty-updates/kilo
+{% endif %}
 
+{% if mitaka %}
+/etc/neutron/neutron.conf:
+  file.managed:
+    - template: jinja
+    - makedirs: True
+    - mode: 755
+    - source: "salt://openstack/neutron/files/mitaka.neutron.conf"
+    - require:
+      - pkg: neutron-pkgs
+
+
+/etc/neutron/plugins/ml2/ml2_conf.ini:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - makedirs: True
+    - source: "salt://openstack/neutron/files/plugins/ml2/mitaka.ml2_conf.ini"
+    - require:
+      - pkg: neutron-pkgs
+
+/etc/neutron/plugins/ml2/linuxbridge_agent.ini:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - makedirs: True
+    - source: "salt://openstack/neutron/files/plugins/linuxbridge/mitaka.linuxbridge_agent.ini"
+    - require:
+      - pkg: neutron-pkgs
+{% else %}
 /etc/neutron/neutron.conf:
   file.managed:
     - template: jinja
@@ -78,6 +110,7 @@ neutron-pkgs:
     - source: "salt://openstack/neutron/files/plugins/ml2/kilo.ml2_conf.ini"
     - require:
       - pkg: neutron-pkgs
+{% endif %}
 
 /etc/init/neutron-server.conf:
   file.managed:
@@ -325,6 +358,41 @@ l3-gateway:
     - require:
       - pkg: neutron-pkgs
 
+{% if mitaka %}
+
+/etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
+  file.managed:
+    - source: "salt://openstack/neutron/files/mitaka/linuxbridge-plugin.filters"
+    - require:
+      - pkg: neutron-pkgs
+
+{% for basepath in [
+    'neutron+agent+linux+bridge_lib.py',
+    'neutron+agent+linux+ip_lib.py',
+    'neutron+plugins+ml2+drivers+agent+_common_agent.py',
+    'neutron+plugins+ml2+drivers+linuxbridge+agent+common+config.py',
+    'neutron+plugins+ml2+drivers+linuxbridge+agent+linuxbridge_neutron_agent.py',
+    'neutron+plugins+ml2+plugin.py',
+    'neutron+plugins+ml2+rpc.py',
+    'neutron+common+utils.py',
+] %}
+
+{% set realpath = '/usr/lib/python2.7/dist-packages/' + basepath.replace('+', '/') %}
+{{ realpath }}:
+  file.managed:
+    - source: salt://openstack/neutron/files/mitaka/{{ basepath }}
+  cmd.wait:
+    - names:
+      - python -m compileall {{ realpath }}
+    - watch:
+      - file: {{ realpath }}
+    - require:
+      - pkg: neutron-pkgs
+
+{% endfor %}
+
+{% else %}
+
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
   file.managed:
     - source: "salt://openstack/neutron/files/kilo.linuxbridge-plugin.filters"
@@ -397,6 +465,18 @@ l3-gateway:
     - require:
       - pkg: neutron-pkgs
 
+{% endif %}
+
+
+{% if mitaka %}
+{% for each in ['server','dhcp-agent','l3-agent','metadata-agent'] %}
+neutron-{{each}} conf:
+  file.replace:
+    - name: /etc/init/neutron-{{each}}.conf
+    - pattern: '^start on runlevel \[2345\]'
+    - repl: 'start on (rabbitmq-server-running or started rabbitmq-server)'
+{% endfor %}
+{% else %}
 {% for each in ['server','dhcp-agent','l3-agent','metadata-agent','plugin-linuxbridge-agent'] %}
 neutron-{{each}} conf:
   file.replace:
@@ -405,6 +485,7 @@ neutron-{{each}} conf:
     - repl: 'start on (rabbitmq-server-running or started rabbitmq-server)'
 {% endfor %}
 
+{% endif%}
 
 linuxbridge hold:
   apt.held:
@@ -453,7 +534,11 @@ neutron restart:
   cmd.run:
     - order: last
     - name: |
+{% if mitaka %}
+        su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade mitaka" neutron
+{% else %}
         su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade kilo" neutron
+{% endif %}
         service neutron-server restart | at now + 1 min
         service neutron-dhcp-agent restart | at now + 1 min
         service neutron-l3-agent restart | at now + 1 min

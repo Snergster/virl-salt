@@ -1,0 +1,11 @@
+[Unit]
+Description=VIRL tap counter service
+After=syslog.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/virl_tap_counter
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

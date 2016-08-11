@@ -12,6 +12,7 @@
 {% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
+{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
 
 cinder-pkgs:
   pkg.installed:
@@ -31,9 +32,15 @@ oslo cinder prereq:
     - onchanges:
       - pkg: cinder-pkgs
     - names:
+{% if mitaka %}
+      - oslo.messaging
+      - oslo.config
+      - pbr
+{% else %}
       - oslo.messaging == 1.6.0
       - oslo.config == 1.6.0
       - pbr == 0.10.8
+{% endif %}
 
 
 cinder-reinstall:
