@@ -1,9 +1,9 @@
-{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - common.numa
 
-{% if mitaka %}
+{% if virl.mitaka %}
 /etc/apt/sources.list.d/virl-qemu-trusty.list:
   file.managed:
     - mode: 0644
@@ -44,7 +44,7 @@ qemu install:
       - qemu-system-common
     - refresh: True
 # need to keep trusty version, xrv does not work with network
-#{% if not mitaka %}
+#{% if not virl.mitaka %}
 #{% endif %}
     - hold: True
     - fromrepo: trusty

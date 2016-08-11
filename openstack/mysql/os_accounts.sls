@@ -1,13 +1,9 @@
-{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
-{% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
-{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - openstack.mysql.install
 
-{% if mitaka %}
+{% if virl.mitaka %}
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat', 'nova_api' ] %}
 {% else %}
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
@@ -15,12 +11,12 @@ include:
 {% for user in accounts %}
 {{ user }}-mysql:
   mysql_user.present:
-{% if mitaka %}
+{% if virl.mitaka %}
     - password_column: authentication_string
 {% endif %}
     - name: {{ user }}
     - host: 'localhost'
-    - password: {{ mypassword }}
+    - password: {{ virl.mypassword }}
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
@@ -41,17 +37,17 @@ include:
 
 {{ user }}-mysql-nonlocal:
   mysql_user.present:
-{% if mitaka %}
+{% if virl.mitaka %}
     - password_column: authentication_string
 {% endif %}
     - name: {{ user }}
-    - host: {{ controllerip }}
-    - password: {{ mypassword }}
+    - host: {{ virl.controller_ip }}
+    - password: {{ virl.mypassword }}
 
 {{ user }}-grant-wildcard:
   cmd.run:
-    - name: mysql --user=root --password={{ mypassword }} -e "GRANT ALL ON {{ user }}.* TO '{{ user }}'@'%' IDENTIFIED BY '{{ mypassword }}';"
-    - unless: mysql --user=root --password={{ mypassword }} -e "select Host,User from user Where user='{{ user }}' AND  host='%';" | grep {{ user }}
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL ON {{ user }}.* TO '{{ user }}'@'%' IDENTIFIED BY '{{ virl.mypassword }}';"
+    - unless: mysql --user=root --password={{ virl.mypassword }} -e "select Host,User from user Where user='{{ user }}' AND  host='%';" | grep {{ user }}
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
@@ -61,8 +57,8 @@ include:
 
 {{ user }}-grant-localhost:
   cmd.run:
-    - name: mysql --user=root --password={{ mypassword }} -e "GRANT ALL ON {{ user }}.* TO '{{ user }}'@'%' IDENTIFIED BY '{{ mypassword }}';"
-    - unless: mysql --user=root --password={{ mypassword }} -e "select Host,User from user Where user='{{ user }}' AND  host='%';" | grep {{ user }}
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL ON {{ user }}.* TO '{{ user }}'@'%' IDENTIFIED BY '{{ virl.mypassword }}';"
+    - unless: mysql --user=root --password={{ virl.mypassword }} -e "select Host,User from user Where user='{{ user }}' AND  host='%';" | grep {{ user }}
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
@@ -71,8 +67,8 @@ include:
 
 {{ user }}-grant-star:
   cmd.run:
-    - name: mysql --user=root --password={{ mypassword }} -e "GRANT ALL ON {{ user }}.* TO '{{ user }}'@'*' IDENTIFIED BY '{{ mypassword }}';"
-    - unless: mysql --user=root --password={{ mypassword }} -e "select Host,User from user Where user='{{ user }}' AND  host='*';" | grep {{ user }}
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL ON {{ user }}.* TO '{{ user }}'@'*' IDENTIFIED BY '{{ virl.mypassword }}';"
+    - unless: mysql --user=root --password={{ virl.mypassword }} -e "select Host,User from user Where user='{{ user }}' AND  host='*';" | grep {{ user }}
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf

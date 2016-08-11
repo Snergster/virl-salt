@@ -1,40 +1,4 @@
-{% set rabbitpassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set metapassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
-{% set neutronpassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set hostname = salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl')) %}
-{% set public_ip = salt['pillar.get']('virl:static_ip', salt['grains.get']('static_ip', '127.0.0.1' )) %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('internalnet_controller_IP', '172.16.10.250')) %}
-{% set l2_port2_enabled = salt['pillar.get']('virl:l2_port2_enabled', salt['grains.get']('l2_port2_enabled', 'True' )) %}
-{% set l2_port = salt['pillar.get']('virl:l2_port', salt['grains.get']('l2_port', 'eth1' )) %}
-{% set l2_network = salt['pillar.get']('virl:l2_network', salt['grains.get']('l2_network', '172.16.1.0/24' )) %}
-{% set l2_gateway = salt['pillar.get']('virl:l2_network_gateway', salt['grains.get']('l2_network_gateway', '172.16.1.1' )) %}
-{% set l2_start_address = salt['pillar.get']('virl:l2_start_address', salt['grains.get']('l2_start_address', '172.16.1.50' )) %}
-{% set l2_end_address = salt['pillar.get']('virl:l2_end_address', salt['grains.get']('l2_end_address', '172.16.1.253' )) %}
-{% set l2_address = salt['pillar.get']('virl:l2_address', salt['grains.get']('l2_address', '172.16.1.254' )) %}
-{% set l2_address2 = salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254' )) %}
-{% set l3_port = salt['pillar.get']('virl:l3_port', salt['grains.get']('l3_port', 'eth3' )) %}
-{% set l3_network = salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_network', '172.16.3.0/24' )) %}
-{% set l3_mask = salt['pillar.get']('virl:l3_mask', salt['grains.get']('l3_mask', '255.255.255.0' )) %}
-{% set l3_network_gateway = salt['pillar.get']('virl:l3_network_gateway', salt['grains.get']('l3_network_gateway', '172.16.3.1' )) %}
-{% set l3_floating_start_address = salt['pillar.get']('virl:l3_floating_start_address', salt['grains.get']('l3_floating_start_address', '172.16.3.50' )) %}
-{% set l3_floating_end_address = salt['pillar.get']('virl:l3_floating_end_address', salt['grains.get']('l3_floating_end_address', '172.16.3.253' )) %}
-{% set l3_address = salt['pillar.get']('virl:l3_address', salt['grains.get']('l3_address', '172.16.3.254/24' )) %}
-{% set l2_port2 = salt['pillar.get']('virl:l2_port2', salt['grains.get']('l2_port2', 'eth2' )) %}
-{% set first_snat_nameserver = salt['pillar.get']('virl:first_snat_nameserver', salt['grains.get']('first_snat_nameserver', '8.8.8.8' )) %}
-{% set second_snat_nameserver = salt['pillar.get']('virl:second_snat_nameserver', salt['grains.get']('second_snat_nameserver', '8.8.8.8' )) %}
-
-{% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
-{% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
-{% set controllerhostname = salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')) %}
-{% set iscontroller = salt['pillar.get']('virl:iscontroller', salt['grains.get']('iscontroller', True)) %}
-{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
-{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - openstack.keystone.setup
@@ -56,14 +20,14 @@ neutron-pkgs:
       - neutron-plugin-ml2
       - neutron-server
       - python-neutron
-{% if not mitaka %}
+{% if not virl.mitaka %}
       - neutron-plugin-linuxbridge
     - refresh: True
     - hold: True
     - fromrepo: trusty-updates/kilo
 {% endif %}
 
-{% if mitaka %}
+{% if virl.mitaka %}
 /etc/neutron/neutron.conf:
   file.managed:
     - template: jinja
@@ -139,19 +103,8 @@ neutron-sysctlforward:
     - repl: 'net.ipv4.ip_forward=1'
 
 
-{% if jumbo_frames == True %}
-neutron-mtu:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'DEFAULT'
-    - parameter: 'network_device_mtu'
-    - value: '9100'
-    - require:
-      - file: /etc/neutron/neutron.conf
-{% endif %}
 
-
-{% if l2_port2_enabled == false %}
+{% if not virl.l2_port2_enabled %}
 neutron-provider-networks:
   openstack_config.present:
     - filename: /etc/neutron/neutron.conf
@@ -166,18 +119,18 @@ neutron-provider-networks-phymap:
     - filename: /etc/neutron/neutron.conf
     - section: 'linux_bridge'
     - parameter: 'physical_interface_mappings'
-    - value: 'flat:{{ l2_port }},ext-net:{{ l3_port }}'
+    - value: 'flat:{{ virl.l2_port }},ext-net:{{ virl.l3_port }}'
 {% endif %}
 
 ## if needs to go here for non controller
-{% if iscontroller == False %}
+{% if not virl.controller %}
 
 neutron-hostname:
   openstack_config.present:
     - filename: /etc/neutron/neutron.conf
     - section: 'DEFAULT'
     - parameter: 'nova_url'
-    - value: 'http://{{ controllerhostname }}:8774/v2'
+    - value: 'http://{{ virl.controllerhostname }}:8774/v2'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -186,7 +139,7 @@ neutron-hostname2:
     - filename: /etc/neutron/neutron.conf
     - section: 'DEFAULT'
     - parameter: 'nova_admin_auth_url'
-    - value: 'http://{{ controllerhostname }}:35357/v2.0'
+    - value: 'http://{{ virl.controllerhostname }}:35357/v2.0'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -195,7 +148,7 @@ neutron-hostname3:
     - filename: /etc/neutron/neutron.conf
     - section: 'keystone_authtoken'
     - parameter: 'auth_uri'
-    - value: 'http://{{ controllerhostname }}:35357/v2.0/'
+    - value: 'http://{{ virl.controllerhostname }}:35357/v2.0/'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -205,7 +158,7 @@ neutron-hostname-indentity:
     - filename: /etc/neutron/neutron.conf
     - section: 'keystone_authtoken'
     - parameter: 'identity_uri'
-    - value: 'http://{{ controllerhostname }}:5000'
+    - value: 'http://{{ virl.controllerhostname }}:5000'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -215,7 +168,7 @@ neutron-hostname4:
     - filename: /etc/neutron/neutron.conf
     - section: 'keystone_authtoken'
     - parameter: 'auth_host'
-    - value: '{{ controllerhostname }}'
+    - value: '{{ virl.controllerhostname }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -227,7 +180,7 @@ neutron-dhcp-nameserver:
     - filename: /etc/neutron/dhcp_agent.ini
     - section: 'DEFAULT'
     - parameter: 'dnsmasq_dns_servers'
-    - value: '{{ first_snat_nameserver }},{{ second_snat_nameserver }}'
+    - value: '{{ snat_dns }},{{ snat_dns2 }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -254,7 +207,7 @@ meta-pass:
     - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'admin_password'
-    - value: '{{ ospassword }}'
+    - value: '{{ virl.ospassword }}'
     - require:
       - pkg: neutron-pkgs
 
@@ -263,7 +216,7 @@ meta-meta:
     - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'nova_metadata_ip'
-    - value: ' {{ public_ip }}'
+    - value: ' {{ virl.public_ip }}'
     - require:
       - pkg: neutron-pkgs
 
@@ -358,7 +311,7 @@ l3-gateway:
     - require:
       - pkg: neutron-pkgs
 
-{% if mitaka %}
+{% if virl.mitaka %}
 
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
   file.managed:
@@ -468,7 +421,7 @@ l3-gateway:
 {% endif %}
 
 
-{% if mitaka %}
+{% if virl.mitaka %}
 {% for each in ['server','dhcp-agent','l3-agent','metadata-agent'] %}
 neutron-{{each}} conf:
   file.replace:
@@ -534,8 +487,8 @@ neutron restart:
   cmd.run:
     - order: last
     - name: |
-{% if mitaka %}
-        su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade mitaka" neutron
+{% if virl.mitaka %}
+        su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade virl.mitaka" neutron
 {% else %}
         su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade kilo" neutron
 {% endif %}

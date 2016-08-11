@@ -1,12 +1,4 @@
-{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
-{% set glancepassword = salt['pillar.get']('virl:glancepassword', salt['grains.get']('password', 'password')) %}
-{% set rabbitpassword = salt['pillar.get']('virl:rabbitpassword', salt['grains.get']('password', 'password')) %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
-{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+{% from "virl.jinja" import virl with context %}
 
 glance-pkgs:
   pkg.installed:
@@ -17,13 +9,13 @@ glance-pkgs:
 
 oslo glance prereq:
   pip.installed:
-{% if proxy == true %}
-    - proxy: {{ http_proxy }}
+{% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
 {% endif %}
     - require:
       - pkg: glance-pkgs
     - names:
-{% if mitaka %}
+{% if virl.mitaka %}
       - oslo.i18n
 {% else %}
       - oslo.i18n == 1.6.0
@@ -34,7 +26,7 @@ glance-api user token:
   file.replace:
     - name: /etc/glance/glance-api.conf
     - pattern: '#use_user_token = True'
-{% if mitaka %}
+{% if virl.mitaka %}
     - repl: 'use_user_token = True'
 {% else %}
     - repl: 'use_user_token = False'
@@ -62,7 +54,7 @@ glance-api admin password:
   file.replace:
     - name: /etc/glance/glance-api.conf
     - pattern: '^admin_password = .*'
-    - repl: 'admin_password = {{glancepassword}}'
+    - repl: 'admin_password = {{ virl.ospassword }}'
     - require:
       - pkg: glance-pkgs
 
@@ -127,7 +119,7 @@ glance-api-conn:
     - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'database'
     - parameter: 'connection'
-    - value: 'mysql://glance:{{ mypassword }}@{{ controllerip }}/glance'
+    - value: 'mysql://glance:{{ virl.mypassword }}@{{ virl.controller_ip }}/glance'
     - require:
       - pkg: glance-pkgs
 
@@ -137,7 +129,7 @@ glance-reg-conn:
     - onlyif: test -e /etc/glance/glance-registry.conf
     - section: 'database'
     - parameter: 'connection'
-    - value: 'mysql://glance:{{ mypassword }}@{{ controllerip }}/glance'
+    - value: 'mysql://glance:{{ virl.mypassword }}@{{ virl.controller_ip }}/glance'
     - require:
       - pkg: glance-pkgs
 
@@ -147,7 +139,7 @@ glance-api-rabbitpass:
     - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'DEFAULT'
     - parameter: 'rabbit_password'
-    - value: '{{ rabbitpassword }}'
+    - value: '{{ virl.ospassword }}'
     - require:
       - pkg: glance-pkgs
 
@@ -158,14 +150,14 @@ glance-api-identityuri:
     - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'keystone_authtoken'
     - parameter: 'identity_uri'
-    - value: 'http://{{ controllerip }}:35357'
+    - value: 'http://{{ virl.controller_ip }}:35357'
 glance-reg-identityuri:
   openstack_config.present:
     - filename: /etc/glance/glance-registry.conf
     - onlyif: test -e /etc/glance/glance-registry.conf
     - section: 'keystone_authtoken'
     - parameter: 'identity_uri'
-    - value: 'http://{{ controllerip }}:35357'
+    - value: 'http://{{ virl.controller_ip }}:35357'
 
 
 glance-api-tenname:
@@ -212,7 +204,7 @@ glance-api-pass:
     - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'keystone_authtoken'
     - parameter: 'admin_password'
-    - value: {{ ospassword }}
+    - value: {{ virl.ospassword }}
     - require:
       - pkg: glance-pkgs
 
@@ -223,7 +215,7 @@ glance-reg-pass:
     - onlyif: test -e /etc/glance/glance-registry.conf
     - section: 'keystone_authtoken'
     - parameter: 'admin_password'
-    - value: {{ ospassword }}
+    - value: {{ virl.ospassword }}
     - require:
       - pkg: glance-pkgs
 
@@ -254,7 +246,7 @@ glance-api-user-token:
     - onlyif: test -e /etc/glance/glance-api.conf
     - section: 'DEFAULT'
     - parameter: 'use_user_token'
-{% if mitaka %}
+{% if virl.mitaka %}
     - value: 'True'
 {% else %}
     - value: 'False'

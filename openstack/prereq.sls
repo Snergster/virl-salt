@@ -1,14 +1,12 @@
-{% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
-{% set proxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+{% from "virl.jinja" import virl with context %}
 
 openstack prereq lock:
   pip.installed:
-  {% if proxy == true %}
-    - proxy: {{ http_proxy }}
+  {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
   {% endif %}
     - names:
-{% if mitaka %}
+{% if virl.mitaka %}
       - oslo.messaging
       - oslo.middleware
       - python-novaclient

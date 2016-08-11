@@ -1,17 +1,13 @@
-{% set heat = salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false )) %}
-{% set cinder = salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false )) %}
-{% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
-{% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
-{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+{% from "virl.jinja" import virl with context %}
 
-{% if controller %}
+{% if virl.controller %}
 
 all-restart:
   cmd.run:
     - name: |
         su -s /bin/sh -c "glance-manage db_sync" glance
         su -s /bin/sh -c "nova-manage db sync" nova
-{% if mitaka %}
+{% if virl.mitaka %}
         su -s /bin/sh -c "nova-manage api_db sync" nova
 {% endif %}
         service apache2 restart
@@ -32,7 +28,7 @@ all-restart:
         service glance-registry restart
 
 
-  {% if cinder %}
+  {% if virl.cinder %}
 cinder-restart all:
   cmd.run:
     - name: |
@@ -41,7 +37,7 @@ cinder-restart all:
         service cinder-volume restart
   {% endif %}
 
-  {% if heat == true %}
+  {% if virl.heat %}
 heat-restart all:
   cmd.run:
     - name: |

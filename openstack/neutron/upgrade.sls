@@ -1,4 +1,4 @@
-{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+{% from "virl.jinja" import virl with context %}
 
 neutron linuxbridge unhold:
   module.run:
@@ -15,7 +15,7 @@ neutron pull to latest:
       - neutron-l3-agent
       - neutron-metadata-agent
       - neutron-plugin-linuxbridge-agent
-{% if not mitaka %}
+{% if not virl.mitaka %}
       - neutron-plugin-linuxbridge
 {% endif %}
       - neutron-plugin-ml2

@@ -1,6 +1,6 @@
-{% set mitaka = salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)) %}
+{% from "virl.jinja" import virl with context %}
 
-{% if not mitaka %}
+{% if not virl.mitaka %}
 /usr/lib/python2.7/dist-packages/salt/utils/openstack/nova.py:
   file.managed:
     - source: 'salt://common/salt-minion/files/nova.py'
