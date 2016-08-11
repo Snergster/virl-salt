@@ -138,6 +138,7 @@
     'compute3_active' : salt['pillar.get']('virl:compute3_active', salt['grains.get']('compute3_active', False )),
     'compute4_active' : salt['pillar.get']('virl:compute4_active', salt['grains.get']('compute4_active', False )),
 	'kilo' : salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', false)),
+    'mitaka' : salt['pillar.get']('virl:mitaka', salt['grains.get']('mitaka', false)),
     'compute1_hostname' : salt['grains.get']('compute1_hostname', 'compute1' ),
     'compute2_hostname' : salt['grains.get']('compute2_hostname', 'compute2' ),
     'compute3_hostname' : salt['grains.get']('compute3_hostname', 'compute3' ),
