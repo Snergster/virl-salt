@@ -1,6 +1,6 @@
 {% from "virl.jinja" import virl with context %}
 
-include:
   {% if not virl.mitaka %}
+include:
   - openstack.repo.kilo
   {% endif %}
