@@ -46,8 +46,8 @@ adding local route to openvpn:
   file.append:
     - name: /etc/openvpn/server.conf
     - text: |
-        push "route {{ virl.l2_network2 }} {{ virl.l2_mask2 }} {{ virl.l2_address }}"
-        push "route {{ virl.l3_network }} {{ virl.l3_mask }} {{ virl.l2_address }}"
+        push "route {{ virl.l2_network2_iponly }} {{ virl.l2_mask2 }} {{ virl.l2_address_iponly }}"
+        push "route {{ virl.l3_network_iponly }} {{ virl.l3_mask }} {{ virl.l2_address_iponly }}"
 
 adding nat to ufw:
   file.prepend:
