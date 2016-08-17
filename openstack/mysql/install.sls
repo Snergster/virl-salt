@@ -38,7 +38,7 @@ debconf-replace:
   file.replace:
     - name: /tmp/debconf
     - pattern: 'MYPASS'
-    - repl: {{ mypassword }}
+    - repl: {{ virl.mypassword }}
     - require:
       - file: /tmp/debconf creation
 
@@ -68,16 +68,16 @@ python-mysqldb:
 debconf-change:
   file.managed:
     - name: /tmp/debconf-change
-    - unless: mysql -u root -p{{ mypassword }} -e 'quit'
+    - unless: mysql -u root -p{{ virl.mypassword }} -e 'quit'
     - contents: |
-        mysql-server mysql-server/root_password password {{ mypassword }}
-        mysql-server mysql-server/root_password_again password {{ mypassword }}
+        mysql-server mysql-server/root_password password {{ virl.mypassword }}
+        mysql-server mysql-server/root_password_again password {{ virl.mypassword }}
 {% if virl.mitaka %}
-        mysql-server-5.7 mysql-server/root_password password {{ mypassword }}
-        mysql-server-5.7 mysql-server/root_password_again password {{ mypassword }}
+        mysql-server-5.7 mysql-server/root_password password {{ virl.mypassword }}
+        mysql-server-5.7 mysql-server/root_password_again password {{ virl.mypassword }}
 {% else %}
-        mysql-server-5.5 mysql-server/root_password password {{ mypassword }}
-        mysql-server-5.5 mysql-server/root_password_again password {{ mypassword }}
+        mysql-server-5.5 mysql-server/root_password password {{ virl.mypassword }}
+        mysql-server-5.5 mysql-server/root_password_again password {{ virl.mypassword }}
 {% endif %}
 
 debconf-change-set:
