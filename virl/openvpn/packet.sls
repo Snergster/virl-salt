@@ -2,6 +2,10 @@
 {% from "virl.jinja" import virl with context %}
 
 {% if virl.openvpn_enable %}
+verify ufw:
+  pkg.installed:
+    - name: ufw
+    - refresh: false
 
 vpn maximize:
   cmd.run:

@@ -8,6 +8,11 @@
   
 {% if openvpn_enable %}
 
+verify ufw:
+  pkg.installed:
+    - name: ufw
+    - refresh: false
+
 vpn maximize:
   cmd.run:
     - names:
