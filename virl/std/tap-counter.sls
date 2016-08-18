@@ -9,11 +9,26 @@ prereq_redis:
   {% endif %}
     - name: redis
 
+{% if virl.mitaka %}
+virl_tap_counter_init:
+  file.managed:
+    - name: /etc/systemd/system/virl-tap-counter.service
+    - source: "salt://virl/std/files/virl-tap-counter.service"
+    - mode: 0755
+
+virl_tap_counter systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+
+{% else %}
+
 virl_tap_counter_init:
   file.managed:
     - name: /etc/init.d/virl-tap-counter
     - source: "salt://virl/std/files/virl-tap-counter.init"
     - mode: 0755
+{% endif %}
+
 
 virl_tap_counter_exec:
   file.managed:

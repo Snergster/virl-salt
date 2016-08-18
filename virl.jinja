@@ -75,6 +75,7 @@
     'debug' : salt['pillar.get']('virl:debug', salt['grains.get']('debug', False)),
     'ceilometer' : salt['pillar.get']('virl:ceilometer', salt['grains.get']('ceilometer', False)),
     'heat' : salt['pillar.get']('virl:enable_heat', salt['grains.get']('enable_heat', false)),
+    'horizon' : salt['pillar.get']('virl:enable_horizon', salt['grains.get']('enable_horizon', false)),
     'cinder_enabled' : salt['pillar.get']('virl:cinder_enabled', salt['grains.get']('cinder_enabled', False)),
     'cinder' : salt['pillar.get']('virl:enable_cinder', salt['grains.get']('enable_cinder', false )),
     'cinder_file' : salt['pillar.get']('virl:cinder_file', salt['grains.get']('cinder_file', False )),

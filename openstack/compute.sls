@@ -1,6 +1,5 @@
-
 include:
-  - openstack.repo.kilo
+  - openstack.repo
   - virl.ntp
   - common.ifb
   - openstack.nova.compute

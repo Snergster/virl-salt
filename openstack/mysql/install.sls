@@ -1,7 +1,4 @@
-{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
-{% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
-{% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
+{% from "virl.jinja" import virl with context %}
 
 # Copyright 2012-2013 Hewlett-Packard Development Company, L.P.
 # All Rights Reserved.
@@ -28,15 +25,20 @@
     - contents: |
         mysql-server mysql-server/root_password password MYPASS
         mysql-server mysql-server/root_password_again password MYPASS
+{% if virl.mitaka %}
+        mysql-server-5.7 mysql-server/root_password password MYPASS
+        mysql-server-5.7 mysql-server/root_password_again password MYPASS
+{% else %}
         mysql-server-5.5 mysql-server/root_password password MYPASS
         mysql-server-5.5 mysql-server/root_password_again password MYPASS
+{% endif %}
 
 
 debconf-replace:
   file.replace:
     - name: /tmp/debconf
     - pattern: 'MYPASS'
-    - repl: {{ mypassword }}
+    - repl: {{ virl.mypassword }}
     - require:
       - file: /tmp/debconf creation
 
@@ -48,12 +50,17 @@ debconf-run:
         debconf-set-selections /tmp/debconf
         rm /tmp/debconf
 
-
+{% if virl.mitaka %}
+mysql-client-5.7:
+  pkg.installed
+mysql-server-5.7:
+  pkg.installed
+{% else %}
 mysql-client-5.5:
   pkg.installed
-
 mysql-server-5.5:
   pkg.installed
+{% endif %}
 
 python-mysqldb:
   pkg.installed
@@ -61,12 +68,17 @@ python-mysqldb:
 debconf-change:
   file.managed:
     - name: /tmp/debconf-change
-    - unless: mysql -u root -p{{ mypassword }} -e 'quit'
+    - unless: mysql -u root -p{{ virl.mypassword }} -e 'quit'
     - contents: |
-        mysql-server mysql-server/root_password password {{ mypassword }}
-        mysql-server mysql-server/root_password_again password {{ mypassword }}
-        mysql-server-5.5 mysql-server/root_password password {{ mypassword }}
-        mysql-server-5.5 mysql-server/root_password_again password {{ mypassword }}
+        mysql-server mysql-server/root_password password {{ virl.mypassword }}
+        mysql-server mysql-server/root_password_again password {{ virl.mypassword }}
+{% if virl.mitaka %}
+        mysql-server-5.7 mysql-server/root_password password {{ virl.mypassword }}
+        mysql-server-5.7 mysql-server/root_password_again password {{ virl.mypassword }}
+{% else %}
+        mysql-server-5.5 mysql-server/root_password password {{ virl.mypassword }}
+        mysql-server-5.5 mysql-server/root_password_again password {{ virl.mypassword }}
+{% endif %}
 
 debconf-change-set:
   cmd.run:
@@ -78,8 +90,11 @@ debconf-change-set:
 
 debconf-change-noninteractive:
   cmd.run:
+{% if virl.mitaka %}
+    - name: dpkg-reconfigure -f noninteractive mysql-server-5.7
+{% else %}
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
-    - onchanges:
+{% endif %}    - onchanges:
       - file: debconf-change
 
 
@@ -97,7 +112,11 @@ mysql:
     - name: /etc/mysql/my.cnf
     - require:
       - pkg: mysql-server
+{% if virl.mitaka %}
+    - source: salt://openstack/mysql/files/mitaka.my.cnf
+{% else %}
     - source: salt://openstack/mysql/files/my.cnf
+{% endif %}
     - makedirs: True
   service:
     - running
@@ -108,13 +127,13 @@ mysql:
     - watch:
       - file: /etc/mysql/my.cnf
 
-{% if dummy_int == True %}
+{% if virl.dummy_int %}
 
 mysql port for dummies:
   file.replace:
     - name: /etc/mysql/my.cnf
     - pattern: ^bind-address.*
-    - repl: 'bind-address = {{ controllerip }}'
+    - repl: 'bind-address = {{ virl.controller_ip }}'
     - require:
       - pkg: mysql
   cmd.wait:

@@ -1,10 +1,9 @@
-
 {% from "virl.jinja" import virl with context %}
 
 
 {% if not virl.masterless %}
 
-/var/cache/virl/ank files:
+/var/cache/virl/ank files install:
   file.recurse:
     - name: /var/cache/virl/ank
     - source: "salt://ank/{{ virl.venv }}/"
@@ -15,6 +14,45 @@
 {% endif %}
 
 
+{% if virl.mitaka %}
+/etc/systemd/system/virl-vis-processor.service:
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-processor.service"
+    - mode: 0755
+
+/etc/systemd/system/virl-vis-mux.service:
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-mux.service"
+    - mode: 0755
+
+/etc/systemd/system/virl-vis-webserver.service:
+  file.managed:
+    - source: "salt://virl/ank/files/virl-vis-webserver.service"
+    - mode: 0755
+
+virl-vis-webserver port change:
+  file.replace:
+    - order: last
+    - name: /etc/systemd/system/virl-vis-webserver.service
+    - pattern: '.*--port.*"'
+    - repl: 'ExecStart=/usr/local/bin/virl_live_vis_webserver --port {{ virl.ank_live }}'
+    - unless:
+      - grep {{ virl.ank_live }} /etc/systemd/system/virl-vis-webserver.service
+      - 'test ! -e  /etc/systemd/system/virl-vis-webserver.service'
+
+
+ank init script:
+  file.managed:
+    - name: /etc/systemd/system/ank-cisco-webserver.service
+    - source: "salt://virl/ank/files/ank-cisco-webserver.service"
+    - mode: 0755
+
+ank systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+
+{% else %}
+
 /etc/init.d/virl-vis-processor:
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-processor.init"
@@ -24,7 +62,6 @@
   file.managed:
     - source: "salt://virl/ank/files/virl-vis-mux.init"
     - mode: 0755
-
 
 /etc/init.d/virl-vis-webserver:
   file.managed:
@@ -78,6 +115,7 @@ ank symlink:
     - mode: 0755
     - require:
       - pip: autonetkit_cisco
+{% endif %}
 
 /root/.autonetkit/autonetkit.cfg:
   file.managed:
@@ -180,6 +218,24 @@ autonetkit_cisco.so remove:
   file.absent:
     - name: /usr/local/lib/python2.7/dist-packages/autonetkit_cisco.so
 
+{% if virl.mitaka %}
+substitute ank port:
+  file.replace:
+    - order: last
+    - name: /etc/systemd/system/ank-cisco-webserver.service
+    - pattern: '.*--port.*"'
+    - repl: 'ExecStart=/usr/local/bin/ank_cisco_webserver --multi_user --port {{ virl.ank }}'
+    - unless:
+      #- grep {{ virl.ank }} /etc/init.d/ank-cisco-webserver
+      #- 'test ! -e /etc/init.d/ank-cisco-webserver'
+      - grep {{ virl.ank }} /etc/systemd/system/ank-cisco-webserver.service
+      - 'test ! -e /etc/systemd/system/ank-cisco-webserver.service'
+  cmd.wait:
+    - names:
+      - service ank-cisco-webserver restart
+    - onchanges:
+      - file: substitute ank port
+{% else %}
 substitute ank port:
   file.replace:
     - order: last
@@ -194,6 +250,7 @@ substitute ank port:
       - service ank-cisco-webserver restart
     - onchanges:
       - file: substitute ank port
+{% endif %}
 
 
 ank-cisco-webserver:

@@ -1,6 +1,32 @@
+{% from "virl.jinja" import virl with context %}
 
 include:
   - common.numa
+
+{% if virl.mitaka %}
+/etc/apt/sources.list.d/virl-qemu-trusty.list:
+  file.managed:
+    - mode: 0644
+    - contents:  |
+          deb http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
+          deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
+
+# sysv script for systemd to use
+/usr/share/qemu/init/qemu-kvm-init:
+  file.managed:
+    - makedirs: True
+    - mode: 755
+    - source: salt://common/files/qemu-kvm-init
+    - unless: test -e /usr/share/qemu/init/qemu-kvm-init
+/etc/init.d/qemu-kvm:
+  file.managed:
+    - mode: 755
+    - source: salt://common/files/qemu-kvm
+    - unless: test -e /etc/init.d/qemu-kvm
+qemu-kvm systemd reload:
+  cmd.run:
+    - name: systemctl daemon-reload
+{% endif %}
 
 libvirt install:
   pkg.installed:
@@ -9,6 +35,7 @@ libvirt install:
     - skip_verify: True
     - refresh: True
 
+
 qemu install:
   pkg.installed:
     - pkgs:
@@ -16,6 +43,9 @@ qemu install:
       - qemu-kvm
       - qemu-system-common
     - refresh: True
+# need to keep trusty version, xrv does not work with network
+#{% if not virl.mitaka %}
+#{% endif %}
     - hold: True
     - fromrepo: trusty
 

@@ -1,26 +1,45 @@
-{% set ospassword = salt['grains.get']('password', 'password') %}
-{% set rabbitpassword = salt['grains.get']('password', 'password') %}
-{% set metapassword = salt['grains.get']('password', 'password') %}
-{% set hostname = salt['grains.get']('hostname', 'virl') %}
-{% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set keystone_service_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
-{% set neutid = salt['grains.get']('neutron_guestid', ' ') %}
-{% set int_ip = salt['grains.get']('internalnet_ip', '172.16.10.250' ) %}
-{% set controllerhname = salt['grains.get']('internalnet_controller_hostname', 'controller') %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
-{% set neutronpassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set iscontroller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', False)) %}
-{% set jumbo_frames = salt['pillar.get']('virl:jumbo_frames', salt['grains.get']('jumbo_frames', False )) %}
+
+{% from "virl.jinja" import virl with context %}
 
 neutron-pkgs:
   pkg.installed:
     - force_yes: True
     - refresh: False
-    - hold: True
-    - fromrepo: trusty-updates/kilo
     - pkgs:
         - neutron-plugin-linuxbridge-agent
+{% if not virl.mitaka %}
+    - hold: True
+    - fromrepo: trusty-updates/kilo
+{% endif %}
 
+{% if virl.mitaka %}
+/etc/neutron/neutron.conf:
+  file.managed:
+    - template: jinja
+    - makedirs: True
+    - mode: 755
+    - source: "salt://openstack/neutron/files/mitaka.neutron.conf"
+    - require:
+      - pkg: neutron-pkgs
+
+/etc/neutron/plugins/ml2/ml2_conf.ini:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - makedirs: True
+    - source: "salt://openstack/neutron/files/plugins/ml2/mitaka.ml2_conf.ini"
+    - require:
+      - pkg: neutron-pkgs
+
+/etc/neutron/plugins/ml2/linuxbridge_agent.ini:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - makedirs: True
+    - source: "salt://openstack/neutron/files/plugins/linuxbridge/mitaka.linuxbridge_agent.ini"
+    - require:
+      - pkg: neutron-pkgs
+{% else %}
 /etc/neutron/neutron.conf:
   file.managed:
     - template: jinja
@@ -38,6 +57,7 @@ neutron-pkgs:
     - source: "salt://openstack/neutron/files/plugins/ml2/kilo.ml2_conf.ini"
     - require:
       - pkg: neutron-pkgs
+{% endif %}
 
 /etc/init/neutron-server.conf:
   file.managed:
@@ -65,28 +85,17 @@ neutron-sysctlforward:
     - pattern: '#net.ipv4.ip_forward=1'
     - repl: 'net.ipv4.ip_forward=1'
 
-{% if jumbo_frames == True %}
-neutron-mtu:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'DEFAULT'
-    - parameter: 'network_device_mtu'
-    - value: '9100'
-    - require:
-      - file: /etc/neutron/neutron.conf
-{% endif %}
-
 neutron rabbit host:
   openstack_config.present:
     - filename: /etc/neutron/neutron.conf
     - section: 'DEFAULT'
     - parameter: 'rabbit_host'
-    - value: '{{ controllerip }}'
+    - value: '{{ virl.controller_ip }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
 
-{% if iscontroller %}
+{% if virl.controller %}
 neutron-dhcp-nameserver:
   openstack_config.present:
     - filename: /etc/neutron/dhcp_agent.ini
@@ -119,7 +128,7 @@ meta-pass:
     - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'admin_password'
-    - value: '{{ ospassword }}'
+    - value: '{{ virl.ospassword }}'
     - require:
       - pkg: neutron-pkgs
 
@@ -128,7 +137,7 @@ meta-meta:
     - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'nova_metadata_ip'
-    - value: ' {{ public_ip }}'
+    - value: ' {{ virl.public_ip }}'
     - require:
       - pkg: neutron-pkgs
 
@@ -225,6 +234,41 @@ l3-gateway:
 
 {% endif %}
 
+{% if virl.mitaka %}
+
+/etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
+  file.managed:
+    - source: "salt://openstack/neutron/files/mitaka/linuxbridge-plugin.filters"
+    - require:
+      - pkg: neutron-pkgs
+
+{% for basepath in [
+    'neutron+agent+linux+bridge_lib.py',
+    'neutron+agent+linux+ip_lib.py',
+    'neutron+plugins+ml2+drivers+agent+_common_agent.py',
+    'neutron+plugins+ml2+drivers+linuxbridge+agent+common+config.py',
+    'neutron+plugins+ml2+drivers+linuxbridge+agent+linuxbridge_neutron_agent.py',
+    'neutron+plugins+ml2+plugin.py',
+    'neutron+plugins+ml2+rpc.py',
+    'neutron+common+utils.py',
+] %}
+
+{% set realpath = '/usr/lib/python2.7/dist-packages/neutron/' + basepath.replace('+', '/') %}
+{{ realpath }}:
+  file.managed:
+    - source: salt://openstack/neutron/files/mitaka/{{ basepath }}
+  cmd.wait:
+    - names:
+      - python -m compileall {{ realpath }}
+    - watch:
+      - file: {{ realpath }}
+    - require:
+      - pkg: neutron-pkgs
+
+{% endfor %}
+
+{% else %}
+
 /etc/neutron/rootwrap.d/linuxbridge-plugin.filters:
   file.managed:
     - source: "salt://openstack/neutron/files/kilo.linuxbridge-plugin.filters"
@@ -296,3 +340,4 @@ l3-gateway:
       - file: /usr/lib/python2.7/dist-packages/neutron/plugins/ml2/rpc.py
     - require:
       - pkg: neutron-pkgs
+{% endif %}

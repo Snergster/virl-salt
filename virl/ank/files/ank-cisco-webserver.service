@@ -1,0 +1,13 @@
+[Unit]
+Description=ank-cisco-webserver
+After=syslog.target
+
+[Service]
+Type=simple
+StandardOutput=journal
+StandardError=inherit
+ExecStart=/usr/local/bin/ank_cisco_webserver --multi_user --port portnumber
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

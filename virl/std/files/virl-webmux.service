@@ -1,0 +1,18 @@
+[Unit]
+Description=VIRL webmuxd
+After=syslog.target
+BindsTo=virl-uwm.service
+
+[Service]
+Type=simple
+User=virl
+Group=virl
+ExecStart=/usr/local/bin/virl_webmuxd
+StandardOutput=journal
+Restart=on-abort
+
+[Install]
+#RequiredBy=virl-uwm.service
+
+[X-Fleet]
+X-ConditionMachineOf=virl-uwm.service
