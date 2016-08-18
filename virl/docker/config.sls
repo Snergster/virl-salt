@@ -24,7 +24,11 @@ docker_config-proxy:
   file.replace:
     - name: /etc/default/docker
     - pattern: '^export http_proxy.*$'
+    {% if virl.download_proxy %}
     - repl: export http_proxy={{ virl.download_proxy }}
+    {% else %}
+    - repl: ''
+    {% endif %}
     - flags: ['IGNORECASE', 'MULTILINE']
     - append_if_not_found: True
     - require_in:
@@ -33,7 +37,11 @@ docker_config-noproxy:
   file.replace:
     - name: /etc/default/docker
     - pattern: '^export no_proxy.*$'
-    - repl: export no_proxy={{ registry_ip }},{{ virl.download_no_proxy }},$no_proxy
+    {% if virl.download_no_proxy %}
+    - repl: export no_proxy={{ registry_ip }},{{virl.download_no_proxy}},$no_proxy
+    {% else %}
+    - repl: export no_proxy={{ registry_ip }},$no_proxy
+    {% endif %}
     - flags: ['IGNORECASE', 'MULTILINE']
     - append_if_not_found: True
     - require_in:
