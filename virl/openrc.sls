@@ -49,15 +49,11 @@ include:
 
 /var/www/index.html:
   file.managed:
-    - order: 7
     - source: salt://files/install_scripts/index.html
     - mode: 755
 
 uwmport replace:
   file.replace:
-    - order: 8
-    - require:
-      - file: /var/www/index.html
     - name: /var/www/index.html
     - pattern: :\d{2,}"
     - repl: :{{ virl.uwmport }}"
