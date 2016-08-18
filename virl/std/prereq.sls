@@ -1,9 +1,18 @@
 
 {% from "virl.jinja" import virl with context %}
 
+{% if virl.packet %}
+add i386 arch support:
+  cmd.run:
+    - name: 'dpkg --add-architecture i386'
+
+{% endif %}
 
 std prereq pkgs:
   pkg.installed:
+{% if virl.packet %}
+      - refresh: True
+{% endif %}
       - pkgs:
         - libxml2-dev
         - libxslt1-dev
