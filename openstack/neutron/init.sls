@@ -180,7 +180,7 @@ neutron-dhcp-nameserver:
     - filename: /etc/neutron/dhcp_agent.ini
     - section: 'DEFAULT'
     - parameter: 'dnsmasq_dns_servers'
-    - value: '{{ snat_dns }},{{ snat_dns2 }}'
+    - value: '{{ virl.snat_dns }},{{ virl.snat_dns2 }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
