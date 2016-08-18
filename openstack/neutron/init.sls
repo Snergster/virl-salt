@@ -180,7 +180,7 @@ neutron-dhcp-nameserver:
     - filename: /etc/neutron/dhcp_agent.ini
     - section: 'DEFAULT'
     - parameter: 'dnsmasq_dns_servers'
-    - value: '{{ snat_dns }},{{ snat_dns2 }}'
+    - value: '{{ virl.snat_dns }},{{ virl.snat_dns2 }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -488,7 +488,7 @@ neutron restart:
     - order: last
     - name: |
 {% if virl.mitaka %}
-        su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade virl.mitaka" neutron
+        su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade mitaka" neutron
 {% else %}
         su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade kilo" neutron
 {% endif %}
