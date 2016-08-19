@@ -59,6 +59,7 @@
     'serstart' : salt['pillar.get']('virl:start_of_serial_port_range', salt['grains.get']('start_of_serial_port_range', '17000')),
     'serend' : salt['pillar.get']('virl:end_of_serial_port_range', salt['grains.get']('end_of_serial_port_range', '18000')),
     'serial_port' : salt['pillar.get']('virl:serial_port',salt['grains.get']('serial_port', '19406')),
+    'serial_timeout_disabled' : salt['pillar.get']('virl:serial_timeout_disabled',salt['grains.get']('serial_timeout_disabled', False)),
     'vnc_port' : salt['pillar.get']('virl:vnc_port',salt['grains.get']('vnc_port', '19407')),
     'vnc' : salt['pillar.get']('virl:vnc', salt['grains.get']('vnc', False)),
     'vnc_password' : salt['pillar.get']('virl:vnc_password', salt['grains.get']('vnc_password', 'letmein')),
