@@ -1,5 +1,11 @@
 {% from "virl.jinja" import virl with context %}
 
+{% if virl.serial_timeout_disabled %}
+{% set telnet_front_enabled = 0 %}
+{% else %}
+{% set telnet_front_enabled = 1 %}
+{% endif %}
+
 include:
   - common.numa
 
@@ -61,6 +67,11 @@ libvirt-bin insert /dev/kvm:
     - source: "salt://openstack/nova/files/kilo.kvm"
     - force: True
     - mode: 0755
+kvm socket proxy:
+  file.replace:
+    - name: /usr/bin/kvm
+    - pattern: '^TELNET_FRONT_ENABLED=.*'
+    - repl: 'TELNET_FRONT_ENABLED={{ telnet_front_enabled }}'
 
 /usr/bin/kvm.real:
   file.symlink:

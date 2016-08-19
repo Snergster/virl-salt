@@ -3,6 +3,7 @@
 declare -a want=()
 declare -a rest=()
 
+TELNET_FRONT_ENABLED=1
 # replace serial port bind adress to this value recognized by STD
 PRIVATE=127.0.1.1
 # get outside ip
@@ -33,9 +34,11 @@ for arg in "$@" ; do
     -chardev)
         # check if we need to front this socket
         port=`echo "$arg" | sed -n '/charserial/s/.*port=\([0-9]\+\).*/\1/p'`
-        if [ -n "$port" -a -n "$OUTSIDE" ] ; then
-            arg=`echo "$arg" | sed "s/host=[0-9.]*/host=$PRIVATE/"`
-            telnet_front "$PRIVATE" "$OUTSIDE" "$port" $$ $ident &
+        if [ $TELNET_FRONT_ENABLED -ne 0 ]; then
+            if [ -n "$port" -a -n "$OUTSIDE" ] ; then
+                arg=`echo "$arg" | sed "s/host=[0-9.]*/host=$PRIVATE/"`
+                telnet_front "$PRIVATE" "$OUTSIDE" "$port" $$ $ident &
+            fi
         fi
 
         prev=none
