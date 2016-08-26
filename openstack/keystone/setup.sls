@@ -129,15 +129,6 @@ cinder service:
       - keystone: Keystone tenants
       - keystone: Keystone roles
 
-cinderv2 service:
-  keystone.service_present:
-    - name: cinderv2
-    - service_type: volumev2
-    - description: OpenStack storage Service v2
-    - require:
-      - keystone: Keystone tenants
-      - keystone: Keystone roles
-
 heat service:
    keystone.service_present:
      - name: heat

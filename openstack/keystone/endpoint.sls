@@ -47,15 +47,6 @@ nova endpoint:
 cinder endpoint:
   keystone.endpoint_present:
     - name: cinder
-    - publicurl: http://{{ public_ip }}:8776/v1/$(tenant_id)s
-    - internalurl: http://{{ int_ip }}:8776/v1/$(tenant_id)s
-    - adminurl: http://{{ int_ip }}:8776/v1/$(tenant_id)s
-    - require:
-      - cmd: key-db-sync
-
-cinderv2 endpoint:
-  keystone.endpoint_present:
-    - name: cinderv2
     - publicurl: http://{{ public_ip }}:8776/v2/$(tenant_id)s
     - internalurl: http://{{ int_ip }}:8776/v2/$(tenant_id)s
     - adminurl: http://{{ int_ip }}:8776/v2/$(tenant_id)s
