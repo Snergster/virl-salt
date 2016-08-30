@@ -1,6 +1,14 @@
 
 {% from "virl.jinja" import virl with context %}
 
+{% if virl.mitaka %}
+
+include:
+  - virl.routervms.virl-core-sync
+
+{% endif %}
+
+
 {% if virl.packet %}
 add i386 arch support:
   cmd.run:

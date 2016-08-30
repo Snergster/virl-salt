@@ -1,7 +1,7 @@
-{% set guestaccount = salt['pillar.get']('virl:guest_account', salt['grains.get']('guest_account', True)) %}
-{% set guestpassword = salt['pillar.get']('virl:guest_password', salt['grains.get']('guest_password', 'guest')) %}
-{% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
-{% if guestaccount == True %}
+{% from "virl.jinja" import virl with context %}
+
+
+{% if virl.guestaccount %}
 
 create guest account:
   module.run:
@@ -18,7 +18,7 @@ fix guest password:
   module.run:
     - name: virl_core.user_present
     - m_name: guest
-    - password: {{ guestpassword }}
+    - password: {{ virl.guestpassword }}
     - project: guest
     - role: admin
     - require:
