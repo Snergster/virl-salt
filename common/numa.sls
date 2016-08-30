@@ -3,6 +3,8 @@
 /proc/sys/kernel/numa_balancing:
   cmd.run:
     - name: '/sbin/sysctl kernel.numa_balancing=0'
+    - unless:
+      - 'grep -q 0 /proc/sys/kernel/numa_balancing'
 
 numa no balance:
   file.managed:
