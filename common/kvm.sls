@@ -41,6 +41,27 @@ libvirt install:
     - skip_verify: True
     - refresh: True
 
+{% if not '2.0.0' in salt['cmd.shell']('/usr/bin/qemu-system-x86_64 --version') %}
+
+qemu unhold:
+  module.run:
+    - name: pkg.unhold
+    - pkgs:
+      - qemu-system-x86
+      - qemu-kvm
+      - qemu-system-common
+
+qemu purge:
+  pkg.purged:
+    - require:
+      - module: qemu unhold
+    - pkgs:
+      - qemu-system-x86
+      - qemu-kvm
+      - qemu-system-common
+
+
+{% endif %}
 
 qemu install:
   pkg.installed:
