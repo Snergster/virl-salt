@@ -85,7 +85,7 @@ password yes:
 password fuck yes:
   file.replace:
     - name: /etc/ssh/sshd_config
-    - pattern: ^.PasswordAuthentication yes
+    - pattern: ^.PasswordAuthentication.*
     - repl: PasswordAuthentication yes
     - require:
       - pkg: libpam-yubico
