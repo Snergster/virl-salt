@@ -213,6 +213,8 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ virl.cpu_overcommit }}
      {% if virl.salt_transport_tcp %}
       - crudini --set /etc/virl/common.cfg licensing offered_salt_masters {{ virl.salt_master_tcp }}
+     {% else %}
+      - crudini --set /etc/virl/common.cfg licensing offered_salt_masters {{ virl.salt_master }}
      {% endif %}
 
 ank_live_port change:
