@@ -90,7 +90,8 @@ address_l2_port = True
 flat_dns1 = safeparser.get('DEFAULT', 'first_flat_nameserver', fallback='8.8.8.8')
 flat_dns2 = safeparser.get('DEFAULT', 'second_flat_nameserver', fallback='8.8.4.4')
 
-l2_port2_enabled = safeparser.getboolean('DEFAULT', 'l2_port2_enabled', fallback=True)
+#l2_port2_enabled = safeparser.getboolean('DEFAULT', 'l2_port2_enabled', fallback=True)
+l2_port2_enabled = True
 l2_port2 = safeparser.get('DEFAULT', 'l2_port2', fallback='eth2')
 l2_mask2 = safeparser.get('DEFAULT', 'l2_mask2', fallback='255.255.255.0')
 l2_bridge_port2 = safeparser.get('DEFAULT', 'l2_bridge_port2', fallback='br-eth2')
