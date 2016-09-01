@@ -290,10 +290,11 @@ def replace(file_path, pattern, subst):
 def building_salt_extra():
     with open(("/tmp/extra"), "w") as extra:
         if not masterless or vagrant_pre_fourth:
-            if salt_tcp:
-                salt_master = salt_master_tcp
             if len(salt_master.split(',')) >= 2:
-                extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
+                if salt_tcp:
+                  extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master_tcp))
+                else:
+                  extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
                 extra.write("""master_type: failover \n""")
                 extra.write("""master_shuffle: True \n""")
                 extra.write("""random_master: True \n""")
@@ -302,7 +303,10 @@ def building_salt_extra():
                 extra.write("""master_alive_interval: 180 \n""")
                 extra.write("""retry_dns: 0 \n""")
             else:
-                extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
+                if salt_tcp:
+                  extra.write("""master: {salt_master}\n""".format(salt_master=salt_master_tcp))
+                else:
+                  extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
             if controller:
               extra.write("""verify_master_pubkey_sign: True \n""")
               extra.write("""always_verify_signature: True \n""")
