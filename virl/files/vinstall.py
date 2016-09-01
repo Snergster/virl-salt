@@ -341,6 +341,8 @@ fileserver_backend:
             stcp.write("""transport: tcp\n""")
             stcp.write("""hash_type: sha256\n""")
         subprocess.call(['sudo', 'mv', '-f', ('/tmp/tcp.conf'), '/etc/salt/minion.d/tcp.conf'])
+    else:
+        subprocess.call(['sudo', 'rm', '-f', '/etc/salt/minion.d/tcp.conf'])
 
 def building_salt_extras(count):
     with open(("/tmp/extra{count}".format(count=count)), "w") as extra:
