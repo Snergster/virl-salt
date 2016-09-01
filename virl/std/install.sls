@@ -211,6 +211,9 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg limits host_simulation_port_max_tcp {{ virl.host_simulation_port_max_tcp }}
       - crudini --set /etc/virl/common.cfg host ram_overcommit {{ virl.ram_overcommit }}
       - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ virl.cpu_overcommit }}
+     {% if virl.salt_transport_tcp %}
+      - crudini --set /etc/virl/common.cfg licensing offered_salt_masters {{ virl.salt_master_tcp }}
+     {% endif %}
 
 ank_live_port change:
   cmd.run:
