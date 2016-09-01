@@ -30,6 +30,12 @@ commonpkgs:
       - bc
 
 
+saltstack repo to trusted:
+  file.replace:
+    - name: /etc/apt/sources.list.d/saltstack.list
+    - pattern: deb https
+    - repl: deb [trusted=yes] https
+
 /usr/local/bin/openstack-config:
   file.symlink:
     - target: /usr/bin/crudini
