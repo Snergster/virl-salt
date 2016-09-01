@@ -185,6 +185,8 @@ salt_domain3 = safeparser.get('DEFAULT', 'salt_domain3', fallback='virl.info')
 salt_id4 = safeparser.get('DEFAULT', 'salt_id4', fallback='virl')
 salt_domain4 = safeparser.get('DEFAULT', 'salt_domain4', fallback='virl.info')
 salt_env = safeparser.get('DEFAULT', 'salt_env', fallback='none')
+salt_tcp = safeparser.getboolean('DEFAULT', 'salt_transport_tcp', fallback=False)
+
 virl_type = safeparser.get('DEFAULT', 'Is_this_a_stable_or_testing_server', fallback='stable')
 cisco_internal = safeparser.getboolean('DEFAULT', 'inside_cisco', fallback=False)
 onedev = safeparser.getboolean('DEFAULT', 'onedev', fallback=False)
@@ -199,6 +201,7 @@ download_proxy_user = safeparser.get('DEFAULT', 'download_proxy_user', fallback=
 #Testing Section
 icehouse = safeparser.getboolean('DEFAULT', 'icehouse', fallback=False)
 kilo = safeparser.getboolean('DEFAULT', 'kilo', fallback=True)
+mitaka = safeparser.getboolean('DEFAULT', 'mitaka', fallback=False)
 
 testingank = safeparser.getboolean('DEFAULT', 'testing_ank', fallback=False)
 testingstd = safeparser.getboolean('DEFAULT', 'testing_std', fallback=False)
@@ -318,8 +321,6 @@ fileserver_backend:
   - git
   - roots
 
-state_output: mixed
-
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
             else:
@@ -331,6 +332,11 @@ fileserver_backend:
         extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id))
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/extra'), '/etc/salt/minion.d/extra.conf'])
+    if salt_tcp:
+        with open(("/tmp/tcp.conf"), "w") as stcp:
+            stcp.write("""transport: tcp\n""")
+            stcp.write("""hash_type: sha256\n""")
+        subprocess.call(['sudo', 'mv', '-f', ('/tmp/tcp.conf'), '/etc/salt/minion.d/tcp.conf'])
 
 def building_salt_extras(count):
     with open(("/tmp/extra{count}".format(count=count)), "w") as extra:
@@ -346,7 +352,6 @@ def building_salt_extras(count):
                 extra.write("""retry_dns: 0 \n""")
             else:
                 extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
-            extra.write("""state_output: mixed \n""")
             if controller:
               extra.write("""verify_master_pubkey_sign: True \n""")
               extra.write("""always_verify_signature: True \n""")
@@ -359,8 +364,6 @@ fileserver_backend:
   - git
   - roots
 
-state_output: mixed
-
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
             elif path.exists('/usr/local/lib/python2.7/dist-packages/dulwich'):
@@ -370,8 +373,6 @@ gitfs_remotes:
 fileserver_backend:
   - git
   - roots
-
-state_output: mixed
 
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
