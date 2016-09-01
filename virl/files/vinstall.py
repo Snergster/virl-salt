@@ -296,7 +296,6 @@ def building_salt_extra():
                 extra.write("""retry_dns: 0 \n""")
             else:
                 extra.write("""master: {salt_master}\n""".format(salt_master=salt_master))
-            extra.write("""state_output: mixed \n""")
             if controller:
               extra.write("""verify_master_pubkey_sign: True \n""")
               extra.write("""always_verify_signature: True \n""")
@@ -308,8 +307,6 @@ def building_salt_extra():
 fileserver_backend:
   - git
   - roots
-
-state_output: mixed
 
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
