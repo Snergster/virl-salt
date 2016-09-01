@@ -175,7 +175,8 @@ cml = safeparser.getboolean('DEFAULT', 'cml', fallback=False)
 #Operational Section
 image_set = safeparser.get('DEFAULT', 'image_set', fallback='internal')
 salt = safeparser.getboolean('DEFAULT', 'salt', fallback=True)
-salt_master = safeparser.get('DEFAULT', 'salt_master', fallback='')
+salt_master = safeparser.get('DEFAULT', 'salt_master', fallback='us-1.virl.info,us-2.virl.info,us-3.virl.info,us-4.virl.info')
+salt_master_tcp = safeparser.get('DEFAULT', 'salt_master_tcp', fallback='us-1-tcp.virl.info,us-2-tcp.virl.info,us-3-tcp.virl.info,us-4-tcp.virl.info')
 salt_id = safeparser.get('DEFAULT', 'salt_id', fallback='virl')
 salt_domain = safeparser.get('DEFAULT', 'salt_domain', fallback='virl.info')
 multi_salt_key = safeparser.getint('DEFAULT', 'multi_salt_key', fallback=1)
@@ -289,6 +290,8 @@ def replace(file_path, pattern, subst):
 def building_salt_extra():
     with open(("/tmp/extra"), "w") as extra:
         if not masterless or vagrant_pre_fourth:
+            if salt_tcp:
+                salt_master = salt_master_tcp
             if len(salt_master.split(',')) >= 2:
                 extra.write("""master: [{salt_master}]\n""".format(salt_master=salt_master))
                 extra.write("""master_type: failover \n""")
