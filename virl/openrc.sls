@@ -45,6 +45,12 @@ include:
     - group: virl
     - mode: 755
 
+noproxy desires controller_ip:
+  file.replace:
+    - name: /home/virl/.bashrc
+    - pattern: no_proxy_defaults,.*
+    - repl: no_proxy_defaults,{{virl.controller_ip}}
+
 {% if not virl.horizon %}
 
 /var/www/index.html:
