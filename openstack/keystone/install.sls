@@ -33,6 +33,40 @@ waiting patiently for apache:
     - name: test.sleep
     - length: 10
 
+{% if virl.mitaka %}
+keystone-pkgs:
+  pkg.installed:
+    - aggregate: False
+    - names:
+      - keystone
+  service-dead:
+    - name: keystone
+  cmd.run:
+    - name: systemctl stop keystone
+
+apache2 installing:
+  pkg.installed:
+      - apache2
+      - libapache2-mod-wsgi
+      - memcached
+  service.dead:
+    - names:
+      - apache2
+      - keystone
+  cmd.run:
+    - name: service apache2 restart
+    - require:
+      - service: keystone die die
+      - module: waiting patiently for apache
+  pip.installed:
+  {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
+  {% endif %}
+    - names:
+      - python-memcached
+
+{% else %}
+
 keystone-pkgs:
   pkg.installed:
     - aggregate: False
@@ -56,6 +90,8 @@ keystone-pkgs:
   {% endif %}
     - names:
       - python-memcached
+
+{% endif %}
 
 /etc/keystone/keystone.conf:
   file.managed:
