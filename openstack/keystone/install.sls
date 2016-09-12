@@ -39,7 +39,7 @@ keystone-pkgs:
     - aggregate: False
     - names:
       - keystone
-  service-dead:
+  service.dead:
     - name: keystone
   cmd.run:
     - name: systemctl stop keystone
