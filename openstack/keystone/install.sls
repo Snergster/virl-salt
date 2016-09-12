@@ -37,8 +37,7 @@ waiting patiently for apache:
 keystone-pkgs:
   pkg.installed:
     - aggregate: False
-    - names:
-      - keystone
+    - name: keystone
   service.dead:
     - name: keystone
   cmd.run:
@@ -46,6 +45,7 @@ keystone-pkgs:
 
 apache2 installing:
   pkg.installed:
+    - names:
       - apache2
       - libapache2-mod-wsgi
       - memcached
