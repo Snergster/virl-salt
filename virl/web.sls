@@ -50,11 +50,6 @@ servername symlink in web:
     - template: jinja
     - source: salt://virl/files/ports.conf
 
-/etc/apache2/sites-enabled/000-default.conf:
-  file.managed:
-    - mode: 755
-    - template: jinja
-    - source: salt://virl/files/000-default.conf
 
 {% if 'xenial' in salt['grains.get']('oscodename') %}
 
