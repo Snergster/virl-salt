@@ -1,6 +1,6 @@
 
 include:
-  - common.xenial-repro
+  - common.xenial-repo
   - common.pip
   - common.distuptodate
 
