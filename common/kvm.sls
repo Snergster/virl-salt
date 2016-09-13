@@ -10,12 +10,6 @@ include:
   - common.numa
 
 {% if virl.mitaka %}
-/etc/apt/sources.list.d/virl-qemu-trusty.list:
-  file.managed:
-    - mode: 0644
-    - contents:  |
-          deb http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
-          deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
 
 # sysv script for systemd to use
 /usr/share/qemu/init/qemu-kvm-init:
