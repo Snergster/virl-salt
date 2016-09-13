@@ -41,7 +41,9 @@ keystone-pkgs:
   service.dead:
     - name: keystone
   cmd.run:
-    - name: systemctl stop keystone
+    - names: 
+      - systemctl stop keystone
+      - systemctl disable keystone
 
 apache2 installing:
   pkg.installed:
