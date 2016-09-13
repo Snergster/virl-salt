@@ -44,6 +44,18 @@ nova endpoint:
     - require:
       - cmd: key-db-sync
 
+{% if virl.mitaka %}
+cinder endpoint:
+  keystone.endpoint_present:
+    - name: cinder
+    - publicurl: http://{{ public_ip }}:8776/v2/$(tenant_id)s
+    - internalurl: http://{{ int_ip }}:8776/v2/$(tenant_id)s
+    - adminurl: http://{{ int_ip }}:8776/v2/$(tenant_id)s
+    - require:
+      - cmd: key-db-sync
+{% endif %}
+
+{% if virl.kilo %}
 cinder endpoint:
   keystone.endpoint_present:
     - name: cinder
@@ -53,7 +65,8 @@ cinder endpoint:
     - require:
       - cmd: key-db-sync
 
-cinderv2 endpoint:
+
+cinder endpoint:
   keystone.endpoint_present:
     - name: cinderv2
     - publicurl: http://{{ public_ip }}:8776/v2/$(tenant_id)s
@@ -61,6 +74,7 @@ cinderv2 endpoint:
     - adminurl: http://{{ int_ip }}:8776/v2/$(tenant_id)s
     - require:
       - cmd: key-db-sync
+{% endif %}
 
 orchestration endpoint:
   keystone.endpoint_present:
