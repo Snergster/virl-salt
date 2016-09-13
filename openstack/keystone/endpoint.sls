@@ -3,6 +3,7 @@
 {% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
 {% set int_ip = salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('internalnet_controller_ip', '172.16.10.250' )) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - openstack.keystone.install
