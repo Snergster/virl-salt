@@ -67,7 +67,7 @@ cinder endpoint:
       - cmd: key-db-sync
 
 
-cinder endpoint:
+cinder endpointv2:
   keystone.endpoint_present:
     - name: cinderv2
     - publicurl: http://{{ public_ip }}:8776/v2/$(tenant_id)s
