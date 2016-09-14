@@ -123,6 +123,7 @@
     'lxciperfpref' : salt['pillar.get']('virl:lxc_iperf', salt['grains.get']('lxc_iperf', True)),
     'lxcroutempref' : salt['pillar.get']('virl:lxc_routem', salt['grains.get']('lxc_routem', True)),
     'lxcostinatopref' : salt['pillar.get']('virl:lxc_ostinato', salt['grains.get']('lxc_ostinato', True)),
+    'neutron_bridge_flooding' : salt['pillar.get']('virl:neutron_bridge_flooding', salt['grains.get']('neutron_bridge_flooding', False)),
     'vmm_mac' : salt['pillar.get']('virl:vmm_mac', salt['grains.get']('vmm_mac', True)),
     'vmm_win32' : salt['pillar.get']('virl:vmm_win32', salt['grains.get']('vmm_win32', True)),
     'vmm_win64' : salt['pillar.get']('virl:vmm_win64', salt['grains.get']('vmm_win64', True)),
