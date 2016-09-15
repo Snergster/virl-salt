@@ -18,6 +18,22 @@ update sourcelist to include sources:
       - file: update sourcelist to include sources
 {% endif %}
 
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
+update sourcelist to include xenial sources:
+  file.append:
+    - name: /etc/apt/sources.list
+    - text:
+      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu xenial main universe'
+      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu xenial-updates main universe'
+      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu xenial-security main universe'
+  cmd.run:
+    - name: 'apt-get update -qq'
+    - onchanges:
+      - file: update sourcelist to include sources
+
+{% endif %}
+
 {% for kernver in kernvers %}
 
 /lib/modules/{{ kernver }}/kernel/net/bridge/bridge.ko:
