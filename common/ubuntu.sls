@@ -41,26 +41,17 @@ commonpkgs:
     - dir_mode: 755
     - makedirs: True
 
-salt-master unhold:
-  module.run:
-    - name: pkg.unhold
-    - m_name: salt-master
-    - onlyif: ls /usr/bin/salt-master
-
-salt-minion unhold:
-  module.run:
-    - name: pkg.unhold
-    - m_name: salt-minion
-    - onlyif: ls /usr/bin/salt-minion
-
-salt-common unhold:
-  module.run:
-    - name: pkg.unhold
-    - m_name: salt-common
-    - onlyif: ls /usr/bin/salt-minion
-
 /etc/apt/apt.conf.d/99force-ipv4:
   file.managed:
     - makedirs: true
     - contents: |
         Acquire::ForceIPv4 "true";
+
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
+floppy remove:
+  file.comment:
+    - name: /etc/fstab
+    - regex: ^/dev/fd0
+
+{% endif %}
