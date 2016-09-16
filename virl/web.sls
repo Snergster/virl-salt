@@ -57,7 +57,7 @@ a2enmod-enable:
   cmd.run:
     - names: 
       - a2enmod proxy
-      - a2enmod rewrte
+      - a2enmod rewrite
       - a2enmod proxy_http
 
 /etc/apache2/sites-enabled/000-default.conf:
