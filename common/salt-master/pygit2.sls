@@ -16,6 +16,13 @@ pygit2 prereqs:
       - libxml2-dev
       - libxslt1-dev
 
+cffi install:
+  pip.installed:
+{% if proxy %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - name: cffi
+
 pygit2 install:
   pip.installed:
 {% if proxy %}
