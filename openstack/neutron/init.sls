@@ -25,6 +25,8 @@ neutron-pkgs:
     - refresh: True
     - hold: True
     - fromrepo: trusty-updates/kilo
+{% else %}
+    - refresh: False
 {% endif %}
 
 {% if virl.mitaka %}
