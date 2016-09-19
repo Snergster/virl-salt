@@ -23,7 +23,11 @@ all-restart:
         service neutron-dhcp-agent restart
         service neutron-l3-agent restart
         service neutron-metadata-agent restart
+{% if not virl.mitaka %}
         service neutron-plugin-linuxbridge-agent restart
+{% else %}
+        service neutron-linuxbridge-agent restart
+{% endif %}
         service glance-api restart
         service glance-registry restart
 
@@ -52,6 +56,7 @@ all-restart:
   cmd.run:
     - name: |
         service nova-compute restart
+  {% if not virl.mitaka %}
         service neutron-plugin-linuxbridge-agent restart
-
+  {% endif %}
 {% endif %}
