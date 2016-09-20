@@ -12,7 +12,6 @@ dummy modprobe default:
   cmd.run:
     - name: modprobe dummy numdummies=5
     - unless: grep "^dummy" /proc/modules
-}
 
   {% if 'xenial' in salt['grains.get']('oscodename') %}
 hard up dummy interfaces:
