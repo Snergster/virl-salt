@@ -100,7 +100,7 @@ man-int-promisc:
     - require:
       - cmd: br4 interface
   cmd.run:
-    - name: ifup {{ virl.int_port }}
+    - name: ifup br4
 
 eth0 ifdown:
   cmd.run:
