@@ -35,17 +35,19 @@ loop1:
 
 br1 interface:
   network.managed:
+    - name: br1
     - enabled: True
     - proto: static
     - type: bridge
     - ipaddr: {{ virl.l2_address }}
     - netmask: {{ virl.l2_mask }}
+    - ports: {{ virl.l2_port }}
 
 man-flat-promisc:
   file.replace:
     - name: /etc/network/interfaces
     - pattern: {{ virl.l2_address }}
-    - repl: '{{ virl.l2_address }}\n    post-up ip link set {{virl.l2_port}} promisc on'
+    - repl: '{{ virl.l2_address }}\n    post-up ip link set br1 promisc on'
     - require:
       - network: br1 interface
 
@@ -53,6 +55,7 @@ man-flat-promisc:
 {% if virl.l2_port2_enabled %}
 br2 interface:
   network.managed:
+    - name: br2
     - enabled: True
     - proto: static
     - type: bridge
@@ -65,7 +68,7 @@ man-flat2-address:
   file.replace:
     - name: /etc/network/interfaces
     - pattern: {{ virl.l2_address2 }}
-    - repl: '{{ virl.l2_address2 }}\n    post-up ip link set {{virl.l2_port2}} promisc on'
+    - repl: '{{ virl.l2_address2 }}\n    post-up ip link set br2 promisc on'
     - require:
       - network: br2 interface
 
@@ -73,7 +76,7 @@ man-flat2-address:
 
 br3 interface:
   network.managed:
-    - name: {{ virl.l3_port }}
+    - name: br3
     - enabled: True
     - proto: static
     - type: bridge
@@ -95,7 +98,7 @@ man-int-promisc:
     - pattern: {{ virl.int_ip }}
     - repl: '{{ virl.int_ip }}\n    post-up ip link set {{ virl.int_port }} promisc on'
     - require:
-      - cmd: {{ virl.int_port }}
+      - cmd: br4 interface
   cmd.run:
     - name: ifup {{ virl.int_port }}
 
