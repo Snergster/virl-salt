@@ -1,6 +1,15 @@
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
+{% if 'xenial' in salt['grains.get']('oscodename') %}
 
+/usr/local/bin/vinstall:
+  file.managed:
+    - source: salt://virl/files/mitaka.vinstall.py
+    - user: virl
+    - group: virl
+    - mode: 0755
+
+{% else %}
 
 /usr/local/bin/vinstall:
   file.managed:
@@ -9,6 +18,7 @@
     - group: virl
     - mode: 0755
 
+{% endif %}
 
 {% if not masterless %}
 /srv/salt/virl/host.sls:
