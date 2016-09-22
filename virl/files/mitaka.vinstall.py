@@ -412,14 +412,14 @@ fileserver_backend:
 def building_salt_all():
     if not path.exists('/etc/salt/virl'):
         subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt/virl'])
-    if path.exists('/usr/bin/keystone-manage') or path.exists('/usr/bin/neutron-server'):
-        admin_tenid = (subprocess.check_output(['keystone --os-tenant-name admin --os-username admin'
+    if path.exists('/usr/bin/openstack') or path.exists('/usr/bin/neutron-server'):
+        admin_tenid = (subprocess.check_output(['openstack --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v3'
-                                            ' tenant-list | grep -w "admin" | cut -d "|" -f2'
+                                            ' tenant list | grep -w "admin" | cut -d "|" -f2'
                                            .format(ospassword=ospassword)], shell=True)[1:33])
-        service_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
+        service_tenid = (subprocess.check_output(['/usr/bin/openstack --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v3'
-                                            ' tenant-list | grep -w "service" | cut -d "|" -f2'
+                                            ' tenant list | grep -w "service" | cut -d "|" -f2'
                                            .format(ospassword=ospassword)], shell=True)[1:33])
         neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v3'
@@ -842,13 +842,13 @@ if __name__ == "__main__":
         call_salt('openstack')
         call_salt('openstack.setup')
 
-        admin_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
+        admin_tenid = (subprocess.check_output(['/usr/bin/openstack --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v3'
-                                            ' tenant-list | grep -w "admin" | cut -d "|" -f2'
+                                            ' tenant list | grep -w "admin" | cut -d "|" -f2'
                                            .format(ospassword=ospassword)], shell=True)[1:33])
-        service_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
+        service_tenid = (subprocess.check_output(['/usr/bin/openstack --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v3'
-                                            ' tenant-list | grep -w "service" | cut -d "|" -f2'
+                                            ' tenant list | grep -w "service" | cut -d "|" -f2'
                                            .format(ospassword=ospassword)], shell=True)[1:33])
         subprocess.call(['sudo', 'crudini', '--set','/etc/salt/minion.d/openstack.conf', '',
                          'keystone.tenant_id', (' ' + admin_tenid)])
@@ -880,9 +880,9 @@ if __name__ == "__main__":
         #     call_salt('openstack.dash')
         #
 
-        admin_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
+        admin_tenid = (subprocess.check_output(['/usr/bin/openstack --os-tenant-name admin --os-username admin'
                                             ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v3'
-                                            ' tenant-list | grep -w "admin" | cut -d "|" -f2'
+                                            ' tenant list | grep -w "admin" | cut -d "|" -f2'
                                            .format(ospassword=ospassword)], shell=True)[1:33])
         subprocess.call(['sudo', 'crudini', '--set','/etc/salt/minion.d/openstack.conf', '',
                           'keystone.tenant_id', (' ' + admin_tenid)])

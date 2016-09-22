@@ -33,7 +33,8 @@ waiting patiently for apache:
     - name: test.sleep
     - length: 10
 
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
 keystone-pkgs:
   pkg.installed:
     - aggregate: False
@@ -66,6 +67,11 @@ apache2 installing:
   {% endif %}
     - names:
       - python-memcached
+
+install openstackclient:
+  pkg.installed:
+    - aggregate: False
+    - name: python-openstackclient
 
 {% else %}
 
