@@ -18,6 +18,7 @@ dummy modprobe default:
 
 hard up dummy interfaces:
   cmd.run:
+    - unless: 'ifconfig dummy4'
     - names:
       - modprobe dummy numdummies=5
       - ip li add dummy0 type dummy
@@ -44,7 +45,7 @@ dummy modprobe default:
   {% if 'xenial' in salt['grains.get']('oscodename') %}
 
 remove dummy.conf:
-  file.remove:
+  file.absent:
     - name: /etc/modprobe.d/dummy.conf
 
 remove dummy from modules:
