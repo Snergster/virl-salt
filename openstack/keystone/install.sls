@@ -104,7 +104,7 @@ keystone-pkgs:
 {% if virl.mitaka %}
 
 {% for basepath in [
-    'keystone+catalog+backends+sql.py'.py',
+    'keystone+catalog+backends+sql.py',
 ] %}
 
 {% set realpath = '/usr/lib/python2.7/dist-packages/' + basepath.replace('+', '/') %}
