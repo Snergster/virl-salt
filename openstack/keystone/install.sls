@@ -101,6 +101,28 @@ keystone-pkgs:
 
 {% endif %}
 
+{% if virl.mitaka %}
+
+{% for basepath in [
+    'keystone+catalog+backends+sql.py'.py',
+] %}
+
+{% set realpath = '/usr/lib/python2.7/dist-packages/' + basepath.replace('+', '/') %}
+{{ realpath }}:
+  file.managed:
+    - source: salt://openstack/keystone/files/mitaka/{{ basepath }}
+  cmd.wait:
+    - names:
+      - python -m compileall {{ realpath }}
+    - watch:
+      - file: {{ realpath }}
+    - require:
+      - pkg: keystone-pkgs
+
+{% endfor %}
+
+{% endif %}
+
 /etc/keystone/keystone.conf:
   file.managed:
     - source: "salt://openstack/keystone/files/kilo.keystone.conf.jinja"
