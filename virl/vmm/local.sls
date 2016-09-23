@@ -24,9 +24,9 @@ VMMlinux:
 backup for installing unreleased vmm:
   module.run:
     - name: archive.cmd_unzip
-    - zip_file: /var/www/download/{{ salt['pillar.get']('files:vmm_lx_qa').split('/')[2]}}
+    - zip_file: /var/www/download/{{ salt['pillar.get']('qa:vmm_lx_qa').split('/')[2]}}
     - dest: /home/virl/VMMaestro-linux
-    - onlyif: ls /var/www/download/{{ salt['pillar.get']('files:vmm_lx_qa').split('/')[2]}}
+    - onlyif: ls /var/www/download/{{ salt['pillar.get']('qa:vmm_lx_qa').split('/')[2]}}
     - require:
       - file: VMMdircreate
       - pkg: vmmpkgs
