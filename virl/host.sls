@@ -28,8 +28,8 @@
 
 include:
   - virl.hostname
-  {% if 'boogeyman' in salt['grains.get']('oscodename') %}
-  - virl.network.xenial
+  {% if 'xenial' in salt['grains.get']('oscodename') %}
+  - virl.network.interfaces
   {% else %}
 
 blank what is there:
