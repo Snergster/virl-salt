@@ -2,6 +2,7 @@
 
 include:
   - virl.network.system
+  - virl.network.always_a_dummy
   - virl.network.br4
   - virl.network.br1
   - virl.network.br3
