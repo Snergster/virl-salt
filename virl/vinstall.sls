@@ -63,4 +63,17 @@
     - makedirs: True
     - mode: 0755
 
+  {% if 'xenial' in salt['grains.get']('oscodename') %}
+
+/srv/salt/virl/network directory:
+  file.directory:
+    - name: /srv/salt/virl/network
+    - makedirs: True
+
+/srv/salt/virl/network copy:
+  file.recurse:
+    - name: /srv/salt/virl/network
+    - source: salt://virl/network
+
+  {% endif %}
 {% endif %}
