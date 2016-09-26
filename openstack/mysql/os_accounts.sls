@@ -5,16 +5,17 @@ include:
 
 {% if virl.mitaka %}
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat', 'nova_api' ] %}
+
+restart mysql again for funsies:
+  cmd.run:
+    - name: 'service mysql restart'
+
 {% else %}
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat' ] %}
 {% endif %}
 {% for user in accounts %}
 
 {% if virl.mitaka %}
-
-restart mysql again for fun:
-  cmd.run:
-    - name: 'service mysql restart'
 
 {{ user }}-mysql virl:
   mysql_user.present:
