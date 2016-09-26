@@ -34,7 +34,7 @@ virl-vis-webserver port change:
   file.replace:
     - order: last
     - name: /etc/systemd/system/virl-vis-webserver.service
-    - pattern: '.*--port.*"'
+    - pattern: '.*--port.*'
     - repl: 'ExecStart=/usr/local/bin/virl_live_vis_webserver --port {{ virl.ank_live }}'
     - unless:
       - grep {{ virl.ank_live }} /etc/systemd/system/virl-vis-webserver.service
@@ -223,7 +223,7 @@ substitute ank port:
   file.replace:
     - order: last
     - name: /etc/systemd/system/ank-cisco-webserver.service
-    - pattern: '.*--port.*"'
+    - pattern: '.*--port.*'
     - repl: 'ExecStart=/usr/local/bin/ank_cisco_webserver --multi_user --port {{ virl.ank }}'
     - unless:
       #- grep {{ virl.ank }} /etc/init.d/ank-cisco-webserver
