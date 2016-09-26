@@ -2,10 +2,28 @@
 
 include:
   - virl.network.system
+  - virl.network.always_a_dummy
   - virl.network.br4
   - virl.network.br1
   - virl.network.br3
-{% if virl.l2_port2_enabled %}
   - virl.network.br2
-{% endif %}
 
+br1 bringup:
+  cmd.run:
+    - unless: ifconfig br1
+    - name: /sbin/ifup br1
+
+br2 bringup:
+  cmd.run:
+    - unless: ifconfig br2
+    - name: /sbin/ifup br2
+
+br3 bringup:
+  cmd.run:
+    - unless: ifconfig br3
+    - name: /sbin/ifup br3
+
+br4 bringup:
+  cmd.run:
+    - unless: ifconfig br4
+    - name: /sbin/ifup br4

@@ -53,6 +53,7 @@ run bridgebuilder.sh {{ kernver }}:
     - require:
       - cmd: update sourcelist to include sources
 {% endif %}
+  {% if not 'xenial' in salt['grains.get']('oscodename') %}
 
 run bridge.sh {{ kernver }}:
   cmd.script:
@@ -62,6 +63,8 @@ run bridge.sh {{ kernver }}:
     - shell: /bin/bash
     - env:
       - version: {{ kernver }}
+
+  {% endif %}
 
 {% endfor %}
 
