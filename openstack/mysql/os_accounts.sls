@@ -11,6 +11,11 @@ include:
 {% for user in accounts %}
 
 {% if virl.mitaka %}
+
+restart mysql again for fun:
+  cmd.run:
+    - name: 'service mysql restart'
+
 {{ user }}-mysql virl:
   mysql_user.present:
     - password_column: authentication_string
