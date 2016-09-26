@@ -3,6 +3,7 @@ Description=VIRL tap counter service
 After=syslog.target
 
 [Service]
+PIDFile=/var/run/virl_tap_counter/virl_tap_counter.pid
 Type=simple
 ExecStart=/usr/local/bin/virl_tap_counter
 Restart=on-abort
