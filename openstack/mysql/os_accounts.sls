@@ -15,11 +15,22 @@ include:
   mysql_user.present:
     - password_column: authentication_string
     - name: {{ user }}
-    - host: 'virl'
+    - host: {{ virl.hostname }}
     - password: {{ virl.mypassword }}
     - require:
       - pkg: mysql-server
       - file: /etc/mysql/my.cnf
+
+{{ user }}-mysql controllerip:
+  mysql_user.present:
+    - password_column: authentication_string
+    - name: {{ user }}
+    - host: {{ virl.controller_ip }}
+    - password: {{ virl.mypassword }}
+    - require:
+      - pkg: mysql-server
+      - file: /etc/mysql/my.cnf
+
 {% endif %}
 
 {{ user }}-mysql:
