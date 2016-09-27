@@ -30,7 +30,7 @@ update sourcelist to include xenial sources:
   cmd.run:
     - name: 'apt-get update -qq'
     - onchanges:
-      - file: update sourcelist to include sources
+      - file: update sourcelist to include xenial sources
 
 {% endif %}
 
