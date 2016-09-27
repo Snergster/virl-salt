@@ -3,6 +3,13 @@
 
 {% if virl.guestaccount %}
 
+  {% if 'xenial' in salt['grains.get']('oscodename') %}
+
+include:
+  - common.salt-minion.sync-and-restart
+
+  {% endif %}
+
 create guest account:
   module.run:
     - name: virl_core.project_present
