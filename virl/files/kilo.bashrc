@@ -112,8 +112,6 @@ export UBUNTU_MENUPROXY=0
 export SWT_GTK3=0
 
 #Begin virl section
-export OS_PROJECT_DOMAIN_ID=default
-export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
 export OS_PASSWORD=ADMIN_PASS
