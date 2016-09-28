@@ -11,5 +11,7 @@ br3 interface:
     - ports: {{ virl.l3_port }}
     - stp: False
     - maxwait: 0
+    - pre_up_cmds:
+      - ifconfig {{ virl.l3_port }} up
     - post_up_cmds:
       - ip link set br3 promisc on

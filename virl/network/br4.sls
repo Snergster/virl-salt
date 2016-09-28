@@ -12,5 +12,7 @@ br4 interface:
     - ports: {{ virl.int_port }}
     - stp: False
     - maxwait: 0
+    - pre_up_cmds:
+      - ifconfig {{ virl.int_port }} up
     - post_up_cmds:
       - ip link set br4 promisc on
