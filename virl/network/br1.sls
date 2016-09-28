@@ -9,12 +9,10 @@ br1 interface:
     - ipaddr: {{ virl.l2_address }}
     - netmask: {{ virl.l2_mask }}
     - ports: {{ virl.l2_port }}
+    - stp: False
+    - maxwait: 0
+    - post_up_cmds:
+      - ip link set br1 promisc on
 
-man-flat-promisc:
-  file.replace:
-    - name: /etc/network/interfaces
-    - pattern: {{ virl.l2_address }}
-    - repl: '{{ virl.l2_address }}\n    post-up ip link set br1 promisc on'
-    - require:
-      - network: br1 interface
+
 
