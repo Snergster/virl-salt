@@ -86,6 +86,22 @@ neutron-pkgs:
     - require:
       - pkg: neutron-pkgs
 
+
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+neutron-sysctl:
+  file.replace:
+    - name: /etc/sysctl.d/10-network-security.conf
+    - pattern: '#net.ipv4.conf.default.rp_filter=1'
+    - repl: 'net.ipv4.conf.default.rp_filter=0'
+
+neutron-sysctl all:
+  file.replace:
+    - name: /etc/sysctl.d/10-network-security.conf
+    - pattern: 'net.ipv4.conf.all.rp_filter=1'
+    - repl: 'net.ipv4.conf.all.rp_filter=0'
+
+{% else %}
+
 neutron-sysctl:
   file.replace:
     - name: /etc/sysctl.conf
@@ -98,13 +114,13 @@ neutron-sysctl2:
     - pattern: '#net.ipv4.conf.all.rp_filter=1'
     - repl: 'net.ipv4.conf.all.rp_filter=0'
 
+{% endif %}
+
 neutron-sysctlforward:
   file.replace:
     - name: /etc/sysctl.conf
     - pattern: '#net.ipv4.ip_forward=1'
     - repl: 'net.ipv4.ip_forward=1'
-
-
 
 {% if not virl.l2_port2_enabled %}
 neutron-provider-networks:
