@@ -11,8 +11,6 @@ br1 interface:
     - ports: {{ virl.l2_port }}
     - stp: False
     - maxwait: 0
-    - pre_up_cmds:
-      - ifconfig {{ virl.l2_port }} up
     - post_up_cmds:
       - ip link set br1 promisc on
 
