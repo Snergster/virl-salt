@@ -157,7 +157,7 @@ neutron-hostname2:
     - filename: /etc/neutron/neutron.conf
     - section: 'DEFAULT'
     - parameter: 'nova_admin_auth_url'
-    - value: 'http://{{ virl.controllerhostname }}:35357/v2.0'
+    - value: 'http://{{ virl.controllerhostname }}:35357/{{ virl.keystone_auth_version }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -166,7 +166,7 @@ neutron-hostname3:
     - filename: /etc/neutron/neutron.conf
     - section: 'keystone_authtoken'
     - parameter: 'auth_uri'
-    - value: 'http://{{ virl.controllerhostname }}:35357/v2.0/'
+    - value: 'http://{{ virl.controllerhostname }}:35357/{{ virl.keystone_auth_version }}/'
     - require:
       - file: /etc/neutron/neutron.conf
 

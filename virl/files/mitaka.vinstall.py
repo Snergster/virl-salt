@@ -47,7 +47,7 @@ safeparser = configparser.ConfigParser()
 safeparser_file = '/etc/virl.ini'
 # safeparser_backup_file = '/home/virl/vsettings.ini'
 if path.exists(safeparser_file):
-    safeparser.read('/etc/virl.ini')
+    safeparser.read(safeparser_file)
 # elif path.exists(safeparser_backup_file):
 #     safeparser.read('/home/virl/vsettings.ini')
 else:
