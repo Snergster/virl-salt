@@ -410,29 +410,39 @@ fileserver_backend:
     subprocess.call(['sudo', 'cp', '-f', '/etc/salt/minion', '/etc/salt{count}/minion'.format(count=count)])
 
 def building_salt_all():
+    if mitaka:
+        keystone_auth_url = 'http://127.0.0.1:5000/v3'
+        keystone_client = 'openstack'
+        keystone_project_list = 'project list'
+        keystone_auth_version = 'v3'
+    else:
+        keystone_client = 'keystone'
+        keystone_auth_url = 'http://127.0.0.1:5000/v2.0'
+        keystone_project_list = 'tenant-list'
+        keystone_auth_version = 'v2.0'
     if not path.exists('/etc/salt/virl'):
         subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt/virl'])
     if path.exists('/usr/bin/keystone-manage') or path.exists('/usr/bin/neutron-server'):
-        admin_tenid = (subprocess.check_output(['keystone --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
-                                            ' tenant-list | grep -w "admin" | cut -d "|" -f2'
-                                           .format(ospassword=ospassword)], shell=True)[1:33])
-        service_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
-                                            ' tenant-list | grep -w "service" | cut -d "|" -f2'
-                                           .format(ospassword=ospassword)], shell=True)[1:33])
+        admin_tenid = (subprocess.check_output(['{keystone_client} --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url={auth_url}'
+                                            ' {project} | grep -w "admin" | cut -d "|" -f2'
+                                           .format(ospassword=ospassword,auth_url=keystone_auth_url,keystone_client=keystone_client,project=keystone_project_list)], shell=True)[1:33])
+        service_tenid = (subprocess.check_output(['{keystone_client} --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url={auth_url}'
+                                            ' {project} | grep -w "service" | cut -d "|" -f2'
+                                           .format(ospassword=ospassword,auth_url=keystone_auth_url,keystone_client=keystone_client,project=keystone_project_list)], shell=True)[1:33])
         neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
+                                            ' --os-password {ospassword} --os-auth-url={auth_url}'
                                             ' net-list | grep -w "ext-net" | cut -d "|" -f2'
-                                           .format(ospassword=ospassword)], shell=True)[1:33])
+                                           .format(ospassword=ospassword,auth_url=keystone_auth_url)], shell=True)[1:33])
     else:
         admin_tenid = ''
         service_tenid = ''
     if path.exists('/usr/bin/neutron-server'):
         neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
+                                            ' --os-password {ospassword} --os-auth-url={auth_url}'
                                             ' net-list | grep -w "ext-net" | cut -d "|" -f2'
-                                           .format(ospassword=ospassword)], shell=True)[1:33])
+                                           .format(ospassword=ospassword,auth_url=keystone_auth_url)], shell=True)[1:33])
     else:
         neutron_extnet_id = ''
     building_salt_extra()
@@ -442,7 +452,7 @@ def building_salt_all():
 keystone.password: {ospassword}
 keystone.tenant: admin
 keystone.tenant_id: {tenid}
-keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
+keystone.auth_url: {auth_url}/
 keystone.token: {kstoken}
 keystone.region_name: 'RegionOne'
 keystone.service_type: 'network'
@@ -457,7 +467,7 @@ virl:
   keystone.tenant_id: {tenid}
   keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
   keystone.region_name: 'RegionOne'
-  keystone.service_type: 'network'\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=admin_tenid, mypass=mypassword))
+  keystone.service_type: 'network'\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=admin_tenid, mypass=mypassword, auth_url=keystone_auth_url))
     if path.exists('/usr/bin/salt-call'):
         with open(("/tmp/foo"), "w") as salt_grain:
             salt_grain.write("""{""")
@@ -478,6 +488,12 @@ virl:
                 salt_grain.write("""  'uwm_url': 'http://{0}:{1}',""".format(public_ip,uwm_port))
             salt_grain.write(""" 'neutron_extnet_id': '{neutid}',""".format(neutid=neutron_extnet_id))
             salt_grain.write(""" 'service_id': '{serviceid}',""".format(serviceid=service_tenid))
+            salt_grain.write("""  OS_AUTH_URL: '{auth_url}',""".format(auth_url=keystone_auth_url))
+            salt_grain.write("""  OS_AUTH_URL: '{auth_url}',""".format(auth_url=keystone_auth_url))
+            if mitaka:
+                salt_grain.write("""  OS_AUTH_URL: '{auth_url}',""".format(auth_url=keystone_auth_url))
+                salt_grain.write("""  kilo: False,"""
+            salt_grain.write("""  keystone_auth_version: '{auth_version}',""".format(auth_version=keystone_auth_version))
             salt_grain.write(""" 'admin_id': '{adminid}'""".format(adminid=admin_tenid))
             salt_grain.write("""}""")
         with open(("/tmp/foo"), "r") as salt_grain_read:
@@ -492,7 +508,10 @@ virl:
                 grains.write("""  cinder_enabled: False\n""")
             if not uwm_port == '14000':
                 grains.write("""  uwm_url: http://{0}:{1}\n""".format(public_ip,uwm_port))
-
+            if mitaka:
+                grains.write("""  kilo: False""")
+                grains.write("""  keystone_auth_version: v3""")
+            grains.write("""  OS_AUTH_URL: {1}\n""".format(keystone_auth_url))
 
             for name, value in safeparser.items('DEFAULT'):
                 grains.write("""  {name}: {value}\n""".format(name=name, value=value))
