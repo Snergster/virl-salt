@@ -55,16 +55,22 @@ cinder-reinstall:
       - pip: oslo cinder prereq
 {% endif %}
 
+{% if virl.mitaka %}
 /etc/cinder/cinder.conf:
   file.managed:
     - mode: 755
     - template: jinja
-    {% if masterless %}
-    - source: "file:///srv/salt/openstack/cinder/files/cinder.conf"
-    {% else %}
+    - source: "salt://openstack/cinder/files/mitaka.cinder.conf"
+
+{% else %}
+
+/etc/cinder/cinder.conf:
+  file.managed:
+    - mode: 755
+    - template: jinja
     - source: "salt://openstack/cinder/files/cinder.conf"
-    - source_hash: md5=915cc27d420bbf1eafc7e1443148e733
-    {% endif %}
+
+{% endif %}
 
 /etc/cinder/lvm.conf:
   file.managed:
