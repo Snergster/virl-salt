@@ -76,6 +76,7 @@
     'ospassword' : salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')),
     'mypassword' : salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')),
     'ks_token' : salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')),
+    'keystone_auth_version' : salt['pillar.get']('virl:keystone_auth_version', salt['grains.get']('keystone_auth_version', 'v2.0')),
     'ganglia' : salt['pillar.get']('virl:ganglia', salt['grains.get']('ganglia', False)),
     'debug' : salt['pillar.get']('virl:debug', salt['grains.get']('debug', False)),
     'ceilometer' : salt['pillar.get']('virl:ceilometer', salt['grains.get']('ceilometer', False)),
