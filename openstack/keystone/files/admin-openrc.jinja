@@ -1,12 +1,13 @@
+{% from "virl.jinja" import virl with context %}
 export OS_PROJECT_DOMAIN_ID=default
 export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=admin
 export OS_TENANT_NAME=admin
 export OS_USERNAME=admin
-export OS_PASSWORD={{ salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) }}
-export OS_AUTH_URL=http://{{ salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('hostname', 'virl')) }}:35357/v3
-export OS_SERVICE_TOKEN={{ salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')) }}
-export OS_SERVICE_ENDPOINT=http://{{ salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('hostname', 'virl')) }}:35357/v2.0
+export OS_PASSWORD={{ virl.ospassword }}
+export OS_AUTH_URL=http://{{ virl.controller_ip }}:35357/{{ virl.keystone_auth_version}}
+export OS_SERVICE_TOKEN={{ virl.ks_token }}
+export OS_SERVICE_ENDPOINT=http://{{ virl.controller_ip }}:35357/{{ virl.keystone_auth_version}}
 export OS_IMAGE_API_VERSION=2
 export OS_ENDPOINT_TYPE=internalURL
 
