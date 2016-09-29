@@ -20,14 +20,14 @@ vpn maximize:
 {% if not virl.l2_address_iponly == '172.16.11.254' %}
 flat subnet update:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat --gateway_ip {{ virl.l2_address_iponly }}
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat --gateway_ip {{ virl.l2_address_iponly }}
 {% endif %}
 
 {% if not virl.l2_address2_iponly == '172.16.2.254' %}
 
 flat1 subnet update:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat1 --gateway_ip {{ virl.l2_address2_iponly }}
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat1 --gateway_ip {{ virl.l2_address2_iponly }}
 
 {% endif %}
 
@@ -35,7 +35,7 @@ flat1 subnet update:
 
 extnet subnet update:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update ext-net --gateway_ip {{ virl.l3_address_iponly }}
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update ext-net --gateway_ip {{ virl.l3_address_iponly }}
 
 {% endif %}
 
