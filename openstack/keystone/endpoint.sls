@@ -21,9 +21,9 @@ glance endpoint:
 keystone endpoint:
   keystone.endpoint_present:
     - name: keystone
-    - publicurl: http://{{ public_ip }}:5000/v2.0
-    - internalurl: http://{{ int_ip }}:5000/v2.0
-    - adminurl: http://{{ int_ip }}:35357/v2.0
+    - publicurl: http://{{ public_ip }}:5000/{{ virl.keystone_auth_version }}
+    - internalurl: http://{{ int_ip }}:5000/{{ virl.keystone_auth_version }}
+    - adminurl: http://{{ int_ip }}:35357/{{ virl.keystone_auth_version }}
     - require:
       - cmd: key-db-sync
 
