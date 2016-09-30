@@ -21,7 +21,7 @@ cffi install:
 {% if proxy %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - name: cffi == 1.3.1
+    - name: cffi 
 
 pygit2 install:
   pip.installed:
@@ -90,6 +90,14 @@ pygit2 install:
     - proxy: {{ http_proxy }}
 {% endif %}
     - name: pygit2 == 0.23.3
+
+cffi install:
+  pip.installed:
+{% if proxy %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - name: cffi == 1.3.1
+
 
 remove libgit trash:
   file.absent:
