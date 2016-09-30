@@ -21,7 +21,7 @@ cffi install:
 {% if proxy %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - name: cffi
+    - name: cffi == 1.3.1
 
 pygit2 install:
   pip.installed:
