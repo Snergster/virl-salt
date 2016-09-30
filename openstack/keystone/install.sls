@@ -130,15 +130,13 @@ keystone-pkgs:
     - require:
       - pkg: keystone-pkgs
 
-{% if 'xenial' in salt['grains.get']('oscodename') %}
+{% if virl.mitaka %}
 
 /usr/local/bin/admin-openrc:
   file.managed:
     - source: "salt://openstack/keystone/files/mitaka.admin-openrc.jinja"
     - mode: 0755
     - template: jinja
-    - require:
-      - pkg: keystone-pkgs
 
 {% else %}
 
@@ -147,8 +145,6 @@ keystone-pkgs:
     - source: "salt://openstack/keystone/files/admin-openrc.jinja"
     - mode: 0755
     - template: jinja
-    - require:
-      - pkg: keystone-pkgs
 
 {% endif %}
 /etc/apache2/sites-available/wsgi-keystone.conf:
