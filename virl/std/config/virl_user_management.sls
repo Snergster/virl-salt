@@ -17,10 +17,14 @@ set_config:
       - crudini --set /etc/virl/virl.cfg env virl_uwm_port {{ virl.uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ virl.uwmport }}
 
+{% if virl.mitaka %}
+
+
 user management auth url:
   cmd.run:
     - names:
       - crudini --set /etc/virl/virl.cfg env virl_openstack_auth_url http://localhost:5000/v3
 
+{% endif %}
 
 

@@ -189,6 +189,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg orchestration volume_service False
      {% endif %}
       - /usr/local/bin/virl_config update --global
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_auth_url http://localhost:5000/{{ virl.keystone_auth_version }}
       - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ virl.uwmpassword }}
       - crudini --set /etc/virl/virl.cfg env virl_openstack_service_token {{ virl.ks_token }}
       - crudini --set /etc/virl/virl.cfg env virl_std_port {{ virl.stdport }}
