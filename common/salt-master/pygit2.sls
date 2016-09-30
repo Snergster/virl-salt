@@ -91,12 +91,12 @@ pygit2 install:
 {% endif %}
     - name: pygit2 == 0.23.3
 
-cffi install:
+cryptography install:
   pip.installed:
 {% if proxy %}
     - proxy: {{ http_proxy }}
 {% endif %}
-    - name: cffi == 1.3.1
+    - name: cryptography >= 1.5.2
 
 
 remove libgit trash:
