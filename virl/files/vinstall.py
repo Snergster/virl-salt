@@ -492,7 +492,7 @@ virl:
             salt_grain.write("""  OS_AUTH_URL: '{auth_url}',""".format(auth_url=keystone_auth_url))
             if mitaka:
                 salt_grain.write("""  OS_AUTH_URL: '{auth_url}',""".format(auth_url=keystone_auth_url))
-                salt_grain.write("""  kilo: False,"""
+                salt_grain.write("""  kilo: False,""")
             salt_grain.write("""  keystone_auth_version: '{auth_version}',""".format(auth_version=keystone_auth_version))
             salt_grain.write(""" 'admin_id': '{adminid}'""".format(adminid=admin_tenid))
             salt_grain.write("""}""")
