@@ -509,8 +509,8 @@ virl:
             if not uwm_port == '14000':
                 grains.write("""  uwm_url: http://{0}:{1}\n""".format(public_ip,uwm_port))
             if mitaka:
-                grains.write("""  kilo: False""")
-                grains.write("""  keystone_auth_version: v3""")
+                grains.write("""  kilo: False\n""")
+                grains.write("""  keystone_auth_version: v3\n""")
             grains.write("""  OS_AUTH_URL: {1}\n""".format(keystone_auth_url))
 
             for name, value in safeparser.items('DEFAULT'):
