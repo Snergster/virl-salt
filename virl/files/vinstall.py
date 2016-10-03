@@ -47,7 +47,7 @@ safeparser = configparser.ConfigParser()
 safeparser_file = '/etc/virl.ini'
 # safeparser_backup_file = '/home/virl/vsettings.ini'
 if path.exists(safeparser_file):
-    safeparser.read('/etc/virl.ini')
+    safeparser.read(safeparser_file)
 # elif path.exists(safeparser_backup_file):
 #     safeparser.read('/home/virl/vsettings.ini')
 else:
@@ -139,6 +139,7 @@ guest_passwd = safeparser.get('DEFAULT', 'guest_password', fallback='guest')
 ospassword = safeparser.get('DEFAULT', 'password', fallback='password')
 mypassword = safeparser.get('DEFAULT', 'mysql_password', fallback='password')
 ks_token = safeparser.get('DEFAULT', 'keystone_service_token', fallback='fkgjhsdflkjh')
+keystone_auth_version = safeparser.get('DEFAULT', 'keystone_auth_version', fallback='v2')
 
 ganglia = safeparser.getboolean('DEFAULT', 'ganglia', fallback=False)
 
@@ -256,13 +257,23 @@ host_sls_values = [hostname,fqdn,public_port,dhcp_public,public_ip,public_gatewa
             dns2,internalnet_port,internalnet_netmask,l3_mask,l2_mask2,l2_mask,dummy_int,
             jumbo_frames]
 
+if mitaka:
+    keystone_auth_url = 'http://127.0.0.1:5000/v3'
+    keystone_client = 'openstack'
+    keystone_project_list = 'project list'
+    keystone_auth_version = 'v3'
+else:
+    keystone_client = 'keystone'
+    keystone_auth_url = 'http://127.0.0.1:5000/v2.0'
+    keystone_project_list = 'tenant-list'
+    keystone_auth_version = 'v2.0'
 
 qadmincall = ['/usr/bin/neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-              '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/v2.0']
+              '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
 nadmincall = ['/usr/bin/nova', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-              '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/v2.0']
+              '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
 kcall = ['/usr/bin/keystone', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-         '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/v2.0']
+         '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
 cpstr = 'sudo -S cp -f "%(from)s" "%(to)s"'
 lnstr = 'sudo -S ln -sf "%(orig)s" "%(link)s"'
 
@@ -410,16 +421,6 @@ fileserver_backend:
     subprocess.call(['sudo', 'cp', '-f', '/etc/salt/minion', '/etc/salt{count}/minion'.format(count=count)])
 
 def building_salt_all():
-    if mitaka:
-        keystone_auth_url = 'http://127.0.0.1:5000/v3'
-        keystone_client = 'openstack'
-        keystone_project_list = 'project list'
-        keystone_auth_version = 'v3'
-    else:
-        keystone_client = 'keystone'
-        keystone_auth_url = 'http://127.0.0.1:5000/v2.0'
-        keystone_project_list = 'tenant-list'
-        keystone_auth_version = 'v2.0'
     if not path.exists('/etc/salt/virl'):
         subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt/virl'])
     if path.exists('/usr/bin/keystone-manage') or path.exists('/usr/bin/neutron-server'):
@@ -491,7 +492,6 @@ virl:
             salt_grain.write(""" 'OS_AUTH_URL': '{auth_url}',""".format(auth_url=keystone_auth_url))
             if mitaka:
                 salt_grain.write("""  'kilo': False ,""")
-            salt_grain.write("""  'keystone_auth_version': '{auth_version}',""".format(auth_version=keystone_auth_version))
             salt_grain.write(""" 'admin_id': '{adminid}'""".format(adminid=admin_tenid))
             salt_grain.write("""}""")
         with open(("/tmp/foo"), "r") as salt_grain_read:
@@ -508,7 +508,6 @@ virl:
                 grains.write("""  uwm_url: http://{0}:{1}\n""".format(public_ip,uwm_port))
             if mitaka:
                 grains.write("""  kilo: False\n""")
-                grains.write("""  keystone_auth_version: v3\n""")
             grains.write("""  OS_AUTH_URL: {1}\n""".format(keystone_auth_url))
 
             for name, value in safeparser.items('DEFAULT'):
@@ -526,7 +525,7 @@ def create_basic_networks():
     user = 'admin'
     password = ospassword
     qcall = ['/usr/bin/neutron', '--os-tenant-name', '{0}'.format(user), '--os-username', '{0}'.format(user),
-             '--os-password', '{0}'.format(password), '--os-auth-url=http://localhost:5000/v2.0']
+             '--os-password', '{0}'.format(password), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
     subprocess.call(qcall + ['quota-update', '--router', '-1'])
     try:
         if not varg['iso']:
@@ -648,7 +647,7 @@ def set_vnc_password(vnc_password):
 
 def Net_Creator(user, password):
     qcall = ['neutron', '--os-tenant-name', '{0}'.format(user), '--os-username', '{0}'.format(user), '--os-password',
-             '{0}'.format(password), '--os-auth-url=http://localhost:5000/v2.0']
+             '{0}'.format(password), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
     try:
         if user not in subprocess.check_output(qadmincall + ['net-list']) and not user == 'flat':
             subprocess.call(qcall + ['net-create', '{0}'.format(user)])

@@ -139,6 +139,7 @@ guest_passwd = safeparser.get('DEFAULT', 'guest_password', fallback='guest')
 ospassword = safeparser.get('DEFAULT', 'password', fallback='password')
 mypassword = safeparser.get('DEFAULT', 'mysql_password', fallback='password')
 ks_token = safeparser.get('DEFAULT', 'keystone_service_token', fallback='fkgjhsdflkjh')
+keystone_auth_version = safeparser.get('DEFAULT', 'keystone_auth_version', fallback='v2')
 
 ganglia = safeparser.getboolean('DEFAULT', 'ganglia', fallback=False)
 
@@ -491,7 +492,6 @@ virl:
             salt_grain.write(""" 'OS_AUTH_URL': '{auth_url}',""".format(auth_url=keystone_auth_url))
             if mitaka:
                 salt_grain.write("""  'kilo': False ,""")
-            salt_grain.write("""  'keystone_auth_version': '{auth_version}',""".format(auth_version=keystone_auth_version))
             salt_grain.write(""" 'admin_id': '{adminid}'""".format(adminid=admin_tenid))
             salt_grain.write("""}""")
         with open(("/tmp/foo"), "r") as salt_grain_read:
@@ -508,7 +508,6 @@ virl:
                 grains.write("""  uwm_url: http://{0}:{1}\n""".format(public_ip,uwm_port))
             if mitaka:
                 grains.write("""  kilo: False\n""")
-                grains.write("""  keystone_auth_version: v3\n""")
             grains.write("""  OS_AUTH_URL: {1}\n""".format(keystone_auth_url))
 
             for name, value in safeparser.items('DEFAULT'):
