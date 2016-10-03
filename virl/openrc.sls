@@ -11,6 +11,12 @@ include:
     - mode: 0755
     - template: jinja
 
+/usr/local/bin/admin-openrc coverage:
+  file.managed:
+    - name: /usr/local/bin/admin-openrc
+    - source: "salt://openstack/keystone/files/mitaka.admin-openrc.jinja"
+    - mode: 0755
+    - template: jinja
 
 /home/virl/.bashrc:
   file.managed:
