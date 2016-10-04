@@ -12,9 +12,9 @@
   {% set interfaces = salt['cmd.run'](list_int_cmd) %}
   {% for int in interfaces.split('\n')[1:] %}
     {% set router_int_delete_cmd = "neutron %s router-interface-delete %s port=%s" % (log_str, router, int) %}
-    device-interface-delete-{{ router }}-{{ int }}:
-      cmd.run:
-       - name: {{ router_int_delete_cmd }}
+device-interface-delete-{{ router }}-{{ int }}:
+  cmd.run:
+    - name: {{ router_int_delete_cmd }}
   {% endfor %}
 {% endfor %}
 
