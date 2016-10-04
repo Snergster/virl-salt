@@ -64,11 +64,10 @@ qemu install:
       - qemu-kvm
       - qemu-system-common
     - refresh: True
-# need to keep trusty version, xrv does not work with network
-#{% if not virl.mitaka %}
-#{% endif %}
+{% if not virl.mitaka %}
     - hold: True
     - fromrepo: trusty
+{% endif %}
 
 libvirt-bin insert /dev/kvm:
   file.line:
