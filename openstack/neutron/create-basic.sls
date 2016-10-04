@@ -38,6 +38,20 @@ neutron lives:
   cmd.run:
     - name: sleep 15
 
+{% if virl.mitaka %}
+
+project_domain_env:
+  environ.setenv:
+    - name: OS_PROJECT_DOMAIN_ID
+    - value: default
+
+user_domain_env:
+  environ.setenv:
+    - name: OS_USER_DOMAIN_ID
+    - value: default
+
+{% endif %}
+
 create flat net:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-create flat --shared --provider:network_type flat --provider:physical_network flat
