@@ -10,3 +10,9 @@ include:
 {% else %}
   - virl.desktop.lubuntu
 {% endif %}
+
+apport disable:
+  file.replace:
+    - name: /etc/default/apport
+    - pattern: enabled=1
+    - repl: enabled=0
