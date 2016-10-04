@@ -40,12 +40,12 @@ neutron lives:
 
 {% if virl.mitaka %}
 
-project_domain_env:
+project_domain_env create:
   environ.setenv:
     - name: OS_PROJECT_DOMAIN_ID
     - value: default
 
-user_domain_env:
+user_domain_env create:
   environ.setenv:
     - name: OS_USER_DOMAIN_ID
     - value: default
