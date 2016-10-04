@@ -2,7 +2,7 @@
 {% set controllerip = salt['pillar.get']('virl:internalnet_controller_ip',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 {% from "virl.jinja" import virl with context %}
 
-{% set log_str = "--os-tenant-name admin --os-username admin --os-password %s --os-auth-url=http://%s%s/%s" % (virl.ospassword, controller_ip, ':5000', virl.keystone_auth_version) %}
+{% set log_str = "--os-tenant-name admin --os-username admin --os-password %s --os-auth-url=http://%s%s/%s" % (virl.ospassword, virl.controller_ip, ':5000', virl.keystone_auth_version) %}
 {% set router_list_cmd = "neutron %s router-list --format csv --quote none --column id" % log_str %}
 
 # delete interfaces
