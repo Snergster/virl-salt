@@ -1,5 +1,6 @@
 
 {% from "virl.jinja" import virl with context %}
+{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 
 neutron-pkgs:
   pkg.installed:
@@ -273,6 +274,7 @@ l3-gateway:
 {% set realpath = '/usr/lib/python2.7/dist-packages/neutron/' + basepath.replace('+', '/') %}
 {{ realpath }}:
   file.managed:
+    - makedirs: True
     - source: salt://openstack/neutron/files/mitaka/{{ basepath }}
   cmd.wait:
     - names:
