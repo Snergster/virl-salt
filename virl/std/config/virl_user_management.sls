@@ -23,7 +23,7 @@ set_config:
 user management auth url:
   cmd.run:
     - names:
-      - crudini --set /etc/virl/virl.cfg env virl_openstack_auth_url http://localhost:5000/v3
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_auth_url http://localhost:5000/{{virl.keystone_auth_version}}
 
 {% endif %}
 
