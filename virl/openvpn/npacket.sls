@@ -3,7 +3,7 @@
 {% set log_str = "--os-tenant-name admin --os-username admin --os-password %s --os-auth-url=http://%s%s/%s" % (virl.ospassword, virl.controller_ip, ':5000', virl.keystone_auth_version) %}
 {% set gateway_show_cmd = "neutron %s subnet-show --field gateway_ip -f value " % log_str %}
 {% set flat_gateway_cmd = "%s flat" % gateway_show_cmd %}
-{% set flat1_gateway_cmd = "%s flat" % gateway_show_cmd %}
+{% set flat1_gateway_cmd = "%s flat1" % gateway_show_cmd %}
 {% set snat_gateway_cmd = "%s ext-net" % gateway_show_cmd %}
 {% set flat_gateway = salt['cmd.run'](flat_gateway_cmd) %}
 {% set flat1_gateway = salt['cmd.run'](flat1_gateway_cmd) %}
