@@ -23,7 +23,7 @@ vpn maximize:
       - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address {{ virl.l2_address_iponly }}
 
 {% if not flat_gateway == virl.l2_address_iponly %}
-flat subnet update:
+{{flat_gateway}} subnet update:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat --gateway_ip {{ virl.l2_address_iponly }}
 {% endif %}
