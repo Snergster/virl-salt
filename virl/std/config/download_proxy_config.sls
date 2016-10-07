@@ -12,6 +12,7 @@ set_config:
       - crudini --set /etc/virl/common.cfg host download_proxy {{ download_proxy }}
       - crudini --set /etc/virl/common.cfg host download_no_proxy {{ download_no_proxy }}
       - crudini --set /etc/virl/common.cfg host download_proxy_user {{ download_proxy_user }}
+      # new location
       - crudini --set /etc/virl/virl-core.ini host download_proxy {{ download_proxy }}
       - crudini --set /etc/virl/virl-core.ini host download_no_proxy {{ download_no_proxy }}
       - crudini --set /etc/virl/virl-core.ini host download_proxy_user {{ download_proxy_user }}
