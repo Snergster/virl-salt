@@ -9,5 +9,7 @@ set_values:
     - names:
       - crudini --set /etc/virl/common.cfg host ram_overcommit {{ ram_overcommit }}
       - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ cpu_overcommit }}
+      - crudini --set /etc/virl/virl-core.ini host ram_overcommit {{ ram_overcommit }}
+      - crudini --set /etc/virl/virl-core.ini host cpu_overcommit {{ cpu_overcommit }}
 
 

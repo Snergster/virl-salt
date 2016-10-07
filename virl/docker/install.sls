@@ -8,6 +8,8 @@ docker registry settings:
     - names:
       - crudini --set /etc/virl/common.cfg host docker_registry_ip {{ virl.registry_ip }}
       - crudini --set /etc/virl/common.cfg host docker_registry_port {{ virl.registry_port }}
+      - crudini --set /etc/virl/virl-core.ini host docker_registry_ip {{ virl.registry_ip }}
+      - crudini --set /etc/virl/virl-core.ini host docker_registry_port {{ virl.registry_port }}
 
 # Docker:
 

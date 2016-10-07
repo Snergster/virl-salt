@@ -54,6 +54,7 @@ std_prereq:
       - Pygments
       - requests == 2.7.0
       - redis >= 2.10.5
+      - setproctitle
       - simplejson >= 3.6.5
       - sqlalchemy == 0.9.9
       - websocket_client >= 0.26.0

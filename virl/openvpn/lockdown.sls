@@ -15,6 +15,7 @@ vpn maximize:
       - crudini --set /etc/virl.ini DEFAULT l2_network_gateway2 {{ l2_gateway2 }}
       - crudini --set /etc/virl.ini DEFAULT l3_network_gateway {{ l3_network_gateway }}
       - crudini --set /etc/virl/virl.cfg env virl_local_ip {{ l2_gateway }}
+      - crudini --set /etc/virl/virl-core.ini env virl_local_ip {{ l2_gateway }}
       - crudini --set /etc/nova/nova.conf serial_console proxyclient_address {{ l2_gateway }}
       - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address {{ l2_gateway }}
       - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat --gateway_ip {{ l2_gateway }}

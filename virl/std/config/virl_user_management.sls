@@ -16,5 +16,7 @@ set_config:
     - names:
       - crudini --set /etc/virl/virl.cfg env virl_uwm_port {{ uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ uwmport }}
+      - crudini --set /etc/virl/virl-core.ini env virl_uwm_port {{ uwmport }}
+      - crudini --set /etc/virl/virl-core.ini env virl_uwm_url http://localhost:{{ uwmport }}
 
 

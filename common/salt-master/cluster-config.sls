@@ -56,43 +56,61 @@
 
 add up to cluster4 to std:
   cmd.run:
-    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+    - names:
+      - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+    # TODO what?
     - onlyif: test -e /etc/virl/common.cfg
 
   {% elif compute3_active %}
 
 add up to cluster3 to std:
   cmd.run:
-    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}}'
+    - names:
+      - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}}'
+      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}},{{compute3}}'
+    # TODO what?
     - onlyif: test -e /etc/virl/common.cfg
 
   {% elif compute2_active %}
 
 add up to cluster2 to std:
   cmd.run:
-    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}}'
+    - names:
+      - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}}'
+      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}}'
+    # TODO what?
     - onlyif: test -e /etc/virl/common.cfg
 
   {% else %}
 
 add only cluster1 to std:
   cmd.run:
-    - name: crudini --set /etc/virl/common.cfg cluster computes '{{compute1}}'
+    - names:
+      - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}}'
+      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}}'
+    # TODO what?
     - onlyif: test -e /etc/virl/common.cfg
 
   {% endif %}
 
 point std at key if it exists:
   cmd.run:
-    - name: crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
+    - names:
+      - crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
+      - crudini --set /etc/virl/virl-core.ini cluster ssh_key '~virl/.ssh/id_rsa'
     - onlyif:
       - test -e ~virl/.ssh/id_rsa.pub
+    # TODO what?
       - test -e /etc/virl/common.cfg
 
 enable cluster in std via cluster config:
   cmd.run:
-    - name: 'crudini --set /etc/virl/common.cfg orchestration cluster_mode True'
+    - names:
+      - crudini --set /etc/virl/common.cfg orchestration cluster_mode True
+      - crudini --set /etc/virl/virl-core.ini orchestration cluster_mode True
     - onlyif:
+    # TODO what?
       - test -e /etc/virl/common.cfg
 
 
