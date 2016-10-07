@@ -1,9 +1,26 @@
 
 {% from "virl.jinja" import virl with context %}
 
+{% if virl.mitaka %}
+
+include:
+  - virl.routervms.virl-core-sync
+
+{% endif %}
+
+
+{% if virl.packet %}
+add i386 arch support:
+  cmd.run:
+    - name: 'dpkg --add-architecture i386'
+
+{% endif %}
 
 std prereq pkgs:
   pkg.installed:
+{% if virl.packet %}
+      - refresh: True
+{% endif %}
       - pkgs:
         - libxml2-dev
         - libxslt1-dev
@@ -54,9 +71,13 @@ std_prereq:
       - Pygments
       - requests == 2.7.0
       - redis >= 2.10.5
-      - setproctitle
       - simplejson >= 3.6.5
+      {% if virl.mitaka %}
+      - sqlalchemy < 1.1.0
+      {% endif %}
+      {% if virl.kilo %}
       - sqlalchemy == 0.9.9
+      {% endif %}
       - websocket_client >= 0.26.0
       - Werkzeug >= 0.10.1
       - wsgiref

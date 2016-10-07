@@ -11,6 +11,12 @@ include:
     - mode: 0755
     - template: jinja
 
+/usr/local/bin/admin-openrc coverage:
+  file.managed:
+    - name: /usr/local/bin/admin-openrc
+    - source: "salt://openstack/keystone/files/mitaka.admin-openrc.jinja"
+    - mode: 0755
+    - template: jinja
 
 /home/virl/.bashrc:
   file.managed:
@@ -19,7 +25,21 @@ include:
     - user: virl
     - group: virl
     - mode: 755
+
+
+controllername bashrc:
+  cmd.run:
+    - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v3' repl='http://{{ virl.controller_ip }}:35357/v3'
+    - unless: grep '{{ virl.controller_ip }}:35357/v3' /home/virl/.bashrc
+
+
+controllername openrc:
+  cmd.run:
+    - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v3' repl='http://{{ virl.controller_ip }}:35357/v3'
+    - unless: grep '{{ virl.controller_ip }}:35357/v3' /usr/local/bin/virl-openrc.sh
+
 {% else %}
+
 /usr/local/bin/virl-openrc.sh:
   file.managed:
     - source: "salt://openstack/keystone/files/admin-openrc.jinja"
@@ -34,6 +54,19 @@ include:
     - user: virl
     - group: virl
     - mode: 755
+
+controllername bashrc:
+  cmd.run:
+    - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ virl.controller_ip }}:35357/v2.0'
+    - unless: grep '{{ virl.controller_ip }}:35357/v2.0' /home/virl/.bashrc
+
+
+controllername openrc:
+  cmd.run:
+    - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ virl.controller_ip }}:35357/v2.0'
+    - unless: grep '{{ virl.controller_ip }}:35357/v2.0' /usr/local/bin/virl-openrc.sh
+
+
 {% endif %}
 
 
@@ -45,19 +78,21 @@ include:
     - group: virl
     - mode: 755
 
+noproxy desires controller_ip:
+  file.replace:
+    - name: /home/virl/.bashrc
+    - pattern: no_proxy_defaults,.*
+    - repl: no_proxy_defaults,{{virl.controller_ip}}
+
 {% if not virl.horizon %}
 
 /var/www/index.html:
   file.managed:
-    - order: 7
     - source: salt://files/install_scripts/index.html
     - mode: 755
 
 uwmport replace:
   file.replace:
-    - order: 8
-    - require:
-      - file: /var/www/index.html
     - name: /var/www/index.html
     - pattern: :\d{2,}"
     - repl: :{{ virl.uwmport }}"
@@ -76,27 +111,6 @@ adminpass2:
     - pattern: export OS_PASSWORD=.*
     - repl:  export OS_PASSWORD={{ virl.ospassword }}
 
-controllername2v3:
-  cmd.run:
-    - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v3' repl='http://{{ virl.controller_ip }}:35357/v3'
-    - unless: grep '{{ virl.controller_ip }}:35357/v3' /home/virl/.bashrc
-
-
-controllernamev3:
-  cmd.run:
-    - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v3' repl='http://{{ virl.controller_ip }}:35357/v3'
-    - unless: grep '{{ virl.controller_ip }}:35357/v3' /usr/local/bin/virl-openrc.sh
-
-controllernamev2:
-  cmd.run:
-    - name: salt-call --local file.replace /home/virl/.bashrc pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ virl.controller_ip }}:35357/v2.0'
-    - unless: grep '{{ virl.controller_ip }}:35357/v2.0' /home/virl/.bashrc
-
-
-controllernamev:
-  cmd.run:
-    - name: salt-call --local file.replace /usr/local/bin/virl-openrc.sh pattern='http:\/\/.*:35357\/v2.0' repl='http://{{ virl.controller_ip }}:35357/v2.0'
-    - unless: grep '{{ virl.controller_ip }}:35357/v2.0' /usr/local/bin/virl-openrc.sh
 
 
 token:

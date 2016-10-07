@@ -71,7 +71,7 @@ glance-api auth url:
   file.replace:
     - name: /etc/glance/glance-api.conf
     - pattern: '#auth_url = None'
-    - repl: 'auth_url = http://127.0.1.1:35357/v2.0'
+    - repl: 'auth_url = http://127.0.1.1:35357/{{virl.keystone_auth_version}}'
     - require:
       - pkg: glance-pkgs
 

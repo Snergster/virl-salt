@@ -11,6 +11,21 @@ https_proxy:
 
 {% endif %}
 
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
+pip on the box:
+  pkg.installed:
+    - pkgs:
+      - python-pip: 8.1.1-2
+      - python-pip-whl: 8.1.1-2
+    - refresh: True
+    - aggregate: False
+    - unless: ls /usr/local/bin/pip
+    - require:
+      - file: remove ugly hold
+
+{% else %}
+
 pip on the box:
   pkg.installed:
     - name: python-pip
@@ -19,6 +34,8 @@ pip on the box:
     - unless: ls /usr/local/bin/pip
     - require:
       - file: remove ugly hold
+
+{% endif %}
 
 remove ugly hold:
   file.absent:
@@ -38,6 +55,15 @@ python-pip:
     - require:
       - cmd: pip hard up
 
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
+python-pip-whl:
+  pkg.purged:
+    - name: python-pip-whl
+    - hold: True
+    - require:
+      - cmd: pip hard up
+{% endif %}
 
 pip symlink:
   file.symlink:

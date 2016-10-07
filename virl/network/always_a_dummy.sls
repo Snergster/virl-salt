@@ -1,6 +1,3 @@
-{% set dummy_int = salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', True )) %}
-
-{% if dummy_int %}
 
   {% if 'xenial' in salt['grains.get']('oscodename') %}
 
@@ -39,30 +36,3 @@ dummy modprobe default:
     - unless: grep "^dummy" /proc/modules
 
   {% endif %}
-
-{% else %}
-
-  {% if 'xenial' in salt['grains.get']('oscodename') %}
-
-remove dummy.conf:
-  file.absent:
-    - name: /etc/modprobe.d/dummy.conf
-
-remove dummy from modules:
-  file.line:
-    - name: /etc/modules
-    - content: 'dummy'
-    - mode: delete
-
-  {% else %}
-
-remove dummy:
-  file.line:
-    - name: /etc/modules
-    - content: 'dummy numdummies=5'
-    - mode: delete
-
-  {% endif %}
-
-
-{% endif %}

@@ -39,6 +39,19 @@ rclocal kvm append:
 
 {%if salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 
+  {% if 'xenial' in salt['grains.get']('oscodename') %}
+bridge rclocal:
+  file.blockreplace:
+    - name: /etc/rc.local
+    - marker_start: "# 005s dummy"
+    - marker_end: "# 005e"
+    - content: |
+             /sbin/ifup br1
+             /sbin/ifup br2
+             /sbin/ifup br3
+             /sbin/ifup br4
+  {% else %}
+
 dummy-rclocal:
   file.blockreplace:
     - name: /etc/rc.local
@@ -46,4 +59,6 @@ dummy-rclocal:
     - marker_end: "# 005e"
     - content: |
              /sbin/ifup {{ salt['pillar.get']('virl:internalnet_port', salt['grains.get']('internalnet_port', 'eth4' )) }}
+  {% endif %}
+
 {% endif %}

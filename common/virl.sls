@@ -16,6 +16,9 @@ include:
   - virl.scripts
   - virl.vextra
   - virl.network.dummy
+  {% if 'xenial' in salt['grains.get']('oscodename') %}
+  - openstack.mysql
+  {% endif %}
 
 mypkgs:
   pkg.installed:

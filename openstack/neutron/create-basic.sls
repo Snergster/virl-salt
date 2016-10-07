@@ -28,7 +28,7 @@
 {% set snat_dns = salt['pillar.get']('virl:first_snat_nameserver',salt['grains.get']('first_snat_nameserver', '8.8.8.8')) %}
 {% set snat_dns2 = salt['pillar.get']('virl:second_snat_nameserver',salt['grains.get']('second_snat_nameserver', '8.8.4.4')) %}
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
-
+{% from "virl.jinja" import virl with context %}
 include:
   - openstack.neutron.changes
 
@@ -38,18 +38,32 @@ neutron lives:
   cmd.run:
     - name: sleep 15
 
+{% if virl.mitaka %}
+
+project_domain_env create:
+  environ.setenv:
+    - name: OS_PROJECT_DOMAIN_ID
+    - value: default
+
+user_domain_env create:
+  environ.setenv:
+    - name: OS_USER_DOMAIN_ID
+    - value: default
+
+{% endif %}
+
 create flat net:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create flat --shared --provider:network_type flat --provider:physical_network flat
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show flat
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-create flat --shared --provider:network_type flat --provider:physical_network flat
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-show flat
     - require:
       - cmd: neutron lives
 
 {% if l2_port2_enabled %}
 create flat1 net:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create flat1 --shared --provider:network_type flat --provider:physical_network flat1
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show flat1
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-create flat1 --shared --provider:network_type flat --provider:physical_network flat1
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-show flat1
     - require:
       - cmd: neutron lives
 
@@ -58,44 +72,44 @@ create flat1 net:
 
 create snat net:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-create ext-net --shared --provider:network_type flat --router:external --provider:physical_network ext-net
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-show ext-net
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-create ext-net --shared --provider:network_type flat --router:external --provider:physical_network ext-net
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-show ext-net
     - require:
       - cmd: neutron lives
 
 create snat net external:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 net-update --shared=true ext-net
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-update --shared=true ext-net
     - require:
       - cmd: neutron lives
       - cmd: create snat net
 
 create flat subnet:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create flat {{ l2_network }} --allocation-pool start={{l2_start_address}},end={{l2_end_address}} --gateway {{ l2_gateway }} --name flat --dns-nameservers list=true {{ flat_dns }} {{ flat_dns2 }}
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-show flat
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-create flat {{ l2_network }} --allocation-pool start={{l2_start_address}},end={{l2_end_address}} --gateway {{ l2_gateway }} --name flat --dns-nameservers list=true {{ flat_dns }} {{ flat_dns2 }}
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-show flat
     - require:
       - cmd: create flat net
 
 create flat host port:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 port-create --fixed-ip ip_address={{ l2_address.split('/')[0] }} --name virl-host-flat flat
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 port-show virl-host-flat
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-create --fixed-ip ip_address={{ l2_address.split('/')[0] }} --name virl-host-flat flat
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-show virl-host-flat
     - require:
       - cmd: create flat subnet
 
 {% if l2_port2_enabled %}
 create flat1 subnet:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create flat1 {{ l2_network2 }} --allocation-pool start={{l2_start_address2}},end={{l2_end_address2}} --gateway {{ l2_gateway2 }} --name flat1 --dns-nameservers list=true {{ flat1_dns }} {{ flat1_dns2 }}
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-show flat1
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-create flat1 {{ l2_network2 }} --allocation-pool start={{l2_start_address2}},end={{l2_end_address2}} --gateway {{ l2_gateway2 }} --name flat1 --dns-nameservers list=true {{ flat1_dns }} {{ flat1_dns2 }}
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-show flat1
     - require:
       - cmd: create flat1 net
 
 create flat1 host port:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 port-create --fixed-ip ip_address={{ l2_address2.split('/')[0] }} --name virl-host-flat1 flat1
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 port-show virl-host-flat1
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-create --fixed-ip ip_address={{ l2_address2.split('/')[0] }} --name virl-host-flat1 flat1
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-show virl-host-flat1
     - require:
       - cmd: create flat1 subnet
 
@@ -103,22 +117,22 @@ create flat1 host port:
 
 create snat subnet:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-create ext-net {{ l3_network }} --allocation-pool start={{l3_start_address}},end={{l3_end_address}} --gateway {{ l3_gateway }} --name ext-net --dns-nameservers list=true {{ snat_dns }} {{ snat_dns2 }}
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-show ext-net
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-create ext-net {{ l3_network }} --allocation-pool start={{l3_start_address}},end={{l3_end_address}} --gateway {{ l3_gateway }} --name ext-net --dns-nameservers list=true {{ snat_dns }} {{ snat_dns2 }}
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-show ext-net
     - require:
       - cmd: create snat net
 
 create ext-net router-gateway:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 router-list -c id -f csv | grep -o '[a-fA-F0-9-]\{36\}' | xargs -IX -n 1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 router-gateway-set X ext-net
-    - onlyif: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/v2.0 subnet-show ext-net
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ virl.keystone_auth_version }} router-list -c id -f csv | grep -o '[a-fA-F0-9-]\{36\}' | xargs -IX -n 1 neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ virl.keystone_auth_version }} router-gateway-set X ext-net
+    - onlyif: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ virl.keystone_auth_version }} subnet-show ext-net
 
 create ext-net host port:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 floatingip-create --floating-ip-address {{ l3_address.split('/')[0] }} ext-net
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} floatingip-create --floating-ip-address {{ l3_address.split('/')[0] }} ext-net
     - require:
       - cmd: create snat subnet
 
 create quota update:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 quota-update --router -1
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} quota-update --router -1

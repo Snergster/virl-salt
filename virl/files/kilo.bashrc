@@ -112,17 +112,16 @@ export UBUNTU_MENUPROXY=0
 export SWT_GTK3=0
 
 #Begin virl section
-export OS_PROJECT_DOMAIN_ID=default
-export OS_USER_DOMAIN_ID=default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
 export OS_PASSWORD=ADMIN_PASS
 export OS_TENANT_NAME=admin
-export OS_AUTH_URL=http://controller:35357/v3
+export OS_AUTH_URL=http://controller:35357/v2.0
 export OS_SERVICE_ENDPOINT=http://controller:35357/v2.0
 export OS_SERVICE_TOKEN=OS_TOKEN
 export OS_IMAGE_API_VERSION=2
-export no_proxy="controller,virl,localhost,127.0.1.1,127.0.0.1,localaddress,.localdomain.com"
+export no_proxy_defaults="controller,virl,localhost,127.0.1.1,127.0.0.1,localaddress,.localdomain.com"
+export no_proxy=$no_proxy_defaults,172.16.10.250
 export OS_ENDPOINT_TYPE=internalURL
 
 export LIBVIRT_DEFAULT_URI='qemu:///system'

@@ -40,4 +40,4 @@ sudoer-defaults:
         - text:
           - virl ALL=(root) NOPASSWD:ALL
           - Defaults:virl secure_path=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/opt:/opt/bin:/opt/support
-          - Defaults env_keep += "http_proxy https_proxy HTTP_PROXY HTTPS_PROXY OS_TENANT_NAME OS_USERNAME OS_PASSWORD OS_AUTH_URL"
+          - Defaults env_keep += "http_proxy https_proxy no_proxy HTTP_PROXY HTTPS_PROXY NO_PROXY OS_TENANT_NAME OS_USERNAME OS_PASSWORD OS_AUTH_URL OS_PROJECT_DOMAIN_ID OS_USER_DOMAIN_ID OS_SERVICE_ENDPOINT OS_SERVICE_TOKEN OS_PROJECT_NAME"

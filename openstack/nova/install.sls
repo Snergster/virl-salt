@@ -125,6 +125,7 @@ add libvirt-qemu to nova:
     'nova+virt+configdrive.py',
     'nova+virt+driver.py',
     'nova+virt+hardware.py',
+    'nova+virt+libvirt+blockinfo.py',
     'nova+virt+libvirt+config.py',
     'nova+virt+libvirt+driver.py',
     'nova+virt+libvirt+vif.py',

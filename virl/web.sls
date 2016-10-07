@@ -50,11 +50,31 @@ servername symlink in web:
     - template: jinja
     - source: salt://virl/files/ports.conf
 
+
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
+a2enmod-enable:
+  cmd.run:
+    - names: 
+      - a2enmod proxy
+      - a2enmod rewrite
+      - a2enmod proxy_http
+
+/etc/apache2/sites-enabled/000-default.conf:
+  file.managed:
+    - mode: 755
+    - template: jinja
+    - source: salt://virl/files/mitaka.000-default.conf
+
+{% else %}
+
 /etc/apache2/sites-enabled/000-default.conf:
   file.managed:
     - mode: 755
     - template: jinja
     - source: salt://virl/files/000-default.conf
+
+{% endif %}
 
 restart apache:
   service.running:

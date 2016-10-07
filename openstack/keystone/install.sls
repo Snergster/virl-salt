@@ -33,6 +33,48 @@ waiting patiently for apache:
     - name: test.sleep
     - length: 10
 
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
+keystone-pkgs:
+  pkg.installed:
+    - aggregate: False
+    - name: keystone
+  service.dead:
+    - name: keystone
+  cmd.run:
+    - names: 
+      - systemctl stop keystone
+      - systemctl disable keystone
+
+apache2 installing:
+  pkg.installed:
+    - names:
+      - apache2
+      - libapache2-mod-wsgi
+      - memcached
+  service.dead:
+    - names:
+      - apache2
+      - keystone
+  cmd.run:
+    - name: service apache2 restart
+    - require:
+      - service: keystone die die
+      - module: waiting patiently for apache
+  pip.installed:
+  {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
+  {% endif %}
+    - names:
+      - python-memcached
+
+install openstackclient:
+  pkg.installed:
+    - aggregate: False
+    - name: python-openstackclient
+
+{% else %}
+
 keystone-pkgs:
   pkg.installed:
     - aggregate: False
@@ -57,6 +99,30 @@ keystone-pkgs:
     - names:
       - python-memcached
 
+{% endif %}
+
+{% if virl.mitaka %}
+
+{% for basepath in [
+    'keystone+catalog+backends+sql.py',
+] %}
+
+{% set realpath = '/usr/lib/python2.7/dist-packages/' + basepath.replace('+', '/') %}
+{{ realpath }}:
+  file.managed:
+    - source: salt://openstack/keystone/files/mitaka/{{ basepath }}
+  cmd.wait:
+    - names:
+      - python -m compileall {{ realpath }}
+    - watch:
+      - file: {{ realpath }}
+    - require:
+      - pkg: keystone-pkgs
+
+{% endfor %}
+
+{% endif %}
+
 /etc/keystone/keystone.conf:
   file.managed:
     - source: "salt://openstack/keystone/files/kilo.keystone.conf.jinja"
@@ -64,14 +130,23 @@ keystone-pkgs:
     - require:
       - pkg: keystone-pkgs
 
+{% if virl.mitaka %}
+
+/usr/local/bin/admin-openrc:
+  file.managed:
+    - source: "salt://openstack/keystone/files/mitaka.admin-openrc.jinja"
+    - mode: 0755
+    - template: jinja
+
+{% else %}
+
 /usr/local/bin/admin-openrc:
   file.managed:
     - source: "salt://openstack/keystone/files/admin-openrc.jinja"
     - mode: 0755
     - template: jinja
-    - require:
-      - pkg: keystone-pkgs
 
+{% endif %}
 /etc/apache2/sites-available/wsgi-keystone.conf:
   file.managed:
     - source: "salt://openstack/keystone/files/wsgi-keystone.conf"

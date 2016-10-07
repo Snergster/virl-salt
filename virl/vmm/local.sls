@@ -21,6 +21,16 @@ VMMlinux:
       - file: VMMdircreate
       - pkg: vmmpkgs
 
+backup for installing unreleased vmm:
+  module.run:
+    - name: archive.cmd_unzip
+    - zip_file: /var/www/download/{{ salt['pillar.get']('qa:vmm_lx_qa').split('/')[2]}}
+    - dest: /home/virl/VMMaestro-linux
+    - onlyif: ls /var/www/download/{{ salt['pillar.get']('qa:vmm_lx_qa').split('/')[2]}}
+    - require:
+      - file: VMMdircreate
+      - pkg: vmmpkgs
+
 VMMdir virl owned:
   cmd.run:
     - name: 'chown -R virl:virl /home/virl/VMMaestro-linux'

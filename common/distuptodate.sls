@@ -5,6 +5,13 @@ include:
   - common.kvm
 {% endif %}
 
+salt to trusted:
+  file.replace:
+    - name: /etc/apt/sources.list.d/saltstack.list
+    - pattern: deb https
+    - repl: deb [trusted=yes] https
+
+
 dist upgrade host:
   module.run:
     - name: pkg.upgrade

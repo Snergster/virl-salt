@@ -28,6 +28,9 @@
 
 include:
   - virl.hostname
+  {% if 'xenial' in salt['grains.get']('oscodename') %}
+  - virl.network.interfaces
+  {% else %}
 
 blank what is there:
   cmd.run:
@@ -153,3 +156,5 @@ eth0 ifup:
     - name: ifup {{publicport}}
     - require:
       - cmd: eth0
+
+{% endif %}

@@ -2,6 +2,36 @@
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
+pygit2 prereqs:
+  pkg.installed:
+    - pkgs:
+      - libssl-dev
+      - python-dev
+      - libffi-dev
+      - libssh2-1-dev
+      - libgit2-dev
+      - libgit2-24
+      - libxml2-dev
+      - libxslt1-dev
+
+cffi install:
+  pip.installed:
+{% if proxy %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - name: cffi 
+
+pygit2 install:
+  pip.installed:
+{% if proxy %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - name: pygit2
+
+{% else %}
+
 libgit2 prereqs:
   pkg.installed:
     - pkgs:
@@ -61,6 +91,17 @@ pygit2 install:
 {% endif %}
     - name: pygit2 == 0.23.3
 
+cryptography install:
+  pip.installed:
+{% if proxy %}
+    - proxy: {{ http_proxy }}
+{% endif %}
+    - name: cryptography >= 1.5.2
+
+
 remove libgit trash:
   file.absent:
     - name: /tmp/libgit2-0.23.4
+
+
+{% endif %}

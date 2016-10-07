@@ -180,19 +180,23 @@ VIRL_CORE:
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_custom_floating_ip True
       - crudini --set /etc/virl/common.cfg orchestration network_security_groups False
       - crudini --set /etc/virl/common.cfg orchestration network_custom_floating_ip True
+      # new location
       - crudini --set /etc/virl/virl-core.ini orchestration network_security_groups False
       - crudini --set /etc/virl/virl-core.ini orchestration network_custom_floating_ip True
      {% endif %}
-     {% if virl.cinder_enabled %}
+     {% if virl.enable_cinder %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
       - crudini --set /etc/virl/common.cfg orchestration volume_service True
+      # new location
       - crudini --set /etc/virl/virl-core.ini orchestration volume_service True
      {% else %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service False
       - crudini --set /etc/virl/common.cfg orchestration volume_service False
+      # new location
       - crudini --set /etc/virl/virl-core.ini orchestration volume_service False
      {% endif %}
       - /usr/local/bin/virl_config update --global
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_auth_url http://localhost:5000/{{ virl.keystone_auth_version }}
       - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ virl.uwmpassword }}
       - crudini --set /etc/virl/virl.cfg env virl_openstack_service_token {{ virl.ks_token }}
       - crudini --set /etc/virl/virl.cfg env virl_std_port {{ virl.stdport }}
@@ -215,6 +219,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg limits host_simulation_port_max_tcp {{ virl.host_simulation_port_max_tcp }}
       - crudini --set /etc/virl/common.cfg host ram_overcommit {{ virl.ram_overcommit }}
       - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ virl.cpu_overcommit }}
+      # new location
       - crudini --set /etc/virl/virl-core.ini env virl_openstack_password {{ virl.uwmpassword }}
       - crudini --set /etc/virl/virl-core.ini env virl_openstack_service_token {{ virl.ks_token }}
       - crudini --set /etc/virl/virl-core.ini env virl_std_port {{ virl.stdport }}
@@ -237,17 +242,28 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl-core.ini limits host_simulation_port_max_tcp {{ virl.host_simulation_port_max_tcp }}
       - crudini --set /etc/virl/virl-core.ini host ram_overcommit {{ virl.ram_overcommit }}
       - crudini --set /etc/virl/virl-core.ini host cpu_overcommit {{ virl.cpu_overcommit }}
+     {% if virl.salt_transport_tcp %}
+      - crudini --set /etc/virl/common.cfg licensing offered_salt_masters {{ virl.salt_master_tcp_default }}
+      # new location
+      - crudini --set /etc/virl/virl-core.ini licensing offered_salt_masters {{ virl.salt_master_tcp_default }}
+     {% else %}
+      - crudini --set /etc/virl/common.cfg licensing offered_salt_masters {{ virl.salt_master_default }}
+      # new location
+      - crudini --set /etc/virl/virl-core.ini licensing offered_salt_masters {{ virl.salt_master_default }}
+     {% endif %}
 
 ank_live_port change:
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg host ank_live_port {{ virl.ank_live }}
+      # new location
       - crudini --set /etc/virl/virl-core.ini host ank_live_port {{ virl.ank_live }}
 
 ank preview port:
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg host ank_preview_port {{ virl.ank }}
+      # new location
       - crudini --set /etc/virl/virl-core.ini host ank_preview_port {{ virl.ank }}
     - require:
       - pip: VIRL_CORE
@@ -257,6 +273,7 @@ web editor alpha:
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg host topology_editor_port {{ virl.ank }}
+      # new location
       - crudini --set /etc/virl/virl-core.ini host topology_editor_port {{ virl.ank }}
 {% else %}
   file.replace:
@@ -272,6 +289,7 @@ enable cluster in std :
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg orchestration cluster_mode True
+      # new location
       - crudini --set /etc/virl/virl-core.ini orchestration cluster_mode True
     - require:
       - pip: VIRL_CORE
@@ -280,10 +298,11 @@ point std at key:
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg cluster ssh_key '~virl/.ssh/id_rsa'
+      # new location
       - crudini --set /etc/virl/virl-core.ini cluster ssh_key '~virl/.ssh/id_rsa'
     - onlyif:
       - test -e ~virl/.ssh/id_rsa.pub
-      # TODO what?
+      # FIXME TODO why only if it exists?
       - test -e /etc/virl/common.cfg
     - require:
       - pip: VIRL_CORE
@@ -294,6 +313,7 @@ add up to cluster4 to std:
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}},{{virl.compute4_hostname}}'
+      # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}},{{virl.compute4_hostname}}'
     - require:
       - pip: VIRL_CORE
@@ -304,6 +324,7 @@ add up to cluster3 to std:
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}}'
+      # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}}'
     - require:
       - pip: VIRL_CORE
@@ -314,6 +335,7 @@ add up to cluster2 to std:
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}}'
+      # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}}'
     - require:
       - pip: VIRL_CORE
@@ -324,6 +346,7 @@ add only cluster1 to std:
   cmd.run:
     - names:
       - crudini --set /etc/virl/common.cfg cluster computes '{{virl.compute1_hostname}}'
+      # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}}'
     - require:
       - pip: VIRL_CORE
@@ -337,6 +360,7 @@ webmux_port change:
     - names:
       - crudini --set /etc/virl/virl.cfg env virl_webmux_port {{ virl.virl_webmux }}
       - crudini --set /etc/virl/common.cfg host webmux_port {{ virl.virl_webmux }}
+      # new location
       - crudini --set /etc/virl/virl-core.ini env virl_webmux_port {{ virl.virl_webmux }}
       - crudini --set /etc/virl/virl-core.ini host webmux_port {{ virl.virl_webmux }}
       - service virl-webmux restart
@@ -350,20 +374,25 @@ uwmadmin change:
       - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ virl.uwmpassword }} -P {{ virl.uwmpassword }}'
       - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ virl.uwmpassword }}
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ virl.uwmpassword }}
+      # new location
       - crudini --set /etc/virl/virl-core.ini env virl_openstack_password {{ virl.uwmpassword }}
       - crudini --set /etc/virl/virl-core.ini env virl_std_password {{ virl.uwmpassword }}
+      {% if not virl.mitaka %}
     - onlyif: 'test -e /var/local/virl/servers.db'
+      {% endif %}
 
 virl init:
   cmd:
     - run
-    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    {% if not virl.mitaka %}
     - onlyif: 'test ! -e /var/local/virl/servers.db'
+    {% endif %}
 
 virl init second:
   cmd:
     - run
-    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/v2.0 -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
     - onfail:
       - cmd: uwmadmin change
 

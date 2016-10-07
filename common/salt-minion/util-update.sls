@@ -1,6 +1,7 @@
 {% from "virl.jinja" import virl with context %}
 
-{% if not virl.mitaka %}
+{% if not 'xenial' in salt['grains.get']('oscodename') %}
+
 /usr/lib/python2.7/dist-packages/salt/utils/openstack/nova.py:
   file.managed:
     - source: 'salt://common/salt-minion/files/nova.py'

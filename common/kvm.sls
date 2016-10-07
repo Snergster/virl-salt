@@ -1,15 +1,15 @@
 {% from "virl.jinja" import virl with context %}
 
+{% if virl.serial_timeout_disabled %}
+{% set telnet_front_enabled = 0 %}
+{% else %}
+{% set telnet_front_enabled = 1 %}
+{% endif %}
+
 include:
   - common.numa
 
 {% if virl.mitaka %}
-/etc/apt/sources.list.d/virl-qemu-trusty.list:
-  file.managed:
-    - mode: 0644
-    - contents:  |
-          deb http://us.archive.ubuntu.com/ubuntu/ trusty main restricted
-          deb http://us.archive.ubuntu.com/ubuntu/ trusty-updates main restricted
 
 # sysv script for systemd to use
 /usr/share/qemu/init/qemu-kvm-init:
@@ -35,6 +35,27 @@ libvirt install:
     - skip_verify: True
     - refresh: True
 
+{% if not '2.0.0' in salt['cmd.shell']('/usr/bin/qemu-system-x86_64 --version') %}
+
+qemu unhold:
+  module.run:
+    - name: pkg.unhold
+    - pkgs:
+      - qemu-system-x86
+      - qemu-kvm
+      - qemu-system-common
+
+qemu purge:
+  pkg.purged:
+    - require:
+      - module: qemu unhold
+    - pkgs:
+      - qemu-system-x86
+      - qemu-kvm
+      - qemu-system-common
+
+
+{% endif %}
 
 qemu install:
   pkg.installed:
@@ -43,11 +64,10 @@ qemu install:
       - qemu-kvm
       - qemu-system-common
     - refresh: True
-# need to keep trusty version, xrv does not work with network
-#{% if not virl.mitaka %}
-#{% endif %}
+{% if not virl.mitaka %}
     - hold: True
     - fromrepo: trusty
+{% endif %}
 
 libvirt-bin insert /dev/kvm:
   file.line:
@@ -61,6 +81,11 @@ libvirt-bin insert /dev/kvm:
     - source: "salt://openstack/nova/files/kilo.kvm"
     - force: True
     - mode: 0755
+kvm socket proxy:
+  file.replace:
+    - name: /usr/bin/kvm
+    - pattern: '^TELNET_FRONT_ENABLED=.*'
+    - repl: 'TELNET_FRONT_ENABLED={{ telnet_front_enabled }}'
 
 /usr/bin/kvm.real:
   file.symlink:

@@ -1,7 +1,7 @@
 {% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
 {% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-
+{% from "virl.jinja" import virl with context %}
 
 include:
   - openstack.keystone.install
@@ -129,6 +129,7 @@ cinder service:
       - keystone: Keystone tenants
       - keystone: Keystone roles
 
+{% if virl.kilo %}
 cinderv2 service:
   keystone.service_present:
     - name: cinderv2
@@ -137,6 +138,8 @@ cinderv2 service:
     - require:
       - keystone: Keystone tenants
       - keystone: Keystone roles
+{% endif %}
+
 
 heat service:
    keystone.service_present:

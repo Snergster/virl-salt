@@ -1,4 +1,14 @@
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
+
+
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+
+include:
+  - common.pip
+
+{% endif %}
+
+
 docopt prereq:
   pip.installed:
     - name: docopt

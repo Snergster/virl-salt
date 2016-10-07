@@ -858,14 +858,14 @@ if __name__ == "__main__":
         call_salt('openstack')
         call_salt('openstack.setup')
 
-        admin_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
-                                            ' tenant-list | grep -w "admin" | cut -d "|" -f2'
-                                           .format(ospassword=ospassword)], shell=True)[1:33])
-        service_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
-                                            ' tenant-list | grep -w "service" | cut -d "|" -f2'
-                                           .format(ospassword=ospassword)], shell=True)[1:33])
+        admin_tenid = (subprocess.check_output(['{keystone_client} --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/{auth_version}'
+                                            ' {project_list} | grep -w "admin" | cut -d "|" -f2'
+                                           .format(ospassword=ospassword,auth_version=keystone_auth_version,project_list=keystone_project_list,keystone_client=keystone_client)], shell=True)[1:33])
+        service_tenid = (subprocess.check_output(['{keystone_client} --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/{auth_version}'
+                                            ' {project_list}| grep -w "service" | cut -d "|" -f2'
+                                           .format(ospassword=ospassword,auth_version=keystone_auth_version,project_list=keystone_project_list,keystone_client=keystone_client)], shell=True)[1:33])
         subprocess.call(['sudo', 'crudini', '--set','/etc/salt/minion.d/openstack.conf', '',
                          'keystone.tenant_id', (' ' + admin_tenid)])
         building_salt_all()
@@ -896,10 +896,10 @@ if __name__ == "__main__":
         #     call_salt('openstack.dash')
         #
 
-        admin_tenid = (subprocess.check_output(['/usr/bin/keystone --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/v2.0'
-                                            ' tenant-list | grep -w "admin" | cut -d "|" -f2'
-                                           .format(ospassword=ospassword)], shell=True)[1:33])
+        admin_tenid = (subprocess.check_output(['{keystone_client} --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url=http://localhost:5000/{auth_version}'
+                                            ' {project_list} | grep -w "admin" | cut -d "|" -f2'
+                                           .format(ospassword=ospassword,auth_version=keystone_auth_version,project_list=keystone_project_list,keystone_client=keystone_client)], shell=True)[1:33])
         subprocess.call(['sudo', 'crudini', '--set','/etc/salt/minion.d/openstack.conf', '',
                           'keystone.tenant_id', (' ' + admin_tenid)])
         create_basic_networks()
@@ -937,7 +937,7 @@ if __name__ == "__main__":
     if varg['test']:
         building_salt_all()
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+                 ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
@@ -990,13 +990,13 @@ if __name__ == "__main__":
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.restart'])
         sleep(50)
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+                 ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+                 ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
+        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/{authver} agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname,authver=keystone_auth_version)], shell=True)).split()
         print q_delete_list
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
@@ -1051,13 +1051,13 @@ if __name__ == "__main__":
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.restart'])
         sleep(50)
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+                 ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/v2.0']
+                 ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/v2.0 agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname)], shell=True)).split()
+        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/{authver} agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname,authver=keystone_auth_version)], shell=True)).split()
         print q_delete_list
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])

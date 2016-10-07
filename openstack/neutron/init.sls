@@ -25,6 +25,8 @@ neutron-pkgs:
     - refresh: True
     - hold: True
     - fromrepo: trusty-updates/kilo
+{% else %}
+    - refresh: False
 {% endif %}
 
 {% if virl.mitaka %}
@@ -84,6 +86,22 @@ neutron-pkgs:
     - require:
       - pkg: neutron-pkgs
 
+
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+neutron-sysctl:
+  file.replace:
+    - name: /etc/sysctl.d/10-network-security.conf
+    - pattern: '#net.ipv4.conf.default.rp_filter=1'
+    - repl: 'net.ipv4.conf.default.rp_filter=0'
+
+neutron-sysctl all:
+  file.replace:
+    - name: /etc/sysctl.d/10-network-security.conf
+    - pattern: 'net.ipv4.conf.all.rp_filter=1'
+    - repl: 'net.ipv4.conf.all.rp_filter=0'
+
+{% else %}
+
 neutron-sysctl:
   file.replace:
     - name: /etc/sysctl.conf
@@ -96,13 +114,13 @@ neutron-sysctl2:
     - pattern: '#net.ipv4.conf.all.rp_filter=1'
     - repl: 'net.ipv4.conf.all.rp_filter=0'
 
+{% endif %}
+
 neutron-sysctlforward:
   file.replace:
     - name: /etc/sysctl.conf
     - pattern: '#net.ipv4.ip_forward=1'
     - repl: 'net.ipv4.ip_forward=1'
-
-
 
 {% if not virl.l2_port2_enabled %}
 neutron-provider-networks:
@@ -139,7 +157,7 @@ neutron-hostname2:
     - filename: /etc/neutron/neutron.conf
     - section: 'DEFAULT'
     - parameter: 'nova_admin_auth_url'
-    - value: 'http://{{ virl.controllerhostname }}:35357/v2.0'
+    - value: 'http://{{ virl.controllerhostname }}:35357/{{ virl.keystone_auth_version }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -148,7 +166,7 @@ neutron-hostname3:
     - filename: /etc/neutron/neutron.conf
     - section: 'keystone_authtoken'
     - parameter: 'auth_uri'
-    - value: 'http://{{ virl.controllerhostname }}:35357/v2.0/'
+    - value: 'http://{{ virl.controllerhostname }}:35357/{{ virl.keystone_auth_version }}/'
     - require:
       - file: /etc/neutron/neutron.conf
 
@@ -488,7 +506,7 @@ neutron restart:
     - order: last
     - name: |
 {% if virl.mitaka %}
-        su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade virl.mitaka" neutron
+        su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade mitaka" neutron
 {% else %}
         su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade kilo" neutron
 {% endif %}

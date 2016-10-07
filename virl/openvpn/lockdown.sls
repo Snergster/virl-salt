@@ -5,8 +5,14 @@
 {% set l3_network_gateway = salt['pillar.get']('virl:l3_network_gateway', salt['grains.get']('l3_network_gateway', '172.16.3.254' )) %}
 {% set publicport = salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
-  
+{% from "virl.jinja" import virl with context %}
+
 {% if openvpn_enable %}
+
+verify ufw:
+  pkg.installed:
+    - name: ufw
+    - refresh: false
 
 vpn maximize:
   cmd.run:
@@ -18,9 +24,28 @@ vpn maximize:
       - crudini --set /etc/virl/virl-core.ini env virl_local_ip {{ l2_gateway }}
       - crudini --set /etc/nova/nova.conf serial_console proxyclient_address {{ l2_gateway }}
       - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address {{ l2_gateway }}
-      - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat --gateway_ip {{ l2_gateway }}
-      - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update flat1 --gateway_ip {{ l2_gateway2 }}
-      - neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://127.0.1.1:5000/v2.0 subnet-update ext-net --gateway_ip {{ l3_network_gateway }}
+
+{% if not virl.l2_address_iponly == '172.16.11.254' %}
+flat subnet update:
+  cmd.run:
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat --gateway_ip {{ virl.l2_address_iponly }}
+{% endif %}
+
+{% if not virl.l2_address2_iponly == '172.16.2.254' %}
+
+flat1 subnet update:
+  cmd.run:
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat1 --gateway_ip {{ virl.l2_address2_iponly }}
+
+{% endif %}
+
+{% if not virl.l3_address_iponly == '172.16.3.254' %}
+
+extnet subnet update:
+  cmd.run:
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update ext-net --gateway_ip {{ virl.l3_address_iponly }}
+
+{% endif %}
 
 ufw accepted ports:
   cmd.run:

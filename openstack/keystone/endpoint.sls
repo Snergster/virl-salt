@@ -3,6 +3,7 @@
 {% set ks_token = salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh') %}
 {% set uwmpassword = salt['grains.get']('uwmadmin_password', 'password') %}
 {% set int_ip = salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('internalnet_controller_ip', '172.16.10.250' )) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - openstack.keystone.install
@@ -20,9 +21,9 @@ glance endpoint:
 keystone endpoint:
   keystone.endpoint_present:
     - name: keystone
-    - publicurl: http://{{ public_ip }}:5000/v2.0
-    - internalurl: http://{{ int_ip }}:5000/v2.0
-    - adminurl: http://{{ int_ip }}:35357/v2.0
+    - publicurl: http://{{ public_ip }}:5000/{{ virl.keystone_auth_version }}
+    - internalurl: http://{{ int_ip }}:5000/{{ virl.keystone_auth_version }}
+    - adminurl: http://{{ int_ip }}:35357/{{ virl.keystone_auth_version }}
     - require:
       - cmd: key-db-sync
 
@@ -44,6 +45,18 @@ nova endpoint:
     - require:
       - cmd: key-db-sync
 
+{% if virl.mitaka %}
+cinder endpoint:
+  keystone.endpoint_present:
+    - name: cinder
+    - publicurl: http://{{ public_ip }}:8776/v2/$(tenant_id)s
+    - internalurl: http://{{ int_ip }}:8776/v2/$(tenant_id)s
+    - adminurl: http://{{ int_ip }}:8776/v2/$(tenant_id)s
+    - require:
+      - cmd: key-db-sync
+{% endif %}
+
+{% if virl.kilo %}
 cinder endpoint:
   keystone.endpoint_present:
     - name: cinder
@@ -53,7 +66,8 @@ cinder endpoint:
     - require:
       - cmd: key-db-sync
 
-cinderv2 endpoint:
+
+cinder endpointv2:
   keystone.endpoint_present:
     - name: cinderv2
     - publicurl: http://{{ public_ip }}:8776/v2/$(tenant_id)s
@@ -61,6 +75,7 @@ cinderv2 endpoint:
     - adminurl: http://{{ int_ip }}:8776/v2/$(tenant_id)s
     - require:
       - cmd: key-db-sync
+{% endif %}
 
 orchestration endpoint:
   keystone.endpoint_present:
