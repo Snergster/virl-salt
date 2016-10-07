@@ -71,6 +71,7 @@ std_prereq:
       - Pygments
       - requests == 2.7.0
       - redis >= 2.10.5
+      - setproctitle
       - simplejson >= 3.6.5
       {% if virl.mitaka %}
       - sqlalchemy < 1.1.0
