@@ -4,6 +4,7 @@
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', false)) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
+{% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )) %}
 
 include:
   - common.ubuntu
@@ -17,7 +18,9 @@ include:
   - virl.vextra
   - virl.network.dummy
   {% if 'xenial' in salt['grains.get']('oscodename') %}
+    {% if controller %}
   - openstack.mysql
+    {% endif %}
   {% endif %}
 
 mypkgs:

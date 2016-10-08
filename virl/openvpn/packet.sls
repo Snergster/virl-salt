@@ -1,5 +1,13 @@
 
 {% from "virl.jinja" import virl with context %}
+{% set log_str = "--os-tenant-name admin --os-username admin --os-password %s --os-auth-url=http://%s%s/%s" % (virl.ospassword, virl.controller_ip, ':5000', virl.keystone_auth_version) %}
+{% set gateway_show_cmd = "neutron %s subnet-show --field gateway_ip -f value " % log_str %}
+{% set flat_gateway_cmd = "%s flat" % gateway_show_cmd %}
+{% set flat1_gateway_cmd = "%s flat1" % gateway_show_cmd %}
+{% set snat_gateway_cmd = "%s ext-net" % gateway_show_cmd %}
+{% set flat_gateway = salt['cmd.run'](flat_gateway_cmd) %}
+{% set flat1_gateway = salt['cmd.run'](flat1_gateway_cmd) %}
+{% set snat_gateway = salt['cmd.run'](snat_gateway_cmd) %}
 
 {% if virl.openvpn_enable %}
 verify ufw:
@@ -17,13 +25,13 @@ vpn maximize:
       - crudini --set /etc/nova/nova.conf serial_console proxyclient_address {{ virl.l2_address_iponly }}
       - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address {{ virl.l2_address_iponly }}
 
-{% if not virl.l2_address_iponly == '172.16.11.254' %}
-flat subnet update:
+{% if not flat_gateway == virl.l2_address_iponly %}
+{{flat_gateway}} subnet update:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat --gateway_ip {{ virl.l2_address_iponly }}
 {% endif %}
 
-{% if not virl.l2_address2_iponly == '172.16.2.254' %}
+{% if not flat1_gateway == virl.l2_address2_iponly %}
 
 flat1 subnet update:
   cmd.run:
@@ -31,7 +39,7 @@ flat1 subnet update:
 
 {% endif %}
 
-{% if not virl.l3_address_iponly == '172.16.3.254' %}
+{% if not snat_gateway == virl.l3_address_iponly %}
 
 extnet subnet update:
   cmd.run:
