@@ -12,15 +12,15 @@ CSR1000v:
   - min_disk: 8
   - min_ram: 0
   - is_public: True
-  - checksum: {{ salt['pillar.get']('routervm_checksums:csr1000v')}}
+  - checksum: a770e96de928265515304c9c9d6b46b9
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/salt/{{ salt['pillar.get']('routervm_files:csr1000v')}}
+  - copy_from: salt://images/salt/csr1000v-universalk9.16.3.1-ext-b2.qcow2
   - property-config_disk_type: cdrom
   - property-hw_cdrom_type: ide
   - property-hw_disk_bus: virtio
   - property-hw_vif_model: virtio
-  - property-release: {{ salt['pillar.get']('version:csr1000v')}}
+  - property-release: 16.3.1-build2
   - property-serial: 2
   - property-subtype: CSR1000v
 
