@@ -302,7 +302,6 @@ point std at key:
       - crudini --set /etc/virl/virl-core.ini cluster ssh_key '~virl/.ssh/id_rsa'
     - onlyif:
       - test -e ~virl/.ssh/id_rsa.pub
-      # FIXME TODO why only if it exists?
       - test -e /etc/virl/common.cfg
     - require:
       - pip: VIRL_CORE

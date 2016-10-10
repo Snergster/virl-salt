@@ -60,7 +60,6 @@ add up to cluster4 to std:
       - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
-    # TODO FIXME why only if it exists?
     - onlyif: test -e /etc/virl/common.cfg
 
   {% elif compute3_active %}
@@ -71,7 +70,6 @@ add up to cluster3 to std:
       - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}}'
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}},{{compute3}}'
-    # TODO FIXME why only if it exists?
     - onlyif: test -e /etc/virl/common.cfg
 
   {% elif compute2_active %}
@@ -82,7 +80,6 @@ add up to cluster2 to std:
       - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}}'
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}}'
-    # TODO FIXME why only if it exists?
     - onlyif: test -e /etc/virl/common.cfg
 
   {% else %}
@@ -93,7 +90,6 @@ add only cluster1 to std:
       - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}}'
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}}'
-    # TODO FIXME why only if it exists?
     - onlyif: test -e /etc/virl/common.cfg
 
   {% endif %}
@@ -106,7 +102,6 @@ point std at key if it exists:
       - crudini --set /etc/virl/virl-core.ini cluster ssh_key '~virl/.ssh/id_rsa'
     - onlyif:
       - test -e ~virl/.ssh/id_rsa.pub
-    # TODO FIXME why only if it exists?
       - test -e /etc/virl/common.cfg
 
 enable cluster in std via cluster config:
@@ -116,7 +111,6 @@ enable cluster in std via cluster config:
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration cluster_mode True
     - onlyif:
-    # TODO FIXME why only if it exists?
       - test -e /etc/virl/common.cfg
 
 
