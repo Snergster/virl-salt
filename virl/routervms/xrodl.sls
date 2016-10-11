@@ -12,7 +12,7 @@ iosxrv:
   - disk_format: qcow2
   - copy_from: salt://images/salt/iosxrv-5.3.2-11-i2ss.qcow2
   - property-config_disk_type: cdrom
-  - property-hw_cdrom_type: id
+  - property-hw_cdrom_bus: ide
   - property-hw_disk_bus: ide
   - property-hw_vif_model: virtio
   - property-release: 5.3.2

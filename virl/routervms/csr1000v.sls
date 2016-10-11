@@ -17,7 +17,7 @@ CSR1000v:
   - disk_format: qcow2
   - copy_from: salt://images/salt/{{ salt['pillar.get']('routervm_files:csr1000v')}}
   - property-config_disk_type: cdrom
-  - property-hw_cdrom_type: ide
+  - property-hw_cdrom_bus: ide
   - property-hw_disk_bus: virtio
   - property-hw_vif_model: virtio
   - property-release: {{ salt['pillar.get']('version:csr1000v')}}

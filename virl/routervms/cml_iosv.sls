@@ -16,7 +16,7 @@ iosv:
     - disk_format: qcow2
     - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.155-3.M
     - property-config_disk_type: disk
-    - property-hw_cdrom_type: ide
+    - property-hw_cdrom_bus: ide
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
     - property-release: 15.5.3.M
