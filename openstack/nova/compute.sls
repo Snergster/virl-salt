@@ -110,6 +110,7 @@ my_ip compute paranoia:
     'nova+virt+configdrive.py',
     'nova+virt+driver.py',
     'nova+virt+hardware.py',
+    'nova+virt+libvirt+blockinfo.py',
     'nova+virt+libvirt+config.py',
     'nova+virt+libvirt+driver.py',
     'nova+virt+libvirt+vif.py',
@@ -127,7 +128,7 @@ my_ip compute paranoia:
     - watch:
       - file: {{ realpath }}
     - require:
-      - pkg: neutron-pkgs
+      - pkg: compute-pkgs
 
 {% endfor %}
 
@@ -287,6 +288,17 @@ my_ip compute paranoia:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/driver.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/driver.py
+
+/usr/lib/python2.7/dist-packages/nova/virt/libvirt/blockinfo.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/blockinfo.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/blockinfo.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/blockinfo.py
 
 /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py:
   file.managed:
