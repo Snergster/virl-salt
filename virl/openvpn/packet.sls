@@ -22,6 +22,8 @@ vpn maximize:
       - crudini --set /etc/virl.ini DEFAULT l2_network_gateway2 {{ virl.l2_address2_iponly }}
       - crudini --set /etc/virl.ini DEFAULT l3_network_gateway {{ virl.l3_address_iponly }}
       - crudini --set /etc/virl/virl.cfg env virl_local_ip {{ virl.l2_address_iponly }}
+      # new location
+      - crudini --set /etc/virl/virl-core.ini env virl_local_ip {{ virl.l2_address_iponly }}
       - crudini --set /etc/nova/nova.conf serial_console proxyclient_address {{ virl.l2_address_iponly }}
       - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address {{ virl.l2_address_iponly }}
 
