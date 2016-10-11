@@ -29,7 +29,7 @@ IOSvL2:
     - property-release: 15.2.4055
 {% endif %}
     - property-config_disk_type: disk
-    - property-hw_cdrom_type: ide
+    - property-hw_cdrom_bus: ide
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
     - property-serial: 2

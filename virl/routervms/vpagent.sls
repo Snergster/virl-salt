@@ -19,7 +19,7 @@ vpagent:
     - disk_format: qcow2
     - copy_from: salt://images/salt/vios-tpgen_adventerprisek9-m.15.4.20140131.qcow2
     - property-config_disk_type: disk
-    - property-hw_cdrom_type: ide
+    - property-hw_cdrom_bus: ide
     - property-hw_disk_bus: virtio
     - property-hw_vif_model: e1000
     - property-release: 15.4
