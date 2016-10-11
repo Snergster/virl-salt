@@ -130,6 +130,7 @@ add libvirt-qemu to nova:
     'nova+virt+libvirt+driver.py',
     'nova+virt+libvirt+vif.py',
     'nova+network+model.py',
+    'nova+objects+fields.py',
     'nova+objects+image_meta.py',
 ] %}
 

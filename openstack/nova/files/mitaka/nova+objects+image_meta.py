@@ -205,6 +205,8 @@ class ImageMetaProps(base.NovaObject):
         'hw_hpet': fields.FlexibleBooleanField(),
         'hw_vif_disable_csum': fields.FlexibleBooleanField(),
         'hw_usb_tablet': fields.FlexibleBooleanField(),
+        'hw_cpu_mode': fields.CpuModeField(),
+        'hw_cpu_model': fields.StringField(),
 
         # name of guest hardware architecture eg i686, x86_64, ppc64
         'hw_architecture': fields.ArchitectureField(),
