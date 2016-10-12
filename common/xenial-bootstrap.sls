@@ -20,6 +20,16 @@ qemu purge:
       - qemu-kvm
       - qemu-system-common
 
+# we need to use older version provided by trusty to avoid lingering socats
+socat purge:
+ pkg.removed:
+   - pkgs:
+     - socat
+socat 1.7.2.3:
+ pkg.installed:
+   - pkgs:
+      - socat < 1.7.2.4
+
 disable upgrades:
  pkg.removed:
    - pkgs:
