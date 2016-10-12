@@ -10,5 +10,8 @@ set_config:
     - names:
       - crudini --set /etc/virl/common.cfg limits host_simulation_port_min_tcp {{ host_simulation_port_min_tcp }}
       - crudini --set /etc/virl/common.cfg limits host_simulation_port_max_tcp {{ host_simulation_port_max_tcp }}
+      # new location
+      - crudini --set /etc/virl/virl-core.ini limits host_simulation_port_min_tcp {{ host_simulation_port_min_tcp }}
+      - crudini --set /etc/virl/virl-core.ini limits host_simulation_port_max_tcp {{ host_simulation_port_max_tcp }}
 
 

@@ -3509,9 +3509,9 @@ class LibvirtDriver(driver.ComputeDriver):
                          'due to an unexpected exception.'), CONF.host,
                      exc_info=True)
 
-    def _get_guest_cpu_model_config(self):
-        mode = CONF.libvirt.cpu_mode
-        model = CONF.libvirt.cpu_model
+    def _get_guest_cpu_model_config(self, image_meta):
+        mode = image_meta.properties.get('hw_cpu_mode', CONF.libvirt.cpu_mode)
+        model = image_meta.properties.get('hw_cpu_model', CONF.libvirt.cpu_model)
 
         if (CONF.libvirt.virt_type == "kvm" or
             CONF.libvirt.virt_type == "qemu"):
@@ -3550,7 +3550,7 @@ class LibvirtDriver(driver.ComputeDriver):
 
     def _get_guest_cpu_config(self, flavor, image_meta,
                               guest_cpu_numa_config, instance_numa_topology):
-        cpu = self._get_guest_cpu_model_config()
+        cpu = self._get_guest_cpu_model_config(image_meta)
 
         if cpu is None:
             return None

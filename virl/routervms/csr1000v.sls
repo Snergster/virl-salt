@@ -17,7 +17,7 @@ CSR1000v:
   - disk_format: qcow2
   - copy_from: salt://images/salt/csr1000v-universalk9.16.3.1-ext-b2.qcow2
   - property-config_disk_type: cdrom
-  - property-hw_cdrom_type: ide
+  - property-hw_cdrom_bus: ide
   - property-hw_disk_bus: virtio
   - property-hw_vif_model: virtio
   - property-release: 16.3.1-build2

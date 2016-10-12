@@ -130,6 +130,7 @@ add libvirt-qemu to nova:
     'nova+virt+libvirt+driver.py',
     'nova+virt+libvirt+vif.py',
     'nova+network+model.py',
+    'nova+objects+fields.py',
     'nova+objects+image_meta.py',
 ] %}
 
@@ -303,6 +304,17 @@ add libvirt-qemu to nova:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/driver.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/driver.py
+
+/usr/lib/python2.7/dist-packages/nova/virt/libvirt/blockinfo.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/blockinfo.py
+    - require:
+      - pkg: nova-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/blockinfo.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/blockinfo.py
 
 /usr/lib/python2.7/dist-packages/nova/virt/libvirt/driver.py:
   file.managed:

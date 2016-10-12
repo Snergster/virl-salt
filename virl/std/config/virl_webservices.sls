@@ -8,3 +8,6 @@ set_config:
     - names:
       - crudini --set /etc/virl/virl.cfg env virl_std_port {{ stdport }}
       - crudini --set /etc/virl/virl.cfg env virl_std_url http://localhost:{{ stdport }}
+      # new location
+      - crudini --set /etc/virl/virl-core.ini env virl_std_port {{ stdport }}
+      - crudini --set /etc/virl/virl-core.ini env virl_std_url http://localhost:{{ stdport }}

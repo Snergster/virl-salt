@@ -19,7 +19,7 @@ NX-OSv:
   - disk_format: qcow2
   - copy_from: salt://images/salt/titanium-final.7.3.0.D1.1.qcow2
   - property-config_disk_type: cdrom
-  - property-hw_cdrom_type: ide
+  - property-hw_cdrom_bus: ide
   - property-hw_disk_bus: ide
   - property-hw_vif_model: e1000
   - property-release: 7.3.0.1

@@ -16,10 +16,15 @@ set_config:
     - names:
       - crudini --set /etc/virl/virl.cfg env virl_uwm_port {{ virl.uwmport }}
       - crudini --set /etc/virl/virl.cfg env virl_uwm_url http://localhost:{{ virl.uwmport }}
+      # new location
+      - crudini --set /etc/virl/virl-core.ini env virl_uwm_port {{ virl.uwmport }}
+      - crudini --set /etc/virl/virl-core.ini env virl_uwm_url http://localhost:{{ virl.uwmport }}
 
 user management auth url:
   cmd.run:
     - names:
       - crudini --set /etc/virl/virl.cfg env virl_openstack_auth_url http://localhost:5000/{{virl.keystone_auth_version}}
+      # new location
+      - crudini --set /etc/virl/virl-core.ini env virl_openstack_auth_url http://localhost:5000/{{virl.keystone_auth_version}}
 
 

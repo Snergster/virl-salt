@@ -19,7 +19,7 @@ iosxrv:
   - disk_format: qcow2
   - copy_from: salt://images/salt/{{ salt['pillar.get']('routervm_files:iosxrv')}}
   - property-config_disk_type: cdrom
-  - property-hw_cdrom_type: id
+  - property-hw_cdrom_bus: ide
   - property-hw_disk_bus: ide
   - property-hw_vif_model: virtio
   - property-release: {{ salt['pillar.get']('version:iosxrv')}}

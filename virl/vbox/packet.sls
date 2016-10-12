@@ -4,6 +4,8 @@ adapter1 ghettoness:
   cmd.run:
     - names:
       - crudini --set /etc/virl/virl.cfg env virl_local_ip {{ adapter1ip }}
+      # new location
+      - crudini --set /etc/virl/virl-core.ini env virl_local_ip {{ adapter1ip }}
       - crudini --set /etc/nova/nova.conf serial_console proxyclient_address {{ adapter1ip }}
       - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address {{ adapter1ip }}
 

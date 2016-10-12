@@ -15,7 +15,7 @@ coreos:
     - disk_format: qcow2
     - copy_from: salt://images/salt/coreos-899-13-0.qcow2
     - property-config_disk_type: cloud-init
-    - property-hw_cdrom_type: ide
+    - property-hw_cdrom_bus: ide
     - property-hw_disk_bus: ide
     - property-hw_vif_model: virtio
     - property-release: 899.13.0
