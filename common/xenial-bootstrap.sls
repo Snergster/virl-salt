@@ -28,7 +28,7 @@ socat purge:
 socat 1.7.2.3:
  pkg.installed:
    - pkgs:
-      - socat < 1.7.2.4
+      - socat: 1.7.2.3-1
 
 disable upgrades:
  pkg.removed:
