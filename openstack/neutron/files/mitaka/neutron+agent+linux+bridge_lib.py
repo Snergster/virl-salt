@@ -137,7 +137,7 @@ class BridgeDevice(ip_lib.IPDevice):
         if ageing is None:
             return
         if physical and not physical_ageing:
-            ageing = 0
+            return
         try:
             self._tee(BRIDGE_AGEING_FS, ageing)
         except RuntimeError:
