@@ -61,7 +61,8 @@ while running_parent && [ "$LOOPS" -ne 0 ]; do
     ##date
     ##echo "Running socat $PRIVATE:$PORT:$OUTSIDE (loops left $LOOPS)"
     LOOPS+=-1
-    socat $DEBUG -t $EOFRSTTIME -T $NODATATIME \
+    timeout --foreground --preserve-status 900 socat \
+         $DEBUG -t $EOFRSTTIME -T $NODATATIME \
         "TCP-LISTEN:$PORT,bind=$OUTSIDE,reuseaddr,$LISTENOPTS" \
         "TCP:$PRIVATE:$PORT,connect-timeout=$CONNECTIME" \
 

@@ -12,6 +12,7 @@
   /usr/bin/telnet_front rmix,
   /usr/bin/socat rmix,
   /bin/sleep rmix,
+  /usr/bin/timeout rmix,
 
   @{PROC}/[0-9]*/cmdline r,
   @{PROC}/@{pid}/net/dev r,
