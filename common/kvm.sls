@@ -35,7 +35,7 @@ libvirt install:
     - skip_verify: True
     - refresh: True
 
-{% if not '2.0.0' in salt['cmd.shell']('/usr/bin/qemu-system-x86_64 --version') %}
+{% if not '2.2.0' in salt['cmd.shell']('/usr/bin/qemu-system-x86_64 --version') %}
 
 qemu unhold:
   module.run:
@@ -63,11 +63,7 @@ qemu install:
       - qemu-system-x86
       - qemu-kvm
       - qemu-system-common
-    - refresh: True
-{% if not virl.mitaka %}
-    - hold: True
-    - fromrepo: trusty
-{% endif %}
+    - refresh: False
 
 libvirt-bin insert /dev/kvm:
   file.line:
