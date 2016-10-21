@@ -113,6 +113,17 @@ glance-reg-olddb:
     - require:
       - pkg: glance-pkgs
 
+{% if virl.mitaka %}
+
+glance-api-conn:
+  ini.options_present:
+    - name: /etc/glance/glance-api.conf
+    - sections:
+        database:
+          connection: 'mysql://glance:{{ virl.mypassword }}@{{ virl.controller_ip }}/glance'
+
+{% else %}
+
 glance-api-conn:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
@@ -122,6 +133,8 @@ glance-api-conn:
     - value: 'mysql://glance:{{ virl.mypassword }}@{{ virl.controller_ip }}/glance'
     - require:
       - pkg: glance-pkgs
+
+{% endif %}
 
 glance-reg-conn:
   openstack_config.present:
