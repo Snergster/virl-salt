@@ -1,3 +1,16 @@
+{% from "virl.jinja" import virl with context %}
+
+{% if virl.proxy %}
+http_proxy:
+  environ.setenv:
+    - value: {{ virl.http_proxy }}
+
+https_proxy:
+  environ.setenv:
+    - value: {{ virl.http_proxy }}
+
+{% endif %}
+
 rasa patches:
   git.latest:
     - name: https://github.com/rasa/vmware-tools-patches.git
