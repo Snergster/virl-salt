@@ -210,7 +210,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl.cfg 'new-project-networks' mgmt_net_dns {{ virl.fdns }}
       - crudini --set /etc/virl/virl.cfg 'new-project-networks' mgmt_net_dns2 {{ virl.sdns }}
       - crudini --set /etc/virl/virl.cfg env virl_webmux_port {{ virl.virl_webmux }}
-      - crudini --set /etc/virl/virl.cfg env virl_local_ip {{ virl.l2_address_iponly }}
+      - crudini --del /etc/virl/virl.cfg env virl_local_ip
       - crudini --set /etc/virl/common.cfg host webmux_port {{ virl.virl_webmux }}
       - crudini --set /etc/virl/common.cfg host ank_live_port {{ virl.ank_live }}
       - crudini --set /etc/virl/common.cfg host download_proxy {{ virl.download_proxy }}
@@ -243,7 +243,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl-core.ini limits host_simulation_port_max_tcp {{ virl.host_simulation_port_max_tcp }}
       - crudini --set /etc/virl/virl-core.ini host ram_overcommit {{ virl.ram_overcommit }}
       - crudini --set /etc/virl/virl-core.ini host cpu_overcommit {{ virl.cpu_overcommit }}
-      - crudini --set /etc/virl/virl-core.ini env virl_local_ip {{ virl.l2_address_iponly }}
+      - crudini --del /etc/virl/virl-core.ini env virl_local_ip
      {% if virl.salt_transport_tcp %}
       - crudini --set /etc/virl/common.cfg licensing offered_salt_masters {{ virl.salt_master_tcp_default }}
       # new location
