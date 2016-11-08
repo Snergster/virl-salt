@@ -8,7 +8,7 @@ include:
 
 lxc_ostinato:
   virl_core.lxc_image_present:
-  - subtype: lxc-ostinato
+  - subtype: lxc-ostinato-drone
   - version: standard
   - release: 0.8.1
 
@@ -16,7 +16,7 @@ lxc_ostinato:
 
 lxc_ostinato gone:
   virl_core.lxc_image_absent:
-  - subtype: lxc-ostinato
+  - subtype: lxc-ostinato-drone
   - version: standard
 
 {% endif %}
