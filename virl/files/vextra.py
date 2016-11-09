@@ -36,7 +36,7 @@ Config = ConfigParser.ConfigParser()
 # virlconfig_file = '/etc/virl.ini'
 
 
-def building_salt_extra(masterless,salt_master,salt_id,salt_domain):
+def building_salt_extra(masterless,salt_master,salt_id,salt_domain,cml):
     with open(("/tmp/extra"), "w") as extra:
         if not masterless:
             if len(salt_master.split(',')) >= 2:
@@ -51,7 +51,13 @@ def building_salt_extra(masterless,salt_master,salt_id,salt_domain):
             extra.write("""auth_timeout: 15 \n""")
             extra.write("""master_alive_interval: 180 \n""")
         else:
-            if path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
+            if cml:
+                extra.write("""file_client: local
+
+fileserver_backend:
+  - roots\n""")
+
+            elif path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
                 extra.write("""gitfs_provider: pygit2\n""")
                 extra.write("""file_client: local
 
@@ -128,11 +134,13 @@ if __name__ == "__main__":
             salt_id = caller.sminion.functions['grains.get']('salt_id')
             salt_domain = caller.sminion.functions['grains.get']('salt_domain')
             salt_master = ''
-            building_salt_extra(masterless,salt_master,salt_id,salt_domain)
+            cml = caller.sminion.functions['grains.get']('cml', 'false')
+            building_salt_extra(masterless,salt_master,salt_id,salt_domain,cml)
             ospassword = caller.sminion.functions['grains.get']('password')
             mypass = caller.sminion.functions['grains.get']('mysql_password')
             ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
             admin_id = caller.sminion.functions['grains.get']('admin_id', ' ')
+            cml = caller.sminion.functions['grains.get']('cml', 'false')
         else:
             try:
                 salt_master = caller.sminion.functions['pillar.get']('virl:salt_master')
@@ -154,7 +162,8 @@ if __name__ == "__main__":
                 if not ks_token:
                     ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
                 admin_id = caller.sminion.functions['grains.get']('admin_id', ' ')
-                building_salt_extra(masterless,salt_master,salt_id,salt_domain)
+                cml = caller.sminion.functions['grains.get']('cml', 'false')
+                building_salt_extra(masterless,salt_master,salt_id,salt_domain,cml)
             except AttributeError:
                 salt_master = caller.sminion.functions['grains.get']('salt_master')
                 salt_id = caller.sminion.functions['grains.get']('salt_id')
@@ -164,7 +173,7 @@ if __name__ == "__main__":
                 mypass = caller.sminion.functions['grains.get']('mysql_password')
                 ks_token = caller.sminion.functions['grains.get']('keystone_service_token')
                 admin_id = caller.sminion.functions['grains.get']('admin_id', ' ')
-                building_salt_extra(masterless,salt_master,salt_id,salt_domain)
+                building_salt_extra(masterless,salt_master,salt_id,salt_domain,cml)
 
         building_salt_openstack(ospassword,ks_token,mypass,admin_id)
     else:
