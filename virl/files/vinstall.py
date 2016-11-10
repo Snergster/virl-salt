@@ -171,6 +171,7 @@ vagrant_calls = safeparser.getboolean('DEFAULT', 'vagrant', fallback=False)
 vagrant_pre_fourth = safeparser.getboolean('DEFAULT', 'vagrant_before_fourth', fallback=False)
 vagrant_keys = safeparser.getboolean('DEFAULT', 'vagrant_keys', fallback=False)
 cml = safeparser.getboolean('DEFAULT', 'cml', fallback=False)
+internet = safeparser.getboolean('DEFAULT', 'internet_access', fallback=True)
 
 
 #Operational Section
@@ -321,12 +322,52 @@ def building_salt_extra():
             if controller:
               extra.write("""verify_master_pubkey_sign: True \n""")
               extra.write("""always_verify_signature: True \n""")
+            if internet:
+                if path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
+                    extra.write("""gitfs_provider: pygit2
+
+fileserver_backend:
+  - git
+  - roots
+
+
+gitfs_remotes:
+  - https://github.com/Snergster/virl-salt.git\n""")
+                elif path.exists('/usr/local/lib/python2.7/dist-packages/dulwich'):
+                    extra.write("""gitfs_provider: dulwich
+
+fileserver_backend:
+  - git
+  - roots
+
+
+gitfs_remotes:
+  - https://github.com/Snergster/virl-salt.git\n""")
         else:
             if cml:
+                if internet:
+                    if path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
+                        extra.write("""gitfs_provider: pygit2\n""")
+                        extra.write("""file_client: local
+
+fileserver_backend:
+  - git
+  - roots
+
+
+gitfs_remotes:
+  - https://github.com/Snergster/virl-salt.git\n""")
+                else:
+                    extra.write("""file_client: local
+
+fileserver_backend:
+  - roots\n""")
+            elif not internet:
                 extra.write("""file_client: local
 
 fileserver_backend:
   - roots\n""")
+
             elif path.exists('/usr/local/lib/python2.7/dist-packages/pygit2'):
                 extra.write("""gitfs_provider: pygit2\n""")
                 extra.write("""file_client: local
@@ -347,11 +388,6 @@ fileserver_backend:
 
 gitfs_remotes:
   - https://github.com/Snergster/virl-salt.git\n""")
-            else:
-                extra.write("""file_client: local
-
-fileserver_backend:
-  - roots\n""")
         extra.write("""log_level: quiet \n""")
         extra.write("""id: '{salt_id}'\n""".format(salt_id=salt_id))
         extra.write("""append_domain: {salt_domain}\n""".format(salt_domain=salt_domain))
