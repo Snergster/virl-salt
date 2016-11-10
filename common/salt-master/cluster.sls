@@ -1,5 +1,6 @@
 {% set publicport = salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
+{% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True)) %}
 
 include:
   - common.salt-master.cluster-config
@@ -52,6 +53,8 @@ compute filter for cluster controller:
     - value: 'AllHostsFilter,ComputeFilter'
     - onlyif: test -e /etc/nova/nova.conf
 
+{% if controller %}
+
 /etc/init/salt-master.conf:
   file.managed:
     - source: salt://common/salt-master/files/salt-master.conf
@@ -66,13 +69,6 @@ verify salt-master enabled:
     - require:
       - file: remove salt-master override
 
-open rabbitmq guest security:
-  file.managed:
-    - name: /etc/rabbitmq/rabbitmq.config
-    - makedirs: True
-    - contents: |
-        [{rabbit, [{loopback_users, []}]}].
-
 salt-master restarting for config:
   service.running:
     - name: salt-master
@@ -82,4 +78,14 @@ salt-master restarting for config:
       - file: /srv/pillar/compute2/init.sls
       - file: /srv/pillar/compute3/init.sls
       - file: /srv/pillar/compute4/init.sls
+
+{% endif %}
+
+open rabbitmq guest security:
+  file.managed:
+    - name: /etc/rabbitmq/rabbitmq.config
+    - makedirs: True
+    - contents: |
+        [{rabbit, [{loopback_users, []}]}].
+
 
