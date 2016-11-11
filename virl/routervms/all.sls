@@ -3,7 +3,6 @@ include:
   - .csr1000v
   - .iosv
   - .iosxrv
-  - .server
   - .lxc_iperf
   - .lxc_routem
   - .lxc_ostinato
@@ -12,6 +11,11 @@ include:
   - .iosvl2
   - .asav
   - .lxc_server
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+  - .xenial_server
+{% else %}
+  - .server
+{% endif %}
 {% if 'cisco.com' in salt['grains.get']('id') %}
   - .iol
   - .iol_l2
