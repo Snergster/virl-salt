@@ -175,7 +175,7 @@ VIRL_CORE:
     - names:
      {% if virl.cml %}
       - echo /usr/local/bin/virl_config lsb-links | at now + 1 min
-     {% else %}
+     {% endif %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_custom_floating_ip True
       - crudini --set /etc/virl/common.cfg orchestration network_security_groups False
@@ -183,7 +183,6 @@ VIRL_CORE:
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration network_security_groups False
       - crudini --set /etc/virl/virl-core.ini orchestration network_custom_floating_ip True
-     {% endif %}
      {% if virl.enable_cinder %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
       - crudini --set /etc/virl/common.cfg orchestration volume_service True
