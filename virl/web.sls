@@ -53,7 +53,7 @@ servername symlink in web:
 
 {% if 'xenial' in salt['grains.get']('oscodename') %}
 
-a2enmod-enable:
+a2enmod-enable-web:
   cmd.run:
     - names: 
       - a2enmod proxy

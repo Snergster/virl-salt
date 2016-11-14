@@ -38,7 +38,7 @@ horizon-oshosts:
     - pattern: 'OPENSTACK_HOST = ".*"'
     - repl: 'OPENSTACK_HOST = "{{ hostname }}"'
 
-a2enmod-enable:
+a2enmod-enable-dash:
   cmd.run:
     - name: a2enmod wsgi
     - unless: 'test -e /etc/apache2/mods-enabled/wsgi.load'
@@ -47,7 +47,7 @@ horizon apache2 restart:
   service.running:
     - name: apache2
     - watch:
-      - cmd: a2enmod-enable
+      - cmd: a2enmod-enable-dash
       - file: horizon-oshosts
       - file: horizon-hosts
       - file: horizon-allowed
@@ -57,7 +57,7 @@ horizon memcached restart:
   service.running:
     - name: memcached
     - watch:
-      - cmd: a2enmod-enable
+      - cmd: a2enmod-enable-dash
       - file: horizon-oshosts
       - file: horizon-hosts
       - file: horizon-allowed
