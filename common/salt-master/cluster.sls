@@ -69,6 +69,10 @@ verify salt-master enabled:
     - require:
       - file: remove salt-master override
 
+salt-master autostart enable:
+    cmd.run:
+        - name: /bin/systemctl enable salt-master
+
 salt-master restarting for config:
   service.running:
     - name: salt-master

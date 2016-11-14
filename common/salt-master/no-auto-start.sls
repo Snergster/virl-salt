@@ -8,3 +8,7 @@ salt-master no upstart:
 salt-master no sysv:
     cmd.run:
         - name: /usr/sbin/update-rc.d -f salt-master remove
+
+salt-master no autostart:
+    cmd.run:
+        - name: /bin/systemctl disable salt-master
