@@ -127,6 +127,24 @@ mysql:
     - watch:
       - file: /etc/mysql/my.cnf
 
+{% if virl.mitaka %}
+
+root-grant-wildcard:
+  cmd.run:
+    - names:
+      - mysql --user=root --password={{ virl.mypassword }} -e "CREATE USER 'root'@'virl' IDENTIFIED BY '{{ virl.mypassword }}';"
+      - mysql --user=root --password={{ virl.mypassword }} -e "CREATE USER 'root'@'{{virl.hostname}}' IDENTIFIED BY '{{ virl.mypassword }}';"
+      - mysql --user=root --password={{ virl.mypassword }} -e "CREATE USER 'root'@'{{virl.controller_ip}}' IDENTIFIED BY '{{ virl.mypassword }}';"
+      - mysql --user=root --password={{ virl.mypassword }} -e "CREATE USER 'root'@'172.16.%.%' IDENTIFIED BY '{{ virl.mypassword }}';"
+      - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'virl';"
+      - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.hostname}}';"
+      - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.controller_ip}}';"
+      - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.16.%.%';"
+    - require:
+      - pkg: mysql-server
+
+{% endif %}
+
 {% if virl.dummy_int %}
 
 mysql port for dummies:
