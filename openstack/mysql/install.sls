@@ -212,10 +212,20 @@ root-rawip-wildcard grants:
     - user: root
     - host: '172.16.%.%'
 
+mysql port for dummies:
+  file.replace:
+    - name: /etc/mysql/my.cnf
+    - pattern: ^bind-address.*
+    - repl: 'bind-address = {{ virl.controller_ip }}'
+  cmd.wait:
+    - name: 'service mysql restart'
+    - watch:
+      - file: mysql port for dummies
+
 {% endif %}
 
 
-{% if virl.dummy_int %}
+{% if virl.kilo and virl.dummy_int %}
 
 mysql port for dummies:
   file.replace:
