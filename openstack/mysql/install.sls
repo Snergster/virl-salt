@@ -112,6 +112,11 @@ mysql:
 
 {% if virl.mitaka %}
 
+root-localhost-test:
+  cmd.run:
+    - name: mysql -u root -ppassword -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{virl.mypassword}}';"
+    - unless: mysql -u root -p{{virl.mypassword}} -e quit
+
 root-localhost-wildcard:
   mysql_user.present:
     - password_column: authentication_string
