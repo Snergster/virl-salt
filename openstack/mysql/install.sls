@@ -140,8 +140,7 @@ root-grant-wildcard:
       - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.hostname}}';"
       - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.controller_ip}}';"
       - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.16.%.%';"
-    - require:
-      - pkg: mysql-server
+
 
 {% endif %}
 
