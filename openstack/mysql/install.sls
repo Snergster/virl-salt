@@ -105,12 +105,12 @@ verify symlink:
     - mode: 0755
 
 mysql:
-  pkg:
-    - installed
+  pkg.installed:
     - name: mysql-server
-
-
 {% if virl.mitaka %}
+  service.running:
+    - name: mysql
+
 
 root-localhost-test:
   cmd.run:
