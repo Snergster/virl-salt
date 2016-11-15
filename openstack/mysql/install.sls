@@ -134,8 +134,13 @@ root-localhost-wildcard:
     - name: root
     - host: 'localhost'
     - password: {{ virl.mypassword }}
-  cmd.run:
-    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost';"
+
+root-localhost-wildcard grants:
+  mysql_grants.present:
+    - grant: ALL PRIVILEGES
+    - database: '*.*'
+    - user: root
+    - host: 'localhost'
 
 root-virl-wildcard:
   mysql_user.present:
@@ -143,8 +148,13 @@ root-virl-wildcard:
     - name: root
     - host: 'virl'
     - password: {{ virl.mypassword }}
-  cmd.run:
-    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'virl';"
+
+root-virl-wildcard grants:
+  mysql_grants.present:
+    - grant: ALL PRIVILEGES
+    - database: '*.*'
+    - user: root
+    - host: 'virl'
 
 root-hostname-wildcard:
   mysql_user.present:
@@ -152,8 +162,13 @@ root-hostname-wildcard:
     - name: root
     - host: '{{virl.hostname}}'
     - password: {{ virl.mypassword }}
-  cmd.run:
-    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.hostname}}';"
+
+root-hostname-wildcard grants:
+  mysql_grants.present:
+    - grant: ALL PRIVILEGES
+    - database: '*.*'
+    - user: root
+    - host: '{{virl.hostname}}'
 
 root-ip-wildcard:
   mysql_user.present:
@@ -161,8 +176,13 @@ root-ip-wildcard:
     - name: root
     - host: '{{virl.controller_ip}}'
     - password: {{ virl.mypassword }}
-  cmd.run:
-    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.controller_ip}}';"
+
+root-ip-wildcard grants:
+  mysql_grants.present:
+    - grant: ALL PRIVILEGES
+    - database: '*.*'
+    - user: root
+    - host: '{{virl.controller_ip}}'
 
 root-controller-wildcard:
   mysql_user.present:
@@ -170,8 +190,13 @@ root-controller-wildcard:
     - name: root
     - host: 'controller'
     - password: {{ virl.mypassword }}
-  cmd.run:
-    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'controller';"
+
+root-controller-wildcard grants:
+  mysql_grants.present:
+    - grant: ALL PRIVILEGES
+    - database: '*.*'
+    - user: root
+    - host: 'controller'
 
 root-rawip-wildcard:
   mysql_user.present:
@@ -179,8 +204,13 @@ root-rawip-wildcard:
     - name: root
     - host: '172.16.%.%'
     - password: {{ virl.mypassword }}
-  cmd.run:
-    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.16.%.%';"
+
+root-rawip-wildcard grants:
+  mysql_grants.present:
+    - grant: ALL PRIVILEGES
+    - database: '*.*'
+    - user: root
+    - host: '172.16.%.%'
 
 {% endif %}
 
