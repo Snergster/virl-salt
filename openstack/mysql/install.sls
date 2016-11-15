@@ -109,6 +109,22 @@ mysql:
     - installed
     - name: mysql-server
 
+my.cnf template:
+  file.managed:
+    - name: /etc/mysql/my.cnf
+{% if virl.mitaka %}
+    - source: salt://openstack/mysql/files/mitaka.my.cnf
+{% else %}
+    - source: salt://openstack/mysql/files/my.cnf
+{% endif %}
+    - makedirs: True
+  service:
+    - running
+    - name: mysql
+    - restart: True
+    - enable: True
+    - watch:
+      - file: /etc/mysql/my.cnf
 
 {% if virl.mitaka %}
 
@@ -198,22 +214,6 @@ root-rawip-wildcard grants:
 
 {% endif %}
 
-my.cnf template:
-  file.managed:
-    - name: /etc/mysql/my.cnf
-{% if virl.mitaka %}
-    - source: salt://openstack/mysql/files/mitaka.my.cnf
-{% else %}
-    - source: salt://openstack/mysql/files/my.cnf
-{% endif %}
-    - makedirs: True
-  service:
-    - running
-    - name: mysql
-    - restart: True
-    - enable: True
-    - watch:
-      - file: /etc/mysql/my.cnf
 
 {% if virl.dummy_int %}
 
