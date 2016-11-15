@@ -120,6 +120,7 @@ my.cnf template:
     - makedirs: True
   service:
     - running
+    - name: mysql
     - restart: True
     - enable: True
     - watch:
