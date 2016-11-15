@@ -222,8 +222,6 @@ mysql port for dummies:
     - name: /etc/mysql/my.cnf
     - pattern: ^bind-address.*
     - repl: 'bind-address = {{ virl.controller_ip }}'
-    - require:
-      - pkg: mysql
   cmd.wait:
     - name: 'service mysql restart'
     - watch:
