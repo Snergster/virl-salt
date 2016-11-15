@@ -53,12 +53,14 @@ floppy remove:
   file.comment:
     - name: /etc/fstab
     - regex: ^/dev/fd0
+    - onlyif: grep fd0 /etc/fstab
 
 {% endif %}
 
 turn off update message crap:
   cmd.run:
     - name: crudini --set /etc/update-manager/release-upgrades DEFAULT Prompt never
+    - onlyif: test -f /etc/update-manager/release-upgrades
 
 release-upgrade-available remove:
   file.absent:
