@@ -182,9 +182,6 @@ root-rawip-wildcard:
     - password: {{ virl.mypassword }}
   cmd.run:
     - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.16.%.%';"
-    - onchanges:
-      - mysql_user: root-rawip-wildcard
-
 
 {% endif %}
 
