@@ -108,10 +108,10 @@ mysql:
   pkg:
     - installed
     - name: mysql-server
+
+my.cnf template:
   file.managed:
     - name: /etc/mysql/my.cnf
-    - require:
-      - pkg: mysql-server
 {% if virl.mitaka %}
     - source: salt://openstack/mysql/files/mitaka.my.cnf
 {% else %}
@@ -122,8 +122,6 @@ mysql:
     - running
     - restart: True
     - enable: True
-    - require:
-      - pkg: mysql-server
     - watch:
       - file: /etc/mysql/my.cnf
 
