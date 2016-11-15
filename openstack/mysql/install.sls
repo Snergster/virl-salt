@@ -129,17 +129,61 @@ mysql:
 
 {% if virl.mitaka %}
 
-root-grant-wildcard:
+root-localhost-wildcard:
+  mysql_user.present:
+    - password_column: authentication_string
+    - name: root
+    - host: 'localhost'
+    - password: {{ virl.mypassword }}
   cmd.run:
-    - names:
-      - mysql --user=root --password={{ virl.mypassword }} -e "CREATE USER 'root'@'virl' IDENTIFIED BY '{{ virl.mypassword }}';"
-      - mysql --user=root --password={{ virl.mypassword }} -e "CREATE USER 'root'@'{{virl.hostname}}' IDENTIFIED BY '{{ virl.mypassword }}';"
-      - mysql --user=root --password={{ virl.mypassword }} -e "CREATE USER 'root'@'{{virl.controller_ip}}' IDENTIFIED BY '{{ virl.mypassword }}';"
-      - mysql --user=root --password={{ virl.mypassword }} -e "CREATE USER 'root'@'172.16.%.%' IDENTIFIED BY '{{ virl.mypassword }}';"
-      - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'virl';"
-      - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.hostname}}';"
-      - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.controller_ip}}';"
-      - mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.16.%.%';"
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost';"
+
+root-virl-wildcard:
+  mysql_user.present:
+    - password_column: authentication_string
+    - name: root
+    - host: 'virl'
+    - password: {{ virl.mypassword }}
+  cmd.run:
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'virl';"
+
+root-hostname-wildcard:
+  mysql_user.present:
+    - password_column: authentication_string
+    - name: root
+    - host: '{{virl.hostname}}'
+    - password: {{ virl.mypassword }}
+  cmd.run:
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.hostname}}';"
+
+root-ip-wildcard:
+  mysql_user.present:
+    - password_column: authentication_string
+    - name: root
+    - host: '{{virl.controller_ip}}'
+    - password: {{ virl.mypassword }}
+  cmd.run:
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'{{virl.controller_ip}}';"
+
+root-controller-wildcard:
+  mysql_user.present:
+    - password_column: authentication_string
+    - name: root
+    - host: 'controller'
+    - password: {{ virl.mypassword }}
+  cmd.run:
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'controller';"
+
+root-rawip-wildcard:
+  mysql_user.present:
+    - password_column: authentication_string
+    - name: root
+    - host: '172.16.%.%'
+    - password: {{ virl.mypassword }}
+  cmd.run:
+    - name: mysql --user=root --password={{ virl.mypassword }} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.16.%.%';"
+    - onchanges:
+      - mysql_user: root-rawip-wildcard
 
 
 {% endif %}
