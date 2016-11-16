@@ -26,6 +26,24 @@ point std at key:
       - test -e ~virl/.ssh/id_rsa.pub
       - test -e /etc/virl/common.cfg
 
+replicate ssh key to root:
+  file.copy:
+    - name: /root/.ssh/id_rsa
+    - source: /home/virl/.ssh/id_rsa
+    - makedirs: True
+    - user: root
+    - mode: 0600
+    - force: True
+
+replicate pub ssh key to root:
+  file.copy:
+    - name: /root/.ssh/id_rsa.pub
+    - source: /home/virl/.ssh/id_rsa.pub
+    - makedirs: True
+    - user: root
+    - mode: 0644
+    - force: True
+
 virl_ssh_key to grains:
   cmd.run:
     - name: /usr/local/bin/ssh_to_grain
