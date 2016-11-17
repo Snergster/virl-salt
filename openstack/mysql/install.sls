@@ -221,6 +221,7 @@ my.cnf template:
       - file: /etc/mysql/my.cnf
 
 {% if virl.dummy_int %}
+  {% if not virl.mitaka %}
 
 mysql port for dummies:
   file.replace:
@@ -232,6 +233,7 @@ mysql port for dummies:
     - watch:
       - file: mysql port for dummies
 
+  {% endif %}
 {% else %}
 
 mysql port anycast:
