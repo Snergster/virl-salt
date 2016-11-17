@@ -6,13 +6,6 @@ rabbitmq-server:
   pkg.installed:
     - name: rabbitmq-server
 
-rabbit_pass:
-  cmd.run:
-    - name: rabbitmqctl change_password guest {{ ospassword }}
-    - user: root
-    - require:
-      - pkg: rabbitmq-server
-
 rabbitmq restart:
   service:
     - name: rabbitmq-server
@@ -24,6 +17,13 @@ rabbitmq restart:
 {% if cluster %}
       - file: /etc/rabbitmq/rabbitmq.config
 {% endif %}
+
+rabbit_pass:
+  cmd.run:
+    - name: rabbitmqctl change_password guest {{ ospassword }}
+    - user: root
+    - require:
+      - pkg: rabbitmq-server
 
 /etc/rabbitmq/rabbitmq-env.conf:
   file.managed:
