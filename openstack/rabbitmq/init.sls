@@ -1,10 +1,20 @@
 {% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
+{% from "virl.jinja" import virl with context %}
 
 rabbitmq-server:
   pkg.installed:
     - name: rabbitmq-server
+
+{% if virl.mitaka %}
+
+early rabbitmq start:
+  service.running:
+    - name: rabbitmq-server
+    - enable: True
+
+{% endif %}
 
 rabbitmq restart:
   service:
