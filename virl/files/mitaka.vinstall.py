@@ -269,11 +269,11 @@ else:
     keystone_auth_version = 'v2.0'
 
 qadmincall = ['/usr/bin/neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-              '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
+              '{0}'.format(ospassword), '--os-user-domain-id=default', '--os-project-domain-id=default', '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
 nadmincall = ['/usr/bin/nova', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-              '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
-kcall = ['/usr/bin/keystone', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-         '{0}'.format(ospassword), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
+              '{0}'.format(ospassword), '--os-user-domain-id=default', '--os-project-domain-id=default', '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
+kcall = ['/usr/bin/openstack', '--os-tenant-name=admin', '--os-username=admin', '--os-user-domain-id=default', '--os-domain-id=default',  '--os-identity-api-version=3',
+              '--os-password={0}'.format(ospassword), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
 cpstr = 'sudo -S cp -f "%(from)s" "%(to)s"'
 lnstr = 'sudo -S ln -sf "%(orig)s" "%(link)s"'
 
@@ -428,26 +428,26 @@ fileserver_backend:
 def building_salt_all():
     if not path.exists('/etc/salt/virl'):
         subprocess.call(['sudo', 'mkdir', '-p', '/etc/salt/virl'])
-    if path.exists('/usr/bin/keystone-manage') or path.exists('/usr/bin/neutron-server'):
+    if path.exists('/usr/bin/openstack') or path.exists('/usr/bin/neutron-server'):
         admin_tenid = (subprocess.check_output(['{keystone_client} --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url={auth_url}'
+                                            ' --os-password {ospassword} --os-auth-url={auth_url} --os-user-domain-id default --os-domain-id default  --os-identity-api-version 3'
                                             ' {project} | grep -w "admin" | cut -d "|" -f2'
                                            .format(ospassword=ospassword,auth_url=keystone_auth_url,keystone_client=keystone_client,project=keystone_project_list)], shell=True)[1:33])
         service_tenid = (subprocess.check_output(['{keystone_client} --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url={auth_url}'
+                                            ' --os-password {ospassword} --os-auth-url={auth_url} --os-user-domain-id default --os-domain-id default  --os-identity-api-version 3'
                                             ' {project} | grep -w "service" | cut -d "|" -f2'
                                            .format(ospassword=ospassword,auth_url=keystone_auth_url,keystone_client=keystone_client,project=keystone_project_list)], shell=True)[1:33])
-        neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url={auth_url}'
-                                            ' net-list | grep -w "ext-net" | cut -d "|" -f2'
+        neutron_extnet_id = (subprocess.check_output(['openstack --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url={auth_url} --os-user-domain-id default --os-domain-id default  --os-identity-api-version 3'
+                                            ' network list | grep -w "ext-net" | cut -d "|" -f2'
                                            .format(ospassword=ospassword,auth_url=keystone_auth_url)], shell=True)[1:33])
     else:
         admin_tenid = ''
         service_tenid = ''
     if path.exists('/usr/bin/neutron-server'):
-        neutron_extnet_id = (subprocess.check_output(['neutron --os-tenant-name admin --os-username admin'
-                                            ' --os-password {ospassword} --os-auth-url={auth_url}'
-                                            ' net-list | grep -w "ext-net" | cut -d "|" -f2'
+        neutron_extnet_id = (subprocess.check_output(['openstack --os-tenant-name admin --os-username admin'
+                                            ' --os-password {ospassword} --os-auth-url={auth_url} --os-user-domain-id default --os-domain-id default  --os-identity-api-version 3'
+                                            ' network list | grep -w "ext-net" | cut -d "|" -f2'
                                            .format(ospassword=ospassword,auth_url=keystone_auth_url)], shell=True)[1:33])
     else:
         neutron_extnet_id = ''
@@ -530,7 +530,8 @@ def create_basic_networks():
     user = 'admin'
     password = ospassword
     qcall = ['/usr/bin/neutron', '--os-tenant-name', '{0}'.format(user), '--os-username', '{0}'.format(user),
-             '--os-password', '{0}'.format(password), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
+             '--os-password', '{0}'.format(password), '--os-user-domain-id=default', '--os-project-domain-id=default',
+             '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
     subprocess.call(qcall + ['quota-update', '--router', '-1'])
     try:
         if not varg['iso']:
@@ -618,7 +619,7 @@ Alias /videos /var/www/videos
 
 def User_Creator(user_list, user_list_limited):
     UNET = True
-    user_check = subprocess.check_output(kcall + ['user-list'])
+    user_check = subprocess.check_output(kcall + ['user list'])
 
     if user_list:
         for each_user in user_list.split(','):
@@ -651,8 +652,8 @@ def set_vnc_password(vnc_password):
 
 
 def Net_Creator(user, password):
-    qcall = ['neutron', '--os-tenant-name', '{0}'.format(user), '--os-username', '{0}'.format(user), '--os-password',
-             '{0}'.format(password), '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
+    qcall = ['neutron', '--os-tenant-name', '{0}'.format(user), '--os-user-domain-id=default', '--os-project-domain-id=default', '--os-username', '{0}'.format(user), '--os-password',
+             '{0}'.format(password), '--os-user-domain-id=default', '--os-project-domain-id=default', '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
     try:
         if user not in subprocess.check_output(qadmincall + ['net-list']) and not user == 'flat':
             subprocess.call(qcall + ['net-create', '{0}'.format(user)])
@@ -942,7 +943,7 @@ if __name__ == "__main__":
     if varg['test']:
         building_salt_all()
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
+                 ospassword, '--os-user-domain-id=default', '--os-project-domain-id=default', '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
@@ -995,13 +996,13 @@ if __name__ == "__main__":
         subprocess.call(['sudo', 'salt-call', '-l', 'quiet', 'state.sls', 'openstack.restart'])
         sleep(50)
         qcall = ['neutron', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
-                 ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
+                 ospassword, '--os-user-domain-id=default', '--os-project-domain-id=default', '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
                  ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         subprocess.call(qcall + ['subnet-delete', 'flat'])
         subprocess.call(qcall + ['subnet-delete', 'flat1'])
         subprocess.call(qcall + ['subnet-delete', 'ext-net'])
-        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-auth-url=http://localhost:5000/{authver} agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname,authver=keystone_auth_version)], shell=True)).split()
+        q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-user-domain-id=default --os-project-domain-id=default --os-auth-url=http://localhost:5000/{authver} agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname,authver=keystone_auth_version)], shell=True)).split()
         print q_delete_list
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
