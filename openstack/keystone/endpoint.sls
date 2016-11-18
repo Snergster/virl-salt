@@ -30,7 +30,7 @@ keystone endpoint:
 neutron endpoint:
   keystone.endpoint_present:
     - name: neutron
-    - publicurl: http://{{ public_ip }}:9696
+    - publicurl: http://{{ int_ip }}:9696
     - internalurl: http://{{ int_ip }}:9696
     - adminurl: http://{{ int_ip }}:9696
     - require:

@@ -83,6 +83,8 @@ soft_external_network_attach_authorize = extensions.soft_core_authorizer(
 _SESSION = None
 _ADMIN_AUTH = None
 
+DEFAULT_SECGROUP = 'default'
+
 
 def list_opts():
     opts = copy.deepcopy(_neutron_options)
@@ -116,7 +118,7 @@ def _load_auth_plugin(conf):
     if auth_plugin:
         return auth_plugin
 
-    err_msg = _('Unknown auth plugin: %s') % conf.neutron.auth_plugin
+    err_msg = _('Unknown auth type: %s') % conf.neutron.auth_type
     raise neutron_client_exc.Unauthorized(message=err_msg)
 
 
@@ -331,6 +333,8 @@ class API(base_api.NetworkAPI):
             if port_binding:
                 port_req_body['port']['binding:host_id'] = None
                 port_req_body['port']['binding:profile'] = {}
+            if constants.DNS_INTEGRATION in self.extensions:
+                port_req_body['port']['dns_name'] = ''
             try:
                 port_client.update_port(port_id, port_req_body)
             except neutron_client_exc.NotFound:
@@ -457,6 +461,17 @@ class API(base_api.NetworkAPI):
                     ordered_networks.append(request)
 
         return ports, net_ids, ordered_networks, available_macs
+
+    def _clean_security_groups(self, security_groups):
+        """Cleans security groups requested from Nova API
+
+        Neutron already passes a 'default' security group when
+        creating ports so it's not necessary to specify it to the
+        request.
+        """
+        if security_groups == [DEFAULT_SECGROUP]:
+            security_groups = []
+        return security_groups
 
     def _process_security_groups(self, instance, neutron, security_groups):
         """Processes and validates requested security groups for allocation.
@@ -605,7 +620,8 @@ class API(base_api.NetworkAPI):
         #                available net which is permitted bug/1364344
         self._check_external_network_attach(context, nets)
 
-        security_groups = kwargs.get('security_groups', [])
+        security_groups = self._clean_security_groups(
+            kwargs.get('security_groups', []))
         security_group_ids = self._process_security_groups(
                                     instance, neutron, security_groups)
 
@@ -626,17 +642,20 @@ class API(base_api.NetworkAPI):
                 continue
 
             nets_in_requested_order.append(network)
-            # If security groups are requested on an instance then the
-            # network must has a subnet associated with it. Some plugins
-            # implement the port-security extension which requires
-            # 'port_security_enabled' to be True for security groups.
-            # That is why True is returned if 'port_security_enabled'
-            # is not found.
-            if (security_groups and not (
-                    network['subnets']
-                    and network.get('port_security_enabled', True))):
 
-                raise exception.SecurityGroupCannotBeApplied()
+            port_security_enabled = network.get('port_security_enabled', True)
+            if port_security_enabled:
+                if not network.get('subnets'):
+                    # Neutron can't apply security groups to a port
+                    # for a network without L3 assignements.
+                    raise exception.SecurityGroupCannotBeApplied()
+            else:
+                if security_group_ids:
+                    # We don't want to apply security groups on port
+                    # for a network defined with
+                    # 'port_security_enabled=False'.
+                    raise exception.SecurityGroupCannotBeApplied()
+
             zone = 'compute:%s' % instance.availability_zone
             port_req_body = {'port': {'device_id': instance.uuid,
                                       'device_owner': zone}}
@@ -1421,7 +1440,20 @@ class API(base_api.NetworkAPI):
         fip = self._get_floating_ip_by_address(client, address)
         if not fip['port_id']:
             return None
-        port = self._show_port(context, fip['port_id'], neutron_client=client)
+
+        try:
+            port = self._show_port(context, fip['port_id'],
+                                   neutron_client=client)
+        except exception.PortNotFound:
+            # NOTE: Here is a potential race condition between _show_port() and
+            # _get_floating_ip_by_address(). fip['port_id'] shows a port which
+            # is the server instance's. At _get_floating_ip_by_address(),
+            # Neutron returns the list which includes the instance. Just after
+            # that, the deletion of the instance happens and Neutron returns
+            # 404 on _show_port().
+            LOG.debug('The port(%s) is not found', fip['port_id'])
+            return None
+
         return port['device_id']
 
     def get_vifs_by_instance(self, context, instance):
@@ -1523,8 +1555,18 @@ class API(base_api.NetworkAPI):
         This api call was added to allow this to be done in one operation
         if using neutron.
         """
-        self._release_floating_ip(context, floating_ip['address'],
-                                  raise_if_associated=False)
+
+        @base_api.refresh_cache
+        def _release_floating_ip_and_refresh_cache(self, context, instance,
+                                                   floating_ip):
+            self._release_floating_ip(context, floating_ip['address'],
+                                      raise_if_associated=False)
+        if instance:
+            _release_floating_ip_and_refresh_cache(self, context, instance,
+                                                   floating_ip)
+        else:
+            self._release_floating_ip(context, floating_ip['address'],
+                                      raise_if_associated=False)
 
     def _release_floating_ip(self, context, address,
                              raise_if_associated=True):
