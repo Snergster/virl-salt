@@ -27,6 +27,7 @@ import string
 import uuid
 
 from oslo_log import log as logging
+from oslo_messaging import exceptions as oslo_exceptions
 from oslo_serialization import jsonutils
 from oslo_utils import excutils
 from oslo_utils import strutils
@@ -1779,24 +1780,53 @@ class API(base.Base):
                        ram=-instance_memory_mb)
         return quotas
 
+    def _get_stashed_volume_connector(self, bdm, instance):
+        """Lookup a connector dict from the bdm.connection_info if set
+
+        Gets the stashed connector dict out of the bdm.connection_info if set
+        and the connector host matches the instance host.
+
+        :param bdm: nova.objects.block_device.BlockDeviceMapping
+        :param instance: nova.objects.instance.Instance
+        :returns: volume connector dict or None
+        """
+        if 'connection_info' in bdm and bdm.connection_info is not None:
+            # NOTE(mriedem): We didn't start stashing the connector in the
+            # bdm.connection_info until Mitaka so it might not be there on old
+            # attachments. Also, if the volume was attached when the instance
+            # was in shelved_offloaded state and it hasn't been unshelved yet
+            # we don't have the attachment/connection information either.
+            connector = jsonutils.loads(bdm.connection_info).get('connector')
+            if connector:
+                if connector.get('host') == instance.host:
+                    return connector
+                LOG.debug('Found stashed volume connector for instance but '
+                          'connector host %(connector_host)s does not match '
+                          'the instance host %(instance_host)s.',
+                          {'connector_host': connector.get('host'),
+                           'instance_host': instance.host}, instance=instance)
+
     def _local_cleanup_bdm_volumes(self, bdms, instance, context):
         """The method deletes the bdm records and, if a bdm is a volume, call
         the terminate connection and the detach volume via the Volume API.
-        Note that at this point we do not have the information about the
-        correct connector so we pass a fake one.
         """
         elevated = context.elevated()
         for bdm in bdms:
             if bdm.is_volume:
-                # NOTE(vish): We don't have access to correct volume
-                #             connector info, so just pass a fake
-                #             connector. This can be improved when we
-                #             expose get_volume_connector to rpc.
-                connector = {'ip': '127.0.0.1', 'initiator': 'iqn.fake'}
                 try:
-                    self.volume_api.terminate_connection(context,
-                                                         bdm.volume_id,
-                                                         connector)
+                    connector = self._get_stashed_volume_connector(
+                        bdm, instance)
+                    if connector:
+                        self.volume_api.terminate_connection(context,
+                                                             bdm.volume_id,
+                                                             connector)
+                    else:
+                        LOG.debug('Unable to find connector for volume %s, '
+                                  'not attempting terminate_connection.',
+                                  bdm.volume_id, instance=instance)
+                    # Attempt to detach the volume. If there was no connection
+                    # made in the first place this is just cleaning up the
+                    # volume state in the Cinder database.
                     self.volume_api.detach(elevated, bdm.volume_id,
                                            instance.uuid)
                     if bdm.delete_on_termination:
@@ -2270,6 +2300,13 @@ class API(base.Base):
 
         image_meta = self._initialize_instance_snapshot_metadata(
             instance, name, properties)
+        # if we're making a snapshot, omit the disk and container formats,
+        # since the image may have been converted to another format, and the
+        # original values won't be accurate.  The driver will populate these
+        # with the correct values later, on image upload.
+        if image_type == 'snapshot':
+            image_meta.pop('disk_format', None)
+            image_meta.pop('container_format', None)
         return self.image_api.create(context, image_meta)
 
     def _initialize_instance_snapshot_metadata(self, instance, name,
@@ -3358,10 +3395,19 @@ class API(base.Base):
             # Some old instances can still have no RequestSpec object attached
             # to them, we need to support the old way
             request_spec = None
-        self.compute_task_api.live_migrate_instance(context, instance,
+        try:
+            self.compute_task_api.live_migrate_instance(context, instance,
                 host_name, block_migration=block_migration,
                 disk_over_commit=disk_over_commit,
                 request_spec=request_spec)
+        except oslo_exceptions.MessagingTimeout as messaging_timeout:
+            with excutils.save_and_reraise_exception():
+                # NOTE(pkoniszewski): It is possible that MessagingTimeout
+                # occurs, but LM will still be in progress, so write
+                # instance fault to database
+                compute_utils.add_instance_fault_from_exc(context,
+                                                          instance,
+                                                          messaging_timeout)
 
     @check_instance_lock
     @check_instance_cell
@@ -4147,13 +4193,16 @@ class SecurityGroupAPI(base.Base, security_group_base.SecurityGroupBase):
 
     def get(self, context, name=None, id=None, map_exception=False):
         self.ensure_default(context)
+        cols = ['rules']
         try:
             if name:
                 return self.db.security_group_get_by_name(context,
                                                           context.project_id,
-                                                          name)
+                                                          name,
+                                                          columns_to_join=cols)
             elif id:
-                return self.db.security_group_get(context, id)
+                return self.db.security_group_get(context, id,
+                                                  columns_to_join=cols)
         except exception.NotFound as exp:
             if map_exception:
                 msg = exp.format_message()

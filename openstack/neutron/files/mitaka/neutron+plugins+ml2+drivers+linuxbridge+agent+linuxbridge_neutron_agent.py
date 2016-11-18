@@ -374,7 +374,7 @@ class LinuxBridgeManager(amb.CommonAgentManagerBase):
         if bridge_name not in self.known_bridges:
             bridge_device.set_group_fwd_mask()
             bridge_device.set_ageing(cfg.CONF.network_bridge_ageing,
-                                     cfg.CONF.network_physical_ageing,
+                                     cfg.CONG.network_physical_ageing,
                                      physical)
             bridge_device.set_multicast_snooping(cfg.CONF.network_bridge_multicast_snooping)
             bridge_device.disable_stp()
@@ -719,10 +719,12 @@ class LinuxBridgeManager(amb.CommonAgentManagerBase):
         return (agent_ip in entries and mac in entries)
 
     def add_fdb_ip_entry(self, mac, ip, interface):
-        ip_lib.IPDevice(interface).neigh.add(ip, mac)
+        if cfg.CONF.VXLAN.arp_responder:
+            ip_lib.IPDevice(interface).neigh.add(ip, mac)
 
     def remove_fdb_ip_entry(self, mac, ip, interface):
-        ip_lib.IPDevice(interface).neigh.delete(ip, mac)
+        if cfg.CONF.VXLAN.arp_responder:
+            ip_lib.IPDevice(interface).neigh.delete(ip, mac)
 
     def add_fdb_bridge_entry(self, mac, agent_ip, interface, operation="add"):
         utils.execute(['bridge', 'fdb', operation, mac, 'dev', interface,

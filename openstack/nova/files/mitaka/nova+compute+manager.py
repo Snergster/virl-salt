@@ -3543,7 +3543,8 @@ class ComputeManager(manager.Manager):
                 migration.save()
 
             rt = self._get_resource_tracker(migration.source_node)
-            rt.drop_move_claim(context, instance, old_instance_type)
+            rt.drop_move_claim(context, instance, old_instance_type,
+                               prefix='old_')
 
             # NOTE(mriedem): The old_vm_state could be STOPPED but the user
             # might have manually powered up the instance to confirm the
@@ -4254,6 +4255,14 @@ class ComputeManager(manager.Manager):
         :param image_id: an image id to snapshot to.
         :param clean_shutdown: give the GuestOS a chance to stop
         """
+
+        @utils.synchronized(instance.uuid)
+        def do_shelve_instance():
+            self._shelve_instance(context, instance, image_id, clean_shutdown)
+        do_shelve_instance()
+
+    def _shelve_instance(self, context, instance, image_id,
+                         clean_shutdown):
         compute_utils.notify_usage_exists(self.notifier, context, instance,
                                           current_period=True)
         self._notify_about_instance_usage(context, instance, 'shelve.start')
@@ -4288,8 +4297,8 @@ class ComputeManager(manager.Manager):
         self._notify_about_instance_usage(context, instance, 'shelve.end')
 
         if CONF.shelved_offload_time == 0:
-            self.shelve_offload_instance(context, instance,
-                                         clean_shutdown=False)
+            self._shelve_offload_instance(context, instance,
+                                          clean_shutdown=False)
 
     @wrap_exception()
     @reverts_task_state
@@ -4306,6 +4315,13 @@ class ComputeManager(manager.Manager):
         :param instance: nova.objects.instance.Instance
         :param clean_shutdown: give the GuestOS a chance to stop
         """
+
+        @utils.synchronized(instance.uuid)
+        def do_shelve_offload_instance():
+            self._shelve_offload_instance(context, instance, clean_shutdown)
+        do_shelve_offload_instance()
+
+    def _shelve_offload_instance(self, context, instance, clean_shutdown):
         self._notify_about_instance_usage(context, instance,
                 'shelve_offload.start')
 
@@ -4321,14 +4337,18 @@ class ComputeManager(manager.Manager):
                 block_device_info)
 
         instance.power_state = current_power_state
-        instance.host = None
-        instance.node = None
         instance.vm_state = vm_states.SHELVED_OFFLOADED
         instance.task_state = None
         instance.save(expected_task_state=[task_states.SHELVING,
                                            task_states.SHELVING_OFFLOADING])
-        # NOTE(ndipanov): This frees the resources with the resource_tracker
+
+        # NOTE(ndipanov): Free resources from the resource tracker
         self._update_resource_tracker(context, instance)
+
+        # NOTE(sfinucan): RPC calls should no longer be attempted against this
+        # instance, so ensure any calls result in errors
+        self._nil_out_instance_obj_host_and_node(instance)
+        instance.save(expected_task_state=None)
 
         self._delete_scheduler_instance_info(context, instance.uuid)
         self._notify_about_instance_usage(context, instance,
@@ -4747,7 +4767,7 @@ class ComputeManager(manager.Manager):
         self._notify_about_instance_usage(
             context, instance, "volume.attach", extra_usage_info=info)
 
-    def _driver_detach_volume(self, context, instance, bdm):
+    def _driver_detach_volume(self, context, instance, bdm, connection_info):
         """Do the actual driver detach using block device mapping."""
         mp = bdm.device_name
         volume_id = bdm.volume_id
@@ -4756,11 +4776,6 @@ class ComputeManager(manager.Manager):
                   {'volume_id': volume_id, 'mp': mp},
                   context=context, instance=instance)
 
-        connection_info = jsonutils.loads(bdm.connection_info)
-        # NOTE(vish): We currently don't use the serial when disconnecting,
-        #             but added for completeness in case we ever do.
-        if connection_info and 'serial' not in connection_info:
-            connection_info['serial'] = volume_id
         try:
             if not self.driver.instance_exists(instance):
                 LOG.warning(_LW('Detaching volume from unknown instance'),
@@ -4785,8 +4800,6 @@ class ComputeManager(manager.Manager):
                               {'volume_id': volume_id, 'mp': mp},
                               context=context, instance=instance)
                 self.volume_api.roll_detaching(context, volume_id)
-
-        return connection_info
 
     def _detach_volume(self, context, volume_id, instance, destroy_bdm=True,
                        attachment_id=None):
@@ -4832,8 +4845,21 @@ class ComputeManager(manager.Manager):
                 self.notifier.info(context, 'volume.usage',
                                    compute_utils.usage_volume_info(vol_usage))
 
-        connection_info = self._driver_detach_volume(context, instance, bdm)
+        connection_info = jsonutils.loads(bdm.connection_info)
         connector = self.driver.get_volume_connector(instance)
+        if CONF.host == instance.host:
+            # Only attempt to detach and disconnect from the volume if the
+            # instance is currently associated with the local compute host.
+            self._driver_detach_volume(context, instance, bdm, connection_info)
+        elif not destroy_bdm:
+            LOG.debug("Skipping _driver_detach_volume during remote rebuild.",
+                      instance=instance)
+        elif destroy_bdm:
+            LOG.error(_LE("Unable to call for a driver detach of volume "
+                          "%(vol_id)s due to the instance being registered to "
+                          "the remote host %(inst_host)s."),
+                      {'vol_id': volume_id, 'inst_host': instance.host},
+                      instance=instance)
 
         if connection_info and not destroy_bdm and (
            connector.get('host') != instance.host):
@@ -5022,7 +5048,8 @@ class ComputeManager(manager.Manager):
         try:
             bdm = objects.BlockDeviceMapping.get_by_volume_and_instance(
                     context, volume_id, instance.uuid)
-            self._driver_detach_volume(context, instance, bdm)
+            connection_info = jsonutils.loads(bdm.connection_info)
+            self._driver_detach_volume(context, instance, bdm, connection_info)
             connector = self.driver.get_volume_connector(instance)
             self.volume_api.terminate_connection(context, volume_id, connector)
         except exception.NotFound:
@@ -5282,7 +5309,7 @@ class ComputeManager(manager.Manager):
             with excutils.save_and_reraise_exception():
                 LOG.exception(_LE('Pre live migration failed at %s'),
                               dest, instance=instance)
-                self._set_migration_status(migration, 'failed')
+                self._set_migration_status(migration, 'error')
                 self._rollback_live_migration(context, instance, dest,
                                               block_migration, migrate_data)
 
@@ -5302,7 +5329,7 @@ class ComputeManager(manager.Manager):
             # nothing must be recovered in this version.
             LOG.exception(_LE('Live migration failed.'), instance=instance)
             with excutils.save_and_reraise_exception():
-                self._set_migration_status(migration, 'failed')
+                self._set_migration_status(migration, 'error')
 
     @wrap_exception()
     @wrap_instance_event
@@ -6793,28 +6820,29 @@ class ComputeManager(manager.Manager):
                                          in migrations])
 
         inst_filters = {'deleted': True, 'soft_deleted': False,
-                        'uuid': inst_uuid_from_migrations, 'host': CONF.host}
+                        'uuid': inst_uuid_from_migrations}
         attrs = ['info_cache', 'security_groups', 'system_metadata']
         with utils.temporary_mutation(context, read_deleted='yes'):
             instances = objects.InstanceList.get_by_filters(
                 context, inst_filters, expected_attrs=attrs, use_slave=True)
 
         for instance in instances:
-            for migration in migrations:
-                if instance.uuid == migration.instance_uuid:
-                    # Delete instance files if not cleanup properly either
-                    # from the source or destination compute nodes when
-                    # the instance is deleted during resizing.
-                    self.driver.delete_instance_files(instance)
-                    try:
-                        migration.status = 'failed'
-                        with migration.obj_as_admin():
-                            migration.save()
-                    except exception.MigrationNotFound:
-                        LOG.warning(_LW("Migration %s is not found."),
-                                    migration.id, context=context,
-                                    instance=instance)
-                    break
+            if instance.host != CONF.host:
+                for migration in migrations:
+                    if instance.uuid == migration.instance_uuid:
+                        # Delete instance files if not cleanup properly either
+                        # from the source or destination compute nodes when
+                        # the instance is deleted during resizing.
+                        self.driver.delete_instance_files(instance)
+                        try:
+                            migration.status = 'failed'
+                            with migration.obj_as_admin():
+                                migration.save()
+                        except exception.MigrationNotFound:
+                            LOG.warning(_LW("Migration %s is not found."),
+                                        migration.id, context=context,
+                                        instance=instance)
+                        break
 
     @messaging.expected_exceptions(exception.InstanceQuiesceNotSupported,
                                    exception.QemuGuestAgentNotEnabled,

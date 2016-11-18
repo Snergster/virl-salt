@@ -903,6 +903,14 @@ class LibvirtDriver(driver.ComputeDriver):
     def _destroy(self, instance, attempt=1):
         try:
             guest = self._host.get_guest(instance)
+            if CONF.serial_console.enabled:
+                # This method is called for several events: destroy,
+                # rebuild, hard-reboot, power-off - For all of these
+                # events we want to release the serial ports acquired
+                # for the guest before destroying it.
+                serials = self._get_serial_ports_from_guest(guest)
+                for hostname, port in serials:
+                    serial_console.release_port(host=hostname, port=port)
         except exception.InstanceNotFound:
             guest = None
 
@@ -1140,15 +1148,6 @@ class LibvirtDriver(driver.ComputeDriver):
             if success:
                 instance.cleaned = True
             instance.save()
-
-        if CONF.serial_console.enabled:
-            try:
-                guest = self._host.get_guest(instance)
-                serials = self._get_serial_ports_from_guest(guest)
-                for hostname, port in serials:
-                    serial_console.release_port(host=hostname, port=port)
-            except exception.InstanceNotFound:
-                pass
 
         self._undefine_domain(instance)
 
@@ -3581,6 +3580,15 @@ class LibvirtDriver(driver.ComputeDriver):
         image = self.image_backend.image(instance,
                                          name,
                                          image_type)
+        if (name == 'disk.config' and image_type == 'rbd' and
+                not image.check_image_exists()):
+            # This is likely an older config drive that has not been migrated
+            # to rbd yet. Try to fall back on 'raw' image type.
+            # TODO(melwitt): Add online migration of some sort so we can
+            # remove this fall back once we know all config drives are in rbd.
+            image = self.image_backend.image(instance, name, 'raw')
+            LOG.debug('Config drive not found in RBD, falling back to the '
+                      'instance directory', instance=instance)
         disk_info = disk_mapping[name]
         return image.libvirt_info(disk_info['bus'],
                                   disk_info['dev'],
@@ -5588,6 +5596,17 @@ class LibvirtDriver(driver.ComputeDriver):
                            {'uuid': instance.uuid, 'libvirt_ver': ver})
                     LOG.error(msg, instance=instance)
                     raise exception.MigrationPreCheckError(reason=msg)
+                # NOTE(eliqiao): Selective disk migrations are not supported
+                # with tunnelled block migrations so we can block them early.
+                if (bdm and
+                    (self._block_migration_flags &
+                     libvirt.VIR_MIGRATE_TUNNELLED != 0)):
+                    msg = (_('Cannot block migrate instance %(uuid)s with'
+                             ' mapped volumes. Selective block device'
+                             ' migration is not supported with tunnelled'
+                             ' block migrations.') % {'uuid': instance.uuid})
+                    LOG.error(msg, instance=instance)
+                    raise exception.MigrationPreCheckError(reason=msg)
         elif not (dest_check_data.is_shared_block_storage or
                   dest_check_data.is_shared_instance_path or
                   (booted_from_volume and not has_local_disk)):
@@ -5696,8 +5715,13 @@ class LibvirtDriver(driver.ComputeDriver):
             raise exception.
         """
 
-        # NOTE(berendt): virConnectCompareCPU not working for Xen
-        if CONF.libvirt.virt_type not in ['qemu', 'kvm']:
+        # NOTE(kchamart): Comparing host to guest CPU model for emulated
+        # guests (<domain type='qemu'>) should not matter -- in this
+        # mode (QEMU "TCG") the CPU is fully emulated in software and no
+        # hardware acceleration, like KVM, is involved. So, skip the CPU
+        # compatibility check for the QEMU domain type, and retain it for
+        # KVM guests.
+        if CONF.libvirt.virt_type not in ['kvm']:
             return
 
         if guest_cpu is None:
@@ -5752,6 +5776,14 @@ class LibvirtDriver(driver.ComputeDriver):
 
         Cannot confirm tmpfile return False.
         """
+        # NOTE(tpatzig): if instances_path is a shared volume that is
+        # under heavy IO (many instances on many compute nodes),
+        # then checking the existence of the testfile fails,
+        # just because it takes longer until the client refreshes and new
+        # content gets visible.
+        # os.utime (like touch) on the directory forces the client to refresh.
+        os.utime(CONF.instances_path, None)
+
         tmp_file = os.path.join(CONF.instances_path, filename)
         if not os.path.exists(tmp_file):
             return False
@@ -6049,6 +6081,18 @@ class LibvirtDriver(driver.ComputeDriver):
                             'destination_xml': new_xml_str,
                             'migrate_disks': device_names,
                         }
+                        # NOTE(pkoniszewski): Because of precheck which blocks
+                        # tunnelled block live migration with mapped volumes we
+                        # can safely remove migrate_disks when tunnelling is
+                        # on. Otherwise we will block all tunnelled block
+                        # migrations, even when an instance does not have
+                        # volumes mapped. This is because selective disk
+                        # migration is not supported in tunnelled block live
+                        # migration. Also we cannot fallback to migrateToURI2
+                        # in this case because of bug #1398999
+                        if (migration_flags &
+                            libvirt.VIR_MIGRATE_TUNNELLED != 0):
+                            params.pop('migrate_disks')
                         dom.migrateToURI3(
                             self._live_migration_uri(dest),
                             params,
@@ -6202,10 +6246,12 @@ class LibvirtDriver(driver.ComputeDriver):
         device_names = []
         block_devices = []
 
-        # TODO(pkoniszewski): Remove this if-statement when we bump min libvirt
-        # version to >= 1.2.17
-        if self._host.has_min_version(
-                MIN_LIBVIRT_BLOCK_LM_WITH_VOLUMES_VERSION):
+        # TODO(pkoniszewski): Remove version check when we bump min libvirt
+        # version to >= 1.2.17.
+        if (self._block_migration_flags &
+                libvirt.VIR_MIGRATE_TUNNELLED == 0 and
+                self._host.has_min_version(
+                    MIN_LIBVIRT_BLOCK_LM_WITH_VOLUMES_VERSION)):
             bdm_list = objects.BlockDeviceMappingList.get_by_instance_uuid(
                 context, instance.uuid)
             block_device_info = driver.get_block_device_info(instance,
@@ -6341,6 +6387,7 @@ class LibvirtDriver(driver.ComputeDriver):
                 abort = False
 
                 if ((progress_watermark is None) or
+                    (progress_watermark == 0) or
                     (progress_watermark > info.data_remaining)):
                     progress_watermark = info.data_remaining
                     progress_time = now
@@ -6628,22 +6675,6 @@ class LibvirtDriver(driver.ComputeDriver):
             is_shared_instance_path = migrate_data.is_shared_instance_path
             is_block_migration = migrate_data.block_migration
 
-        if configdrive.required_by(instance):
-                # NOTE(sileht): configdrive is stored into the block storage
-                # kvm is a block device, live migration will work
-                # NOTE(sileht): the configdrive is stored into a shared path
-                # kvm don't need to migrate it, live migration will work
-                # NOTE(dims): Using config drive with iso format does not work
-                # because of a bug in libvirt with read only devices. However
-                # one can use vfat as config_drive_format which works fine.
-                # Please see bug/1246201 for details on the libvirt bug.
-            if (is_shared_block_storage or
-                is_shared_instance_path or
-                CONF.config_drive_format == 'vfat'):
-                pass
-            else:
-                raise exception.NoLiveMigrationForConfigDriveInLibVirt()
-
         if not is_shared_instance_path:
             instance_dir = libvirt_utils.get_instance_path_at_destination(
                             instance, migrate_data)
@@ -6680,6 +6711,19 @@ class LibvirtDriver(driver.ComputeDriver):
                 self._create_images_and_backing(
                     context, instance, instance_dir, disk_info,
                     fallback_from_host=instance.host)
+                if (configdrive.required_by(instance) and
+                        CONF.config_drive_format == 'iso9660'):
+                    # NOTE(pkoniszewski): Due to a bug in libvirt iso config
+                    # drive needs to be copied to destination prior to
+                    # migration when instance path is not shared and block
+                    # storage is not shared. Files that are already present
+                    # on destination are excluded from a list of files that
+                    # need to be copied to destination. If we don't do that
+                    # live migration will fail on copying iso config drive to
+                    # destination and writing to read-only device.
+                    # Please see bug/1246201 for more details.
+                    src = "%s:%s/disk.config" % (instance.host, instance_dir)
+                    self._remotefs.copy_file(src, instance_dir)
 
             if not is_block_migration:
                 # NOTE(angdraug): when block storage is shared between source
