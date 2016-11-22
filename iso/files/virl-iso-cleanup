@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Check to see if /dev/loop0 exists, and drop out if it does.  Otherwise
+# we are on the target / installed system, so delete the ISO build artifacts.
+
+if [ -e /cdrom/casper/vmlinuz ]
+then
+	exit 0
+elif [ -e /etc/network/interfaces.virl ]
+then
+    /bin/mv -f /etc/network/interfaces.virl /etc/network/interfaces
+    /bin/rm -r /home/distroshare
+    /bin/rm -r /home/virl/distroshare*
+	/bin/rm /home/virl/Desktop/ubiquity.desktop
+	systemctl disable virl-iso-cleanup
+        /bin/rm /home/virl/iso.builder.tar.gz
+	/bin/rm /home/virl/ub.new.tar.gz
+	/bin/rm /home/virl/go.sh
+	exit 0
+else
+    exit 0
+fi
