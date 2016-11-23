@@ -243,6 +243,11 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl-core.ini host ram_overcommit {{ virl.ram_overcommit }}
       - crudini --set /etc/virl/virl-core.ini host cpu_overcommit {{ virl.cpu_overcommit }}
       - crudini --del /etc/virl/virl-core.ini env virl_local_ip
+     {% if virl.mitaka %}
+      - crudini --set /etc/virl/virl-core.ini linuxbridge bridge_flat br1
+      - crudini --set /etc/virl/virl-core.ini linuxbridge bridge_flat1 br2
+      - crudini --set /etc/virl/virl-core.ini linuxbridge bridge_ext-net br3
+     {% endif %}
      {% if virl.salt_transport_tcp %}
       - crudini --set /etc/virl/common.cfg licensing offered_salt_masters {{ virl.salt_master_tcp_default }}
       # new location
