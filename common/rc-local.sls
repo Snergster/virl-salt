@@ -50,6 +50,7 @@ bridge rclocal:
              /sbin/ifup br2
              /sbin/ifup br3
              /sbin/ifup br4
+             /sbin/ifup eth0
   {% else %}
 
 dummy-rclocal:
