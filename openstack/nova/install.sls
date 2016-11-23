@@ -121,6 +121,7 @@ add libvirt-qemu to nova:
     'nova+compute+rpcapi.py',
     'nova+console+websocketproxy.py',
     'nova+exception.py',
+    'nova+image+glance.py',
     'nova+network+neutronv2+api.py',
     'nova+virt+configdrive.py',
     'nova+virt+driver.py',
