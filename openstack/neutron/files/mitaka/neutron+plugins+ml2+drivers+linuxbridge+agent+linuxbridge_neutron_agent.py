@@ -374,7 +374,7 @@ class LinuxBridgeManager(amb.CommonAgentManagerBase):
         if bridge_name not in self.known_bridges:
             bridge_device.set_group_fwd_mask()
             bridge_device.set_ageing(cfg.CONF.network_bridge_ageing,
-                                     cfg.CONG.network_physical_ageing,
+                                     cfg.CONF.network_physical_ageing,
                                      physical)
             bridge_device.set_multicast_snooping(cfg.CONF.network_bridge_multicast_snooping)
             bridge_device.disable_stp()
