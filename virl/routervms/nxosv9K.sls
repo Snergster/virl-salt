@@ -2,6 +2,7 @@
 
 include:
   - virl.routervms.virl-core-sync
+  - virl.efibios
 
 {% if virl.nxosv9k and virl.nxosv9kpref %}
 nxosv9k:
