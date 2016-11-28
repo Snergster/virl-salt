@@ -44,6 +44,17 @@ asav flavor create:
     - require:
       - cmd: asav flavor delete
 
+asav flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'ASAv'
+    - profile: virl
+    - ram: 2048
+    - disk: 0
+    - vcpus: 1
+    - onfail:
+      - module: 'asav flavor create'
+
 {% else %}
 
 asav gone:

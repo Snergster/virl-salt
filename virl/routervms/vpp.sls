@@ -39,6 +39,17 @@ vPP flavor create:
     - require:
       - cmd: vPP flavor delete
 
+vPP flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'vPP'
+    - profile: virl
+    - ram: 2048
+    - disk: 0
+    - vcpus: 2
+    - onfail:
+      - module: 'vPP flavor create'
+
 {% else %}
 
 vPP gone:

@@ -42,6 +42,17 @@ UbuntuServertrusty flavor create:
     - require:
       - cmd: UbuntuServertrusty flavor delete
 
+UbuntuServertrusty flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'server'
+    - profile: virl
+    - ram: 512
+    - disk: 0
+    - vcpus: 1
+    - onfail:
+      - module: 'UbuntuServertrusty flavor create'
+
 {% else %}
 
 UbuntuServertrusty gone:

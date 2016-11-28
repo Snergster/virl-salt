@@ -44,6 +44,17 @@ nxosv9k flavor create:
     - require:
       - cmd: nxosv9k flavor delete
 
+nxosv9k flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'nxosv9k'
+    - profile: virl
+    - ram: 8192
+    - disk: 0
+    - vcpus: 2
+    - onfail:
+      - module: 'nxosv9k flavor create'
+
 {% else %}
 
 nxosv9k gone:

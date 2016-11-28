@@ -39,6 +39,17 @@ kali flavor create:
     - require:
       - cmd: kali flavor delete
 
+kali flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'kali'
+    - profile: virl
+    - ram: 2048
+    - disk: 0
+    - vcpus: 1
+    - onfail:
+      - module: 'kali flavor create'
+
 {% else %}
 
 kali gone:

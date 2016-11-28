@@ -43,6 +43,17 @@ NX-OSv flavor create:
     - require:
       - cmd: NX-OSv flavor delete
 
+NX-OSv flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'NX-OSv'
+    - profile: virl
+    - ram: 3072
+    - disk: 0
+    - vcpus: 1
+    - onfail:
+      - module: 'NX-OSv flavor create'
+
 {% else %}
 
 NX-OSv gone:

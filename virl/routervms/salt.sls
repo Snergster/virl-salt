@@ -39,6 +39,17 @@ vsalt flavor create:
     - require:
       - cmd: vsalt flavor delete
 
+vsalt flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'vsalt'
+    - profile: virl
+    - ram: 512
+    - disk: 0
+    - vcpus: 1
+    - onfail:
+      - module: 'vsalt flavor create'
+
 {% else %}
 
 vsalt gone:

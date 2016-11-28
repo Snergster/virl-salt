@@ -45,6 +45,17 @@ vpagent flavor create:
     - require:
       - cmd: vpagent flavor delete
 
+vpagent flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'vpagent'
+    - profile: virl
+    - ram: 512
+    - disk: 0
+    - vcpus: 1
+    - onfail:
+      - module: 'vpagent flavor create'
+
 {% else %}
 
 vpagent gone:

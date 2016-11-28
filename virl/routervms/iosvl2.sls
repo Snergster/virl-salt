@@ -54,6 +54,17 @@ IOSvL2 flavor create:
     - require:
       - cmd: IOSvL2 flavor delete
 
+IOSvL2 flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'IOSvL2'
+    - profile: virl
+    - ram: 768
+    - disk: 0
+    - vcpus: 1
+    - onchanges:
+      - module: 'IOSvL2 flavor create'
+
 {% else %}
 
 IOSvL2 gone:

@@ -41,6 +41,17 @@ coreos flavor create:
     - require:
       - cmd: coreos flavor delete
 
+coreos flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'coreos'
+    - profile: virl
+    - ram: 2048
+    - disk: 0
+    - vcpus: 2
+    - onfail:
+      - module: 'coreos flavor create'
+
 {% else %}
 
 coreos gone:

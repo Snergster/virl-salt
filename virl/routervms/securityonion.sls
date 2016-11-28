@@ -39,6 +39,17 @@ security-onion flavor create:
     - require:
       - cmd: security-onion flavor delete
 
+security-onion flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'security-onion'
+    - profile: virl
+    - ram: 3096
+    - disk: 8
+    - vcpus: 1
+    - onfail:
+      - module: 'security-onion flavor create'
+
 {% else %}
 
 security-onion gone:

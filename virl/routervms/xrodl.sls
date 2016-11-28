@@ -39,3 +39,13 @@ iosxrv flavor create:
     - require:
       - cmd: iosxrv flavor delete
 
+iosxrv flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'IOS XRv'
+    - profile: virl
+    - ram: 3096
+    - disk: 0
+    - vcpus: 1
+    - onfail:
+      - module: 'iosxrv flavor create'

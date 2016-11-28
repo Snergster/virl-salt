@@ -52,6 +52,17 @@ iosv flavor create:
     - require:
       - cmd: iosv flavor delete
 
+iosv flavor create2:
+  module.run:
+    - name: nova.flavor_create
+    - m_name: 'IOSv'
+    - profile: virl
+    - ram: 512
+    - disk: 0
+    - vcpus: 1
+    - onfail:
+      - module: 'iosv flavor create'
+
 {% else %}
 
 iosv gone:
