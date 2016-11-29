@@ -16,8 +16,6 @@ apache dir reset:
     - source_hash: {{ virl.virlweb }}
 {% endif %}
     - if_missing: /var/www/html/index.html
-    - require:
-      - file: apache dir reset
 
 servername prepend:
   file.replace:
