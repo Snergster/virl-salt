@@ -184,4 +184,8 @@ cloud conf hostname hack:
     - name: /etc/cloud/cloud.cfg
     - text: 'preserve_hostname: true'
 
+add i386 arch support:
+  cmd.run:
+    - name: 'dpkg --add-architecture i386'
+
 {% endif %}

@@ -19,14 +19,6 @@ include:
 
 {% endif %}
 
-
-{% if virl.packet %}
-add i386 arch support:
-  cmd.run:
-    - name: 'dpkg --add-architecture i386'
-
-{% endif %}
-
 std prereq pkgs:
   pkg.installed:
 {% if virl.packet %}
@@ -35,11 +27,6 @@ std prereq pkgs:
       - pkgs:
         - libxml2-dev
         - libxslt1-dev
-{% if 'xenial' in salt['grains.get']('oscodename') %}
-        - libc6-i386
-{% else %}
-        - libc6:i386
-{% endif %}
 
 std_prereq_webmux:
   pip.installed:
