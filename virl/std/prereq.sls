@@ -1,6 +1,17 @@
 
 {% from "virl.jinja" import virl with context %}
 
+{% if virl.proxy %}
+http_proxy:
+  environ.setenv:
+    - value: {{ virl.http_proxy }}
+
+https_proxy:
+  environ.setenv:
+    - value: {{ virl.http_proxy }}
+
+{% endif %}
+
 {% if virl.mitaka %}
 
 include:
@@ -28,9 +39,6 @@ std prereq pkgs:
 
 std_prereq_webmux:
   pip.installed:
-  {% if virl.proxy %}
-    - proxy: {{ virl.http_proxy }}
-  {% endif %}
     - require:
       - pkg: std prereq pkgs
     - names:
@@ -47,9 +55,6 @@ std_prereq_webmux:
 
 std_prereq:
   pip.installed:
-{% if virl.proxy %}
-    - proxy: {{ virl.http_proxy }}
-{% endif %}
     - names:
       - docker-py >= 1.3.1
       - ipaddr >= 2.1.11
