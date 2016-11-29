@@ -16,6 +16,9 @@ apache dir reset:
     - source_hash: {{ virl.virlweb }}
 {% endif %}
     - if_missing: /var/www/html/index.html
+{% if salt_minor_version == 11 %}
+    - enforce_toplevel: false
+{% endif %}
 
 servername prepend:
   file.replace:

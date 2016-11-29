@@ -21,6 +21,7 @@
     'salt_id' : salt['pillar.get']('virl:salt_id', salt['grains.get']('salt_id', 'virl')),
     'salt_transport_tcp' : salt['pillar.get']('virl:salt_transport_tcp', salt['grains.get']('salt_transport_tcp', false)),
     'salt_domain' : salt['pillar.get']('virl:salt_domain', salt['grains.get']('salt_domain', 'virl.info')),
+    'salt_minor_version' : salt['grains.get']('saltversioninfo')[1],
 	'masterless' : salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)),
     'l2_port' : salt['pillar.get']('virl:l2_port', salt['grains.get']('l2_port', 'eth1' )),
     'l2_network' : salt['pillar.get']('virl:l2_network', salt['grains.get']('l2_network', '172.16.1.0/24' )),

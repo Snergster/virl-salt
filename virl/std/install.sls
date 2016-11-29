@@ -62,6 +62,9 @@ std docs:
     {% endif %}
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
+{% if salt_minor_version == 11 %}
+    - enforce_toplevel: false
+{% endif %}
 {% if not virl.cml %}
     - require:
       - file: std doc cleaner
