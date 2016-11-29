@@ -35,7 +35,11 @@ std prereq pkgs:
       - pkgs:
         - libxml2-dev
         - libxslt1-dev
+{% if 'xenial' in salt['grains.get']('oscodename') %}
+        - libc6-i386
+{% else %}
         - libc6:i386
+{% endif %}
 
 std_prereq_webmux:
   pip.installed:

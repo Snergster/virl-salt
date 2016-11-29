@@ -28,16 +28,24 @@ vpn maximize:
       - crudini --set /etc/nova/nova.conf DEFAULT serial_port_proxyclient_address {{ virl.l2_address_iponly }}
 
 {% if not flat_gateway == virl.l2_address_iponly %}
-{{flat_gateway}} subnet update:
+flat gateway subnet update:
   cmd.run:
+  {% if virl.mitaka %}
+    - name: neutron --os-tenant-name admin --os-user-domain-id=default --os-project-domain-id=default --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat --gateway_ip {{ virl.l2_address_iponly }}
+  {% else %}
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat --gateway_ip {{ virl.l2_address_iponly }}
+  {% endif %}
 {% endif %}
 
 {% if not flat1_gateway == virl.l2_address2_iponly %}
 
 flat1 subnet update:
   cmd.run:
+  {% if virl.mitaka %}
+    - name: neutron --os-tenant-name admin --os-user-domain-id=default --os-project-domain-id=default --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat1 --gateway_ip {{ virl.l2_address2_iponly }}
+  {% else %}
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update flat1 --gateway_ip {{ virl.l2_address2_iponly }}
+  {% endif %}
 
 {% endif %}
 
@@ -45,7 +53,11 @@ flat1 subnet update:
 
 extnet subnet update:
   cmd.run:
+  {% if virl.mitaka %}
+    - name: neutron --os-tenant-name admin --os-user-domain-id=default --os-project-domain-id=default --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update ext-net --gateway_ip {{ virl.l3_address_iponly }}
+  {% else %}
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-update ext-net --gateway_ip {{ virl.l3_address_iponly }}
+  {% endif %}
 
 {% endif %}
 
