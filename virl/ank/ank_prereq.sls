@@ -36,7 +36,7 @@ ank prereq:
       - certifi >= 14.5.14
       - backports.ssl_match_hostname >= 3.4.0.2
       - netaddr == 0.7.15
-      - networkx >= 1.7
+      - networkx == 1.7
       - PyYAML >= 3.10
       - pexpect == 3.1
       - pyparsing >= 2.0.1
