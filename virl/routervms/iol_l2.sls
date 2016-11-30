@@ -5,7 +5,7 @@ include:
 
 {% if virl.iol_l2pref %}
 
-iol prereq pkgs:
+iol-l2 prereq pkgs:
   pkg.installed:
 {% if virl.packet %}
       - refresh: True
