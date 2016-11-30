@@ -1,3 +1,4 @@
+{% from "virl.jinja" import virl with context %}
 {% set lxc_server = salt['pillar.get']('lxcimages:lxc_server', True) %}
 {% set lxc_server_pref = salt['pillar.get']('virl:lxc_server', salt['grains.get']('lxc_server', True)) %}
 {% set cml = salt['grains.get']('cml', False) %}
@@ -11,7 +12,11 @@ lxc_server:
   virl_core.lxc_image_present:
   - subtype: lxc
   - version: ubuntu-ci
+  {% if virl.mitaka %}
+  - release: 16.04.0
+  {% else %}
   - release: 14.04.2
+  {% endif %}
 
   {% if not cml %}
 remove dead tar:
