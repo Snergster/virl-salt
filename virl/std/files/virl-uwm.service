@@ -8,7 +8,7 @@ Before=virl-webmux.service
 Type=simple
 ExecStart=/usr/local/bin/virl_uwm_server run
 ExecStop=/usr/local/bin/virl_uwm_server stop
-Restart=on-abort
+Restart=on-abnormal
 # workaround for hang
 TimeoutSec=20
 
