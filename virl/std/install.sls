@@ -115,6 +115,11 @@ virl_webmux_init:
     - makedirs: true
     - mode: 0644
 
+/etc/virl/virl-core.ini:
+  file.managed:
+    - replace: false
+    - makedirs: true
+    - mode: 0644
 
 {% if virl.mitaka %}
 virl systemd reload:
