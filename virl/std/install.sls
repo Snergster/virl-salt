@@ -179,20 +179,26 @@ VIRL_CORE:
      {% if virl.cml %}
       - echo /usr/local/bin/virl_config lsb-links | at now + 1 min
      {% endif %}
+     {% if not virl.mitaka %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_custom_floating_ip True
+     {% endif %}
       - crudini --set /etc/virl/common.cfg orchestration network_security_groups False
       - crudini --set /etc/virl/common.cfg orchestration network_custom_floating_ip True
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration network_security_groups False
       - crudini --set /etc/virl/virl-core.ini orchestration network_custom_floating_ip True
      {% if virl.enable_cinder %}
+          {% if not virl.mitaka %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
+          {% endif %}
       - crudini --set /etc/virl/common.cfg orchestration volume_service True
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration volume_service True
      {% else %}
+          {% if not virl.mitaka %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service False
+          {% endif %}
       - crudini --set /etc/virl/common.cfg orchestration volume_service False
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration volume_service False
