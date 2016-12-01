@@ -21,7 +21,7 @@ iosxrv:
   - property-config_disk_type: cdrom
   - property-hw_cdrom_bus: ide
   - property-hw_disk_bus: ide
-  - property-hw_vif_model: virtio
+  - property-hw_vif_model: e1000
   - property-release: {{ salt['pillar.get']('version:iosxrv')}}
   - property-serial: 3
   - property-subtype: 'IOS XRv'
