@@ -83,6 +83,14 @@ std docs redo:
     - onfail: 
       - archive: std docs
 
+
+careful apache2 restart:
+  cmd.wait:
+    - name: service apache2 restart
+    - watch:
+      - archive: std docs redo
+      - archive: std docs 
+
 {% if virl.mitaka %}
 virl_webmux_init:
   file.managed:
