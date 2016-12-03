@@ -444,7 +444,9 @@ virl-uwm:
     - restart: True
 
 virl init failsafe:
-  cmd:
-    - run
+  cmd.run:
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
-    - order: last
+    - require:
+      - service: virl-uwm
+      - service: virl-std
+
