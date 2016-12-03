@@ -1,5 +1,21 @@
 {% from "virl.jinja" import virl with context %}
 
+{% if virl.proxy %}
+http_proxy unset:
+  environ.setenv:
+    - name: http_proxy
+    - value: False
+    - false_unsets: True
+    
+https_proxy unset:
+  environ.setenv:
+    - name: https_proxy
+    - value: False
+    - false_unsets: True
+
+{% endif %}
+
+
 /var/cache/virl/std:
   file.recurse:
       {% if virl.cml %}
