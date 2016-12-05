@@ -128,6 +128,9 @@ export no_proxy=$no_proxy_defaults,172.16.10.250
 export OS_ENDPOINT_TYPE=internalURL
 
 export LIBVIRT_DEFAULT_URI='qemu:///system'
+
+alias vm="function _bla(){ ps auxw | grep \"kvm\\.real.*\$1\" | sed -e 's/ -/\n-/g'; }; _bla"
+
 #End virl section
 
 export PATH
