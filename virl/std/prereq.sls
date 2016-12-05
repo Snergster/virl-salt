@@ -52,7 +52,7 @@ std_prereq:
       - flask-sqlalchemy >= 2.0
       - Flask >= 0.10.1
       - Flask_Login >= 0.3.0
-      - Flask_RESTful >= 0.3.2
+      - Flask_RESTful >= 0.3.5
       - Flask_WTF >= 0.11
       - Flask_Breadcrumbs >= 0.3.0
       - flask-compress
