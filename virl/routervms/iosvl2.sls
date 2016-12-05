@@ -62,7 +62,7 @@ IOSvL2 flavor create2:
     - ram: 768
     - disk: 0
     - vcpus: 1
-    - onchanges:
+    - onfail:
       - module: 'IOSvL2 flavor create'
 
 {% else %}

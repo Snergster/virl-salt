@@ -1,5 +1,21 @@
 {% from "virl.jinja" import virl with context %}
 
+{% if virl.proxy %}
+http_proxy unset:
+  environ.setenv:
+    - name: http_proxy
+    - value: False
+    - false_unsets: True
+    
+https_proxy unset:
+  environ.setenv:
+    - name: https_proxy
+    - value: False
+    - false_unsets: True
+
+{% endif %}
+
+
 /var/cache/virl/std:
   file.recurse:
       {% if virl.cml %}
@@ -83,6 +99,14 @@ std docs redo:
     - onfail: 
       - archive: std docs
 
+
+careful apache2 restart:
+  cmd.wait:
+    - name: service apache2 restart
+    - watch:
+      - archive: std docs redo
+      - archive: std docs 
+
 {% if virl.mitaka %}
 virl_webmux_init:
   file.managed:
@@ -115,6 +139,11 @@ virl_webmux_init:
     - makedirs: true
     - mode: 0644
 
+/etc/virl/virl-core.ini:
+  file.managed:
+    - replace: false
+    - makedirs: true
+    - mode: 0644
 
 {% if virl.mitaka %}
 virl systemd reload:
@@ -179,20 +208,26 @@ VIRL_CORE:
      {% if virl.cml %}
       - echo /usr/local/bin/virl_config lsb-links | at now + 1 min
      {% endif %}
+     {% if not virl.mitaka %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_security_groups False
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration network_custom_floating_ip True
+     {% endif %}
       - crudini --set /etc/virl/common.cfg orchestration network_security_groups False
       - crudini --set /etc/virl/common.cfg orchestration network_custom_floating_ip True
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration network_security_groups False
       - crudini --set /etc/virl/virl-core.ini orchestration network_custom_floating_ip True
      {% if virl.enable_cinder %}
+          {% if not virl.mitaka %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service True
+          {% endif %}
       - crudini --set /etc/virl/common.cfg orchestration volume_service True
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration volume_service True
      {% else %}
+          {% if not virl.mitaka %}
       - crudini --set /usr/local/lib/python2.7/dist-packages/virl_pkg_data/conf/builtin.cfg orchestration volume_service False
+          {% endif %}
       - crudini --set /etc/virl/common.cfg orchestration volume_service False
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration volume_service False
@@ -423,3 +458,11 @@ virl-uwm:
     - order: last
     - enable: True
     - restart: True
+
+virl init failsafe:
+  cmd.run:
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    - require:
+      - service: virl-uwm
+      - service: virl-std
+
