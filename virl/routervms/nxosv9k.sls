@@ -18,7 +18,7 @@ NX-OSv 9000:
   - disk_format: qcow2
   - copy_from: salt://images/salt/nxosv-final.7.0.3.I5.1.qcow2
   - property-config_disk_type: cdrom
-  - property-hw_cdrom_type: sata
+  - property-hw_cdrom_bus: sata
   - property-hw_disk_bus: sata
   - property-hw_bios: n9kbios.bin
   - property-hw_vif_model: e1000
