@@ -83,6 +83,13 @@ salt-master restarting for config:
       - file: /srv/pillar/compute3/init.sls
       - file: /srv/pillar/compute4/init.sls
 
+ssh_key strict key:
+  file.replace:
+    - name: /etc/ssh/ssh_config
+    - pattern: |
+        #   StrictHostKeyChecking ask
+    - repl: '    StrictHostKeyChecking no\n'
+
 {% endif %}
 
 open rabbitmq guest security:
