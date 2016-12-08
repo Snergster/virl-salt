@@ -14,10 +14,10 @@ UbuntuServertrusty:
   - min_disk: 3
   - min_ram: 0
   - is_public: True
-  - checksum: 3dc12c0950321bb114279959ffb239d8
+  - checksum: 36ffdc30fe71020dcf319833d9578757
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/salt/ubuntu-16.04-server-cloudimg-amd64-disk1.img
+  - copy_from: salt://images/salt/ubuntu-16.04-server-cloudimg-amd64-disk1.qcow2
   - property-hw_disk_bus: virtio
   - property-release: 16.04.1
   - property-serial: 1
