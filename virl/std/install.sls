@@ -276,6 +276,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/virl-core.ini host download_proxy {{ virl.download_proxy }}
       - crudini --set /etc/virl/virl-core.ini host download_no_proxy {{ virl.download_no_proxy }}
       - crudini --set /etc/virl/virl-core.ini host download_proxy_user {{ virl.download_proxy_user }}
+      - crudini --set /etc/virl/virl-core.ini host horizon {{ virl.horizon }}
       - crudini --set /etc/virl/virl-core.ini limits host_simulation_port_min_tcp {{ virl.host_simulation_port_min_tcp }}
       - crudini --set /etc/virl/virl-core.ini limits host_simulation_port_max_tcp {{ virl.host_simulation_port_max_tcp }}
       - crudini --set /etc/virl/virl-core.ini host ram_overcommit {{ virl.ram_overcommit }}

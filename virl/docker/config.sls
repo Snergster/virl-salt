@@ -53,6 +53,7 @@ docker_config-systemd-fix:
     - name: /etc/systemd/system/docker.service.d/10-defaults.conf
     - mode: 0644
     - source: "salt://virl/docker/files/10-defaults.conf"
+    - makedirs: True
   cmd.run:
     - name: systemctl daemon-reload
 {% endif %}
