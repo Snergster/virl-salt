@@ -4,4 +4,7 @@
 ::1		localhost ip6-localhost ip6-loopback {{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}	{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}.{{salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'virl.info'))}}
 ff02::1		ip6-allnodes
 ff02::2		ip6-allrouters
-172.16.10.250		{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}
+{{salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}}		{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}
+
+# VIRL cluster start block
+# VIRL cluster end block

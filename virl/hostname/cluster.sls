@@ -8,6 +8,13 @@
 {% set compute3_hostname = salt['grains.get']('compute1_hostname', 'compute3')%}
 {% set compute4_hostname = salt['grains.get']('compute1_hostname', 'compute4')%}
 
+hostname-for-cluster-prep:
+  file.append:
+    - name: /etc/hosts
+    - text:
+      - '# VIRL cluster start block'
+      - '# VIRL cluster end block'
+
 hostnames-for-cluster-block:
   file.blockreplace:
     - name: /etc/hosts
