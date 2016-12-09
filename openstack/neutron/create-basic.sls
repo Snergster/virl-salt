@@ -58,6 +58,10 @@ create flat net:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-show flat
     - require:
       - cmd: neutron lives
+{% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
 
 {% if l2_port2_enabled %}
 create flat1 net:
@@ -66,6 +70,10 @@ create flat1 net:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-show flat1
     - require:
       - cmd: neutron lives
+  {% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+  {% endif %}
 
 {% endif %}
 
@@ -76,6 +84,11 @@ create snat net:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} net-show ext-net
     - require:
       - cmd: neutron lives
+{% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
+
 
 create snat net external:
   cmd.run:
@@ -83,6 +96,10 @@ create snat net external:
     - require:
       - cmd: neutron lives
       - cmd: create snat net
+{% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
 
 create flat subnet:
   cmd.run:
@@ -90,6 +107,10 @@ create flat subnet:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-show flat
     - require:
       - cmd: create flat net
+{% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
 
 create flat host port:
   cmd.run:
@@ -97,6 +118,10 @@ create flat host port:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-show virl-host-flat
     - require:
       - cmd: create flat subnet
+{% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
 
 {% if l2_port2_enabled %}
 create flat1 subnet:
@@ -105,6 +130,10 @@ create flat1 subnet:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-show flat1
     - require:
       - cmd: create flat1 net
+  {% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+  {% endif %}
 
 create flat1 host port:
   cmd.run:
@@ -112,6 +141,10 @@ create flat1 host port:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-show virl-host-flat1
     - require:
       - cmd: create flat1 subnet
+  {% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+  {% endif %}
 
 {% endif %}
 
@@ -121,18 +154,36 @@ create snat subnet:
     - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} subnet-show ext-net
     - require:
       - cmd: create snat net
+{% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
 
 create ext-net router-gateway:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ virl.keystone_auth_version }} router-list -c id -f csv | grep -o '[a-fA-F0-9-]\{36\}' | xargs -IX -n 1 neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ virl.keystone_auth_version }} router-gateway-set X ext-net
     - onlyif: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ virl.keystone_auth_version }} subnet-show ext-net
+{% if virl.mitaka %}
+    - require:
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
 
 create ext-net host port:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} floatingip-create --floating-ip-address {{ l3_address.split('/')[0] }} ext-net
     - require:
       - cmd: create snat subnet
+{% if virl.mitaka %}
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
 
 create quota update:
   cmd.run:
     - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} quota-update --router -1
+{% if virl.mitaka %}
+    - require:
+      - environ: project_domain_env create
+      - environ: user_domain_env create
+{% endif %}
