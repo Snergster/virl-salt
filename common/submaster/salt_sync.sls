@@ -9,6 +9,6 @@ just in case:
     - target: /srv/salt
     - name: https://github.com/Snergster/virl-salt.git
     - depth: 1
-    - force: True
+    - force_clone: True
     - onfail:
       - git: first attempt
