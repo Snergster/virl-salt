@@ -5,6 +5,7 @@
 {% set compute2_active = salt['pillar.get']('virl:compute2_active', salt['grains.get']('compute2_active', False )) %}
 {% set compute3_active = salt['pillar.get']('virl:compute3_active', salt['grains.get']('compute3_active', False )) %}
 {% set compute4_active = salt['pillar.get']('virl:compute4_active', salt['grains.get']('compute4_active', False )) %}
+{% from "virl.jinja" import virl with context %}
 
 /srv/pillar/top.sls:
   file.managed:
@@ -13,6 +14,7 @@
         base:
           '*':
             - users
+            - release
           'compute1*':
             - compute1
           'compute2*':
@@ -21,6 +23,16 @@
             - compute3
           'compute4*':
             - compute4
+
+/srv/pillar/release/init.sls:
+  file.managed:
+    - makedirs: true
+    - template: jinja
+    {% if virl.mitaka %}
+    - source: salt://common/salt-master/files/release.jinja
+    {% else %}
+    - source: salt://common/salt-master/files/kilo.release.jinja
+    {% endif %}
 
 /srv/pillar/users/init.sls:
   file.managed:
@@ -51,6 +63,8 @@
     - makedirs: true
     - template: jinja
     - source: salt://common/salt-master/files/compute4.ini.jinja
+
+
 
   {% if compute4_active %}
 

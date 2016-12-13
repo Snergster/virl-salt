@@ -1,6 +1,7 @@
 {% set publicport = salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 {% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - common.salt-master.cluster-config
