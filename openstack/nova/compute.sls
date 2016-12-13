@@ -18,11 +18,7 @@ compute-pkgs:
   file.managed:
     - mode: 755
     - template: jinja
-{% if virl.mitaka %}
-    - source: "salt://openstack/nova/files/mitaka.nova.conf"
-{% else %}
     - source: "salt://openstack/nova/files/compute.nova.conf"
-{% endif %}
     - require:
       - pkg: compute-pkgs
 
