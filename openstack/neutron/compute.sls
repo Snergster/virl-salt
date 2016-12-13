@@ -119,7 +119,7 @@ neutron-dhcp-nameserver:
     - filename: /etc/neutron/dhcp_agent.ini
     - section: 'DEFAULT'
     - parameter: 'dnsmasq_dns_servers'
-    - value: '{{ first_snat_nameserver }},{{ second_snat_nameserver }}'
+    - value: '{{ virl.first_snat_nameserver }},{{ virl.second_snat_nameserver }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
