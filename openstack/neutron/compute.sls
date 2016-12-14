@@ -40,6 +40,16 @@ neutron-pkgs:
     - source: "salt://openstack/neutron/files/plugins/linuxbridge/mitaka.linuxbridge_agent.ini"
     - require:
       - pkg: neutron-pkgs
+
+neutron rabbit host:
+  openstack_config.present:
+    - filename: /etc/neutron/neutron.conf
+    - section: 'oslo_messaging_rabbit'
+    - parameter: 'rabbit_host'
+    - value: '{{ virl.controller_ip }}'
+    - require:
+      - file: /etc/neutron/neutron.conf
+
 {% else %}
 /etc/neutron/neutron.conf:
   file.managed:
@@ -58,6 +68,16 @@ neutron-pkgs:
     - source: "salt://openstack/neutron/files/plugins/ml2/kilo.ml2_conf.ini"
     - require:
       - pkg: neutron-pkgs
+
+neutron rabbit host:
+  openstack_config.present:
+    - filename: /etc/neutron/neutron.conf
+    - section: 'DEFAULT'
+    - parameter: 'rabbit_host'
+    - value: '{{ virl.controller_ip }}'
+    - require:
+      - file: /etc/neutron/neutron.conf
+
 {% endif %}
 
 /etc/init/neutron-server.conf:
@@ -103,14 +123,6 @@ neutron-sysctlforward:
     - pattern: '#net.ipv4.ip_forward=1'
     - repl: 'net.ipv4.ip_forward=1'
 
-neutron rabbit host:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'DEFAULT'
-    - parameter: 'rabbit_host'
-    - value: '{{ virl.controller_ip }}'
-    - require:
-      - file: /etc/neutron/neutron.conf
 
 
 {% if virl.controller %}
@@ -119,7 +131,7 @@ neutron-dhcp-nameserver:
     - filename: /etc/neutron/dhcp_agent.ini
     - section: 'DEFAULT'
     - parameter: 'dnsmasq_dns_servers'
-    - value: '{{ first_snat_nameserver }},{{ second_snat_nameserver }}'
+    - value: '{{ virl.first_snat_nameserver }},{{ virl.second_snat_nameserver }}'
     - require:
       - file: /etc/neutron/neutron.conf
 

@@ -10,7 +10,7 @@ lxc_ostinato:
   virl_core.lxc_image_present:
   - subtype: lxc-ostinato-drone
   - version: standard
-  - release: 0.8.1
+  - release: 0.8
 
 {% else %}
 

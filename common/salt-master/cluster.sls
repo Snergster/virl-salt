@@ -1,6 +1,7 @@
 {% set publicport = salt['pillar.get']('virl:public_port', salt['grains.get']('public_port', 'eth0')) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 {% set controller = salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - common.salt-master.cluster-config
@@ -82,6 +83,13 @@ salt-master restarting for config:
       - file: /srv/pillar/compute2/init.sls
       - file: /srv/pillar/compute3/init.sls
       - file: /srv/pillar/compute4/init.sls
+
+ssh_key strict key:
+  file.replace:
+    - name: /etc/ssh/ssh_config
+    - pattern: |
+        #   StrictHostKeyChecking ask
+    - repl: '    StrictHostKeyChecking no\n'
 
 {% endif %}
 
