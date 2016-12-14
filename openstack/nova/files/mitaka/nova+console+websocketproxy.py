@@ -114,10 +114,12 @@ class NovaProxyRequestHandlerBase(object):
                 expected_origin_hostname = e.split(']')[0][1:]
             else:
                 expected_origin_hostname = e.split(':')[0]
-        expected_origin_hostnames = CONF.console_allowed_origins
+        expected_origin_hostnames = list(CONF.console_allowed_origins)
         expected_origin_hostnames.append(expected_origin_hostname)
         origin_url = self.headers.getheader('Origin')
         # missing origin header indicates non-browser client which is OK
+        # VMM sends Origin without scheme, which breaks the check
+        # only if config lists any origins, enforce them
         if origin_url is not None and CONF.console_allowed_origins:
             origin = urlparse.urlparse(origin_url)
             origin_hostname = origin.hostname
