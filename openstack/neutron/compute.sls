@@ -283,7 +283,7 @@ l3-gateway:
     'neutron+common+utils.py',
 ] %}
 
-{% set realpath = '/usr/lib/python2.7/dist-packages/neutron/' + basepath.replace('+', '/') %}
+{% set realpath = '/usr/lib/python2.7/dist-packages/' + basepath.replace('+', '/') %}
 {{ realpath }}:
   file.managed:
     - makedirs: True
