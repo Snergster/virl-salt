@@ -4,11 +4,6 @@
 {% set virl_cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False))%}
 {% set dhcp = salt['pillar.get']('virl:using_dhcp_on_the_public_port', salt['grains.get']('using_dhcp_on_the_public_port', True )) %}
 
-{% if virl_cluster %}
-include:
-  - virl.hostname.cluster
-{% endif %}
-
 
 hosts new style:
   file.managed:
