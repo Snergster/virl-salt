@@ -137,6 +137,8 @@
     'vmm_linux' : salt['pillar.get']('virl:vmm_linux', salt['grains.get']('vmm_linux', True)),
     'std_clients' : salt['pillar.get']('virl:virl_clients', salt['grains.get']('virl_clients', True)),
     'cml' : salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )),
+    'port' : salt['grains.get']('virl_apache_port', '80'),
+    'uwm' : salt['grains.get']('virl_user_management', '19400'),
     'dist_upgrade' : salt['pillar.get']('virl:dist_upgrade', salt['grains.get']('dist_upgrade', True)),
     'no_upgrade' : salt['pillar.get']('virl:no_upgrade', salt['grains.get']('no_upgrade', True)),
     'openvpn_enable' : salt['pillar.get']('virl:openvpn_enable', salt['grains.get']('openvpn_enable', False)),
