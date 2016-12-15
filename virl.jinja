@@ -174,7 +174,7 @@
     'pypi_mirror_index' : salt['pillar.get']('virl:pypi_mirror_index', salt['grains.get']('pypi_mirror_index', 'http://172.23.175.103:4040/root/pypi/' )),
     'venv' : salt['pillar.get']('behave:environment', 'stable' ),
     'virlweb' : salt['pillar.get']('files_checksums:virlweb', '' ),
-    'cmlweb' : salt['pillar.get']('files_checksums:virlweb', '' ),
+    'cmlweb' : salt['pillar.get']('files_checksums:cmlweb', '' ),
     'registry_ip' : salt['pillar.get']('virl:l2_address2', salt['grains.get']('l2_address2', '172.16.2.254/xx' )).split('/')[0],
     'registry_port' : salt['pillar.get']('virl:docker_registry_port', salt['grains.get']('docker_registry_port', '19397' )),
     'docker_version' : salt['pillar.get']('version:docker','1.9.1-0~trusty'),
