@@ -38,6 +38,18 @@ horizon-oshosts:
     - pattern: 'OPENSTACK_HOST = ".*"'
     - repl: 'OPENSTACK_HOST = "{{ hostname }}"'
 
+horizon-os-api-versions:
+  file.replace:
+    - name: /etc/openstack-dashboard/local_settings.py
+    - pattern: '#OPENSTACK_API_VERSIONS = {'
+    - repl: 'OPENSTACK_API_VERSIONS = { "identity": 3}'
+
+horizon-os-keystone-url:
+  file.replace:
+    - name: /etc/openstack-dashboard/local_settings.py
+    - pattern: 'OPENSTACK_KEYSTONE_URL = "http://%s:5000/v2.0" % OPENSTACK_HOST'
+    - repl: 'OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3.0" % OPENSTACK_HOST'
+
 a2enmod-enable-dash:
   cmd.run:
     - name: a2enmod wsgi
