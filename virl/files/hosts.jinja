@@ -1,10 +1,28 @@
+{% from "virl.jinja" import virl with context %}
 127.0.0.1		localhost
 127.0.1.1		{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}	{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}.{{salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'virl.info'))}}
 # The following lines are desirable for IPv6 capable hosts
 ::1		localhost ip6-localhost ip6-loopback {{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}	{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}.{{salt['pillar.get']('virl:domain_name', salt['grains.get']('domain_name', 'virl.info'))}}
 ff02::1		ip6-allnodes
 ff02::2		ip6-allrouters
-{{salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' ))}}		{{salt['pillar.get']('virl:hostname', salt['grains.get']('hostname', 'virl'))}}
 
 # VIRL cluster start block
+{%- if virl.controller %}
+{{ virl.controller_ip }}    controller  {{virl.hostname}}       {{virl.hostname}}.{{virl.domain_name}}
+{%- if virl.compute1_active %}
+{{ virl.compute1_internalnet_ip }}      compute1        compute1.{{virl.domain_name}}
+{% endif %}
+{%- if virl.compute2_active %}
+{{ virl.compute2_internalnet_ip }}      compute2        compute2.{{virl.domain_name}}
+{% endif %}
+{%- if virl.compute3_active %}
+{{ virl.compute3_internalnet_ip }}      compute3        compute3.{{virl.domain_name}}
+{% endif %}
+{%- if virl.compute4_active %}
+{{ virl.compute4_internalnet_ip }}      compute4        compute4.{{virl.domain_name}}
+{% endif %}
+{%- else %}
+{{ virl.int_ip }}    {{virl.hostname}}  {{virl.hostname}}.{{virl.domain_name}}
+{{ virl.controller_ip }}    controller
+{%- endif %}
 # VIRL cluster end block
