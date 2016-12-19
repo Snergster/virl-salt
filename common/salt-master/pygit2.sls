@@ -17,6 +17,37 @@ pygit2 prereqs:
       - libxslt1-dev
       - cmake
 
+libgit2 pull:
+  archive.extracted:
+    - name: /tmp/
+    - source: 'salt://common/salt-master/files/v0.24.2.tar.gz'
+    - source_hash: md5=735661b5b73e3c120d13e2bae21e49b3
+    - archive_format: tar
+    - if_missing: /tmp/libgit2-0.24.2
+    - unless: test -e /usr/local/lib/libgit2.so.0.24.2
+  cmd.run:
+    - name: cmake .
+    - cwd: /tmp/libgit2-0.24.2
+    - require:
+      - pkg: libgit2 prereqs
+    - onchanges:
+      - archive: libgit2 pull
+
+cmake libgit2:
+  cmd.run:
+    - cwd: /tmp/libgit2-0.24.2
+    - onchanges:
+      - cmd: libgit2 pull
+    - names:
+      - 'make -s'
+      - 'make -s install'
+
+ldconfig always run:
+  cmd.run:
+    - name: ldconfig
+    - require:
+      - cmd: cmake libgit2
+
 cffi install:
   pip.installed:
 {% if proxy %}
