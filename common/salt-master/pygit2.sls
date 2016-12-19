@@ -29,7 +29,7 @@ libgit2 pull:
     - name: cmake .
     - cwd: /tmp/libgit2-0.24.2
     - require:
-      - pkg: libgit2 prereqs
+      - pkg: pygit2 prereqs
     - onchanges:
       - archive: libgit2 pull
 
