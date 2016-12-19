@@ -15,6 +15,7 @@ pygit2 prereqs:
       - libgit2-24
       - libxml2-dev
       - libxslt1-dev
+      - cmake
 
 cffi install:
   pip.installed:
