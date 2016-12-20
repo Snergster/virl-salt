@@ -1,13 +1,13 @@
-{% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
-{% if packet %}
+{% if virl.packet %}
   - virl.ini-writeout
   - common.virluser
 {% endif %}
   - virl.vsalt
   - virl.vextra
-{% if packet %}
+{% if virl.packet %}
   - virl.packet_host
 {% else %}
   - virl.host
