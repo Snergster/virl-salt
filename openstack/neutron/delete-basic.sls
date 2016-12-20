@@ -16,27 +16,7 @@ user_domain_env delete:
     - name: OS_USER_DOMAIN_ID
     - value: default
 
-{% set log_str = "--os-user-domain-id default --os-project-domain-id default --os-tenant-name admin --os-username admin --os-password %s --os-auth-url=http://%s%s/%s" % (ospassword, controllerip, ':5000', keystone_auth_version) %}
-
-{% else %}
-
-{% set log_str = "--os-tenant-name admin --os-username admin --os-password %s --os-auth-url=http://%s%s/%s" % (ospassword, controllerip, ':5000', keystone_auth_version) %}
-
 {% endif %}
-
-{% set router_list_cmd = "neutron %s router-list --format csv --quote none --column id" % log_str %}
-
-{% set routers = salt['cmd.run'](router_list_cmd) %}
-{% for router in routers.split('\n')[1:] %}
-  {% set list_int_cmd = "neutron %s router-port-list --format csv --quote none --column id %s" % (log_str, router) %}
-  {% set interfaces = salt['cmd.run'](list_int_cmd) %}
-  {% for int in interfaces.split('\n')[1:] %}
-    {% set router_int_delete_cmd = "neutron %s router-interface-delete %s port=%s" % (log_str, router, int) %}
-device-interface-delete-{{ router }}-{{ int }}:
-  cmd.run:
-    - name: {{ router_int_delete_cmd }}
-  {% endfor %}
-{% endfor %}
 
 update device owner:
   cmd.run:
@@ -80,7 +60,7 @@ delete floating ips:
 
 clear ext-net router-gateway:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} router-list -c id -f csv | grep -o '[a-fA-F0-9-]\{36\}' | xargs -n 1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} router-gateway-clear
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} router-list -c id -f csv | grep -o '[a-fA-F0-9-]\{36\}' | xargs -rn1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} router-gateway-clear
     - onlyif: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} subnet-show ext-net
 {% if virl.mitaka %}
     - require:
