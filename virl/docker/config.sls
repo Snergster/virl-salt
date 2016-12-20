@@ -20,6 +20,7 @@ docker_config-opts:
     - append_if_not_found: True
     - require_in:
       - module: docker_restart
+
 docker_config-proxy:
   file.replace:
     - name: /etc/default/docker
@@ -33,6 +34,20 @@ docker_config-proxy:
     - append_if_not_found: True
     - require_in:
       - module: docker_restart
+docker_config-proxy-systemd:
+  file.replace:
+    - name: /etc/default/docker
+    - pattern: '^http_proxy.*$'
+    {% if virl.download_proxy %}
+    - repl: http_proxy={{ virl.download_proxy }}
+    {% else %}
+    - repl: ''
+    {% endif %}
+    - flags: ['IGNORECASE', 'MULTILINE']
+    - append_if_not_found: True
+    - require_in:
+      - module: docker_restart
+
 docker_config-noproxy:
   file.replace:
     - name: /etc/default/docker
@@ -41,6 +56,19 @@ docker_config-noproxy:
     - repl: export no_proxy={{ registry_ip }},{{virl.download_no_proxy}},$no_proxy
     {% else %}
     - repl: export no_proxy={{ registry_ip }},$no_proxy
+    {% endif %}
+    - flags: ['IGNORECASE', 'MULTILINE']
+    - append_if_not_found: True
+    - require_in:
+      - module: docker_restart
+docker_config-noproxy-systemd:
+  file.replace:
+    - name: /etc/default/docker
+    - pattern: '^no_proxy.*$'
+    {% if virl.download_no_proxy %}
+    - repl: no_proxy={{ registry_ip }},{{virl.download_no_proxy}},$no_proxy
+    {% else %}
+    - repl: no_proxy={{ registry_ip }},$no_proxy
     {% endif %}
     - flags: ['IGNORECASE', 'MULTILINE']
     - append_if_not_found: True
