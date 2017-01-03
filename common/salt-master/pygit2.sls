@@ -20,14 +20,14 @@ pygit2 prereqs:
 libgit2 pull:
   archive.extracted:
     - name: /tmp/
-    - source: 'salt://common/salt-master/files/v0.24.2.tar.gz'
-    - source_hash: md5=735661b5b73e3c120d13e2bae21e49b3
+    - source: 'salt://common/salt-master/files/v0.25.0.tar.gz'
+    - source_hash: md5=76b4caa2a32a933a81c360fd47fe4017
     - archive_format: tar
-    - if_missing: /tmp/libgit2-0.24.2
-    - unless: test -e /usr/local/lib/libgit2.so.0.24.2
+    - if_missing: /tmp/libgit2-0.25.0
+    - unless: test -e /usr/local/lib/libgit2.so.0.25.0
   cmd.run:
     - name: cmake .
-    - cwd: /tmp/libgit2-0.24.2
+    - cwd: /tmp/libgit2-0.25.0
     - require:
       - pkg: pygit2 prereqs
     - onchanges:
@@ -35,7 +35,7 @@ libgit2 pull:
 
 cmake libgit2:
   cmd.run:
-    - cwd: /tmp/libgit2-0.24.2
+    - cwd: /tmp/libgit2-0.25.0
     - onchanges:
       - cmd: libgit2 pull
     - names:
