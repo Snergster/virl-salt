@@ -22,6 +22,7 @@ iosxrv 9000:
   - property-hw_cdrom_bus: ide
   - property-hw_disk_bus: virtio
   - property-hw_vif_model: virtio
+  - property-hw_cpu_mode: host-passthrough
   - property-release: {{ salt['pillar.get']('version:iosxr9000')}}
   - property-serial: 4
   - property-subtype: 'IOS XRv 9000'
@@ -38,9 +39,9 @@ iosxrv 9000 flavor create:
   module.run:
     - name: nova.flavor_create
     - m_name: 'IOS XRv 9000'
-    - ram: 16384
+    - ram: 8192
     - disk: 0
-    - vcpus: 4
+    - vcpus: 2
     - onchanges:
       - glance: iosxrv 9000
     - require:
@@ -51,9 +52,9 @@ iosxrv 9000 flavor create2:
     - name: nova.flavor_create
     - m_name: 'IOS XRv 9000'
     - profile: virl
-    - ram: 16384
+    - ram: 8192
     - disk: 0
-    - vcpus: 4
+    - vcpus: 2
     - onfail:
       - module: 'iosxrv 9000 flavor create'
 
