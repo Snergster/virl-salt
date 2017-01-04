@@ -2,6 +2,9 @@
 include:
   - common.xenial-repo
   - common.pip
+{% if not 'xenial' in salt['grains.get']('oscodename') %}
+  - common.salt-minion.amd
+{% endif %}
   - common.distuptodate
 
 commonpkgs:
