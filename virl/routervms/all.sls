@@ -11,6 +11,8 @@ include:
   - .iosvl2
   - .asav
   - .lxc_server
+  - .nxosv9k
+  - .iosxrv9000
 {% if 'xenial' in salt['grains.get']('oscodename') %}
   - .xenial_server
 {% else %}
