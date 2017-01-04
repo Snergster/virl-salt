@@ -56,7 +56,7 @@ floppy remove:
   file.comment:
     - name: /etc/fstab
     - regex: ^/dev/fd0
-    - onlyif: grep fd0 /etc/fstab
+    - onlyif: grep /fd0 /etc/fstab
 
 {% endif %}
 
