@@ -8,6 +8,7 @@ apt-get install -y linux-headers-$version
 apt-get source -y linux-image-$version
 cd linux*/
 sed -i -e '/BR_GROUPFWD_RESTRICTED/s/0x.*u/0x0u/' net/bridge/br_private.h
+sed -i -e '/MODULE_VERSION/iMODULE_INFO(ciscopatch, "BR_GROUPFWD_RESTRICTED_v2");' net/bridge/br.c
 cp /usr/src/linux-headers-$version/Module.symvers .
 make olddefconfig
 make prepare modules_prepare
