@@ -3,7 +3,7 @@
 include:
   - openstack.mysql.install
 
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
 {% set accounts = ['keystone', 'nova', 'glance', 'cinder', 'neutron', 'quantum', 'dash', 'heat', 'nova_api' ] %}
 
 restart mysql again for funsies:
@@ -15,7 +15,7 @@ restart mysql again for funsies:
 {% endif %}
 {% for user in accounts %}
 
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
 
 {{ user }}-mysql virl:
   mysql_user.present:
@@ -69,7 +69,7 @@ restart mysql again for funsies:
 
 {{ user }}-mysql-nonlocal:
   mysql_user.present:
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
     - password_column: authentication_string
 {% endif %}
     - name: {{ user }}

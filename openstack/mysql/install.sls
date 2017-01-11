@@ -25,7 +25,7 @@
     - contents: |
         mysql-server mysql-server/root_password password MYPASS
         mysql-server mysql-server/root_password_again password MYPASS
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
         mysql-server-5.7 mysql-server/root_password password MYPASS
         mysql-server-5.7 mysql-server/root_password_again password MYPASS
 {% else %}
@@ -50,7 +50,7 @@ debconf-run:
         debconf-set-selections /tmp/debconf
         rm /tmp/debconf
 
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
 mysql-client-5.7:
   pkg.installed
 mysql-server-5.7:
@@ -72,7 +72,7 @@ debconf-change:
     - contents: |
         mysql-server mysql-server/root_password password {{ virl.mypassword }}
         mysql-server mysql-server/root_password_again password {{ virl.mypassword }}
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
         mysql-server-5.7 mysql-server/root_password password {{ virl.mypassword }}
         mysql-server-5.7 mysql-server/root_password_again password {{ virl.mypassword }}
 {% else %}
@@ -90,7 +90,7 @@ debconf-change-set:
 
 debconf-change-noninteractive:
   cmd.run:
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.7
 {% else %}
     - name: dpkg-reconfigure -f noninteractive mysql-server-5.5
@@ -107,7 +107,7 @@ verify symlink:
 mysql:
   pkg.installed:
     - name: mysql-server
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
   service.running:
     - name: mysql
 
@@ -206,7 +206,7 @@ root-rawip-wildcard grants:
 my.cnf template:
   file.managed:
     - name: /etc/mysql/my.cnf
-{% if virl.mitaka %}
+{% if 'xenial' in salt['grains.get']('oscodename') %}
     - source: salt://openstack/mysql/files/mitaka.my.cnf
 {% else %}
     - source: salt://openstack/mysql/files/my.cnf
@@ -221,7 +221,7 @@ my.cnf template:
       - file: /etc/mysql/my.cnf
 
 {% if virl.dummy_int %}
-  {% if not virl.mitaka %}
+  {% if not 'xenial' in salt['grains.get']('oscodename') %}
 
 mysql port for dummies:
   file.replace:
