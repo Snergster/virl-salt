@@ -1,6 +1,4 @@
-{% from "virl.jinja" import virl with context %}
-
-  {% if not virl.mitaka %}
+{% if not 'xenial' in salt['grains.get']('oscodename') %}
 include:
   - openstack.repo.kilo
   {% endif %}
