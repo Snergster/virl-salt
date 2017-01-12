@@ -8,6 +8,8 @@ atlassian-ide-plugin.xml
 .gitignore
 *-e
 *~
+virl/routervms/nxosv9000.sls
+virl/routervms/nxosv9000r.sls
 
 *.sw[op]
 .DS_Store
