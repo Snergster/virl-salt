@@ -4,8 +4,10 @@ After=syslog.target
 
 [Service]
 #PIDFile=/var/run/virl_tap_counter/virl_tap_counter.pid
+EnvironmentFile=/etc/default/virl_tap_counter
 Type=simple
-ExecStart=/usr/local/bin/virl_tap_counter
+ExecStart=/usr/local/bin/virl_tap_counter --address $TC_ADDRESS --port $TC_PORT --glob-interval $TC_GLOB_INTERVAL --poll-interval $TC_POLL_INTERVAL --ttl $TC_TTL
+LimitNOFILE=16384
 Restart=on-abort
 
 [Install]
