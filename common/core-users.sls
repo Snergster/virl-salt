@@ -1,4 +1,4 @@
-{% for username, user in pillar.get('users.core', {}).items() %}
+{% for username, user in pillar.get('users', {}).items() %}
 {{ username }}:
 
   group:
