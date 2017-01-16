@@ -50,7 +50,7 @@ horizon-os-keystone-url:
   file.replace:
     - name: /etc/openstack-dashboard/local_settings.py
     - pattern: 'OPENSTACK_KEYSTONE_URL = "http://%s:5000/v2.0" % OPENSTACK_HOST'
-    - repl: 'OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3.0" % OPENSTACK_HOST'
+    - repl: 'OPENSTACK_KEYSTONE_URL = "http://%s:5000/v3" % OPENSTACK_HOST'
 {% endif %}
  
 
