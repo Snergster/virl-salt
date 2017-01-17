@@ -76,12 +76,21 @@ yubi-auth-replace:
     - source: 'salt://common/yubikey/files/yubi-auth'
     - mode: 0644  
 
-custom-pam-yubico:
+custom-pam-yubico-auth:
   file.replace:
     - name: /etc/pam.d/yubi-auth
     - pattern: <pam-yubi-goes-here>
     - repl: 'auth required pam_yubico.so mode=client id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
 key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}'
+    - require:
+      - pkg: libpam-yubico
+      - file: yubi-auth-replace
+
+custom-pam-yubico-group:
+  file.replace:
+    - name: /etc/pam.d/yubi-auth
+    - pattern: <syncgroup>
+    - repl: '{{salt['pillar.get']('yubikey:group')}}'
     - require:
       - pkg: libpam-yubico
       - file: yubi-auth-replace
