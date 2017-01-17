@@ -102,5 +102,5 @@ yubi-auth-in-sshd:
       - '@include yubi-auth'
     - require:
       - pkg: libpam-yubico
-      - file: /etc/pam.d/yubi-auth
+      - file: yubi-auth-replace
       - file: no-common-auth-in-sshd

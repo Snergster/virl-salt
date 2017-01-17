@@ -29,6 +29,7 @@ std prereq pkgs:
       - pkgs:
         - libxml2-dev
         - libxslt1-dev
+        - python-faulthandler
 
 std_prereq_webmux:
   pip.installed:
