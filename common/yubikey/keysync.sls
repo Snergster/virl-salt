@@ -102,7 +102,6 @@ no-common-auth-in-sshd:
     - require:
       - pkg: libpam-yubico
       - file: yubi-auth-replace
-      - file: custom-pam-yubico
 
 yubi-auth-in-sshd:
   file.prepend:
