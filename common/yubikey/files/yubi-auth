@@ -1,0 +1,15 @@
+# If this is a user in group keysync they don't have a yubikey and we need to skip the yubiconf authentication module: 
+auth    [success=1 default=ignore]      pam_succeed_if.so user ingroup keysync
+
+auth    required pam_yubico.so mode=client id=19643 authfile=/etc/yubikeys key=37t1W8sIeK8W+dmTHpTuD9vCcdo= url=http://api.yubico.com/wsapi/2.0/verify?id=%d&otp=%s
+
+# OK, we don't yet know if we got here because this is a user in keysync or if pam_yubico was called. Let's check again.
+
+# If the users is not in keysync then it's a yubikey holder - skip the normal authentication modules:
+auth    [success=4 default=ignore]      pam_succeed_if.so user notingroup keysync
+
+# We got here because the users is in group keysync - run the normal authentication modules:
+auth    [success=1 default=ignore]      pam_unix.so nullok_secure
+auth    requisite                       pam_deny.so
+auth    required                        pam_permit.so
+auth    optional                        pam_cap.so
