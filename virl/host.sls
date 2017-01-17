@@ -126,6 +126,12 @@ man-snat-promisc:
     - require:
       - network: {{ l3_port }}
 
+set-dns-default:
+  file.replace:
+    - name: /etc/dhcp/dhclient.conf
+    - pattern: #reject 192.33.137.209;
+    - repl: 'default domain-name-servers {{fdns}} {{sdns}}'
+
 man-int-promisc:
   file.replace:
     - name: /etc/network/interfaces
@@ -144,7 +150,7 @@ eth0:
   cmd.run:
 {% if dhcp %}
     - names:
-      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp dns-nameservers="{{fdns}} {{sdns}}"'
+      - 'salt-call --local ip.build_interface {{publicport}} eth True proto=dhcp'
 {% else %}
     - names:
       - 'salt-call --local ip.build_interface {{publicport}} eth True proto=static dns-nameservers="{{fdns}} {{sdns}}" address={{public_ip}} netmask={{public_netmask}} gateway={{public_gateway}}'

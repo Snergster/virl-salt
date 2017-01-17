@@ -1,12 +1,12 @@
 # If this is a user in group keysync they don't have a yubikey and we need to skip the yubiconf authentication module: 
-auth    [success=1 default=ignore]      pam_succeed_if.so user ingroup keysync
+auth    [success=1 default=ignore]      pam_succeed_if.so user ingroup <syncgroup>
 
 <pam-yubi-goes-here>
 
 # We don't yet know if we got here because this is a user in keysync or if pam_yubico was called.
 # Check again and if the user is not in keysync then skip the normal authentication modules:
 
-auth    [success=4 default=ignore]      pam_succeed_if.so user notingroup keysync
+auth    [success=4 default=ignore]      pam_succeed_if.so user notingroup <syncgroup>
 
 # We got here because the users is in group keysync - run the normal authentication modeles:
 auth    [success=1 default=ignore]      pam_unix.so nullok_secure
