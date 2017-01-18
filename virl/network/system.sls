@@ -32,7 +32,7 @@ eth0 ifdown:
 eth0:
   cmd.run:
 {% if virl.dhcp %}
-    - names
+    - names:
       - 'salt-call --local ip.build_interface {{virl.publicport}} eth True proto=dhcp'
 {% else %}
     - names:
