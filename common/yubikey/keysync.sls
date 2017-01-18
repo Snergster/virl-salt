@@ -112,3 +112,8 @@ yubi-auth-in-sshd:
       - pkg: libpam-yubico
       - file: yubi-auth-replace
       - file: no-common-auth-in-sshd
+
+restart-ssh-post-yubi-auth:
+    service.running:
+      - name: ssh
+      - watch:
