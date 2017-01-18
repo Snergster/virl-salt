@@ -43,7 +43,7 @@ set-dns-default:
   file.replace:
     - name: /etc/dhcp/dhclient.conf
     - pattern: "#reject 192.33.137.209;"
-    - repl: 'default domain-name-servers {{fdns}} {{sdns}}'
+    - repl: 'default domain-name-servers {{virl.fdns}} {{virl.sdns}}'
 
 
 eth0 ifup:
