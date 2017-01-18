@@ -3,12 +3,12 @@ auth    [success=1 default=ignore]      pam_succeed_if.so user ingroup <syncgrou
 
 <pam-yubi-goes-here>
 
-# We don't yet know if we got here because this is a user in keysync or if pam_yubico was called.
-# Check again and if the user is not in keysync then skip the normal authentication modules:
+# We don't yet know if we got here because this is a user in <syncgroup> or if pam_yubico was called.
+# Check again and if the user is not in <syncgroup> then skip the normal authentication modules:
 
 auth    [success=4 default=ignore]      pam_succeed_if.so user notingroup <syncgroup>
 
-# We got here because the users is in group keysync - run the normal authentication modeles:
+# We got here because the user is in group <syncgroup> - run the normal authentication modules:
 auth    [success=1 default=ignore]      pam_unix.so nullok_secure
 auth    requisite                       pam_deny.so
 auth    required                        pam_permit.so

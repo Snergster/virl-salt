@@ -32,8 +32,8 @@ eth0 ifdown:
 eth0:
   cmd.run:
 {% if virl.dhcp %}
-    - names:
-      - 'salt-call --local ip.build_interface {{virl.publicport}} eth True proto=dhcp dns-nameservers="{{virl.fdns}} {{virl.sdns}}"'
+    - names
+      - 'salt-call --local ip.build_interface {{virl.publicport}} eth True proto=dhcp'
 {% else %}
     - names:
       - 'salt-call --local ip.build_interface {{virl.publicport}} eth True proto=static dns-nameservers="{{virl.fdns}} {{virl.sdns}}" address={{virl.public_ip}} netmask={{virl.public_netmask}} gateway={{virl.public_gateway}}'

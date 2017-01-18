@@ -9,31 +9,6 @@ libykclient3:
     - makedirs: True
     - contents_pillar: yubikey:authorized
 
-common auth out:
-  file.comment:
-    - name: /etc/pam.d/sshd
-    - regex: ^@include common-auth
-    - require:
-      - pkg: libpam-yubico
-      - file: /etc/pam.d/yubi-auth
-
-yubi auth in:
-  file.prepend:
-    - name: /etc/pam.d/sshd
-    - text:
-      - '@include yubi-auth'
-    - require:
-      - pkg: libpam-yubico
-      - file: /etc/pam.d/yubi-auth
-      - file: common auth out
-
-/etc/pam.d/yubi-auth:
-  file.managed:
-    - contents: 'auth required pam_yubico.so mode=client id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
-key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}'
-    - require:
-      - pkg: libpam-yubico
-
 /etc/pam.d/login:
   file.prepend:
     - require:
@@ -42,8 +17,7 @@ key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url'
       - 'auth sufficient pam_yubico.so id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
 key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}'
 
-
-challenge yes:
+enable-challenge-response-auth-in-sshd-config:
   file.replace:
     - name: /etc/ssh/sshd_config
     - pattern: ChallengeResponseAuthentication yes
@@ -51,14 +25,18 @@ challenge yes:
     - require:
       - pkg: libpam-yubico
 
-multichallenge:
+enable-match-in-sshd-config:
   file.append:
     - name: /etc/ssh/sshd_config
-    - text: AuthenticationMethods publickey,password
+    - text:
+      - Match group {{salt['pillar.get']('yubikey:group')}}
+      - "  AuthenticationMethods publickey"
+      - Match group *,{{salt['pillar.get']('yubikey:group')}}
+      - "  AuthenticationMethods publickey,password"
     - require:
       - pkg: libpam-yubico
 
-rsa no:
+disable-rsa-auth-in-sshd-config:
   file.replace:
     - name: /etc/ssh/sshd_config
     - pattern: RSAAuthentication yes
@@ -66,7 +44,7 @@ rsa no:
     - require:
       - pkg: libpam-yubico
 
-pubkey no:
+disable-pubkey-auth-in-sshd-config:
   file.replace:
     - name: /etc/ssh/sshd_config
     - pattern: PubkeyAuthentication no
@@ -74,7 +52,7 @@ pubkey no:
     - require:
       - pkg: libpam-yubico
 
-password yes:
+enable-password-auth-regex-in-sshd-config:
   file.replace:
     - name: /etc/ssh/sshd_config
     - pattern: ^.PasswordAuthentication yes
@@ -82,7 +60,7 @@ password yes:
     - require:
       - pkg: libpam-yubico
 
-password fuck yes:
+enable-password-auth-in-sshd-config:
   file.replace:
     - name: /etc/ssh/sshd_config
     - pattern: PasswordAuthentication no
@@ -90,8 +68,56 @@ password fuck yes:
     - require:
       - pkg: libpam-yubico
 
-common-auth replace:
+common-auth-replace:
   file.managed:
     - name: /etc/pam.d/common-auth
     - source: 'salt://common/yubikey/files/common-auth'
     - mode: 0644
+
+yubi-auth-replace:
+  file.managed:
+    - name: /etc/pam.d/yubi-auth
+    - source: 'salt://common/yubikey/files/yubi-auth'
+    - mode: 0644  
+
+custom-pam-yubico-auth:
+  file.replace:
+    - name: /etc/pam.d/yubi-auth
+    - pattern: <pam-yubi-goes-here>
+    - repl: 'auth required pam_yubico.so mode=client id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
+key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}'
+    - require:
+      - pkg: libpam-yubico
+      - file: yubi-auth-replace
+
+custom-pam-yubico-group:
+  file.replace:
+    - name: /etc/pam.d/yubi-auth
+    - pattern: <syncgroup>
+    - repl: '{{salt['pillar.get']('yubikey:group')}}'
+    - require:
+      - pkg: libpam-yubico
+      - file: yubi-auth-replace
+
+no-common-auth-in-sshd:
+  file.comment:
+    - name: /etc/pam.d/sshd
+    - regex: ^@include common-auth
+    - require:
+      - pkg: libpam-yubico
+      - file: yubi-auth-replace
+
+yubi-auth-in-sshd:
+  file.prepend:
+    - name: /etc/pam.d/sshd
+    - text:
+      - '@include yubi-auth'
+    - require:
+      - pkg: libpam-yubico
+      - file: yubi-auth-replace
+      - file: no-common-auth-in-sshd
+
+restart-ssh-post-yubi-auth:
+    service.running:
+      - name: ssh
+      - watch:
