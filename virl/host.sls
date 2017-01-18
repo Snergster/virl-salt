@@ -127,10 +127,10 @@ man-snat-promisc:
       - network: {{ l3_port }}
 
 set-dns-default:
-  file.replace:
+  file.managed:
     - name: /etc/dhcp/dhclient.conf
-    - pattern: #reject 192.33.137.209;
-    - repl: 'default domain-name-servers {{fdns}} {{sdns}}'
+    - source: 'salt://virl/files/dhclient.conf'
+    - mode: 0644  
 
 man-int-promisc:
   file.replace:
