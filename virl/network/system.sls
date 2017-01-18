@@ -39,6 +39,12 @@ eth0:
       - 'salt-call --local ip.build_interface {{virl.publicport}} eth True proto=static dns-nameservers="{{virl.fdns}} {{virl.sdns}}" address={{virl.public_ip}} netmask={{virl.public_netmask}} gateway={{virl.public_gateway}}'
 {% endif %}
 
+set-dns-default:
+  file.replace:
+    - name: /etc/dhcp/dhclient.conf
+    - pattern: "#reject 192.33.137.209;"
+    - repl: 'default domain-name-servers {{fdns}} {{sdns}}'
+
 
 eth0 ifup:
   cmd.run:
