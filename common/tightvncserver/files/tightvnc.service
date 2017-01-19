@@ -1,0 +1,13 @@
+[Unit]
+Description=Tightvnc server
+After=syslog.target network.target
+
+[Service]
+Type=forking
+User=virl
+ExecStart=/usr/bin/tightvncserver -geometry 1440x850 -alwaysshared :1
+ExecStop=/usr/bin/tightvncserver -kill :1
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target

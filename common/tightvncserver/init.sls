@@ -15,6 +15,7 @@ tightvnc-pkgs:
     - names:
       - tightvncserver
       - blackbox
+      - xterm
 
 /home/virl/.vnc/xstartup:
   file.managed:
@@ -37,19 +38,14 @@ tightvnc-pkgs:
     - group: virl
     - dir_mode: 700
 
-/etc/init.d/tightvnc:
+/etc/systemd/system/tightvnc.service:
   file.managed:
     - mode: 755
     {% if masterless %}
-    - source: "file:///srv/salt/common/tightvncserver/files/tightvnc.init"
+    - source: "file:///srv/salt/common/tightvncserver/files/tightvnc.service"
     {% else %}
-    - source: "salt://files/install_scripts/tightvnc.init"
+    - source: "salt://files/install_scripts/tightvnc.service"
     {% endif %}
-
-/etc/rc2.d/S97tightvnc:
-  file.symlink:
-    - target: /etc/init.d/tightvnc
-    - mode: 0755
 
 /home/virl/.vnc/passwd:
   file.managed:
