@@ -121,3 +121,4 @@ restart-ssh-post-yubi-auth:
     service.running:
       - name: ssh
       - watch:
+        - file: yubi-auth-replace
