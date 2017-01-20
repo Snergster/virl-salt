@@ -22,7 +22,7 @@ NX-OSv 9000:
   - property-hw_disk_bus: sata
   - property-hw_bios: n9kbios.bin
   - property-hw_vif_model: e1000
-  - property-release: nxosv-7.0.3.I5.1
+  - property-release: 7.0.3.I5.1
   - property-serial: 2
   - property-subtype: 'NX-OSv 9000'
 
