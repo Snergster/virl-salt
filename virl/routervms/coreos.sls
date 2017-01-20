@@ -36,6 +36,9 @@ coreos flavor create:
     - ram: 2048
     - disk: 0
     - vcpus: 2
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: coreos
     - require:

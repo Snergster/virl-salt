@@ -40,6 +40,9 @@ vpagent flavor create:
     - ram: 512
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: vpagent
     - require:

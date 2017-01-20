@@ -30,6 +30,9 @@ UbuntuServertrusty flavor create:
     - ram: 4096
     - disk: 0
     - vcpus: 2
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: UbuntuServertrusty
     - require:

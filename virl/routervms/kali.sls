@@ -34,6 +34,9 @@ kali flavor create:
     - ram: 2048
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: kali
     - require:

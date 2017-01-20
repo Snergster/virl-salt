@@ -49,6 +49,9 @@ IOSvL2 flavor create:
     - ram: 768
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: IOSvL2
     - require:

@@ -40,6 +40,9 @@ NX-OSv flavor create:
     - ram: 3072
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - require:
       - cmd: NX-OSv flavor delete
 

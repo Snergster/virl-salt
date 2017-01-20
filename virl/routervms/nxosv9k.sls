@@ -40,6 +40,9 @@ NX-OSv 9000 flavor create:
     - ram: 8192
     - disk: 0
     - vcpus: 2
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: NX-OSv 9000
     - require:
