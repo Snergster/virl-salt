@@ -1,10 +1,9 @@
-{% set iosxrv9000pref = salt['pillar.get']('virl:iosxrv9000', salt['grains.get']('iosxrv9000', True)) %}
-{% set iosxrv9000 = salt['pillar.get']('routervms:iosxrv9000', False ) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if iosxrv9000 and iosxrv9000pref %}
+{% if virl.iosxrv9000 and virl.iosxrv9000pref %}
 
 iosxrv 9000:
   glance.image_present:
@@ -27,7 +26,6 @@ iosxrv 9000:
   - property-serial: 4
   - property-subtype: 'IOS XRv 9000'
 
-
 iosxrv 9000 flavor delete:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOS XRv 9000"'
@@ -49,17 +47,6 @@ iosxrv 9000 flavor create:
       - glance: iosxrv 9000
     - require:
       - cmd: iosxrv 9000 flavor delete
-
-iosxrv 9000 flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'IOS XRv 9000'
-    - profile: virl
-    - ram: 8192
-    - disk: 0
-    - vcpus: 2
-    - onfail:
-      - module: 'iosxrv 9000 flavor create'
 
 {% else %}
 

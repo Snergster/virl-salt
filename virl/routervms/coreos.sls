@@ -1,7 +1,6 @@
-{% set coreos = salt['pillar.get']('routervms:coreos', False) %}
-{% set coreospref = salt['pillar.get']('virl:coreos', salt['grains.get']('coreos', True)) %}
+{% from "virl.jinja" import virl with context %}
 
-{% if coreos and coreospref %}
+{% if virl.coreos and virl.coreospref %}
 coreos:
   glance.image_present:
     - profile: virl
@@ -43,17 +42,6 @@ coreos flavor create:
       - glance: coreos
     - require:
       - cmd: coreos flavor delete
-
-coreos flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'coreos'
-    - profile: virl
-    - ram: 2048
-    - disk: 0
-    - vcpus: 2
-    - onfail:
-      - module: 'coreos flavor create'
 
 {% else %}
 

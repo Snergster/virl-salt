@@ -1,7 +1,6 @@
-{% set kali = salt['pillar.get']('routervms:kali', False) %}
-{% set kalipref = salt['pillar.get']('virl:kali', salt['grains.get']('kali', True)) %}
+{% from "virl.jinja" import virl with context %}
 
-{% if kali and kalipref %}
+{% if virl.kali and virl.kalipref %}
 
 kali:
   glance.image_present:
@@ -41,17 +40,6 @@ kali flavor create:
       - glance: kali
     - require:
       - cmd: kali flavor delete
-
-kali flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'kali'
-    - profile: virl
-    - ram: 2048
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'kali flavor create'
 
 {% else %}
 

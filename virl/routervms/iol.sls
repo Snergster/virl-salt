@@ -1,4 +1,5 @@
 {% from "virl.jinja" import virl with context %}
+
 include:
   - virl.routervms.virl-core-sync
 
@@ -7,10 +8,10 @@ include:
 iol prereq pkgs:
   pkg.installed:
 {% if virl.packet %}
-      - refresh: True
+    - refresh: True
 {% endif %}
-      - pkgs:
-        - libc6:i386
+    - pkgs:
+      - libc6:i386
 
 iol:
   virl_core.lxc_image_present:

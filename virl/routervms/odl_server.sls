@@ -1,3 +1,4 @@
+{% from "virl.jinja" import virl with context %}
 
 UbuntuServertrusty:
   glance.image_present:
@@ -37,14 +38,3 @@ UbuntuServertrusty flavor create:
       - glance: UbuntuServertrusty
     - require:
       - cmd: UbuntuServertrusty flavor delete
-
-UbuntuServertrusty flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'odlcontroller'
-    - profile: virl
-    - ram: 4096
-    - disk: 0
-    - vcpus: 2
-    - onfail:
-      - module: 'UbuntuServertrusty flavor create'

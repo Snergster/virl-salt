@@ -1,10 +1,9 @@
-{% set asav = salt['pillar.get']('routervms:asav', False) %}
-{% set asavpref = salt['pillar.get']('virl:asav', salt['grains.get']('asav', True)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if asav and asavpref %}
+{% if virl.asav and virl.asavpref %}
 asav:
   glance.image_present:
     - profile: virl
@@ -46,17 +45,6 @@ asav flavor create:
       - glance: asav
     - require:
       - cmd: asav flavor delete
-
-asav flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'ASAv'
-    - profile: virl
-    - ram: 2048
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'asav flavor create'
 
 {% else %}
 

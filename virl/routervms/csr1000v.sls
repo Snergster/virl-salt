@@ -46,17 +46,6 @@ CSR1000v flavor create:
     - require:
       - cmd: CSR1000v flavor delete
 
-CSR1000v flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'CSR1000v'
-    - profile: virl
-    - ram: 3072
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'CSR1000v flavor create'
-
 {% else %}
 
 CSR1000v gone:

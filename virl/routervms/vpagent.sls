@@ -1,10 +1,9 @@
-{% set vpagentpref = salt['pillar.get']('virl:vpagent', salt['grains.get']('vpagent', True)) %}
-{% set vpagent = salt['pillar.get']('routervms:vpagent', False) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if vpagent and vpagentpref %}
+{% if virl.vpagent and virl.vpagentpref %}
 
 vpagent:
   glance.image_present:
@@ -47,17 +46,6 @@ vpagent flavor create:
       - glance: vpagent
     - require:
       - cmd: vpagent flavor delete
-
-vpagent flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'vpagent'
-    - profile: virl
-    - ram: 512
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'vpagent flavor create'
 
 {% else %}
 

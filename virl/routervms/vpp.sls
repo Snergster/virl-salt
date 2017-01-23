@@ -1,12 +1,11 @@
-{% set vPP = salt['pillar.get']('routervms:vpp', True) %}
-{% set vPPpref = salt['pillar.get']('virl:vpp', salt['grains.get']('vpp', True)) %}
+{% from "virl.jinja" import virl with context %}
 
-{% if vPP and vPPpref %}
+{% if virl.vpp and virl.vpppref %}
 
-vPP:
+vpp:
   glance.image_present:
   - profile: virl
-  - name: 'vPP'
+  - name: 'vpp'
   - container_format: bare
   - min_disk: 4
   - min_ram: 0
@@ -14,23 +13,23 @@ vPP:
   - checksum: d93fd5ae034b74b0524e0f12167b4049
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/private/vpp-VPPDEV_07302015.qcow2
+  - copy_from: salt://images/private/vpp-vppDEV_07302015.qcow2
   - property-hw_disk_bus: virtio
   - property-release: 07302015
   - property-serial: 1
-  - property-subtype: vPP
+  - property-subtype: vpp
 
-vPP flavor delete:
+vpp flavor delete:
   cmd.run:
-    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "vPP"'
-    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-show "vPP"
+    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "vpp"'
+    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-show "vpp"
     - onchanges:
-      - glance: vPP
+      - glance: vpp
 
-vPP flavor create:
+vpp flavor create:
   module.run:
     - name: nova.flavor_create
-    - m_name: 'vPP'
+    - m_name: 'vpp'
     - ram: 2048
     - disk: 0
     - vcpus: 2
@@ -38,30 +37,19 @@ vPP flavor create:
     - profile: virl
   {% endif %}
     - onchanges:
-      - glance: vPP
+      - glance: vpp
     - require:
-      - cmd: vPP flavor delete
-
-vPP flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'vPP'
-    - profile: virl
-    - ram: 2048
-    - disk: 0
-    - vcpus: 2
-    - onfail:
-      - module: 'vPP flavor create'
+      - cmd: vpp flavor delete
 
 {% else %}
 
-vPP gone:
+vpp gone:
   glance.image_absent:
   - profile: virl
-  - name: 'vPP'
+  - name: 'vpp'
 
-vPP flavor absent:
+vpp flavor absent:
   cmd.run:
-    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "vPP"'
-    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "vPP"
+    - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "vpp"'
+    - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "vpp"
 {% endif %}

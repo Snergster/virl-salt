@@ -48,17 +48,6 @@ NX-OSv 9000 flavor create:
     - require:
       - cmd: NX-OSv 9000 flavor delete
 
-NX-OSv 9000 flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'NX-OSv 9000'
-    - profile: virl
-    - ram: 8192
-    - disk: 0
-    - vcpus: 2
-    - onfail:
-      - module: 'NX-OSv 9000 flavor create'
-
 {% else %}
 
 NX-OSv 9000 gone:
