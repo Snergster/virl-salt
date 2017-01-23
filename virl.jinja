@@ -93,7 +93,7 @@
     'dummy_int' : salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )),
     'controller' : salt['pillar.get']('virl:this_node_is_the_controller', salt['grains.get']('this_node_is_the_controller', True )),
     'controllerhostname' : salt['pillar.get']('virl:internalnet_controller_hostname',salt['grains.get']('internalnet_controller_hostname', 'controller')),
-    'controller_ip' : salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('internalnet_controller_IP', '172.16.10.250')),
+    'controller_ip' : salt['pillar.get']('virl:internalnet_controller_ip', salt['grains.get']('internalnet_controller_ip', '172.16.10.250')),
     'int_port' : salt['pillar.get']('virl:internalnet_port', salt['grains.get']('internalnet_port', 'eth4' )),
     'int_ip' : salt['pillar.get']('virl:internalnet_ip', salt['grains.get']('internalnet_ip', '172.16.10.250' )),
     'int_network' : salt['pillar.get']('virl:internalnet_network', salt['grains.get']('internalnet_network', '172.16.10.0' )),
