@@ -139,6 +139,7 @@
     'lxc_pref' : salt['pillar.get']('virl:lxc_server', salt['grains.get']('lxc_server', True)),
     'lxc_iperf_pref' : salt['pillar.get']('virl:lxc_iperf', salt['grains.get']('lxc_iperf', True)),
     'lxc_routempref' : salt['pillar.get']('virl:lxc_routem', salt['grains.get']('lxc_routem', True)),
+    'lxc_serverpref' : salt['pillar.get']('virl:lxc_server', salt['grains.get']('lxc_server', True)),    
     'lxc_ostinatopref' : salt['pillar.get']('virl:lxc_ostinato', salt['grains.get']('lxc_ostinato', True)),
     'securityonion' : salt['pillar.get']('virl:securityonion', salt['grains.get']('securityonion', True)),    
     'neutron_bridge_flooding' : salt['pillar.get']('virl:neutron_bridge_flooding', salt['grains.get']('neutron_bridge_flooding', False)),
