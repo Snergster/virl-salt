@@ -2,6 +2,7 @@
 {% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
 {% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
 {% set cml_iosv = salt['pillar.get']('routervms:cml_iosv', False ) %}
+{% set mitaka = salt['grains.get']('mitaka', false )) %}
 
 include:
   - virl.routervms.virl-core-sync
