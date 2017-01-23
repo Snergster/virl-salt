@@ -15,13 +15,13 @@ lxc_server:
   - release: 14.04.2
   {% endif %}
 
-  {% if not virl.cml %}
-  remove dead tar:
-    cmd.run:
-      - order: last
-      - names:
-        - 'rm -f /var/local/virl/lxc/images/*lxc-ubuntu-ci.tar'
-  {% endif %}
+{% if not virl.cml %}
+remove dead tar:
+  cmd.run:
+    - order: last
+    - names:
+      - 'rm -f /var/local/virl/lxc/images/*lxc-ubuntu-ci.tar'
+{% endif %}
 {% else %}
 
 lxc_server gone:
