@@ -3,7 +3,7 @@
 include:
   - virl.routervms.virl-core-sync
 
-{% if virl.lxc_server and virl.lxc_server_pref %}
+{% if virl.lxc_server and virl.lxc_serverpref %}
 
 lxc_server:
   virl_core.lxc_image_present:
