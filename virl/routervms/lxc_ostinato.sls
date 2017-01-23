@@ -3,7 +3,7 @@
 include:
   - virl.routervms.virl-core-sync
 
-{% if virl.lxc_ostinato and virl.lxc_ostinato_pref %}
+{% if virl.lxc_ostinato and virl.lxc_ostinatopref %}
 
 lxc_ostinato:
   virl_core.lxc_image_present:
