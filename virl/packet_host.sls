@@ -58,33 +58,9 @@
 include:
   - virl.hostname
   - virl.hostname.packet
-  {% if 'xenial' in salt['grains.get']('oscodename') %}
-  - virl.network.br1
-  - virl.network.br2
-  - virl.network.br3
-
-br1 bringup:
-  cmd.run:
-    - unless: ifconfig br1
-    - name: /sbin/ifup br1
-
-br2 bringup:
-  cmd.run:
-    - unless: ifconfig br2
-    - name: /sbin/ifup br2
-
-br3 bringup:
-  cmd.run:
-    - unless: ifconfig br3
-    - name: /sbin/ifup br3
-
-br4 bringup:
-  cmd.run:
-    - unless: ifconfig br4
-    - name: /sbin/ifup br4
-
+  {% if not 'xenial' in salt['grains.get']('oscodename') %}
+  - virl.network.always_a_dummy
   {% endif %}
-
 
 adding source to interfaces:
   cmd.run:
@@ -129,7 +105,49 @@ remove dummy crud:
   file.absent:
     - name: /etc/network/interfaces.d/dummy.cfg
 
+  {% else %}
+
+/etc/network/interfaces.d/flat.cfg:
+  file.managed:
+    - contents:  |
+          auto br1
+          iface br1 inet static
+              address {{l2_address}}
+              netmask {{l2_mask}}
+              bridge_maxwait 0
+              bridge_ports {{l2_port}}
+              bridge_stp off
+              post-up ip link set br1 promisc on
+
+/etc/network/interfaces.d/flat1.cfg:
+  file.managed:
+    - contents:  |
+          auto br2
+          iface br2 inet static
+              address {{l2_address2}}
+              netmask {{l2_mask2}}
+              bridge_maxwait 0
+              bridge_ports {{l2_port2}}
+              bridge_stp off
+              post-up ip link set br2 promisc on
+
+/etc/network/interfaces.d/snat.cfg:
+  file.managed:
+    - contents:  |
+          auto br1
+          iface br1 inet static
+              address {{l3_address}}
+              netmask {{l3_mask}}
+              bridge_maxwait 0
+              bridge_ports {{l3_port}}
+              bridge_stp off
+              post-up ip link set br1 promisc on
+
+remove dummy crud:
+  file.absent:
+    - name: /etc/network/interfaces.d/dummy.cfg
   {% endif %}
+
 {% if not cluster %}
 
 /etc/network/interfaces.d/internal.cfg:
@@ -265,6 +283,29 @@ additional interfaces:
     - name: /etc/network/interfaces
     - text: source /etc/network/interfaces.d/*.cfg
 
+  {% if 'xenial' in salt['grains.get']('oscodename') %}
+
+br1 bringup:
+  cmd.run:
+    - unless: ifconfig br1
+    - name: /sbin/ifup br1
+
+br2 bringup:
+  cmd.run:
+    - unless: ifconfig br2
+    - name: /sbin/ifup br2
+
+br3 bringup:
+  cmd.run:
+    - unless: ifconfig br3
+    - name: /sbin/ifup br3
+
+br4 bringup:
+  cmd.run:
+    - unless: ifconfig br4
+    - name: /sbin/ifup br4
+
+  {% endif %}
 
 get your dummy on:
   cmd.run:
