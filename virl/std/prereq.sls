@@ -46,7 +46,6 @@ std_prereq_webmux:
       - docker-py >= 1.3.1
       - lxml >= 3.4.1, < 3.6.0
 
-
 std_prereq:
   pip.installed:
     - names:

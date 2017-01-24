@@ -15,12 +15,12 @@ CSR1000v:
   - checksum: 2e5803d23cd52cba5d55fa8306be5f13
   - protected: False
   - disk_format: qcow2
-  - copy_from: salt://images/salt/csr1000v-universalk9.16.3.2.qcow2
+  - copy_from: salt://images/salt/csr1000v-universalk9.16.4.1.qcow2
   - property-config_disk_type: cdrom
   - property-hw_cdrom_bus: ide
   - property-hw_disk_bus: virtio
   - property-hw_vif_model: virtio
-  - property-release: 16.3.2
+  - property-release: 16.4.1
   - property-serial: 2
   - property-subtype: CSR1000v
 
