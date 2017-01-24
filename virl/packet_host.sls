@@ -58,6 +58,33 @@
 include:
   - virl.hostname
   - virl.hostname.packet
+  {% if 'xenial' in salt['grains.get']('oscodename') %}
+  - virl.network.br1
+  - virl.network.br2
+  - virl.network.br3
+
+br1 bringup:
+  cmd.run:
+    - unless: ifconfig br1
+    - name: /sbin/ifup br1
+
+br2 bringup:
+  cmd.run:
+    - unless: ifconfig br2
+    - name: /sbin/ifup br2
+
+br3 bringup:
+  cmd.run:
+    - unless: ifconfig br3
+    - name: /sbin/ifup br3
+
+br4 bringup:
+  cmd.run:
+    - unless: ifconfig br4
+    - name: /sbin/ifup br4
+
+  {% endif %}
+
 
 adding source to interfaces:
   cmd.run:
@@ -70,7 +97,7 @@ adding source to interfaces:
           iface lo:1 inet loopback
               address 127.0.1.1
               netmask 255.0.0.0
-
+  {% if not 'xenial' in salt['grains.get']('oscodename') %}
 /etc/network/interfaces.d/flat.cfg:
   file.managed:
     - contents:  |
@@ -102,6 +129,7 @@ remove dummy crud:
   file.absent:
     - name: /etc/network/interfaces.d/dummy.cfg
 
+  {% endif %}
 {% if not cluster %}
 
 /etc/network/interfaces.d/internal.cfg:
