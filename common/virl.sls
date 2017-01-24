@@ -14,6 +14,7 @@ include:
   - openstack.repo
   - common.kvm
   - common.ksm
+  - virl.efibios
   - virl.scripts
   - virl.vextra
   - virl.network.dummy

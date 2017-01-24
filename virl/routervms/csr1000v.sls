@@ -12,7 +12,7 @@ CSR1000v:
   - min_disk: 8
   - min_ram: 0
   - is_public: True
-  - checksum: 2e5803d23cd52cba5d55fa8306be5f13
+  - checksum: 3428e0dcf5132a1b11ab7696d8c61b2e
   - protected: False
   - disk_format: qcow2
   - copy_from: salt://images/salt/csr1000v-universalk9.16.4.1.qcow2
