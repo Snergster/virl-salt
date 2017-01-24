@@ -5,7 +5,7 @@ include:
 
 {% if virl.server and virl.serverpref %}
 
-UbuntuServertrusty:
+UbuntuServerXenial:
   glance.image_present:
   - profile: virl
   - name: 'server'
@@ -22,14 +22,14 @@ UbuntuServertrusty:
   - property-serial: 1
   - property-subtype: server
 
-UbuntuServertrusty flavor delete:
+UbuntuServerXenial flavor delete:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "server"'
     - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-show "server"
     - onchanges:
-      - glance: UbuntuServertrusty
+      - glance: UbuntuServerXenial
 
-UbuntuServertrusty flavor create:
+UbuntuServerXenial flavor create:
   module.run:
     - name: nova.flavor_create
     - m_name: 'server'
@@ -40,18 +40,18 @@ UbuntuServertrusty flavor create:
     - profile: virl
   {% endif %}
     - onchanges:
-      - glance: UbuntuServertrusty
+      - glance: UbuntuServerXenial
     - require:
-      - cmd: UbuntuServertrusty flavor delete
+      - cmd: UbuntuServerXenial flavor delete
 
 {% else %}
 
-UbuntuServertrusty gone:
+UbuntuServerXenial gone:
   glance.image_absent:
   - profile: virl
   - name: 'server'
 
-UbuntuServertrusty flavor absent:
+UbuntuServerXenial flavor absent:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "server"'
     - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "server"
