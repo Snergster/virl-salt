@@ -107,7 +107,6 @@ python-pip mirror defaults:
 
 {% endif %}
 
-{% if virl.packet %}
 good six:
   pip.installed:
     - name: six >= 1.9.0
@@ -138,4 +137,3 @@ requests stop bitching:
     {% endif %}
     - upgrade: True
 
-{% endif %}
