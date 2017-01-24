@@ -134,14 +134,14 @@ remove dummy crud:
 /etc/network/interfaces.d/snat.cfg:
   file.managed:
     - contents:  |
-          auto br1
-          iface br1 inet static
+          auto br3
+          iface br3 inet static
               address {{l3_address}}
               netmask {{l3_mask}}
               bridge_maxwait 0
               bridge_ports {{l3_port}}
               bridge_stp off
-              post-up ip link set br1 promisc on
+              post-up ip link set br3 promisc on
 
 remove dummy crud:
   file.absent:
