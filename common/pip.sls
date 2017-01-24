@@ -106,3 +106,32 @@ python-pip mirror defaults:
         disable-pip-version-check = true
 
 {% endif %}
+
+{% if virl.packet %}
+good six:
+  pip.installed:
+    - name: six >= 1.9.0
+    {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
+    {% endif %}
+    - upgrade: True
+    - onlyif:
+      - 'test -e /usr/local/bin/pip'
+
+{% for each in ['six.py','six.pyc','six-1.5.2.egg-info'] %}
+remove old {{each}}:
+  file.absent:
+    - name: /usr/lib/python2.7/dist-packages/{{ each }}
+    - require:
+      - pip: good six
+{% endfor %}
+
+requests stop bitching:
+  pip.installed:
+    - name: ndg-httpsclient
+    {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
+    {% endif %}
+    - upgrade: True
+
+{% endif %}
