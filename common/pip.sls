@@ -118,6 +118,8 @@ good six:
     - onlyif:
       - 'test -e /usr/local/bin/pip'
 
+{% if not 'xenial' in salt['grains.get']('oscodename') %}
+
 {% for each in ['six.py','six.pyc','six-1.5.2.egg-info'] %}
 remove old {{each}}:
   file.absent:
@@ -125,6 +127,8 @@ remove old {{each}}:
     - require:
       - pip: good six
 {% endfor %}
+
+{% endif %}
 
 requests stop bitching:
   pip.installed:
