@@ -22,11 +22,9 @@ ff02::2		ip6-allrouters
 {%- if virl.compute4_active -%}
 {{ virl.compute4_internalnet_ip }}      compute4        compute4.{{virl.domain_name}}
 {% endif %}
-{%- else %}
-{{ virl.int_ip }}    {{virl.hostname}}  {{virl.hostname}}.{{virl.domain_name}}
-{{ virl.controller_ip }}    controller
 {%- endif %}
+{% endif %}
 {{ virl.int_ip }}    {{virl.hostname}}  {{virl.hostname}}.{{virl.domain_name}}
 {{ virl.controller_ip }}    controller
-{% endif %}
+
 # VIRL cluster end block
