@@ -129,11 +129,3 @@ remove old {{each}}:
 
 {% endif %}
 
-requests stop bitching:
-  pip.installed:
-    - name: ndg-httpsclient
-    {% if virl.proxy %}
-    - proxy: {{ virl.http_proxy }}
-    {% endif %}
-    - upgrade: True
-
