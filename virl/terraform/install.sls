@@ -30,6 +30,10 @@ remove dead zipfile:
     - require:
       - cmd: install terraform
 
+remove old terraform providers:
+  cmd.run:
+    - name: 'rm -f /usr/local/bin/terraform-*'
+
 {% else %}
 
 download terraform:
@@ -50,5 +54,10 @@ remove dead zipfile:
     - name: /home/virl/terraform_{{ terraform_version }}_linux_amd64.zip
     - require:
       - cmd: install terraform
+
+remove old terraform providers:
+  cmd.run:
+    - name: 'rm -f /usr/local/bin/terraform-*'
+
 
 {% endif %}
