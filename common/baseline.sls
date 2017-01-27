@@ -30,11 +30,6 @@ baseline-packages:
       - virt-what
       - vim
 
-/srv/salt:
-  file.directory:
-    - dir_mode: 755
-    - makedirs: True
-
 /etc/apt/apt.conf.d/99force-ipv4:
   file.managed:
     - makedirs: true
