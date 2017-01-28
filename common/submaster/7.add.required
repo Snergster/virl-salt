@@ -1,3 +1,0 @@
-#!/bin/bash
-salt-call state.sls common.baseline
-pip install psutil python-dateutil pyinotify M2crypto
