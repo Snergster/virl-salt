@@ -347,6 +347,28 @@ my_ip compute paranoia:
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
 
+/usr/lib/python2.7/dist-packages/nova/console/serial.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/console.serial.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/console/serial.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/console/serial.py
+
+/usr/lib/python2.7/dist-packages/nova/virl_utils.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/virl_utils.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virl_utils.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virl_utils.py
+
 {% endif %}
 
 nova-compute restart:
