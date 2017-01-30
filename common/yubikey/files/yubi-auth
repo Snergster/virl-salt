@@ -1,4 +1,4 @@
-# If this is a user in group keysync they don't have a yubikey and we need to skip the yubiconf authentication module: 
+# If this is a user in group <syncgroup> skip yubiconf authentication module: 
 auth    [success=1 default=ignore]      pam_succeed_if.so user ingroup <syncgroup>
 
 <pam-yubi-goes-here>
