@@ -1,6 +1,6 @@
 {% set id = data['id'] %}
 
-{% if 'salt-master' in data['data'] %}
+{% if 'salt-master' in data['service_name'] %}
 {% set running_status = data['salt-master']['running'] %}
 restart salt-master:
   local.service.start:
@@ -21,7 +21,7 @@ sendmsg_run:
         room_id: 1552751
         from_name: master_watch
 {% endif %}
-{% if 'proftpd' in data['data'] %}
+{% if 'proftpd' in data['service_name'] %}
 {% set running_status = data['proftpd']['running'] %}
 restart proftpd:
   local.service.start:
