@@ -1,8 +1,8 @@
-{% set id = data['data']['id'] %}
+{% set id = data['id'] %}
 
 {% if id %}
-{% set mount = data['data']['mount'] %}
-{% set disk = data['data']['diskusage'] %}
+{% set mount = data['mount'] %}
+{% set disk = data['diskusage'] %}
 
 
 sendmsg_run:

@@ -1,7 +1,7 @@
-{% set id = data['data']['id'] %}
+{% set id = data['id'] %}
 
 {% if id %}
-{% set cpu = data['data']['avg'] %}
+{% set cpu = data['avg'] %}
 
 sendmsg_run:
   local.hipchat.send_message:
