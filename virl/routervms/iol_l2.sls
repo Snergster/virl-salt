@@ -8,10 +8,10 @@ include:
 iol-l2 prereq pkgs:
   pkg.installed:
 {% if virl.packet %}
-      - refresh: True
+    - refresh: True
 {% endif %}
-      - pkgs:
-        - libc6:i386
+    - pkgs:
+      - libc6:i386
 
 iol-l2:
   virl_core.lxc_image_present:

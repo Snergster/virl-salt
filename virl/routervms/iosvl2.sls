@@ -1,13 +1,9 @@
-
-{% set iosvl2 = salt['pillar.get']('routervms:iosvl2', False ) %}
-{% set iosvl2pref = salt['pillar.get']('virl:iosvl2', salt['grains.get']('iosvl2', True)) %}
-{% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
-{% set cml_iosvl2 = salt['pillar.get']('virl:cml_iosvl2', salt['grains.get']('cml_iosvl2', False )) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if iosvl2pref or cml_iosvl2 %}
+{% if virl.iosvl2pref or virl.cml_iosvl2 %}
 
 IOSvL2:
   glance.image_present:
@@ -19,7 +15,7 @@ IOSvL2:
     - is_public: True
     - protected: False
     - disk_format: qcow2
-{% if cml %}
+{% if virl.cml %}
     - checksum: c9d556c75a3aa510443014c5dea3dbdb
     - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.cml.vmdk
     - property-release: 15.2.4063
@@ -49,21 +45,13 @@ IOSvL2 flavor create:
     - ram: 768
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: IOSvL2
     - require:
       - cmd: IOSvL2 flavor delete
-
-IOSvL2 flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'IOSvL2'
-    - profile: virl
-    - ram: 768
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'IOSvL2 flavor create'
 
 {% else %}
 

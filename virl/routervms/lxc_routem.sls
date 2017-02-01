@@ -1,10 +1,9 @@
-{% set lxc_routem = salt['pillar.get']('lxcimages:lxc_routem', True) %}
-{% set lxc_routem_pref = salt['pillar.get']('virl:lxc_routem', salt['grains.get']('lxc_routem', True)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if lxc_routem and lxc_routem_pref %}
+{% if virl.lxc_routem and virl.lxc_routempref %}
 
 lxc_routem:
   virl_core.lxc_image_present:

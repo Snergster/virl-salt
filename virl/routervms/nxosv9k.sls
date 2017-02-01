@@ -22,7 +22,7 @@ NX-OSv 9000:
   - property-hw_disk_bus: sata
   - property-hw_bios: n9kbios.bin
   - property-hw_vif_model: e1000
-  - property-release: nxosv-7.0.3.I5.1
+  - property-release: 7.0.3.I5.1
   - property-serial: 2
   - property-subtype: 'NX-OSv 9000'
 
@@ -40,21 +40,13 @@ NX-OSv 9000 flavor create:
     - ram: 8192
     - disk: 0
     - vcpus: 2
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: NX-OSv 9000
     - require:
       - cmd: NX-OSv 9000 flavor delete
-
-NX-OSv 9000 flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'NX-OSv 9000'
-    - profile: virl
-    - ram: 8192
-    - disk: 0
-    - vcpus: 2
-    - onfail:
-      - module: 'NX-OSv 9000 flavor create'
 
 {% else %}
 

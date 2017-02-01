@@ -1,7 +1,7 @@
 
 {% set http_proxy = salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy.esl.cisco.com:80/')) %}
 {% set ifproxy = salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)) %}
-{% set terraform_version = salt['pillar.get']('version:terraform', '0.6.16') %}
+{% set terraform_version = salt['pillar.get']('version:terraform', '0.8.4') %}
 
 {% if ifproxy == True %}
 http_proxy:
@@ -30,6 +30,10 @@ remove dead zipfile:
     - require:
       - cmd: install terraform
 
+remove old terraform providers:
+  cmd.run:
+    - name: 'rm -f /usr/local/bin/terraform-*'
+
 {% else %}
 
 download terraform:
@@ -50,5 +54,10 @@ remove dead zipfile:
     - name: /home/virl/terraform_{{ terraform_version }}_linux_amd64.zip
     - require:
       - cmd: install terraform
+
+remove old terraform providers:
+  cmd.run:
+    - name: 'rm -f /usr/local/bin/terraform-*'
+
 
 {% endif %}

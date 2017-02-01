@@ -1,12 +1,11 @@
-{% set server = salt['pillar.get']('routervms:UbuntuServertrusty', True) %}
-{% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if server and serverpref %}
+{% if virl.server and virl.serverpref %}
 
-UbuntuServertrusty:
+UbuntuServerXenial:
   glance.image_present:
   - profile: virl
   - name: 'server'
@@ -23,44 +22,36 @@ UbuntuServertrusty:
   - property-serial: 1
   - property-subtype: server
 
-UbuntuServertrusty flavor delete:
+UbuntuServerXenial flavor delete:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "server"'
     - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-show "server"
     - onchanges:
-      - glance: UbuntuServertrusty
+      - glance: UbuntuServerXenial
 
-UbuntuServertrusty flavor create:
+UbuntuServerXenial flavor create:
   module.run:
     - name: nova.flavor_create
     - m_name: 'server'
     - ram: 512
     - disk: 0
     - vcpus: 1
-    - onchanges:
-      - glance: UbuntuServertrusty
-    - require:
-      - cmd: UbuntuServertrusty flavor delete
-
-UbuntuServertrusty flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'server'
+  {% if virl.mitaka %}
     - profile: virl
-    - ram: 512
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'UbuntuServertrusty flavor create'
+  {% endif %}
+    - onchanges:
+      - glance: UbuntuServerXenial
+    - require:
+      - cmd: UbuntuServerXenial flavor delete
 
 {% else %}
 
-UbuntuServertrusty gone:
+UbuntuServerXenial gone:
   glance.image_absent:
   - profile: virl
   - name: 'server'
 
-UbuntuServertrusty flavor absent:
+UbuntuServerXenial flavor absent:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "server"'
     - onlyif: source /usr/local/bin/virl-openrc.sh ;nova flavor-list | grep -w "server"

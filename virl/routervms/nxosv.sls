@@ -1,10 +1,9 @@
-{% set nxosv = salt['pillar.get']('routervms:nxosv', False) %}
-{% set nxosvpref = salt['pillar.get']('virl:nxosv', salt['grains.get']('nxosv', True)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if nxosv and nxosvpref %}
+{% if virl.nxosv and virl.nxosvpref %}
 
 NX-OSv:
   glance.image_present:
@@ -40,19 +39,11 @@ NX-OSv flavor create:
     - ram: 3072
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - require:
       - cmd: NX-OSv flavor delete
-
-NX-OSv flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'NX-OSv'
-    - profile: virl
-    - ram: 3072
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'NX-OSv flavor create'
 
 {% else %}
 

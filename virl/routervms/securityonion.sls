@@ -1,7 +1,7 @@
-{% set securityonion = salt['pillar.get']('routervms:securityonion', False) %}
-{% set securityonionpref = salt['pillar.get']('virl:securityonion', salt['grains.get']('securityonion', True)) %}
+{% from "virl.jinja" import virl with context %}
 
-{% if securityonion and securityonionpref %}
+{% if virl.securityonion and virl.securityonionpref %}
+
 security-onion:
   glance.image_present:
     - profile: virl
@@ -34,21 +34,13 @@ security-onion flavor create:
     - ram: 3096
     - disk: 8
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: security-onion
     - require:
       - cmd: security-onion flavor delete
-
-security-onion flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'security-onion'
-    - profile: virl
-    - ram: 3096
-    - disk: 8
-    - vcpus: 1
-    - onfail:
-      - module: 'security-onion flavor create'
 
 {% else %}
 

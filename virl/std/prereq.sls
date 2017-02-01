@@ -30,6 +30,7 @@ std prereq pkgs:
         - libxml2-dev
         - libxslt1-dev
         - python-faulthandler
+        - libc6:i386
 
 std_prereq_webmux:
   pip.installed:
@@ -45,7 +46,6 @@ std_prereq_webmux:
       - service_identity
       - docker-py >= 1.3.1
       - lxml >= 3.4.1, < 3.6.0
-
 
 std_prereq:
   pip.installed:

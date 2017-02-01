@@ -1,7 +1,6 @@
-{% set cml_iosv = salt['pillar.get']('routervms:cml_iosv', False ) %}
-{% set cml_iosvpref = salt['pillar.get']('virl:cml_iosv', salt['grains.get']('cml_iosv', True)) %}
+{% from "virl.jinja" import virl with context %}
 
-{% if cml_iosv and cml_iosvpref %}
+{% if virl.cml_iosv and virl.cml_iosvpref %}
 
 iosv:
   glance.image_present:
@@ -37,21 +36,13 @@ iosv flavor create:
     - ram: 512
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: iosv
     - require:
       - cmd: iosv flavor delete
-
-iosv flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'IOSv'
-    - profile: virl
-    - ram: 512
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'iosv flavor create'
 
 {% else %}
 

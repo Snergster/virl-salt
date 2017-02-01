@@ -1,3 +1,4 @@
+{% from "virl.jinja" import virl with context %}
 
 iosxrv:
   glance.image_present:
@@ -19,7 +20,6 @@ iosxrv:
   - property-serial: 3
   - property-subtype: 'IOS XRv'
 
-
 iosxrv flavor delete:
   cmd.run:
     - name: 'source /usr/local/bin/virl-openrc.sh ;nova flavor-delete "IOS XRv"'
@@ -34,18 +34,10 @@ iosxrv flavor create:
     - ram: 3096
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: iosxrv
     - require:
       - cmd: iosxrv flavor delete
-
-iosxrv flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'IOS XRv'
-    - profile: virl
-    - ram: 3096
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'iosxrv flavor create'

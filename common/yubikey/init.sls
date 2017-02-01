@@ -1,3 +1,10 @@
+{% set proxy = salt['pillar.get']('master_proxy:state') %}
+
+yubico-ppa:
+  pkgrepo.managed:
+    - ppa: yubico/stable
+    - refresh_db: True
+
 libpam-yubico:
   pkg.installed
 
@@ -14,8 +21,13 @@ libykclient3:
     - require:
       - pkg: libpam-yubico
     - text:
-      - 'auth sufficient pam_yubico.so id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
-key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}'
+{% if proxy %}
+      - 'auth sufficient pam_yubico.so id={{salt['pillar.get']('yubikey:id')}} 
+key={{salt['pillar.get']('yubikey:key')}} authfile={{salt['pillar.get']('yubikey:authfile')}} urllist={{salt['pillar.get']('yubikey:urllist')}} capath=/etc/ssl/certs proxy={{salt['pillar.get']('master_proxy:proxy_url')}}' 
+{% else %}
+      - 'auth sufficient pam_yubico.so id={{salt['pillar.get']('yubikey:id')}} 
+key={{salt['pillar.get']('yubikey:key')}} authfile={{salt['pillar.get']('yubikey:authfile')}} urllist={{salt['pillar.get']('yubikey:urllist')}} capath=/etc/ssl/certs'
+{% endif %}
 
 enable-challenge-response-auth-in-sshd-config:
   file.replace:
@@ -84,8 +96,13 @@ custom-pam-yubico-auth:
   file.replace:
     - name: /etc/pam.d/yubi-auth
     - pattern: <pam-yubi-goes-here>
-    - repl: 'auth required pam_yubico.so mode=client id={{salt['pillar.get']('yubikey:id')}} authfile={{salt['pillar.get']('yubikey:authfile')}}
-key={{salt['pillar.get']('yubikey:key')}} url={{salt['pillar.get']('yubikey:url')}}'
+{% if proxy %}
+    - repl: 'auth required pam_yubico.so id={{salt['pillar.get']('yubikey:id')}} 
+key={{salt['pillar.get']('yubikey:key')}} authfile={{salt['pillar.get']('yubikey:authfile')}} urllist={{salt['pillar.get']('yubikey:urllist')}} capath=/etc/ssl/certs proxy={{salt['pillar.get']('master_proxy:proxy_url')}}' 
+{% else %}
+    - repl: 'auth required pam_yubico.so id={{salt['pillar.get']('yubikey:id')}} 
+key={{salt['pillar.get']('yubikey:key')}} authfile={{salt['pillar.get']('yubikey:authfile')}} urllist={{salt['pillar.get']('yubikey:urllist')}} capath=/etc/ssl/certs'
+{% endif %}
     - require:
       - pkg: libpam-yubico
       - file: yubi-auth-replace

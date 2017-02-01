@@ -1,10 +1,9 @@
-{% set server = salt['pillar.get']('routervms:UbuntuServertrusty', True) %}
-{% set serverpref = salt['pillar.get']('virl:server', salt['grains.get']('server', True)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if server and serverpref %}
+{% if virl.server and virl.serverpref %}
 
 UbuntuServertrusty:
   glance.image_present:
@@ -37,21 +36,13 @@ UbuntuServertrusty flavor create:
     - ram: 512
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: UbuntuServertrusty
     - require:
       - cmd: UbuntuServertrusty flavor delete
-
-UbuntuServertrusty flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'server'
-    - profile: virl
-    - ram: 512
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'UbuntuServertrusty flavor create'
 
 {% else %}
 

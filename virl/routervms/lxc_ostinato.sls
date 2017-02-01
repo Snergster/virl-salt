@@ -1,10 +1,9 @@
-{% set lxc_ostinato = salt['pillar.get']('lxcimages:lxc_ostinato', True) %}
-{% set lxc_ostinato_pref = salt['pillar.get']('virl:lxc_ostinato', salt['grains.get']('lxc_ostinato', True)) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if lxc_ostinato and lxc_ostinato_pref %}
+{% if virl.lxc_ostinato and virl.lxc_ostinatopref %}
 
 lxc_ostinato:
   virl_core.lxc_image_present:

@@ -1,12 +1,9 @@
-{% set iosv = salt['pillar.get']('routervms:iosv', True ) %}
-{% set iosvpref = salt['pillar.get']('virl:iosv', salt['grains.get']('iosv', True)) %}
-{% set cml = salt['pillar.get']('virl:cml', salt['grains.get']('cml', false )) %}
-{% set cml_iosv = salt['pillar.get']('routervms:cml_iosv', False ) %}
+{% from "virl.jinja" import virl with context %}
 
 include:
   - virl.routervms.virl-core-sync
 
-{% if iosvpref or cml_iosv %}
+{% if virl.iosvpref or virl.cml_iosv %}
 
 iosv:
   glance.image_present:
@@ -16,7 +13,7 @@ iosv:
     - min_disk: 2
     - min_ram: 0
     - is_public: True
-  {% if cml %}
+  {% if virl.cml %}
     - checksum: 4e94f3e63ad2771e5662f614921c8c62
     - copy_from: salt://images/salt/vios-adventerprisek9-m.cml.vmdk.SPA.156-2.T
   {% else %}
@@ -47,21 +44,13 @@ iosv flavor create:
     - ram: 512
     - disk: 0
     - vcpus: 1
+  {% if virl.mitaka %}
+    - profile: virl
+  {% endif %}
     - onchanges:
       - glance: iosv
     - require:
       - cmd: iosv flavor delete
-
-iosv flavor create2:
-  module.run:
-    - name: nova.flavor_create
-    - m_name: 'IOSv'
-    - profile: virl
-    - ram: 512
-    - disk: 0
-    - vcpus: 1
-    - onfail:
-      - module: 'iosv flavor create'
 
 {% else %}
 
