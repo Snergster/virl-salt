@@ -100,6 +100,7 @@ my_ip compute paranoia:
     'nova+api+openstack+compute+schemas+remote_consoles.py',
     'nova+cmd+baseproxy.py',
     'nova+cmd+serialproxy.py',
+    'nova+conf+serial_console.py',
     'nova+compute+api.py',
     'nova+compute+cells_api.py',
     'nova+compute+manager.py',
@@ -107,6 +108,7 @@ my_ip compute paranoia:
     'nova+console+websocketproxy.py',
     'nova+exception.py',
     'nova+network+neutronv2+api.py',
+    'nova+utils.py',
     'nova+virt+configdrive.py',
     'nova+virt+driver.py',
     'nova+virt+hardware.py',
@@ -344,6 +346,28 @@ my_ip compute paranoia:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/virt/libvirt/vif.py
+
+/usr/lib/python2.7/dist-packages/nova/console/serial.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/console.serial.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/console/serial.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/console/serial.py
+
+/usr/lib/python2.7/dist-packages/nova/virl_utils.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/virl_utils.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virl_utils.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virl_utils.py
 
 {% endif %}
 

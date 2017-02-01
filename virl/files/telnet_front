@@ -64,7 +64,7 @@ while running_parent && [ "$LOOPS" -ne 0 ]; do
     timeout --foreground --preserve-status 900 socat \
          $DEBUG -t $EOFRSTTIME -T $NODATATIME \
         "TCP-LISTEN:$PORT,bind=$OUTSIDE,reuseaddr,$LISTENOPTS" \
-        "TCP:$PRIVATE:$PORT,connect-timeout=$CONNECTIME" \
+        "TCP6:[$PRIVATE]:$PORT,connect-timeout=$CONNECTIME" \
 
     result=$?
     ##echo "Socat ended with $result"

@@ -105,6 +105,7 @@ from nova.virt import netutils
 from nova.virt import watchdog_actions
 from nova import volume
 from nova.volume import encryptors
+from nova import virl_utils as vutils
 
 libvirt = None
 
@@ -2408,6 +2409,15 @@ class LibvirtDriver(driver.ComputeDriver):
         self._create_domain_and_network(context, xml, instance, network_info,
                                         disk_info,
                                         block_device_info=block_device_info)
+
+        ports = vutils.parse_serial_ports(xml)
+        host = vutils.local_ip()
+        metadata = instance.metadata
+        node_id = metadata.get("node_id")
+        sim_id = metadata.get("simulation_id")
+        user_id = metadata.get("user_id")
+        LOG.info("Pushing port info for node {} of simulation {}".format(node_id, sim_id))
+        vutils.push_node_info(sim_id, node_id, user_id, host, ports)
         LOG.debug("Instance is running", instance=instance)
 
         def _wait_for_boot():
