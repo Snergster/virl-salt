@@ -4,9 +4,9 @@ include:
   - virl.ramdisk
   - common.kvm
 
-redis-py:
+redis-py nova prereq:
   pip.installed:
-    - name: redis>=2.10.5
+    - name: redis >= 2.10.5
     {% if virl.proxy %}
     - proxy: {{ virl.http_proxy }}
     {% endif %}
