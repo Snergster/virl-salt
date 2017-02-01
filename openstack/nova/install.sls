@@ -4,6 +4,13 @@ include:
   - virl.ramdisk
   - common.kvm
 
+redis-py:
+  pip.installed:
+    - name: redis>=2.10.5
+    {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
+    {% endif %}
+
 nova-api:
   pkg.installed:
     - name: nova-api

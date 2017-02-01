@@ -1,3 +1,12 @@
+{% from "virl.jinja" import virl with context %}
+
+redis-py:
+  pip.installed:
+    - name: redis>=2.10.5
+    {% if virl.proxy %}
+    - proxy: {{ virl.http_proxy }}
+    {% endif %}
+
 include:
   - openstack.repo
   - virl.ntp
