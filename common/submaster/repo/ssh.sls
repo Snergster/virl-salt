@@ -7,4 +7,4 @@
   file.managed:
     - contents_pillar: master_git:virl_keys_public
     - require:
-      - file: /root.ssh/id_rsa
+      - file: /root/.ssh/id_rsa
