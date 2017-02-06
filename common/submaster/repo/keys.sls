@@ -4,3 +4,4 @@ virl-keys:
     - target: /etc/salt/pki/master
     - identity: /root/.ssh/id_rsa
     - branch: master
+    - force_clone: true
