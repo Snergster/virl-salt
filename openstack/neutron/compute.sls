@@ -131,7 +131,7 @@ neutron-dhcp-nameserver:
     - filename: /etc/neutron/dhcp_agent.ini
     - section: 'DEFAULT'
     - parameter: 'dnsmasq_dns_servers'
-    - value: '{{ virl.first_snat_nameserver }},{{ virl.second_snat_nameserver }}'
+    - value: '{{ virl.snat_dns }},{{ virl.snat_dns2 }}'
     - require:
       - file: /etc/neutron/neutron.conf
 
