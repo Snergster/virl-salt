@@ -171,6 +171,18 @@ add libvirt-qemu to nova:
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
 
+/usr/lib/python2.7/dist-packages/nova/virl_utils.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/virl_utils.py
+    - require:
+      - pkg: nova-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/virl_utils.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/virl_utils.py
+
+
 /usr/lib/python2.7/dist-packages/nova/cmd/baseproxy.py:
   file.managed:
     - source: salt://openstack/nova/files/kilo/baseproxy.py
