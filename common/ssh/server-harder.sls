@@ -4,7 +4,7 @@ ssh server config:
     - source: "salt://common/ssh/files/sshd_config"
     - mode: 0644
 
-salt://common/salt-master/files/moduli.sh:
+salt://common/ssh/files/moduli.sh:
   cmd.script:
     - user: root
 
