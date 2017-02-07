@@ -32,17 +32,6 @@ nova-pkgs:
       - nova-serialproxy
       - python-novaclient
 
-{% if virl.mitaka %}
-/lib/systemd/system/nova-serialproxy.service:
-  file.absent
-/etc/systemd/system/multi-user.target.wants/nova-serialproxy.service:
-  file.absent
-nova-serialproxy systemd reload:
-  cmd.run:
-    - name: systemctl daemon-reload
-{% endif %}
-
-
 /etc/nova:
   file.directory:
     - dir_mode: 755
@@ -449,14 +438,6 @@ nova-{{each}} conf:
     - user: nova
     - group: nova
     - mode: 0644
-    - require:
-      - pkg: nova-pkgs
-
-/etc/init.d/nova-serialproxy:
-  file.managed:
-    - source: "salt://openstack/nova/files/nova-serialproxy"
-    - force: True
-    - mode: 0755
     - require:
       - pkg: nova-pkgs
 
