@@ -6,7 +6,7 @@ http_proxy unset:
     - name: http_proxy
     - value: False
     - false_unsets: True
-    
+
 https_proxy unset:
   environ.setenv:
     - name: https_proxy
@@ -341,51 +341,21 @@ point std at key:
     - require:
       - pip: VIRL_CORE
 
-  {% if virl.compute4_active %}
+  {% set compute_hostnames = [] %}
+  {% if virl.compute1_active and compute_hostnames.append(virl.compute1_hostname) %}{% endif %}
+  {% if virl.compute2_active and compute_hostnames.append(virl.compute2_hostname) %}{% endif %}
+  {% if virl.compute3_active and compute_hostnames.append(virl.compute3_hostname) %}{% endif %}
+  {% if virl.compute4_active and compute_hostnames.append(virl.compute4_hostname) %}{% endif %}
+  {% set compute_hostnames = ','.join(compute_hostnames) %}
 
-add up to cluster4 to std:
+set clusters in std:
   cmd.run:
     - names:
-      - crudini --set /etc/virl/common.cfg cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}},{{virl.compute4_hostname}}'
+      - crudini --set /etc/virl/common.cfg cluster computes '{{compute_hostnames}}'
       # new location
-      - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}},{{virl.compute4_hostname}}'
+      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute_hostnames}}'
     - require:
       - pip: VIRL_CORE
-
-  {% elif virl.compute3_active %}
-
-add up to cluster3 to std:
-  cmd.run:
-    - names:
-      - crudini --set /etc/virl/common.cfg cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}}'
-      # new location
-      - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}}'
-    - require:
-      - pip: VIRL_CORE
-
-  {% elif virl.compute2_active %}
-
-add up to cluster2 to std:
-  cmd.run:
-    - names:
-      - crudini --set /etc/virl/common.cfg cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}}'
-      # new location
-      - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}}'
-    - require:
-      - pip: VIRL_CORE
-
-  {% else %}
-
-add only cluster1 to std:
-  cmd.run:
-    - names:
-      - crudini --set /etc/virl/common.cfg cluster computes '{{virl.compute1_hostname}}'
-      # new location
-      - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}}'
-    - require:
-      - pip: VIRL_CORE
-
-  {% endif %}
 
 {% endif %}
 
