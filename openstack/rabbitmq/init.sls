@@ -7,16 +7,16 @@ rabbitmq-server:
   pkg.installed:
     - name: rabbitmq-server
 
-{% if virl.mitaka %}
+kill-the-rabbit:
+  service.dead:
+    - name: rabbitmq-server
 
-early rabbitmq start:
-  service.running:
+revive-the-rabbit:
+  service.running
     - name: rabbitmq-server
     - enable: True
 
-{% endif %}
-
-rabbitmq restart:
+poke-the-rabbit-after-changes:
   service:
     - name: rabbitmq-server
     - running
