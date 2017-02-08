@@ -55,8 +55,6 @@ serial_opts = [
                     '\'controller\' hostname'),
     cfg.IntOpt('redis_port',
                default=6379,
-               min=1,
-               max=65535,
                help='Port of redis instance running on controller. '
                     'Defaults to 6379'
                )

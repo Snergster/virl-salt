@@ -32,17 +32,6 @@ nova-pkgs:
       - nova-serialproxy
       - python-novaclient
 
-{% if virl.mitaka %}
-/lib/systemd/system/nova-serialproxy.service:
-  file.absent
-/etc/systemd/system/multi-user.target.wants/nova-serialproxy.service:
-  file.absent
-nova-serialproxy systemd reload:
-  cmd.run:
-    - name: systemctl daemon-reload
-{% endif %}
-
-
 /etc/nova:
   file.directory:
     - dir_mode: 755
@@ -170,6 +159,17 @@ add libvirt-qemu to nova:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
     - watch:
       - file: /usr/lib/python2.7/dist-packages/nova/cmd/serialproxy.py
+
+/usr/lib/python2.7/dist-packages/nova/console/serial.py:
+  file.managed:
+    - source: salt://openstack/nova/files/kilo/console.serial.py
+    - require:
+      - pkg: compute-pkgs
+  cmd.wait:
+    - names:
+      - python -m compileall /usr/lib/python2.7/dist-packages/nova/console/serial.py
+    - watch:
+      - file: /usr/lib/python2.7/dist-packages/nova/console/serial.py
 
 /usr/lib/python2.7/dist-packages/nova/virl_utils.py:
   file.managed:
@@ -449,14 +449,6 @@ nova-{{each}} conf:
     - user: nova
     - group: nova
     - mode: 0644
-    - require:
-      - pkg: nova-pkgs
-
-/etc/init.d/nova-serialproxy:
-  file.managed:
-    - source: "salt://openstack/nova/files/nova-serialproxy"
-    - force: True
-    - mode: 0755
     - require:
       - pkg: nova-pkgs
 
