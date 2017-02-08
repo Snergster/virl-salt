@@ -12,7 +12,7 @@ kill-the-rabbit:
     - name: rabbitmq-server
 
 revive-the-rabbit:
-  service.running
+  service.running:
     - name: rabbitmq-server
     - enable: True
 
