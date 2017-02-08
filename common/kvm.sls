@@ -74,7 +74,7 @@ libvirt-bin insert /dev/kvm:
 
 /usr/bin/kvm:
   file.managed:
-    - source: "salt://openstack/nova/files/kilo.kvm"
+    - source: "salt://openstack/nova/files/kvm"
     - force: True
     - mode: 0755
 kvm socket proxy:
