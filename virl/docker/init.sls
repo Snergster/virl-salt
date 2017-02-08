@@ -32,6 +32,18 @@ registry_remove:
       - pkg: docker_install
       - module: docker_restart
 
+registry_container_stop:
+  cmd.run:
+    - names:
+      - docker ps | grep "/bin/registry serve" | awk '{print $1}' | xargs docker stop
+    - onlyif: docker ps | grep "/bin/registry serve"
+
+registry_container_remove:
+  cmd.run:
+    - names:
+      - docker ps -a | grep "/bin/registry serve" | awk '{print $1}' | xargs docker rm
+    - onlyif: docker ps -a | grep "/bin/registry serve"
+
 registry_load:
   # state docker.loaded is buggy -> file.managed and cmd.run
   file.managed:
@@ -57,7 +69,7 @@ registry_run:
   # dockerio.running replaced by cmd.run due to API problems of dockerio/docker-py used versions
   cmd.run:
     - names:
-      - docker run -d -p {{ virl.registry_ip }}:{{ virl.registry_port }}:5000 -e REGISTRY_STORAGE_DELETE_ENABLED=true -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/var/lib/registry -v /var/local/virl/docker:/var/lib/registry --restart=always registry:{{ virl.registry_version }}
+      - docker run -d -p {{ virl.registry_ip }}:{{ virl.registry_port }}:5000 -e REGISTRY_STORAGE_DELETE_ENABLED=true -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/var/lib/registry -v /var/local/virl/docker:/var/lib/registry --restart=always --name registry registry:{{ virl.registry_version }}
     - require:
       - cmd: registry_tag
     # - unless: docker ps | grep "{{ registry_ip }}:{{ registry_port }}->5000/tcp"
