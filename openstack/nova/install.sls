@@ -487,7 +487,6 @@ nova-restart:
     - require:
       - pkg: nova-pkgs
       - file: /etc/nova/nova.conf
-      - file: /etc/init.d/nova-serialproxy
     - name: |
         su -s /bin/sh -c "glance-manage db_sync" glance
         su -s /bin/sh -c "nova-manage db sync" nova
