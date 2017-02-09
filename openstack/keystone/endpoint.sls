@@ -27,6 +27,10 @@ keystone endpoint:
     - require:
       - cmd: key-db-sync
 
+neutron endpoint delete:
+  keystone.endpoint_absent:
+    - name: neutron
+
 neutron endpoint:
   keystone.endpoint_present:
     - name: neutron
