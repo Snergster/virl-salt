@@ -164,7 +164,7 @@ add libvirt-qemu to nova:
   file.managed:
     - source: salt://openstack/nova/files/kilo/console.serial.py
     - require:
-      - pkg: compute-pkgs
+      - pkg: nova-pkgs
   cmd.wait:
     - names:
       - python -m compileall /usr/lib/python2.7/dist-packages/nova/console/serial.py
