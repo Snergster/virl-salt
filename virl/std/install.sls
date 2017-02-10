@@ -419,9 +419,7 @@ virl init:
   cmd:
     - run
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
-    {% if not virl.mitaka %}
     - onlyif: 'test ! -e /var/local/virl/servers.db'
-    {% endif %}
 
 virl init second:
   cmd:
@@ -453,6 +451,7 @@ virl-uwm:
 virl init failsafe:
   cmd.run:
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    - onlyif: 'test ! -e /var/local/virl/servers.db'
     - require:
       - service: virl-uwm
       - service: virl-std
