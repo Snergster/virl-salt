@@ -182,7 +182,11 @@ VIRL_CORE_dead:
       - virl-std
       - virl-uwm
     - prereq:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 {% if not virl.mitaka %}
     - require:
       - file: /etc/rc2.d/S98virl-std
@@ -301,7 +305,11 @@ ank preview port:
       # new location
       - crudini --set /etc/virl/virl-core.ini host ank_preview_port {{ virl.ank }}
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
 web editor alpha:
 {% if virl.web_editor %}
@@ -317,7 +325,11 @@ web editor alpha:
     - repl: ''
 {% endif %}
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
 {% if virl.cluster %}
 enable cluster in std :
@@ -327,7 +339,11 @@ enable cluster in std :
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration cluster_mode True
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
 point std at key:
   cmd.run:
@@ -339,7 +355,11 @@ point std at key:
       - test -e ~virl/.ssh/id_rsa.pub
       - test -e /etc/virl/common.cfg
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
   {% if virl.compute4_active %}
 
@@ -350,7 +370,11 @@ add up to cluster4 to std:
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}},{{virl.compute4_hostname}}'
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
   {% elif virl.compute3_active %}
 
@@ -361,7 +385,11 @@ add up to cluster3 to std:
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}},{{virl.compute3_hostname}}'
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
   {% elif virl.compute2_active %}
 
@@ -372,7 +400,11 @@ add up to cluster2 to std:
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}},{{virl.compute2_hostname}}'
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
   {% else %}
 
@@ -383,7 +415,11 @@ add only cluster1 to std:
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{virl.compute1_hostname}}'
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
   {% endif %}
 
@@ -432,7 +468,11 @@ virl db upgrade init:
   cmd.run:
     - name: /usr/local/bin/virl_uwm_server upgrade
     - require:
+{% if virl.cml %}
+      - pip: CML_CORE
+{% else %}
       - pip: VIRL_CORE
+{% endif %}
 
 virl-std:
   service:
