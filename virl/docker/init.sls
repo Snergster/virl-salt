@@ -25,9 +25,9 @@ registry_remove:
   cmd.script:
     - source: salt://virl/files/remove_docker_registry.sh
     - env:
-      REGISTRY_ID: {{ virl.registry_docker_ID }}
-      REGISTRY_IP: {{ virl.registry_ip }}
-      REGISTRY_PORT: {{ virl.registry_port }}
+      - REGISTRY_ID: {{ virl.registry_docker_ID }}
+      - REGISTRY_IP: {{ virl.registry_ip }}
+      - REGISTRY_PORT: {{ virl.registry_port }}
     - require:
       - pkg: docker_install
       - module: docker_restart
@@ -60,7 +60,7 @@ registry_load:
 registry_tag:
   cmd.run:
     - names:
-      - docker tag {{ virl.registry_docker_ID }} registry:{{ virl.registry_version }}
+      - docker tag -f {{ virl.registry_docker_ID }} registry:{{ virl.registry_version }}
     - unless: docker images | grep '^registry *{{ virl.registry_version }} *{{ virl.registry_docker_ID }}'
     - require:
       - cmd: registry_load
