@@ -32,18 +32,6 @@ registry_remove:
       - pkg: docker_install
       - module: docker_restart
 
-registry_container_stop:
-  cmd.run:
-    - names:
-      - docker ps | grep "/bin/registry serve" | awk '{print $1}' | xargs docker stop
-    - onlyif: docker ps | grep "/bin/registry serve"
-
-registry_container_remove:
-  cmd.run:
-    - names:
-      - docker ps -a | grep "/bin/registry serve" | awk '{print $1}' | xargs docker rm
-    - onlyif: docker ps -a | grep "/bin/registry serve"
-
 registry_load:
   # state docker.loaded is buggy -> file.managed and cmd.run
   file.managed:
