@@ -50,6 +50,7 @@ std_prereq_webmux:
 std_prereq:
   pip.installed:
     - names:
+      - cryptography >= 1.1
       - docker-py >= 1.3.1
       - ipaddr >= 2.1.11
       - flask-sqlalchemy >= 2.0
@@ -65,7 +66,7 @@ std_prereq:
       - lxml >= 3.4.1, < 3.6.0
       - MarkupSafe >= 0.23
       - mock >= 1.0.1
-      - paramiko >= 1.15.2, < 2.0.0
+      - paramiko >= 2.1.1
       - pycrypto >= 2.6.1
       - Pygments
       - requests == 2.7.0
