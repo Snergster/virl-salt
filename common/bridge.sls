@@ -1,8 +1,11 @@
 {% set kilo = salt['pillar.get']('virl:kilo', salt['grains.get']('kilo', true)) %}
-{% set kernvers = salt['grains.get']('kernels_to_bridge_patch', [salt['cmd.run']('uname -r')]) %}
 {% set masterless = salt['pillar.get']('virl:salt_masterless', salt['grains.get']('salt_masterless', false)) %}
 {% set packet = salt['pillar.get']('virl:packet', salt['grains.get']('packet', False )) %}
 {% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
+
+{# command returns current + latest (if different from current) kernver #}
+{% set kernvers_default_cmd = '(uname -r; ls -v /boot/vmlinuz-* | cut -c15- | tail -1) | uniq' %}
+{% set kernvers = salt['grains.get']('kernels_to_bridge_patch', salt['cmd.run'](kernvers_default_cmd).split('\n')) %}
 
 {% if packet %}
 update sourcelist to include sources:
