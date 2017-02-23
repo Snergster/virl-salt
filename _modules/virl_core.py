@@ -100,7 +100,7 @@ def __os_client(command, args=(), kwargs={}):
     """Call a virl_openstack_client command"""
     return __command(command='virl_openstack_client',
                      args=('--quiet', '--json'),
-                     kwargs={'-A': __get_config('os_auth_url', OS_AUTH_URL),
+                     kwargs={'-A': __get_config('OS_AUTH_URL', OS_AUTH_URL),
                              '-U': __get_config('os_username', os_username),
                              '-P': __get_config('password', password),
                              '-T': __get_config('os_tenant', OS_TENANT)},
