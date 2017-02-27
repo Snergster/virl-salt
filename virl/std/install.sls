@@ -411,9 +411,7 @@ uwmadmin change:
       # new location
       - crudini --set /etc/virl/virl-core.ini env virl_openstack_password {{ virl.uwmpassword }}
       - crudini --set /etc/virl/virl-core.ini env virl_std_password {{ virl.uwmpassword }}
-      {% if not virl.mitaka %}
     - onlyif: 'test -e /var/local/virl/servers.db'
-      {% endif %}
 
 virl init:
   cmd:
@@ -425,6 +423,7 @@ virl init second:
   cmd:
     - run
     - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    - onlyif: 'test ! -e /var/local/virl/servers.db'
     - onfail:
       - cmd: uwmadmin change
 
