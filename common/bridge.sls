@@ -38,6 +38,7 @@ update sourcelist to include xenial sources:
 {% endif %}
 
 {% for kernver in kernvers %}
+  {% if not salt['cmd.run']('modinfo -k ' + kernver + ' -F ciscopatch bridge | grep -x BR_GROUPFWD_RESTRICTED_v2') %}
 
 /lib/modules/{{ kernver }}/kernel/net/bridge/bridge.ko:
   file.managed:
@@ -52,11 +53,11 @@ run bridgebuilder.sh {{ kernver }}:
       - version: {{ kernver }}
     - onfail:
       - file: /lib/modules/{{ kernver }}/kernel/net/bridge/bridge.ko
-{% if packet %}
+    {% if packet %}
     - require:
       - cmd: update sourcelist to include sources
-{% endif %}
-  {% if not 'xenial' in salt['grains.get']('oscodename') %}
+    {% endif %}
+    {% if not 'xenial' in salt['grains.get']('oscodename') %}
 
 run bridge.sh {{ kernver }}:
   cmd.script:
@@ -67,7 +68,8 @@ run bridge.sh {{ kernver }}:
     - env:
       - version: {{ kernver }}
 
-  {% endif %}
+    {% endif %}
 
+  {% endif %}
 {% endfor %}
 
