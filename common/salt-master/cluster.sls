@@ -51,7 +51,7 @@ compute filter for cluster controller:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
     - parameter: 'scheduler_default_filters'
-    - value: 'AllHostsFilter,ComputeFilter'
+    - value: 'RamFilter,AllHostsFilter,ComputeFilter'
     - onlyif: test -e /etc/nova/nova.conf
 
 {% if controller %}
