@@ -748,11 +748,18 @@ def check_versions(new_version, old_version):
     return None
 
 
+def get_virl_version_key():
+    out = subprocess.check_output('lsb_release -cs', shell=True)
+    ubuntu_codename = out.strip()
+    key = 'virl_%s' % ubuntu_codename
+    return key
+
+
 def determine_upgrade_type():
     # major.minor.maintenance
     virl_current = get_grains('virl_release')
     if virl_current:
-        virl_available = get_pillar('version:virl')
+        virl_available = get_pillar('version:%s' % get_virl_version_key())
         if not virl_available:
             return None
 
