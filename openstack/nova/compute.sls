@@ -87,7 +87,7 @@ compute filter for compute paranoia:
     - filename: /etc/nova/nova.conf
     - section: 'DEFAULT'
     - parameter: 'scheduler_default_filters'
-    - value: 'AllHostsFilter,ComputeFilter'
+    - value: 'RamFilter,AllHostsFilter,ComputeFilter'
     - require:
       - file: /etc/nova/nova.conf
 
