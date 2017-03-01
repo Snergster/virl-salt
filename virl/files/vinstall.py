@@ -831,7 +831,7 @@ if __name__ == "__main__":
         upgrade_type = determine_upgrade_type()
 
         if upgrade_type is None:
-            virl_available = get_pillar('version:virl')
+            virl_available = get_pillar('version:%s' % get_virl_version_key())
             print(
                 'We are sorry, but in-place upgrades from/to an unknown '
                 'release are not supported. Please back up any data you wish '
@@ -845,7 +845,7 @@ if __name__ == "__main__":
 
         if upgrade_type == 'major' or upgrade_type == 'downgrade':
             virl_current = get_grains('virl_release')
-            virl_available = get_pillar('version:virl')
+            virl_available = get_pillar('version:%s' % get_virl_version_key())
             print(
                 'We are sorry, but in-place upgrades from the current release '
                 '%(current)s to release %(available)s are not supported '
