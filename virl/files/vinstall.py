@@ -783,11 +783,18 @@ def check_versions(new_version, old_version):
     return None
 
 
+def get_virl_version_key():
+    out = subprocess.check_output('lsb_release -cs', shell=True)
+    ubuntu_codename = out.strip()
+    key = 'virl_%s' % ubuntu_codename
+    return key
+
+
 def determine_upgrade_type():
     # major.minor.maintenance
     virl_current = get_grains('virl_release')
     if virl_current:
-        virl_available = get_pillar('version:virl')
+        virl_available = get_pillar('version:%s' % get_virl_version_key())
         if not virl_available:
             return None
 
@@ -824,7 +831,7 @@ if __name__ == "__main__":
         upgrade_type = determine_upgrade_type()
 
         if upgrade_type is None:
-            virl_available = get_pillar('version:virl')
+            virl_available = get_pillar('version:%s' % get_virl_version_key())
             print(
                 'We are sorry, but in-place upgrades from/to an unknown '
                 'release are not supported. Please back up any data you wish '
@@ -838,7 +845,7 @@ if __name__ == "__main__":
 
         if upgrade_type == 'major' or upgrade_type == 'downgrade':
             virl_current = get_grains('virl_release')
-            virl_available = get_pillar('version:virl')
+            virl_available = get_pillar('version:%s' % get_virl_version_key())
             print(
                 'We are sorry, but in-place upgrades from the current release '
                 '%(current)s to release %(available)s are not supported '
