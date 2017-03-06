@@ -1,0 +1,15 @@
+include:
+  - .csr1000v
+  - .iosv
+  - .iosxrv601
+  - .lxc_iperf
+  - .lxc_routem
+  - .lxc_ostinato
+  - .vpagent
+  - .nxosv
+  - .iosvl2
+  - .asav
+  - .lxc_server
+  - .nxosv9k
+  - .iosxrv9000
+  - .xenial_server
