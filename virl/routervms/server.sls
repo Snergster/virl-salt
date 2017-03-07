@@ -18,7 +18,7 @@ UbuntuServertrusty:
   - disk_format: qcow2
   - copy_from: salt://images/salt/ubuntu-14.04-server-cloudimg-amd64-disk1.img
   - property-hw_disk_bus: virtio
-  - property-release: 14.04.2
+  - property-release: 14.04.3
   - property-serial: 1
   - property-subtype: server
 
