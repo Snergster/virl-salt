@@ -26,16 +26,10 @@ include:
 qemu-kvm systemd reload:
   cmd.run:
     - name: systemctl daemon-reload
-{% endif %}
 
-libvirt install:
-  pkg.installed:
-    - name: libvirt-bin
-    - aggregate: False
-    - skip_verify: True
-    - refresh: True
+{% else %}
 
-{% if not '2.2.0' in salt['cmd.shell']('/usr/bin/qemu-system-x86_64 --version') %}
+  {% if not '2.2.0' in salt['cmd.shell']('/usr/bin/qemu-system-x86_64 --version') %}
 
 qemu unhold:
   module.run:
@@ -54,8 +48,17 @@ qemu purge:
       - qemu-kvm
       - qemu-system-common
 
+  {% endif %}
 
 {% endif %}
+
+libvirt install:
+  pkg.installed:
+    - name: libvirt-bin
+    - aggregate: False
+    - skip_verify: True
+    - refresh: True
+
 
 qemu install:
   pkg.installed:
