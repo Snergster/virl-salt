@@ -99,6 +99,8 @@
     'int_network' : salt['pillar.get']('virl:internalnet_network', salt['grains.get']('internalnet_network', '172.16.10.0' )),
     'int_mask' : salt['pillar.get']('virl:internalnet_netmask', salt['grains.get']('internalnet_netmask', '255.255.255.0' )),
     'int_gateway' : salt['pillar.get']('virl:internalnet_gateway', salt['grains.get']('internalnet_gateway', '172.16.10.1' )),
+    'int_broadcast' : salt['pillar.get']('virl:internalnet_broadcast', salt['grains.get']('internalnet_broadcast', '172.16.10.255' )),
+    'int_prefixlen' : salt['pillar.get']('virl:internalnet_prefixlen', salt['grains.get']('internalnet_prefixlen', '24' )),
     'onedev' : salt['grains.get']('onedev', 'False'),
     'iol' : salt['pillar.get']('routervms:iol', False),
     'asav' : salt['pillar.get']('routervms:asav', True),    

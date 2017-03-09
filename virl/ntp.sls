@@ -35,7 +35,11 @@ ntp stop:
 
 ntpdate sync:
     cmd.run:
+{% if virl.controller %}
       - name: ntpdate {{ virl.ntp_server }}
+{% else %}
+      - name: ntpdate {{ virl.controller_ip }}
+{% endif %}
 
 ntp start:
     cmd.run:
