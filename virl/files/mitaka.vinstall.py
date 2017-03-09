@@ -993,16 +993,12 @@ if __name__ == "__main__":
                  ospassword, '--os-user-domain-id=default', '--os-project-domain-id=default', '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
         nmcall = ['nova-manage', '--os-tenant-name', 'admin', '--os-username', 'admin', '--os-password',
                  ospassword, '--os-auth-url=http://localhost:5000/{0}'.format(keystone_auth_version)]
-        subprocess.call(qcall + ['subnet-delete', 'flat'])
-        subprocess.call(qcall + ['subnet-delete', 'flat1'])
-        subprocess.call(qcall + ['subnet-delete', 'ext-net'])
         q_delete_list = (subprocess.check_output( ['neutron --os-username admin --os-password {ospassword} --os-tenant-name admin --os-user-domain-id=default --os-project-domain-id=default --os-auth-url=http://localhost:5000/{authver} agent-list | grep -v "{hostname}" |grep -v "region" | grep -v "+-" | cut -d "|" -f2'.format(ospassword=ospassword,hostname=hostname,authver=keystone_auth_version)], shell=True)).split()
         print q_delete_list
         for _qeach in q_delete_list:
             subprocess.call(qcall + ['agent-delete', '{0}'.format(_qeach)])
         # for _keach in k_delete_list:
         #     subprocess.call(kcall + ['endpoint-delete', '{0}'.format(_keach)])
-        create_basic_networks()
         if guest_account:
             call_salt('virl.guest')
         novaclient = '/home/virl/.novaclient'
