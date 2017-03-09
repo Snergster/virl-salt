@@ -12,7 +12,7 @@ lxc_ostinato_gone:
 {% if virl.lxc_ostinato and virl.lxc_ostinatopref %}
 
 # original virl-core for 1.2.* needs to use older name
-{% set subtype_reported = 'lxc-ostinato' + ('' if '0.10.28' in salt['pillar.get']('files:virl', '') else '-drone') %}
+{% set subtype_reported = 'lxc-ostinato' + ('' if '0.10.28' in salt['cmd.run']('virl_config version')[0] else '-drone') %}
 
 lxc_ostinato:
   virl_core.lxc_image_present:
