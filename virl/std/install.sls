@@ -300,8 +300,6 @@ ank preview port:
       - crudini --set /etc/virl/common.cfg host ank_preview_port {{ virl.ank }}
       # new location
       - crudini --set /etc/virl/virl-core.ini host ank_preview_port {{ virl.ank }}
-    - require:
-      - pip: VIRL_CORE
 
 web editor alpha:
 {% if virl.web_editor %}
@@ -316,8 +314,6 @@ web editor alpha:
     - pattern: '^topology_editor_port.*'
     - repl: ''
 {% endif %}
-    - require:
-      - pip: VIRL_CORE
 
 {% if virl.cluster %}
 enable cluster in std :
