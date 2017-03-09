@@ -1,7 +1,6 @@
 #!/usr/bin/python
 #__author__ = 'ejk'
 
-
 """virl install.
 
 Usage:
@@ -19,6 +18,7 @@ import envoy
 import json
 import sys
 import re
+import yaml
 from time import sleep
 from tempfile import mkstemp
 from shutil import move, copy, copystat
@@ -474,51 +474,39 @@ virl:
   keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
   keystone.region_name: 'RegionOne'
   keystone.service_type: 'network'\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=admin_tenid, mypass=mypassword, auth_url=keystone_auth_url))
-    if path.exists('/usr/bin/salt-call'):
-        with open(("/tmp/foo"), "w") as salt_grain:
-            salt_grain.write("""{""")
-            for key, value in (safeparser.items('DEFAULT')):
-                if key == 'domain': salt_grain.write(""" 'domain_name': '{value}',""".format(key=key,value=value))
-                if value.lower() == 'true' or value.lower() == 'false':
-                    salt_grain.write(""" '{key}': {value} ,""".format(key=key,value=value))
-                else:
-                    salt_grain.write(""" '{key}': '{value}',""".format(key=key,value=value))
-            if cml:
-                salt_grain.write("""  'cinder_enabled': False ,""")
-            else:
-                if cinder_device or cinder_file:
-                    salt_grain.write("""  'cinder_enabled': True ,""")
-                else:
-                    salt_grain.write("""  'cinder_enabled': False ,""")
-            if not uwm_port == '14000':
-                salt_grain.write("""  'uwm_url': 'http://{0}:{1}',""".format(public_ip,uwm_port))
-            salt_grain.write(""" 'neutron_extnet_id': '{neutid}',""".format(neutid=neutron_extnet_id))
-            salt_grain.write(""" 'service_id': '{serviceid}',""".format(serviceid=service_tenid))
-            salt_grain.write(""" 'OS_AUTH_URL': '{auth_url}',""".format(auth_url=keystone_auth_url))
-            if mitaka:
-                salt_grain.write("""  'kilo': False ,""")
-            salt_grain.write(""" 'admin_id': '{adminid}'""".format(adminid=admin_tenid))
-            salt_grain.write("""}""")
-        with open(("/tmp/foo"), "r") as salt_grain_read:
-            subprocess.call(['sudo', 'salt-call', '--local','grains.setvals', salt_grain_read.read() ])
-        subprocess.call(['sudo', 'rm', '-f', '/tmp/foo'])
+  
+    grains = {}
+    for key, value in safeparser.items('DEFAULT'):
+        if key == 'domain':
+            key = 'domain_name'
+        if value.lower() in ['true', 'false']:
+            value = value.lower() == 'true'
+        grains[key] = value
+      
+    if cml:
+        grains['cinder_enabled'] = False
     else:
-        with open(("/tmp/grains"), "w") as grains:
-            # for section_name in safeparser.sections():
-            if cinder_device or cinder_file:
-                grains.write("""  cinder_enabled: True\n""")
-            else:
-                grains.write("""  cinder_enabled: False\n""")
-            if not uwm_port == '14000':
-                grains.write("""  uwm_url: http://{0}:{1}\n""".format(public_ip,uwm_port))
-            if mitaka:
-                grains.write("""  kilo: False\n""")
-            grains.write("""  OS_AUTH_URL: {1}\n""".format(keystone_auth_url))
+        grains['cinder_enabled'] = cinder_device or cinder_file
 
-            for name, value in safeparser.items('DEFAULT'):
-                grains.write("""  {name}: {value}\n""".format(name=name, value=value))
-            grains.write("""  neutron_extnet_id: {neutid}\n""".format(neutid=neutron_extnet_id))
-        subprocess.call(['sudo', 'mv', '-f', ('/tmp/grains'), '/etc/salt'])
+    if not uwm_port == '14000':
+        grains['uwm_url'] = "http://{0}:{1}".format(public_ip,uwm_port)
+
+    if mitaka:
+        grains['kilo'] = False
+
+    grains['neutron_extnet_id'] = neutron_extnet_id
+    grains['service_id'] = service_tenid
+    grains['OS_AUTH_URL'] = keystone_auth_url
+    grains['admin_id'] = admin_tenid
+  
+    if path.exists('/usr/bin/salt-call'):
+        grains_json = json.dumps(grains)
+        subprocess.call(['sudo', 'salt-call', '--local', 'grains.setvals', grains_json])
+    else:
+        grains_yaml = yaml.safe_dump(grains, default_flow_style=False)
+        with open(('/etc/salt/grains'), 'w') as grains_file:
+            grains_file.write(grains_yaml)
+
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/openstack'), '/etc/salt/minion.d/openstack.conf'])
     if not masterless:
         subprocess.call(['sudo', 'service', 'salt-minion', 'restart'])
