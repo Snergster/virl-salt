@@ -18,65 +18,51 @@ user_domain_env delete:
 
 {% endif %}
 
-update device owner:
-  cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} port-list --format csv --column id | sed 1d | xargs -rn1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} port-update --device-id None --device-owner None $1
-{% if virl.mitaka %}
-    - require:
-      - environ: project_domain_env create
-      - environ: user_domain_env create
-{% endif %}
 
-# delete ports
-delete ports:
-  cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} port-list --format csv --column id | sed 1d | xargs -rn1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} port-delete $1
-{% if virl.mitaka %}
-    - require:
-      - environ: project_domain_env create
-      - environ: user_domain_env create
-{% endif %}
-
-delete ports check:
-  cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} port-list --format csv --column id | sed 1d | xargs -rn1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} port-delete $1
-    - onfail:
-      - cmd: delete ports
-{% if virl.mitaka %}
-    - require:
-      - environ: project_domain_env create
-      - environ: user_domain_env create
-{% endif %}
-
-# delete floating ips
-delete floating ips:
-  cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} floatingip-list --format csv --column id | sed 1d | xargs -rn1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} floatingip-delete $1
-{% if virl.mitaka %}
-    - require:
-      - environ: project_domain_env create
-      - environ: user_domain_env create
-{% endif %}
-
-clear ext-net router-gateway:
-  cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} router-list -c id -f csv | grep -o '[a-fA-F0-9-]\{36\}' | xargs -rn1 neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} router-gateway-clear
-    - onlyif: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} subnet-show ext-net
-{% if virl.mitaka %}
-    - require:
-      - environ: project_domain_env create
-      - environ: user_domain_env create
-{% endif %}
-
+{% set neutron_auth = '--os-tenant-name admin --os-username admin --os-password ' + ospassword + ' --os-auth-url=http://' + controllerip + ':5000/' + kav %}
 {% for each in ['flat','flat1','ext-net'] %}
+  {% set subnet_id = salt['cmd.run'](cmd='neutron ' + neutron_auth + ' subnet-list --name=' + each + ' --column id --format value', env={'OS_PROJECT_DOMAIN_ID': 'default', 'OS_USER_DOMAIN_ID': 'default'} if virl.mitaka else {} ) %}
+  {% if subnet_id %}
+  
+delete floating ips {{ each }}:
+  cmd.run:
+    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --device_owner=network:floatingip --column device_id --format value | xargs -rn1 neutron {{ neutron_auth }} floatingip-delete
+    {% if virl.mitaka %}
+    - require:
+      - environ: project_domain_env delete
+      - environ: user_domain_env delete
+    {% endif %}
+
+clear router-gateway {{ each }}:
+  cmd.run:
+    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --device_owner=network:router_gateway --column device_id --format value | xargs -rn1 neutron {{ neutron_auth }} router-gateway-clear
+    {% if virl.mitaka %}
+    - require:
+      - environ: project_domain_env delete
+      - environ: user_domain_env delete
+    {% endif %}
+
+delete ports {{ each }}:
+  cmd.run:
+    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --column id --format value | xargs -rn1 neutron {{ neutron_auth }} port-delete
+    {% if virl.mitaka %}
+    - require:
+      - environ: project_domain_env delete
+      - environ: user_domain_env delete
+      - delete floating ips {{ each }}
+      - clear router-gateway {{ each }}
+    {% endif %}
+
 delete {{ each }}:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} subnet-delete {{ each }}
-    - onlyif: neutron --os-tenant-name admin --os-username admin --os-password {{ ospassword }} --os-auth-url=http://{{ controllerip }}:5000/{{ kav }} subnet-show {{ each }}
-  {% if virl.mitaka %}
+    - name: neutron {{ neutron_auth }} subnet-delete {{ each }}
+    {% if virl.mitaka %}
     - require:
-      - environ: project_domain_env create
-      - environ: user_domain_env create
-  {% endif %}
+      - environ: project_domain_env delete
+      - environ: user_domain_env delete
+      - delete ports {{ each }}
+    {% endif %}
 
+  {% endif %}
 {% endfor %}
+
