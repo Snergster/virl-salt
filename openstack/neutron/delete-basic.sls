@@ -45,23 +45,23 @@ clear router-gateway {{ subnet_name }}:
 delete ports {{ subnet_name }}:
   cmd.run:
     - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --column id --format value | xargs -rn1 neutron {{ neutron_auth }} port-delete
-    {% if virl.mitaka %}
     - require:
+    {% if virl.mitaka %}
       - environ: project_domain_env delete
       - environ: user_domain_env delete
+    {% endif %}
       - delete floating ips {{ subnet_name }}
       - clear router-gateway {{ subnet_name }}
-    {% endif %}
 
 delete {{ subnet_name }}:
   cmd.run:
     - name: neutron {{ neutron_auth }} subnet-delete {{ subnet_name }}
-    {% if virl.mitaka %}
     - require:
+    {% if virl.mitaka %}
       - environ: project_domain_env delete
       - environ: user_domain_env delete
-      - delete ports {{ subnet_name }}
     {% endif %}
+      - delete ports {{ subnet_name }}
 
   {% endif %}
 {% endfor %}
