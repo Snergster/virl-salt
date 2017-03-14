@@ -74,6 +74,14 @@ redis-bind:
     - require:
       - pkg: redis-server
 
+redis-no-persist:
+  file.replace:
+    - name: /etc/redis/redis.conf
+    - pattern: '^save .*'
+    - repl: ''
+    - require:
+      - pkg: redis-server
+
 redis-running:
   service.running:
     - name: redis-server
