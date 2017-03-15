@@ -482,7 +482,7 @@ virl:
         if value.lower() in ['true', 'false']:
             value = value.lower() == 'true'
         grains[key] = value
-      
+
     if cml:
         grains['cinder_enabled'] = False
     else:
@@ -498,14 +498,15 @@ virl:
     grains['service_id'] = service_tenid
     grains['OS_AUTH_URL'] = keystone_auth_url
     grains['admin_id'] = admin_tenid
-  
+
     if path.exists('/usr/bin/salt-call'):
         grains_json = json.dumps(grains)
-        subprocess.call(['sudo', 'salt-call', '--local', 'grains.setvals', grains_json])
+        subprocess.check_call(['sudo', 'salt-call', '--local', 'grains.setvals', grains_json])
     else:
         grains_yaml = yaml.safe_dump(grains, default_flow_style=False)
-        with open(('/etc/salt/grains'), 'w') as grains_file:
+        with open('/tmp/grains', 'w') as grains_file:
             grains_file.write(grains_yaml)
+        subprocess.check_call(['sudo', 'mv', '-f', '/tmp/grains', '/etc/salt/grains'])
 
     subprocess.call(['sudo', 'mv', '-f', ('/tmp/openstack'), '/etc/salt/minion.d/openstack.conf'])
     if not masterless:
