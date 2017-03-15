@@ -14,7 +14,7 @@
 # pam-auth-update(8) for details.
 
 # here are the per-package modules (the "Primary" block)
-auth    [success=2 default=ignore]      pam_yubikey.so
+auth    [success=2 default=ignore]      pam_yubico.so
 auth    [success=1 default=ignore]      pam_unix.so nullok_secure
 # here's the fallback if no module succeeds
 auth    requisite                       pam_deny.so
@@ -22,6 +22,4 @@ auth    requisite                       pam_deny.so
 # this avoids us returning an error just because nothing sets a success code
 # since the modules above will each just jump around
 auth    required                        pam_permit.so
-# and here are more per-package modules (the "Additional" block)
-auth    optional                        pam_cap.so
 # end of pam-auth-update config
