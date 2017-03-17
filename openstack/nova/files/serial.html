@@ -19,18 +19,6 @@
     color: #000;
     background: #f0f0f0;
   }
-
-  #terminal-title, #terminal {
-    margin: 0px;
-  }
-  #terminal-title {
-    background: #eee;
-  }
-  #terminal-container {
-    float: left;
-    margin: 10px;
-    padding: 0px;
-  }
 </style>
 <script>
 function getURLParameter(name) {
@@ -43,8 +31,12 @@ document.title = node + ' :serial port';
 </script>
 <script src="term.js"></script>
 <script>
-
 (function() {
+  function decodeBase64(base64_raw) {
+    var s = new String(base64_raw);
+    return window.atob(base64_raw.replace(/^data:[^,]+,/, ''));
+  }
+
   return setTimeout(function() {
     // getQueryVar, createCookie from noVNC/include/webutil.js
     getQueryVar = function(name, defVal) {
@@ -92,27 +84,40 @@ document.title = node + ' :serial port';
       });
 
       term.open(document.getElementById('terminal'));
+      // to prevent initial garbage chars
+      var isJustOpened = true;
 
       ws.onmessage=function(evt) {
         var reader = new FileReader();
+        var isStandartOnly = (FileReader.prototype.readAsBinaryString === undefined);
         reader.addEventListener('loadend', function() {
-	  term.write(reader.result);
+          var result = reader.result;
+          if (isStandartOnly) {
+            result = decodeBase64(reader.result);
+          }
+          if (!isJustOpened) {
+            term.write(result);
+          } else {
+            // skipping initial garbage, allowing the rest
+            isJustOpened = false;
+          }
         });
 
-	reader.readAsBinaryString(evt.data);        
+        if (isStandartOnly) {
+          reader.readAsDataURL(evt.data);
+        } else {
+          reader.readAsBinaryString(evt.data);
+        }
       };
       ws.onerror=function(evt) {
 	alert('websocket error: ' + evt.data);
       };
     });
   }, 1000);
+
 }).call(this);
 </script>
 </head>
 <body>
 
-<div id='terminal-container'>
-<div id='terminal-title'>Terminal</div>
-<div id='terminal'></div>
-</div>
 </body></html>
