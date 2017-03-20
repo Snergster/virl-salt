@@ -32,22 +32,17 @@
     padding: 0px;
   }
 </style>
-<script>
-function getURLParameter(name) {
-  return decodeURIComponent(
-        (new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20')
-    )||null
-}
-var node = getURLParameter('node');
-document.title = node + ' :serial port';
-</script>
 <script src="term.js"></script>
 <script>
-
 (function() {
+  function decodeBase64(base64_raw) {
+    var s = new String(base64_raw);
+    return window.atob(s.replace(/^data:[^,]+,/, ''));
+  }
+
   return setTimeout(function() {
     // getQueryVar, createCookie from noVNC/include/webutil.js
-    getQueryVar = function(name, defVal) {
+    var getQueryVar = function(name, defVal) {
 	var re = new RegExp('[?][^#]*' + name + '=([^&#]*)'),
 	    match = document.location.href.match(re);
 	if (typeof defVal === 'undefined') { defVal = null; }
@@ -58,7 +53,7 @@ document.title = node + ' :serial port';
 	}
     };
 
-    createCookie = function(name,value,days) {
+    var createCookie = function(name,value,days) {
 	var date, expires;
 	if (days) {
 	    date = new Date();
@@ -73,10 +68,13 @@ document.title = node + ' :serial port';
 
     // If a token variable is passed in, set the parameter in a cookie.
     // This is used by nova-novncproxy.
-    token = getQueryVar('token', null);
+    var token = getQueryVar('token', null);
     if (token) {
-	createCookie('token', token, 1)
+      createCookie('token', token, 1)
     }
+    var node = getQueryVar('node', null);
+    document.getElementById('terminal-title').innerText = node;
+    document.title = node + ' :serial port';
 
     var term = new Terminal(80, 60);
     // the proxy we use uses a binary data format.  To convert we have
@@ -92,27 +90,43 @@ document.title = node + ' :serial port';
       });
 
       term.open(document.getElementById('terminal'));
+      // to prevent initial garbage chars
+      var isJustOpened = true;
 
       ws.onmessage=function(evt) {
         var reader = new FileReader();
+        var isStandartOnly = (FileReader.prototype.readAsBinaryString === undefined);
         reader.addEventListener('loadend', function() {
-	  term.write(reader.result);
+          var result = reader.result;
+          if (isStandartOnly) {
+            result = decodeBase64(reader.result);
+          }
+          if (!isJustOpened) {
+            term.write(result);
+          } else {
+            // skipping initial garbage, allowing the rest
+            isJustOpened = false;
+          }
         });
 
-	reader.readAsBinaryString(evt.data);        
+        if (isStandartOnly) {
+          reader.readAsDataURL(evt.data);
+        } else {
+          reader.readAsBinaryString(evt.data);
+        }
       };
       ws.onerror=function(evt) {
 	alert('websocket error: ' + evt.data);
       };
     });
   }, 1000);
+
 }).call(this);
 </script>
 </head>
 <body>
-
-<div id='terminal-container'>
 <div id='terminal-title'>Terminal</div>
+<div id='terminal-container'>
 <div id='terminal'></div>
 </div>
 </body></html>
