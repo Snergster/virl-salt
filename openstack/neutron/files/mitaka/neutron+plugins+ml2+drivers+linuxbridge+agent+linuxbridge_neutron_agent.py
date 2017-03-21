@@ -469,8 +469,7 @@ class LinuxBridgeManager(amb.CommonAgentManagerBase):
             network_link.set_master(bridge_name,
                 mtu_size=cfg.CONF.network_device_mtu, down=False)
         else:
-            network_link.set_mtu(cfg.CONF.network_device_mtu)
-            network_link.set_up()
+            network_link.set_params(up=True, mtu=cfg.CONF.network_device_mtu)
 
         return True
         
