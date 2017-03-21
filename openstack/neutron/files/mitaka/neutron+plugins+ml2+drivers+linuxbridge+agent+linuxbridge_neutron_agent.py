@@ -463,9 +463,15 @@ class LinuxBridgeManager(amb.CommonAgentManagerBase):
                 return False
             #self.ensure_tap_mtu(tap_device_name, phy_dev_name)
 
-        # Do mess with any devices encountered
-        ip_lib.IPDevice(tap_device_name).link.set_master(bridge_name,
-            mtu_size=cfg.CONF.network_device_mtu, down=False)
+        # Set only some properties on links that are not governed by neutron
+        network_link = ip_lib.IPDevice(tap_device_name).link
+        if device_owner.startswith(constants.DEVICE_OWNER_PREFIXES):
+            network_link.set_master(bridge_name,
+                mtu_size=cfg.CONF.network_device_mtu, down=False)
+        else:
+            network_link.set_mtu(cfg.CONF.network_device_mtu)
+            network_link.set_up()
+
         return True
         
         # Avoid messing with plugging devices into a bridge that the agent
