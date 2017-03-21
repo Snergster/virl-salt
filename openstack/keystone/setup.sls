@@ -41,7 +41,7 @@ admin:
 
 uwmadmin:
   keystone.user_present:
-    - password: {{ uwmpassword }}
+    - password: {{ ospassword }}
     - email: uwmadmin@domain.com
     - tenant: uwmadmin
     - roles:
