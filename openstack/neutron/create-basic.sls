@@ -114,8 +114,8 @@ create flat subnet:
 
 create flat host port:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-create --fixed-ip ip_address={{ l2_address.split('/')[0] }} --name virl-host-flat flat
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-show virl-host-flat
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-create --fixed-ip ip_address={{ l2_address.split('/')[0] }} --device-id reserved --device-owner compute:none --name reserved-ok-if-down-host-flat flat
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-show reserved-ok-if-down-host-flat
     - require:
       - cmd: create flat subnet
 {% if virl.mitaka %}
@@ -137,8 +137,8 @@ create flat1 subnet:
 
 create flat1 host port:
   cmd.run:
-    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-create --fixed-ip ip_address={{ l2_address2.split('/')[0] }} --name virl-host-flat1 flat1
-    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-show virl-host-flat1
+    - name: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-create --fixed-ip ip_address={{ l2_address2.split('/')[0] }} --device-id reserved --device-owner compute:none --name reserved-ok-if-down-host-flat1 flat1
+    - unless: neutron --os-tenant-name admin --os-username admin --os-password {{ virl.ospassword }} --os-auth-url=http://127.0.1.1:5000/{{ virl.keystone_auth_version }} port-show reserved-ok-if-down-host-flat1
     - require:
       - cmd: create flat1 subnet
   {% if virl.mitaka %}
