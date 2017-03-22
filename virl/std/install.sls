@@ -224,7 +224,7 @@ VIRL_CORE:
      {% endif %}
       - /usr/local/bin/virl_config update --global
       - crudini --set /etc/virl/virl.cfg env virl_openstack_auth_url http://localhost:5000/{{ virl.keystone_auth_version }}
-      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ virl.uwmpassword }}
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ virl.ospassword }}
       - crudini --set /etc/virl/virl.cfg env virl_openstack_service_token {{ virl.ks_token }}
       - crudini --set /etc/virl/virl.cfg env virl_std_port {{ virl.stdport }}
       - crudini --set /etc/virl/virl.cfg env virl_std_url http://localhost:{{ virl.stdport }}
@@ -248,7 +248,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg host ram_overcommit {{ virl.ram_overcommit }}
       - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ virl.cpu_overcommit }}
       # new location
-      - crudini --set /etc/virl/virl-core.ini env virl_openstack_password {{ virl.uwmpassword }}
+      - crudini --set /etc/virl/virl-core.ini env virl_openstack_password {{ virl.ospassword }}
       - crudini --set /etc/virl/virl-core.ini env virl_openstack_service_token {{ virl.ks_token }}
       - crudini --set /etc/virl/virl-core.ini env virl_std_port {{ virl.stdport }}
       - crudini --set /etc/virl/virl-core.ini env virl_std_url http://localhost:{{ virl.stdport }}
@@ -371,24 +371,24 @@ uwmadmin change:
      {% if virl.cml %}
       - sleep 65
      {% endif %}
-      - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ virl.uwmpassword }} -P {{ virl.uwmpassword }}'
-      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ virl.uwmpassword }}
+      - '/usr/local/bin/virl_uwm_server set-password -u uwmadmin -p {{ virl.uwmpassword }} -P {{ virl.ospassword }}'
+      - crudini --set /etc/virl/virl.cfg env virl_openstack_password {{ virl.ospassword }}
       - crudini --set /etc/virl/virl.cfg env virl_std_password {{ virl.uwmpassword }}
       # new location
-      - crudini --set /etc/virl/virl-core.ini env virl_openstack_password {{ virl.uwmpassword }}
+      - crudini --set /etc/virl/virl-core.ini env virl_openstack_password {{ virl.ospassword }}
       - crudini --set /etc/virl/virl-core.ini env virl_std_password {{ virl.uwmpassword }}
     - onlyif: 'test -e /var/local/virl/servers.db'
 
 virl init:
   cmd:
     - run
-    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.ospassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
 
 virl init second:
   cmd:
     - run
-    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.ospassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
     - onfail:
       - cmd: uwmadmin change
@@ -415,7 +415,7 @@ virl-uwm:
 
 virl init failsafe:
   cmd.run:
-    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.uwmpassword }} -T uwmadmin
+    - name: /usr/local/bin/virl_uwm_server init -A http://127.0.1.1:5000/{{ virl.keystone_auth_version }} -u uwmadmin -p {{ virl.uwmpassword }} -U uwmadmin -P {{ virl.ospassword }} -T uwmadmin
     - onlyif: 'test ! -e /var/local/virl/servers.db'
     - require:
       - service: virl-uwm
