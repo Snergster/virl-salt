@@ -25,6 +25,15 @@ cinder-volume start:
   service.running:
     - name: cinder-volume
 
+{% set free = salt['cmd.run']("df -m /var/lib/ | awk '/^\// { print $ 4 ; }'") | int %}
+{% if salt['file.file_exists'](cinder_location) %}
+{% set delete_size = salt['cmd.run']("stat -c%s '{{ cinder_location }}'") | int %}
+{% else %}
+{% set delete_size = 0 %}
+{% endif %}
+# create only if there is 10000M left after creating file
+{% if free + (delete_size/2**20) - (cinder_size | int) - 10000 >= 0 %}
+
 create cinder file:
   cmd.run:
     - onlyif: test ! -e {{ cinder_location }}
@@ -40,6 +49,8 @@ create cinder device:
     - name:  |
         /sbin/pvcreate {{ cinder_location }}
         /sbin/vgcreate cinder-volumes {{ cinder_location }}
+{% endif %}
+
 {% endif %}
 
 {% if cinder_file or cinder_device %}
