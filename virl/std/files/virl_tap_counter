@@ -9,7 +9,6 @@ from itertools import cycle
 from datetime import datetime
 from calendar import timegm
 
-
 import redis
 
 logger = logging.getLogger('virl_tap_counter')
@@ -110,10 +109,10 @@ class IfaceManager(object):
         self.port = redis_port
 
         logger.info('Initialised with args: {}'.format(
-                [prefix, redis_host, redis_port, refresh_interval,
-                 glob_interval, ttl]))
+            [prefix, redis_host, redis_port, refresh_interval,
+             glob_interval, ttl]))
         logger.info('Starting interface monitoring for {} interfaces'.format(
-                len(self.ifaces)))
+            len(self.ifaces)))
 
     def _count(self):
         """
@@ -131,12 +130,12 @@ class IfaceManager(object):
         new_ifaces = {iface: IfaceInfo(iface) for iface in
                       os.listdir('/sys/class/net')
                       if iface.startswith(
-                self.prefix) and iface not in self.ifaces.keys()}
+            self.prefix) and iface not in self.ifaces.keys()}
         if new_ifaces:
             self.ifaces.update(new_ifaces)
             logger.info('New interfaces found: {}, '
                         'now monitoring {} interfaces'.format(
-                    ",".join(new_ifaces.keys()), len(self.ifaces)))
+                ",".join(new_ifaces.keys()), len(self.ifaces)))
 
     def loop(self):
         """
@@ -160,18 +159,18 @@ class IfaceManager(object):
                     # Cant mutate dict mid-iteration
                     to_delete.append(iface_name)
                     logger.info(
-                            "Interface {} brought down, now monitoring {} interfaces".format(
-                                    iface_name,
-                                    len(self.ifaces) - len(to_delete)
-                            ))
+                        "Interface {} brought down, now monitoring {} interfaces".format(
+                            iface_name,
+                            len(self.ifaces) - len(to_delete)
+                        ))
                     continue
                 # Push to redis - or break the loop
                 if not self._push(iface_name, new_vals):
                     logger.warning('Recovered from redis instance '
                                    'being unreachable, skipping round...')
                     logger.info(
-                            'Resuming interface monitoring for {} interfaces'.format(
-                                    len(self.ifaces)))
+                        'Resuming interface monitoring for {} interfaces'.format(
+                            len(self.ifaces)))
                     self.edge_of_second()
                     # Timing is off, skip this loop
                     break
@@ -227,7 +226,7 @@ class IfaceManager(object):
         while True:
             logger.error('Redis instance at {}:{} not reachable [try number {}]'
                          ' - will retry after 1 min'.format(
-                    self.host, self.port, retry_counter))
+                self.host, self.port, retry_counter))
             retry_counter += 1
             try:
                 self.redis.ping()
@@ -235,9 +234,10 @@ class IfaceManager(object):
                 time.sleep(60)
             else:
                 logger.warning(
-                        'Reconnected to redis instance on {}. try'.format(
-                                retry_counter))
+                    'Reconnected to redis instance on {}. try'.format(
+                        retry_counter))
                 return True
+
     @staticmethod
     def edge_of_second():
         logger.info("Correcting time skew")
