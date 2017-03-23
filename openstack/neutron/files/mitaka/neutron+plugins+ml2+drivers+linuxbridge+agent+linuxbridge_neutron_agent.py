@@ -466,7 +466,7 @@ class LinuxBridgeManager(amb.CommonAgentManagerBase):
         # Set only some properties on links that are not governed by neutron
         network_link = ip_lib.IPDevice(tap_device_name).link
         if device_owner.startswith(constants.DEVICE_OWNER_PREFIXES) or physical_network in self.bridge_mappings:
-            network_link.set_master(bridge_name, mtu_size=cfg.CONF.network_device_mtu, down=False)
+            network_link.set_params(master=bridge_name, mtu=cfg.CONF.network_device_mtu, up=True)
         else:
             network_link.set_params(up=True, mtu=cfg.CONF.network_device_mtu)
 
