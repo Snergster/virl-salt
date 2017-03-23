@@ -78,7 +78,11 @@ add clusters to std:
       - crudini --set /etc/virl/common.cfg cluster computes '{{ compute_hostnames }}'
       # new location
       - crudini --set /etc/virl/virl-core.ini cluster computes '{{ compute_hostnames }}'
+{% if virl.mitaka %}
+    - onlyif: test -e /etc/virl/virl-core.ini
+{% else %}
     - onlyif: test -e /etc/virl/common.cfg
+{% endif %}
 
 point std at key if it exists:
   cmd.run:
@@ -88,7 +92,11 @@ point std at key if it exists:
       - crudini --set /etc/virl/virl-core.ini cluster ssh_key '~virl/.ssh/id_rsa'
     - onlyif:
       - test -e ~virl/.ssh/id_rsa.pub
-      - test -e /etc/virl/common.cfg
+{% if virl.mitaka %}
+    - onlyif: test -e /etc/virl/virl-core.ini
+{% else %}
+    - onlyif: test -e /etc/virl/common.cfg
+{% endif %}
 
 enable cluster in std via cluster config:
   cmd.run:
@@ -97,7 +105,11 @@ enable cluster in std via cluster config:
       # new location
       - crudini --set /etc/virl/virl-core.ini orchestration cluster_mode True
     - onlyif:
-      - test -e /etc/virl/common.cfg
+{% if virl.mitaka %}
+    - onlyif: test -e /etc/virl/virl-core.ini
+{% else %}
+    - onlyif: test -e /etc/virl/common.cfg
+{% endif %}
 
 
 
