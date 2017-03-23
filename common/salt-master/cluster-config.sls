@@ -65,48 +65,20 @@
     - source: salt://common/salt-master/files/compute4.ini.jinja
 
 
+  {% set compute_hostnames = [] %}
+  {% if virl.compute1_active and compute_hostnames.append(virl.compute1_hostname) %}{% endif %}
+  {% if virl.compute2_active and compute_hostnames.append(virl.compute2_hostname) %}{% endif %}
+  {% if virl.compute3_active and compute_hostnames.append(virl.compute3_hostname) %}{% endif %}
+  {% if virl.compute4_active and compute_hostnames.append(virl.compute4_hostname) %}{% endif %}
+  {% set compute_hostnames = ','.join(compute_hostnames) %}
 
-  {% if compute4_active %}
-
-add up to cluster4 to std:
+add clusters to std:
   cmd.run:
     - names:
-      - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+      - crudini --set /etc/virl/common.cfg cluster computes '{{ compute_hostnames }}'
       # new location
-      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}},{{compute3}},{{compute4}}'
+      - crudini --set /etc/virl/virl-core.ini cluster computes '{{ compute_hostnames }}'
     - onlyif: test -e /etc/virl/common.cfg
-
-  {% elif compute3_active %}
-
-add up to cluster3 to std:
-  cmd.run:
-    - names:
-      - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}},{{compute3}}'
-      # new location
-      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}},{{compute3}}'
-    - onlyif: test -e /etc/virl/common.cfg
-
-  {% elif compute2_active %}
-
-add up to cluster2 to std:
-  cmd.run:
-    - names:
-      - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}},{{compute2}}'
-      # new location
-      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}},{{compute2}}'
-    - onlyif: test -e /etc/virl/common.cfg
-
-  {% else %}
-
-add only cluster1 to std:
-  cmd.run:
-    - names:
-      - crudini --set /etc/virl/common.cfg cluster computes '{{compute1}}'
-      # new location
-      - crudini --set /etc/virl/virl-core.ini cluster computes '{{compute1}}'
-    - onlyif: test -e /etc/virl/common.cfg
-
-  {% endif %}
 
 point std at key if it exists:
   cmd.run:
