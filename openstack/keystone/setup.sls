@@ -1,6 +1,3 @@
-{% set public_ip = salt['grains.get']('public_ip', '127.0.1.1') %}
-{% set uwmpassword = salt['pillar.get']('virl:uwmadmin_password', salt['grains.get']('uwmadmin_password', 'password')) %}
-{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
 {% from "virl.jinja" import virl with context %}
 
 include:
@@ -26,7 +23,7 @@ Keystone roles:
 
 admin:
   keystone.user_present:
-    - password: {{ ospassword }}
+    - password: {{ virl.ospassword }}
     - email: admin@domain.com
     - roles:
         admin:   # tenants
@@ -41,7 +38,7 @@ admin:
 
 uwmadmin:
   keystone.user_present:
-    - password: {{ ospassword }}
+    - password: {{ virl.uwmpassword }}
     - email: uwmadmin@domain.com
     - tenant: uwmadmin
     - roles:
@@ -53,7 +50,7 @@ uwmadmin:
 
 nova:
   keystone.user_present:
-    - password: {{ ospassword }}
+    - password: {{ virl.ospassword }}
     - email: nova@domain.com
     - tenant: service
     - roles:
@@ -65,7 +62,7 @@ nova:
 
 neutron:
   keystone.user_present:
-    - password: {{ ospassword }}
+    - password: {{ virl.ospassword }}
     - email: neutron@domain.com
     - tenant: service
     - roles:
@@ -77,7 +74,7 @@ neutron:
 
 glance:
   keystone.user_present:
-    - password: {{ ospassword }}
+    - password: {{ virl.ospassword }}
     - email: glance@domain.com
     - tenant: service
     - roles:
@@ -89,7 +86,7 @@ glance:
 
 cinder:
   keystone.user_present:
-    - password: {{ ospassword }}
+    - password: {{ virl.ospassword }}
     - email: cinder@domain.com
     - tenant: service
     - roles:
@@ -101,7 +98,7 @@ cinder:
 
 heat:
   keystone.user_present:
-    - password: {{ ospassword }}
+    - password: {{ virl.ospassword }}
     - email: heat@domain.com
     - tenant: service
     - roles:
