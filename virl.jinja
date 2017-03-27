@@ -8,6 +8,7 @@
 	'public_network' : salt['pillar.get']('virl:public_network', salt['grains.get']('public_network', '172.16.6.0' )),
 	'public_netmask' : salt['pillar.get']('virl:public_netmask', salt['grains.get']('public_netmask', '255.255.255.0' )),
 	'public_gateway' : salt['pillar.get']('virl:public_gateway', salt['grains.get']('public_gateway', '172.16.6.0' )),
+    'openstack_public_ip' : salt['pillar.get']('virl:openstack_public_ip', salt['grains.get']('openstack_public_ip', '127.0.1.1' )),
 	'proxy' : salt['pillar.get']('virl:proxy', salt['grains.get']('proxy', False)),
 	'http_proxy' : salt['pillar.get']('virl:http_proxy', salt['grains.get']('http_proxy', 'https://proxy-wsa.esl.cisco.com:80/')),
 	'ks_token' : salt['pillar.get']('virl:keystone_service_token', salt['grains.get']('keystone_service_token', 'fkgjhsdflkjh')),
