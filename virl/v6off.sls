@@ -36,8 +36,8 @@ network-manager no upstart:
 v6off-rclocal:
   file.blockreplace:
     - name: /etc/rc.local
-    - marker_start: "# 002s v6off"
-    - marker_end: "# 002e"
+    - marker_start: "# 002s v6"
+    - marker_end: "# 002e end"
     - content: |
              /usr/local/bin/adjust-ipv6-sysctl.sh
 

@@ -58,8 +58,8 @@ create cinder device:
 cinder-rclocal:
   file.blockreplace:
     - name: /etc/rc.local
-    - marker_start: "# 001s Cinder"
-    - marker_end: "# 001e"
+    - marker_start: "# 001s cinder"
+    - marker_end: "# 001e end"
    {% if salt['file.file_exists'](cinder_location) %}
     - content: |
              /sbin/losetup -f {{ cinder_location }}
