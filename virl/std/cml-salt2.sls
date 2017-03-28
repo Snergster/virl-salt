@@ -22,5 +22,4 @@
     - user: virl
     - group: virl
     - include_pat: {{ virl.registry_file }}
-    - exclude_pat: *
     - file_mode: 755
