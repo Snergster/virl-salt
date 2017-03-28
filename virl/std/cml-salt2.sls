@@ -1,3 +1,5 @@
+{% from "virl.jinja" import virl with context %}
+
 /srv/salt/cml:
   file.recurse:
     - source: "salt://cml/"
@@ -12,4 +14,13 @@
     - user: virl
     - group: virl
     - exclude_pat: E@(.git)
+    - file_mode: 755
+
+/srv/salt/images/salt:
+  file.recurse:
+    - source: "salt://images/salt/"
+    - user: virl
+    - group: virl
+    - include_pat: {{ registry_file }}
+    - exclude_pat: *
     - file_mode: 755
