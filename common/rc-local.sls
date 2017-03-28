@@ -3,7 +3,7 @@
 {% if virl.cml %}
 
 /etc/set-motd.sh:
-  file.recurse:
+  file.managed:
     - source: "salt://files/motd-cml.sh"
     - user: virl
     - group: virl
@@ -12,7 +12,7 @@
 {% else %}
 
 /etc/set-motd.sh:
-  file.recurse:
+  file.managed:
     - source: "salt://files/motd-virl.sh"
     - user: virl
     - group: virl
