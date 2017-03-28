@@ -536,6 +536,41 @@ class IpLinkCommand(IpDeviceCommandBase):
 
     def set_alias(self, alias_name):
         self._as_root([], ('set', self.name, 'alias', alias_name))
+    
+    def set_params(self, **kwargs):
+        if len(kwargs) <= 0:
+            raise ValueError("Function expects at least one argument.")
+
+        special = ['allmulticast_on', 'up', 'master']
+        regular = ['address', 'mtu', 'netns', 'name', 'alias']
+        valid_options = special + regular
+
+        command = ['set', self.name]
+        for key, value in kwargs.iteritems():
+            if key not in valid_options:
+                raise ValueError("Unknown parameter {}. Expecting one of {}".format(key, valid_options))
+            if key in regular:
+                command.append(key)
+                command.append(value)
+
+        new_master = kwargs.get('master', False)
+        if new_master is not False and self.master != new_master:
+            if new_master is None:
+                command.append('nomaster')
+            else:
+                command.append('master')
+                command.append(new_master)
+
+        if kwargs.get('allmulticast_on'):
+           command.append('allmulticast')
+           command.append('on')
+
+        up = kwargs.get('up')
+        if up is True:
+            command.append('up')
+        elif up is False:
+            command.append('down')
+        return self._as_root([], tuple(command))
 
     def delete(self):
         self._as_root([], ('delete', self.name))

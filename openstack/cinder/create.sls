@@ -27,7 +27,7 @@ cinder-volume start:
 
 {% set free = salt['cmd.run']("df -m /var/lib/ | awk '/^\// { print $ 4 ; }'") | int %}
 {% if salt['file.file_exists'](cinder_location) %}
-{% set delete_size = salt['cmd.run']("stat -c%s '{{ cinder_location }}'") | int %}
+{% set delete_size = salt['cmd.run'](' '.join(['stat', '-c%s', cinder_location])) | int %}
 {% else %}
 {% set delete_size = 0 %}
 {% endif %}

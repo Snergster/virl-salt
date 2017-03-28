@@ -1,6 +1,5 @@
 
 {% from "virl.jinja" import virl with context %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 
 neutron-pkgs:
   pkg.installed:
@@ -167,7 +166,7 @@ meta-meta:
     - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'nova_metadata_ip'
-    - value: ' {{ virl.public_ip }}'
+    - value: ' {{ virl.openstackt_public_ip }}'
     - require:
       - pkg: neutron-pkgs
 
