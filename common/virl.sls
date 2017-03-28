@@ -153,8 +153,8 @@ v6off-rclocal:
     - name: /etc/rc.local
     - require:
       - file: /usr/local/bin/v6off jinja
-    - marker_start: "# 002s v6"
-    - marker_end: "# 002e end"
+    - marker_start: "# 002s v6off"
+    - marker_end: "# 002e"
     - content: |
              /usr/local/bin/adjust-ipv6-sysctl.sh
 

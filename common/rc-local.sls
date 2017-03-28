@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% from "virl.jinja" import virl with context %}
 
 {% if virl.cml %}
@@ -21,14 +22,17 @@
 {% endif %}
 
 add-rclocal-markers
+=======
+rclocal replace buckets:
+>>>>>>> parent of 83b4f9c... Cleanup the rc.local blocks and add MOTDs for VIRL and CML.
   file.replace:
     - name: /etc/rc.local
     - pattern: '# By default this script does nothing.'
     - repl: |
-          # VIRL use only. Please dont replace or alter the blocks below
-          # 001s cinder
+          # VIRL use. Please dont replace or alter the blocks below
+          # 001s Cinder
           # 001e end
-          # 002s v6
+          # 002s v6off
           # 002e end
           # 003s start
           # 003e end
@@ -38,32 +42,35 @@ add-rclocal-markers
           # 005e end
           # 006s kvm
           # 006e end
-          # 007s motd
-          # 007e end
 
-rclocal-set-motd:
-  file.blockreplace:
+rclocal v6off append:
+  file.replace:
     - name: /etc/rc.local
-    - marker_start: "# 007s motd"
-    - marker_end: "# 007e end"
-    - content: /etc/set-motd.sh
+    - pattern: '# 002s start'
+    - repl: '# 002s v6off'
 
-rclocal-kvm-append:
+rclocal dummy append:
+  file.replace:
+    - name: /etc/rc.local
+    - pattern: '# 005s start'
+    - repl: '# 005s dummy'
+
+rclocal kvm append:
   file.blockreplace:
     - name: /etc/rc.local
     - marker_start: "# 006s kvm"
-    - marker_end: "# 006e end"
+    - marker_end: "# 006e"
     - content: |
              test -e /dev/kvm || touch /dev/kvm
 
 {%if salt['pillar.get']('virl:dummy_int', salt['grains.get']('dummy_int', False )) %}
 
   {% if 'xenial' in salt['grains.get']('oscodename') %}
-rclocal-bridge:
+bridge rclocal:
   file.blockreplace:
     - name: /etc/rc.local
     - marker_start: "# 005s dummy"
-    - marker_end: "# 005e end"
+    - marker_end: "# 005e"
     - content: |
              /sbin/ifup br1
              /sbin/ifup br2
@@ -72,7 +79,7 @@ rclocal-bridge:
              /sbin/ifup eth0
   {% else %}
 
-rclocal-dummy:
+dummy-rclocal:
   file.blockreplace:
     - name: /etc/rc.local
     - marker_start: "# 005s dummy"
