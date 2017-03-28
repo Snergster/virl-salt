@@ -8,6 +8,7 @@ from logging.handlers import RotatingFileHandler
 from itertools import cycle
 from datetime import datetime
 from calendar import timegm
+from collections import OrderedDict
 
 import redis
 
@@ -98,6 +99,7 @@ class IfaceManager(object):
         self.ifaces = {iface: IfaceInfo(iface) for iface in
                        os.listdir('/sys/class/net') if
                        iface.startswith(prefix)}
+        self.ifaces = OrderedDict(sorted(self.ifaces.items()))
         self.redis = redis.StrictRedis(host=redis_host, port=redis_port)
         self.prefix = prefix
         self.refresh_interval = refresh_interval
@@ -133,6 +135,7 @@ class IfaceManager(object):
             self.prefix) and iface not in self.ifaces.keys()}
         if new_ifaces:
             self.ifaces.update(new_ifaces)
+            self.ifaces = OrderedDict(sorted(self.ifaces.items()))
             logger.info('New interfaces found: {}, '
                         'now monitoring {} interfaces'.format(
                 ",".join(new_ifaces.keys()), len(self.ifaces)))
@@ -149,6 +152,7 @@ class IfaceManager(object):
         """
         while True:
             start_time = time.time()
+            logger.debug("Start of iteration at: {}".format(start_time))
             # Refresh if necessary
             self._count()
             to_delete = []
@@ -180,6 +184,7 @@ class IfaceManager(object):
                 post_time = time.time()
                 # Time the loop duration
                 time_diff = post_time - start_time
+                logger.debug("Loop iteration took: {} s".format(time_diff))
                 if time_diff > self.refresh_interval:
                     logger.warning(
                         "Loop iteration took more then set interval. Interval: {}s, iteration: {}s. "
@@ -187,6 +192,9 @@ class IfaceManager(object):
                             self.refresh_interval, time_diff,
                             self.refresh_interval - (time_diff % self.refresh_interval)))
                     IfaceManager.edge_of_second()
+                else:
+                   logger.info("Sleeping for {} s".format(self.refresh_interval - time_diff))
+                   time.sleep(self.refresh_interval - time_diff)
 
     def _push(self, name, vals):
         """
