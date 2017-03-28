@@ -54,7 +54,7 @@ nova-pkgs:
       - pkg: nova-pkgs
 {% endif %}
 
-{% if virl.dhcp %}
+{% if not virl.mitaka and virl.dhcp %}
 
 my ip for dhcp to static:
   openstack_config.present:
@@ -85,7 +85,7 @@ vnc_server proxy for dhcp to static:
 
 {% endif %}
 
-{% if virl.cluster %}
+{% if not virl.mitaka and virl.cluster %}
 compute filter for cluster:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
@@ -452,6 +452,8 @@ nova-{{each}} conf:
     - require:
       - pkg: nova-pkgs
 
+{% if not virl.mitaka %}
+
 nova-compute serial:
   openstack_config.present:
     - filename: /etc/nova/nova-compute.conf
@@ -460,6 +462,8 @@ nova-compute serial:
     - value: '{{ virl.serstart }}:{{ virl.serend }}'
     - require:
       - file: /etc/nova/nova.conf
+
+{% endif %}
 
 /etc/rc2.d/S98nova-serialproxy:
   file.absent
