@@ -1,6 +1,4 @@
-
 {% from "virl.jinja" import virl with context %}
-
 
 redis-py on compute:
   pip.installed:
@@ -36,6 +34,8 @@ add libvirt-qemu to nova:
     - name: nova
     - delusers:
       - libvirt-qemu
+
+{% if not virl.mitaka %}
 
 serial_console tune:
   openstack_config.present:
@@ -82,6 +82,10 @@ vncserver tune2:
     - require:
       - file: /etc/nova/nova.conf
 
+{% endif %}
+
+{% if not virl.mitaka and virl.cluster %}
+compute filter for cluster:
 compute filter for compute paranoia:
   openstack_config.present:
     - filename: /etc/nova/nova.conf
@@ -90,6 +94,10 @@ compute filter for compute paranoia:
     - value: 'RamFilter,AllHostsFilter,ComputeFilter'
     - require:
       - file: /etc/nova/nova.conf
+
+{% endif %}
+
+{% if not virl.mitaka %}
 
 my_ip compute paranoia:
   openstack_config.present:
@@ -100,6 +108,7 @@ my_ip compute paranoia:
     - require:
       - file: /etc/nova/nova.conf
 
+{% endif %}
 
 {% if virl.mitaka %}
 
