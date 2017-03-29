@@ -1,6 +1,7 @@
 {% from "virl.jinja" import virl with context %}
 
 {% if virl.proxy %}
+
 http_proxy std prereq:
   environ.setenv:
     - name: http_proxy
