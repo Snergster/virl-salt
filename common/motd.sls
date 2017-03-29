@@ -4,7 +4,7 @@
 
 /etc/set-motd:
   file.managed:
-    - source: "salt://files/motd-cml.sh"
+    - source: "salt://files/motd-cml"
     - user: virl
     - group: virl
     - file_mode: 755
@@ -13,7 +13,7 @@
 
 /etc/set-motd:
   file.managed:
-    - source: "salt://files/motd-virl.sh"
+    - source: "salt://files/motd-virl"
     - user: virl
     - group: virl
     - file_mode: 755
@@ -26,4 +26,5 @@ set-motd:
     - marker_start: "# 007s motd"
     - marker_end: "# 007e end"
     - content: |
-             /etc/set-motd
+             /etc/set-motd > /etc/update-motd.d/20-virl
+             chmod +x /etc/update-motd.d/20-virl

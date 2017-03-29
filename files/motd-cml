@@ -1,0 +1,26 @@
+#!/bin/bash
+
+mgmt=$(awk '$2 == 00000000 { print $1 }' /proc/net/route)
+maddr=$(ip addr show dev $mgmt | awk '$1 == "inet" { sub("/..", "", $2); print $2}')
+cat <<EOF
+---------------------- Cisco Modeling Labs -----------------------
+
+To manage your this server please use the User Workspace
+Manager (UWM) interface at http://$maddr
+
+The default credentials are 'uwmadmin' / 'password'
+
+EOF
+printf "\nServer Interfaces: \n"
+
+ifquery --list | egrep -v lo | sort | while read intf
+do
+ipadr=$(ip addr show dev $intf |awk '$1 == "inet" { sub("/..", "", $2); print $2}')
+   ip link show $intf > /dev/null 2>&1
+        if [ $? -ne 0 ] ; then
+        printf ">>>>%sInterface $intf DOWN%s\n"
+        else
+        printf "$ipadr ($intf)\n"
+        fi
+done
+echo ""
