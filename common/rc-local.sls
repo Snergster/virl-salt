@@ -16,6 +16,8 @@ rclocal replace buckets:
           # 005e end
           # 006s kvm
           # 006e end
+          # 007s motd
+          # 007e end
 
 rclocal v6off append:
   file.replace:
