@@ -1,7 +1,7 @@
-
 {% from "virl.jinja" import virl with context %}
 
 {% if virl.proxy %}
+
 http_proxy std prereq:
   environ.setenv:
     - name: http_proxy
@@ -60,7 +60,7 @@ std_prereq:
       - Flask >= 0.14
       - Flask_Login >= 0.3.0
       - Flask_RESTful >= 0.3.5
-      - Flask_WTF >= 0.11
+      - Flask_WTF >= 0.14
       - Flask_Breadcrumbs >= 0.3.0
       - flask-compress
       - Flask_Cors

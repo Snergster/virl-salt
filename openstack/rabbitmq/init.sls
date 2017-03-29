@@ -1,6 +1,3 @@
-{% set ospassword = salt['pillar.get']('virl:password', salt['grains.get']('password', 'password')) %}
-{% set mypassword = salt['pillar.get']('virl:mysql_password', salt['grains.get']('mysql_password', 'password')) %}
-{% set cluster = salt['pillar.get']('virl:virl_cluster', salt['grains.get']('virl_cluster', False )) %}
 {% from "virl.jinja" import virl with context %}
 
 rabbitmq-server:
@@ -24,13 +21,13 @@ poke-the-rabbit-after-changes:
     - watch:
       - cmd: rabbit_pass
       - file: /etc/rabbitmq/rabbitmq-env.conf
-{% if cluster %}
+{% if virl.cluster %}
       - file: /etc/rabbitmq/rabbitmq.config
 {% endif %}
 
 rabbit_pass:
   cmd.run:
-    - name: rabbitmqctl change_password guest {{ ospassword }}
+    - name: rabbitmqctl change_password guest {{ virl.ospassword }}
     - user: root
     - require:
       - pkg: rabbitmq-server
@@ -43,7 +40,7 @@ rabbit_pass:
     - contents: |
         RABBITMQ_NODE_IP_ADDRESS=0.0.0.0
 
-{% if cluster %}
+{% if virl.cluster %}
 /etc/rabbitmq/rabbitmq.config:
   file.managed:
     - require:

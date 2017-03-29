@@ -40,15 +40,6 @@ neutron-pkgs:
     - require:
       - pkg: neutron-pkgs
 
-neutron rabbit host:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'oslo_messaging_rabbit'
-    - parameter: 'rabbit_host'
-    - value: '{{ virl.controller_ip }}'
-    - require:
-      - file: /etc/neutron/neutron.conf
-
 {% else %}
 /etc/neutron/neutron.conf:
   file.managed:
