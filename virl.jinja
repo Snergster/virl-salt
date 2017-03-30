@@ -198,6 +198,7 @@
     'docker_version' : salt['pillar.get']('version:docker','1.9.1-0~trusty'),
     'registry_version' : salt['pillar.get']('version:docker_registry','2.6.0'),
     'registry_file' : salt['pillar.get']('docker:registry_file','registry-2.6.0.tar'),
+    'tap_file' : salt['pillar.get']('docker:tap_file','docker-tap-counter.tar'),
     'registry_file_hash' : salt['pillar.get']('files_checksums:docker_registry','8c4f0dbc756553e460f7bbc9fea5d59f'),
     'tap_counter_file_hash' : salt['pillar.get']('files_checksums:tap_counter','a4eae90640eb3fd9983b4b93ad809c63'),
     'registry_docker_ID' : salt['pillar.get']('docker:registry_id','eb3ee02bebc9'),

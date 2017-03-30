@@ -48,11 +48,11 @@ bridge rclocal:
     - marker_start: "# 005s dummy"
     - marker_end: "# 005e"
     - content: |
-             /sbin/ifup br1
-             /sbin/ifup br2
-             /sbin/ifup br3
-             /sbin/ifup br4
-             /sbin/ifup eth0
+             /sbin/ifup br1 &
+             /sbin/ifup br2 &
+             /sbin/ifup br3 &
+             /sbin/ifup br4 &
+             /sbin/ifup eth0 &
   {% else %}
 
 dummy-rclocal:

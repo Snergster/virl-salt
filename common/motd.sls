@@ -26,5 +26,4 @@ set-motd:
     - marker_start: "# 007s motd"
     - marker_end: "# 007e end"
     - content: |
-             /etc/set-motd > /etc/update-motd.d/20-virl
-             chmod +x /etc/update-motd.d/20-virl
+             /etc/set-motd
