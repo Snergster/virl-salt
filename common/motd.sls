@@ -2,8 +2,9 @@
 
 {% if virl.cml %}
 
-/etc/set-motd:
+set-motd-cml:
   file.managed:
+    - name: /etc/set-motd
     - source: "salt://files/motd-cml"
     - user: root
     - group: root
@@ -11,8 +12,9 @@
 
 {% else %}
 
-/etc/set-motd:
+set-motd-virl:
   file.managed:
+    - name: /etc/set-motd
     - source: "salt://files/motd-virl"
     - user: root
     - group: root
@@ -20,7 +22,11 @@
 
 {% endif %}
 
-set-motd:
+hammer-the-execute-bit:
+  cmd.run:
+    - name: chmod 0755 /etc/set-motd
+
+call-motd-in-etc:
   file.blockreplace:
     - name: /etc/rc.local
     - marker_start: "# 007s motd"
