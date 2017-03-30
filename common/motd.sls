@@ -5,18 +5,18 @@
 /etc/set-motd:
   file.managed:
     - source: "salt://files/motd-cml"
-    - user: virl
-    - group: virl
-    - file_mode: 755
+    - user: root
+    - group: root
+    - file_mode: '0755'
 
 {% else %}
 
 /etc/set-motd:
   file.managed:
     - source: "salt://files/motd-virl"
-    - user: virl
-    - group: virl
-    - file_mode: 755
+    - user: root
+    - group: root
+    - file_mode: '0755'
 
 {% endif %}
 
