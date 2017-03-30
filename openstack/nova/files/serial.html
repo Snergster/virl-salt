@@ -73,7 +73,7 @@
       createCookie('token', token, 1)
     }
     var node = getQueryVar('node', null);
-    document.getElementById('terminal-title').innerText = node;
+    document.getElementById('terminal-title').innerHTML = node;
     document.title = node + ' :serial port';
 
     var term = new Terminal(80, 60);
