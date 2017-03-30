@@ -7,7 +7,7 @@
     - source: "salt://files/motd-cml"
     - user: root
     - group: root
-    - file_mode: '0755'
+    - file_mode: keep
 
 {% else %}
 
@@ -16,7 +16,7 @@
     - source: "salt://files/motd-virl"
     - user: root
     - group: root
-    - file_mode: '0755'
+    - file_mode: keep
 
 {% endif %}
 
