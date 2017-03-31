@@ -14,6 +14,8 @@ echo "printf \"To manage this server please use the User Workspace\\n\""
 echo "printf \"Manager (UWM) interface at:\\n\\n\""
 echo "printf \"http://$maddr\\n\\n\""
 echo "printf \"The default credentials are 'uwmadmin' / 'password'\\n\\n\""
+echo "printf \"For support please open a case with Cisco TAC:\\n\""
+echo "printf \"http://www.cisco.com/support\\n\\n\""
 echo "printf \"Server Interfaces:\\n\\n\""
 
 ifquery --list | egrep -v lo | sort | while read intf

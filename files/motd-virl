@@ -14,6 +14,9 @@ echo "printf \"To manage this server please use the User Workspace\\n\""
 echo "printf \"Manager (UWM) interface at:\\n\\n\""
 echo "printf \"http://$maddr\\n\\n\""
 echo "printf \"The default credentials are 'uwmadmin' / 'password'\\n\\n\""
+echo "printf \"* Documentation:  https://learningnetwork.cisco.com/docs/DOC-30160\\n\""
+echo "printf \"* Guides:         https://learningnetwork.cisco.com/docs/DOC-30518\\n\""
+echo "printf \"* Support:        https://learningnetwork.cisco.com/groups/virl\\n\\n\""
 echo "printf \"Server Interfaces:\\n\\n\""
 
 ifquery --list | egrep -v lo | sort | while read intf
