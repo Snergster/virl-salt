@@ -23,6 +23,7 @@ pull-docker-registry:
     - user: virl
     - group: virl
     - file_mode: 755
+    - makedirs: true
 
 pull-docker-tap:
   file.managed:
@@ -31,3 +32,4 @@ pull-docker-tap:
     - user: virl
     - group: virl
     - file_mode: 755
+    - makedirs: true
