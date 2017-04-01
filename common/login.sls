@@ -5,7 +5,7 @@
 set-motd-cml:
   file.managed:
     - name: /etc/set-motd
-    - source: "salt://files/motd-cml"
+    - source: salt://files/motd-cml
     - user: root
     - group: root
     - file_mode: keep
@@ -15,7 +15,7 @@ set-motd-cml:
 set-motd-virl:
   file.managed:
     - name: /etc/set-motd
-    - source: "salt://files/motd-virl"
+    - source: salt://files/motd-virl
     - user: root
     - group: root
     - file_mode: keep
@@ -33,3 +33,11 @@ call-motd-in-etc:
     - marker_end: "# 007e end"
     - content: |
              /etc/set-motd
+
+mask-libvirt-in-lightdm:
+  file.managed:
+    - name: /var/lib/AccountsService/users/libvirt-qemu
+    - source: salt://files/libvirt-qemu
+    - user: root
+    - group: root
+    - file_mode: keep
