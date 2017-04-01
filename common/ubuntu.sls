@@ -29,7 +29,8 @@ commonpkgs:
       - htop
       - gcc
       - bc
-
+      - vim
+      - landscape-sysinfo
 
 /usr/local/bin/openstack-config:
   file.symlink:

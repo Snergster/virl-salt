@@ -1,0 +1,13 @@
+#!/bin/bash
+mgt=$(/sbin/ifconfig $(route | grep default | awk '{print $(NF)}') | grep "inet addr" | awk '{ print $2 }' | awk -F: '{ print $2 }')
+echo ""
+echo "_______________________ Virtual Internet Routing Labs _______________________"
+echo ""
+echo "Manage this server using the User Workspace Manager at: http://$mgt"
+echo ""
+echo "The default credentials are 'uwmadmin' / 'password'"
+echo ""
+echo "* Documentation:  https://learningnetwork.cisco.com/docs/DOC-30160"
+echo "* Guides:         https://learningnetwork.cisco.com/docs/DOC-30518"
+echo "* Support:        https://learningnetwork.cisco.com/groups/virl"
+echo ""

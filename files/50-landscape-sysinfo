@@ -1,0 +1,3 @@
+#!/bin/sh
+echo ""
+/usr/bin/landscape-sysinfo --exclude-sysinfo-plugins=LandscapeLink,LoggedInUsers

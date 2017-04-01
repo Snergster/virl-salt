@@ -4,35 +4,47 @@
 
 set-motd-cml:
   file.managed:
-    - name: /etc/set-motd
-    - source: salt://files/motd-cml
+    - name: /etc/update-motd.d/60-cml
+    - source: salt://files/60-cml
     - user: root
     - group: root
     - file_mode: keep
+
+hammer-the-execute-bit-cml:
+  cmd.run:
+    - name: chmod 0755 /etc/update-motd.d/60-virl
 
 {% else %}
 
 set-motd-virl:
   file.managed:
-    - name: /etc/set-motd
-    - source: salt://files/motd-virl
+    - name: /etc/update-motd.d/60-virl
+    - source: salt://files/60-virl
     - user: root
     - group: root
     - file_mode: keep
 
+hammer-the-execute-bit-virl:
+  cmd.run:
+    - name: chmod 0755 /etc/update-motd.d/60-virl
+
 {% endif %}
 
-hammer-the-execute-bit:
-  cmd.run:
-    - name: chmod 0755 /etc/set-motd
+set-motd-sysinfo:
+  file.managed:
+    - name: /etc/update-motd.d/50-landscape-sysinfo
+    - source: salt://files/50-landscape-sysinfo
+    - user: root
+    - group: root
+    - file_mode: keep
 
-call-motd-in-etc:
-  file.blockreplace:
-    - name: /etc/rc.local
-    - marker_start: "# 007s motd"
-    - marker_end: "# 007e end"
-    - content: |
-             /etc/set-motd
+hammer-the-execute-bit-landscape:
+  cmd.run:
+    - name: chmod 0755 /etc/update-motd.d/50-landscape-sysinfo
+
+kill-10-help:
+  file.absent:
+    -name: /etc/update-motd.d/10-help-text
 
 mask-libvirt-in-lightdm:
   file.managed:
