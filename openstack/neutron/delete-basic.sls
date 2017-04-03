@@ -22,12 +22,12 @@ user_domain_env delete:
 {% set neutron_auth = '--os-tenant-name admin --os-username admin --os-password ' + ospassword + ' --os-auth-url=http://' + controllerip + ':5000/' + kav %}
 {% for subnet_name in ['flat','flat1','ext-net'] %}
   {% set is_extnet = subnet_name == 'ext-net' %}
-  {% set subnet_id = salt['cmd.run'](cmd='neutron ' + neutron_auth + ' subnet-list --name=' + subnet_name + ' --column id --format value', env={'OS_PROJECT_DOMAIN_ID': 'default', 'OS_USER_DOMAIN_ID': 'default'} if virl.mitaka else {} ) %}
+  {% set subnet_id = salt['cmd.run'](cmd='neutron ' + neutron_auth + ' subnet-list --name=' + subnet_name + ' --column id --format csv --quote none | sed 1d', env={'OS_PROJECT_DOMAIN_ID': 'default', 'OS_USER_DOMAIN_ID': 'default'} if virl.mitaka else {} ) %}
   {% if subnet_id and is_extnet %}
   
 delete floating ips {{ subnet_name }}:
   cmd.run:
-    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --device_owner=network:floatingip --column device_id --format value | xargs -rn1 neutron {{ neutron_auth }} floatingip-delete
+    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --device_owner=network:floatingip --column device_id --format csv --quote none | sed 1d | xargs -rn1 neutron {{ neutron_auth }} floatingip-delete
     {% if virl.mitaka %}
     - require:
       - environ: project_domain_env delete
@@ -36,7 +36,7 @@ delete floating ips {{ subnet_name }}:
 
 clear router-gateway {{ subnet_name }}:
   cmd.run:
-    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --device_owner=network:router_gateway --column device_id --format value | xargs -rn1 neutron {{ neutron_auth }} router-gateway-clear
+    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --device_owner=network:router_gateway --column device_id --format csv --quote none | sed 1d | xargs -rn1 neutron {{ neutron_auth }} router-gateway-clear
     {% if virl.mitaka %}
     - require:
       - environ: project_domain_env delete
@@ -48,7 +48,7 @@ clear router-gateway {{ subnet_name }}:
   
 delete ports {{ subnet_name }}:
   cmd.run:
-    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --column id --format value | xargs -rn1 neutron {{ neutron_auth }} port-delete
+    - name: neutron {{ neutron_auth }} port-list --fixed_ips subnet_id={{ subnet_id }} --column id --format csv --quote none | sed 1d | xargs -rn1 neutron {{ neutron_auth }} port-delete
     {% if virl.mitaka or is_extnet %}
     - require:
       {% if virl.mitaka %}
