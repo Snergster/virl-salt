@@ -514,6 +514,8 @@ virl:
         with open(("/tmp/foo"), "w") as salt_grain:
             salt_grain.write("""{""")
             for key, value in (safeparser.items('DEFAULT')):
+                if 'old_mysql_password' in key:
+                    continue
                 if key == 'domain': salt_grain.write(""" 'domain_name': '{value}',""".format(key=key,value=value))
                 if value.lower() == 'true' or value.lower() == 'false':
                     salt_grain.write(""" '{key}': {value} ,""".format(key=key,value=value))
@@ -526,6 +528,12 @@ virl:
                     salt_grain.write("""  'cinder_enabled': True ,""")
                 else:
                     salt_grain.write("""  'cinder_enabled': False ,""")
+
+            # Save old mysql password for password changed
+            old_password = get_grains('mysql_password')
+            if old_password != mypassword:
+                grains['old_mysql_password'] = old_password
+
             if not uwm_port == '14000':
                 salt_grain.write("""  'uwm_url': 'http://{0}:{1}',""".format(public_ip,uwm_port))
             salt_grain.write(""" 'neutron_extnet_id': '{neutid}',""".format(neutid=neutron_extnet_id))
