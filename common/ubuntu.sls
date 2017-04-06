@@ -30,7 +30,7 @@ commonpkgs:
       - gcc
       - bc
       - vim
-      - landscape-sysinfo
+      - landscape-common
 
 /usr/local/bin/openstack-config:
   file.symlink:
