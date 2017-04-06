@@ -474,7 +474,7 @@ virl:
   keystone.auth_url: 'http://127.0.0.1:5000/v2.0/'
   keystone.region_name: 'RegionOne'
   keystone.service_type: 'network'\n""".format(ospassword=ospassword, kstoken=ks_token, tenid=admin_tenid, mypass=mypassword, auth_url=keystone_auth_url))
-  
+
     grains = {}
     for key, value in safeparser.items('DEFAULT'):
         if key == 'domain':
@@ -493,6 +493,13 @@ virl:
 
     if mitaka:
         grains['kilo'] = False
+
+    # Save old mysql password for password changed
+    if 'old_mysql_password' in grains:
+        del grains['old_mysql_password']
+    old_password = get_grains('mysql_password')
+    if old_password != mypassword:
+        grains['old_mysql_password'] = old_password
 
     grains['neutron_extnet_id'] = neutron_extnet_id
     grains['service_id'] = service_tenid
