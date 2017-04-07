@@ -118,8 +118,8 @@ root-localhost-test:
     - name: mysql -u root -ppassword -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{virl.mypassword}}';"
     - unless: mysql -u root -p{{virl.mypassword}} -e quit
 
-root-password-change:
 {% if old_mypassword != '' and old_mypassword != virl.mypassword %}
+root-password-change:
     cmd.run:
       - name: mysql -u root -p{{ old_mypassword }} -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{virl.mypassword}}';"
 {% endif %}

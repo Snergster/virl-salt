@@ -532,7 +532,7 @@ virl:
             # Save old mysql password for password changed
             old_password = get_grains('mysql_password')
             if old_password != mypassword:
-                grains['old_mysql_password'] = old_password
+                salt_grain.write("""  'old_mysql_password': %s ,""" % old_password)
 
             if not uwm_port == '14000':
                 salt_grain.write("""  'uwm_url': 'http://{0}:{1}',""".format(public_ip,uwm_port))
