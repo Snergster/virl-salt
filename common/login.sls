@@ -44,7 +44,7 @@ hammer-the-execute-bit-landscape:
 
 kill-10-help:
   file.absent:
-    -name: /etc/update-motd.d/10-help-text
+    - name: /etc/update-motd.d/10-help-text
 
 mask-libvirt-in-lightdm:
   file.managed:
