@@ -10,10 +10,6 @@ set-motd-cml:
     - group: root
     - file_mode: keep
 
-hammer-the-execute-bit-cml:
-  cmd.run:
-    - name: chmod 0755 /etc/update-motd.d/60-virl
-
 {% else %}
 
 set-motd-virl:
@@ -23,10 +19,6 @@ set-motd-virl:
     - user: root
     - group: root
     - file_mode: keep
-
-hammer-the-execute-bit-virl:
-  cmd.run:
-    - name: chmod 0755 /etc/update-motd.d/60-virl
 
 {% endif %}
 
@@ -38,13 +30,13 @@ set-motd-sysinfo:
     - group: root
     - file_mode: keep
 
-hammer-the-execute-bit-landscape:
-  cmd.run:
-    - name: chmod 0755 /etc/update-motd.d/50-landscape-sysinfo
-
 kill-10-help:
   file.absent:
     - name: /etc/update-motd.d/10-help-text
+
+hammer-the-execute-bits:
+  cmd.run:
+    - name: chmod 0755 /etc/update-motd.d/*
 
 mask-libvirt-in-lightdm:
   file.managed:
