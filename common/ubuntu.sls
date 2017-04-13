@@ -68,3 +68,9 @@ turn off update message crap:
 release-upgrade-available remove:
   file.absent:
     - name: /var/lib/update-notifier/release-upgrade-available
+
+/etc/apt/apt.conf.d/99unattended-upgrades:
+  file.managed:
+    - makedirs: true
+    - contents: |
+        Unattended-Upgrade::Allowed-Origins {};
