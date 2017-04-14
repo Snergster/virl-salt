@@ -11,7 +11,7 @@ virl_client download:
     - dir_mode: 755
     - include_pat: 'VIRL_CLIENTS*.whl'
     - exclude_pat:  E@(.*64.exe)|(.*32.exe$)|(.*dmg$)|(.*zip$)|(.*box$)
-    - source: "salt://std/{{ virl.venv }}/"
+    - source: "salt://virl/std/{{ virl.venv }}/"
 {% else %}
   module.run:
     - name: file.find

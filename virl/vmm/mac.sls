@@ -17,7 +17,7 @@ include:
     - dir_mode: 755
     - include_pat: '*.dmg'
     - exclude_pat: E@(.*exe$)|(.*zip$)|(.*box$)
-    - source: "salt://vmm/{{ venv }}/"
+    - source: "salt://virl/vmm/{{ venv }}/"
     - require:
       - file: download
 {% else %}

@@ -10,7 +10,7 @@
 
 /srv/salt/std:
   file.recurse:
-    - source: salt://std/
+    - source: salt://virl/std/
     - user: virl
     - group: virl
     - exclude_pat: E@(.git)

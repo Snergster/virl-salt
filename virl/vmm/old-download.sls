@@ -12,6 +12,6 @@ include:
     - file_mode: 755
     - dir_mode: 755
     - exclude_pat: .virl*
-    - source: "salt://vmm/{{ venv }}/"
+    - source: "salt://virl/vmm/{{ venv }}/"
     - require:
       - file: download

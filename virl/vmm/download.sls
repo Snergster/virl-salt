@@ -21,7 +21,7 @@ include:
     {% if cml %}
     - source: "salt://cml/vmm/{{ venv }}/"
     {% else %}
-    - source: "salt://vmm/{{ venv }}/"
+    - source: "salt://virl/vmm/{{ venv }}/"
     {% endif %}
     - require:
       - file: download
@@ -44,7 +44,7 @@ include:
     {% if cml %}
     - source: "salt://cml/vmm/{{ venv }}/"
     {% else %}
-    - source: "salt://vmm/{{ venv }}/"
+    - source: "salt://virl/vmm/{{ venv }}/"
     {% endif %}
     - require:
       - file: download
@@ -67,7 +67,7 @@ include:
     {% if cml %}
     - source: "salt://cml/vmm/{{ venv }}/"
     {% else %}
-    - source: "salt://vmm/{{ venv }}/"
+    - source: "salt://virl/vmm/{{ venv }}/"
     {% endif %}
     - require:
       - file: download
@@ -90,7 +90,7 @@ include:
     {% if cml %}
     - source: "salt://cml/vmm/{{ venv }}/"
     {% else %}
-    - source: "salt://vmm/{{ venv }}/"
+    - source: "salt://virl/vmm/{{ venv }}/"
     {% endif %}
     - require:
       - file: download

@@ -18,7 +18,7 @@ include:
     - dir_mode: 755
     - include_pat: '*setup_32.exe'
     - exclude_pat: E@(.*64.exe$)|(.*dmg$)|(.*zip$)|(.*box$)
-    - source: "salt://vmm/{{ venv }}/"
+    - source: "salt://virl/vmm/{{ venv }}/"
     - require:
       - file: download
 {% else %}

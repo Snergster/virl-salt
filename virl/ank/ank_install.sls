@@ -18,7 +18,7 @@
 /var/cache/virl/ank files install:
   file.recurse:
     - name: /var/cache/virl/ank
-    - source: "salt://ank/{{ virl.venv }}/"
+    - source: "salt://virl/ank/{{ virl.venv }}/"
     - user: virl
     - group: virl
     - file_mode: 755
