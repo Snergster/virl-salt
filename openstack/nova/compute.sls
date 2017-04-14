@@ -124,6 +124,7 @@ my_ip compute paranoia:
     'nova+compute+manager.py',
     'nova+compute+rpcapi.py',
     'nova+console+websocketproxy.py',
+    'nova+console+serial.py',
     'nova+exception.py',
     'nova+network+neutronv2+api.py',
     'nova+utils.py',
