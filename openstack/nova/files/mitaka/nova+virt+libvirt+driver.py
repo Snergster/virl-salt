@@ -4248,7 +4248,7 @@ class LibvirtDriver(driver.ComputeDriver):
                     CONF.serial_console.proxyclient_address)
                 console.listen_port = (
                     serial_console.acquire_port(
-                        console.listen_host))
+                        "::1"))
                 guest.add_device(console)
         else:
             LOG.error('Serial console is not enabled')
