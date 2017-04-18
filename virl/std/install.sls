@@ -422,3 +422,23 @@ virl init failsafe:
       - service: virl-uwm
       - service: virl-std
 
+inotify max instances:
+  file.line:
+  {% if virl.mitaka %}
+   - name: /etc/sysctl.d/30-tracker.conf
+   {% else %}
+   - name: /etc/sysctl.conf
+   {% endif %}
+   - mode: ensure
+   - content: "fs.inotify.max_user_instances=1024"
+   - location: end
+
+inotify sysctl restart:
+  cmd.run:
+    - name: 'sysctl -p'
+    - onchanges:
+    {% if virl.mitaka %}
+      - file: /etc/sysctl.d/30-tracker.conf
+      {% else %}
+      - file: /etc/sysctl.conf
+      {% endif %}
