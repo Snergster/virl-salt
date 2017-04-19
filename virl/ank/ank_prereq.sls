@@ -40,7 +40,7 @@ ank prereq:
       - PyYAML >= 3.10
       - pexpect == 3.1
       - pyparsing >= 2.0.1
-      - tornado >= 4.3
+      - tornado <= 4.4.3
 
 textfsm:
   pip.installed:

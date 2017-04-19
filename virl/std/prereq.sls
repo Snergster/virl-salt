@@ -87,6 +87,6 @@ std_prereq:
       - wsgiref
       - WTForms >= 2.0.2
       - WTForms-JSON == 0.3.0
-      - tornado >= 3.2.2
+      - tornado <= 4.4.3
     - require:
       - pkg: 'std prereq pkgs'
