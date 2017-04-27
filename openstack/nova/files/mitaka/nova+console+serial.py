@@ -83,7 +83,7 @@ def _get_port_range():
 
 
 def _verify_port(host, port):
-    af = socket.AF_INET6 if host == "::1" else socket.AF_INET
+    af = socket.AF_INET6 if ":" in host else socket.AF_INET
     s = socket.socket(af)
     try:
         s.bind((host, port))
