@@ -248,6 +248,7 @@ VIRL_CORE:
       - crudini --set /etc/virl/common.cfg host ram_overcommit {{ virl.ram_overcommit }}
       - crudini --set /etc/virl/common.cfg host cpu_overcommit {{ virl.cpu_overcommit }}
       # new location
+      - crudini --set /etc/virl/virl-core.ini env virl_openstack_auth_url http://localhost:5000/{{ virl.keystone_auth_version }}
       - crudini --set /etc/virl/virl-core.ini env virl_openstack_password {{ virl.uwmpassword }}
       - crudini --set /etc/virl/virl-core.ini env virl_openstack_service_token {{ virl.ks_token }}
       - crudini --set /etc/virl/virl-core.ini env virl_std_port {{ virl.stdport }}

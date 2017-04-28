@@ -1,7 +1,7 @@
-
 {% from "virl.jinja" import virl with context %}
 
 {% if virl.proxy %}
+
 http_proxy std prereq:
   environ.setenv:
     - name: http_proxy
@@ -57,10 +57,10 @@ std_prereq:
       - docker-py >= 1.3.1
       - ipaddr >= 2.1.11
       - flask-sqlalchemy >= 2.0
-      - Flask >= 0.10.1
+      - Flask >= 0.14
       - Flask_Login >= 0.3.0
       - Flask_RESTful >= 0.3.5
-      - Flask_WTF >= 0.11
+      - Flask_WTF >= 0.14
       - Flask_Breadcrumbs >= 0.3.0
       - flask-compress
       - Flask_Cors

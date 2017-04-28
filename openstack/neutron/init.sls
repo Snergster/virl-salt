@@ -234,7 +234,7 @@ meta-meta:
     - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'nova_metadata_ip'
-    - value: ' {{ virl.public_ip }}'
+    - value: ' {{ virl.openstack_public_ip }}'
     - require:
       - pkg: neutron-pkgs
 

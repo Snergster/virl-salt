@@ -347,6 +347,7 @@ DISABLE_REASON_UNDEFINED = None
 
 # Guest config console string
 CONSOLE = "console=tty0 console=ttyS0"
+REAL_SERIAL_HOST = "::1"
 
 GuestNumaConfig = collections.namedtuple(
     'GuestNumaConfig', ['cpuset', 'cputune', 'numaconfig', 'numatune'])
@@ -910,7 +911,7 @@ class LibvirtDriver(driver.ComputeDriver):
                 # for the guest before destroying it.
                 serials = self._get_serial_ports_from_guest(guest)
                 for hostname, port in serials:
-                    serial_console.release_port(host=hostname, port=port)
+                    serial_console.release_port(host=REAL_SERIAL_HOST, port=port)
         except exception.InstanceNotFound:
             guest = None
 
@@ -4248,7 +4249,7 @@ class LibvirtDriver(driver.ComputeDriver):
                     CONF.serial_console.proxyclient_address)
                 console.listen_port = (
                     serial_console.acquire_port(
-                        console.listen_host))
+                        REAL_SERIAL_HOST))
                 guest.add_device(console)
         else:
             LOG.error('Serial console is not enabled')

@@ -1,0 +1,11 @@
+#!/bin/bash
+mgt=$(/sbin/ifconfig $(route | grep default | awk '{print $(NF)}') | grep "inet addr" | awk '{ print $2 }' | awk -F: '{ print $2 }')
+echo ""
+echo "____________________________ Cisco Modeling Labs ____________________________"
+echo ""
+echo "Manage this server using the User Workspace Manager at: http://$mgt"
+echo ""
+echo "The default credentials are 'uwmadmin' / 'password'"
+echo ""
+echo "* Support:	http://www.cisco.com/support"
+echo ""

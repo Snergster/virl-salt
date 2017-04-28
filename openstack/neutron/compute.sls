@@ -1,6 +1,5 @@
 
 {% from "virl.jinja" import virl with context %}
-{% set controllerip = salt['pillar.get']('virl:internalnet_controller_IP',salt['grains.get']('internalnet_controller_ip', '172.16.10.250')) %}
 
 neutron-pkgs:
   pkg.installed:
@@ -40,15 +39,6 @@ neutron-pkgs:
     - source: "salt://openstack/neutron/files/plugins/linuxbridge/mitaka.linuxbridge_agent.ini"
     - require:
       - pkg: neutron-pkgs
-
-neutron rabbit host:
-  openstack_config.present:
-    - filename: /etc/neutron/neutron.conf
-    - section: 'oslo_messaging_rabbit'
-    - parameter: 'rabbit_host'
-    - value: '{{ virl.controller_ip }}'
-    - require:
-      - file: /etc/neutron/neutron.conf
 
 {% else %}
 /etc/neutron/neutron.conf:
@@ -167,7 +157,7 @@ meta-meta:
     - filename: /etc/neutron/metadata_agent.ini
     - section: 'DEFAULT'
     - parameter: 'nova_metadata_ip'
-    - value: ' {{ virl.public_ip }}'
+    - value: ' {{ virl.openstackt_public_ip }}'
     - require:
       - pkg: neutron-pkgs
 

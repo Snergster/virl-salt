@@ -1,4 +1,5 @@
 {% from "virl.jinja" import virl with context %}
+{% set old_mypassword = salt['grains.get']('old_mysql_password', '') %}
 
 # Copyright 2012-2013 Hewlett-Packard Development Company, L.P.
 # All Rights Reserved.
@@ -116,6 +117,12 @@ root-localhost-test:
   cmd.run:
     - name: mysql -u root -ppassword -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{virl.mypassword}}';"
     - unless: mysql -u root -p{{virl.mypassword}} -e quit
+
+{% if old_mypassword != '' and old_mypassword != virl.mypassword %}
+root-password-change:
+    cmd.run:
+      - name: mysql -u root -p{{ old_mypassword }} -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{virl.mypassword}}';"
+{% endif %}
 
 root-localhost-wildcard:
   mysql_user.present:
