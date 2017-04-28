@@ -425,6 +425,7 @@ inotify max instances:
   file.line:
   {% if virl.mitaka %}
    - name: /etc/sysctl.d/30-tracker.conf
+   - create: True
    {% else %}
    - name: /etc/sysctl.conf
    {% endif %}
