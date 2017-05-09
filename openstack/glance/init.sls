@@ -22,6 +22,23 @@ oslo glance prereq:
 {% endif %}
 
 
+glance-api-workers:
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
+    - section: 'DEFAULT'
+    - parameter: 'workers'
+    - value: '{{ worker_count('glance-api') }}'
+
+glance-reg-workers:
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
+    - section: 'DEFAULT'
+    - parameter: 'workers'
+    - value: '{{ worker_count('glance-registry') }}'
+
+
 glance-api user token:
   file.replace:
     - name: /etc/glance/glance-api.conf
@@ -146,6 +163,66 @@ glance-reg-conn:
     - require:
       - pkg: glance-pkgs
 
+glance-api-dbpool-size:
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
+    - section: 'database'
+    - parameter: 'max_pool_size'
+    - value: '{{ db_pool.max_size }}'
+    - require:
+      - pkg: glance-pkgs
+
+glance-reg-dbpool-size:
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
+    - section: 'database'
+    - parameter: 'max_pool_size'
+    - value: '{{ db_pool.max_size }}'
+    - require:
+      - pkg: glance-pkgs
+
+glance-api-dbpool-overflow:
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
+    - section: 'database'
+    - parameter: 'max_overflow'
+    - value: '{{ db_pool.overflow }}'
+    - require:
+      - pkg: glance-pkgs
+
+glance-reg-dbpool-overflow:
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
+    - section: 'database'
+    - parameter: 'max_overflow'
+    - value: '{{ db_pool.overflow }}'
+    - require:
+      - pkg: glance-pkgs
+
+glance-api-dbpool-idle:
+  openstack_config.present:
+    - filename: /etc/glance/glance-api.conf
+    - onlyif: test -e /etc/glance/glance-api.conf
+    - section: 'database'
+    - parameter: 'idle_timeout'
+    - value: '{{ db_pool.idle_sec }}'
+    - require:
+      - pkg: glance-pkgs
+
+glance-reg-dbpool-idle:
+  openstack_config.present:
+    - filename: /etc/glance/glance-registry.conf
+    - onlyif: test -e /etc/glance/glance-registry.conf
+    - section: 'database'
+    - parameter: 'idle_timeout'
+    - value: '{{ db_pool.idle_sec }}'
+    - require:
+      - pkg: glance-pkgs
+
 glance-api-rabbitpass:
   openstack_config.present:
     - filename: /etc/glance/glance-api.conf
@@ -164,6 +241,7 @@ glance-api-identityuri:
     - section: 'keystone_authtoken'
     - parameter: 'identity_uri'
     - value: 'http://{{ virl.controller_ip }}:35357'
+
 glance-reg-identityuri:
   openstack_config.present:
     - filename: /etc/glance/glance-registry.conf

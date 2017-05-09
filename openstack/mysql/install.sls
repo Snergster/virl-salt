@@ -215,6 +215,7 @@ my.cnf template:
     - name: /etc/mysql/my.cnf
 {% if 'xenial' in salt['grains.get']('oscodename') %}
     - source: salt://openstack/mysql/files/mitaka.my.cnf
+    - template: jinja
 {% else %}
     - source: salt://openstack/mysql/files/my.cnf
 {% endif %}
@@ -226,33 +227,3 @@ my.cnf template:
     - enable: True
     - watch:
       - file: /etc/mysql/my.cnf
-
-{% if virl.dummy_int %}
-  {% if not 'xenial' in salt['grains.get']('oscodename') %}
-
-mysql port for dummies:
-  file.replace:
-    - name: /etc/mysql/my.cnf
-    - pattern: ^bind-address.*
-    - repl: 'bind-address = {{ virl.controller_ip }}'
-  cmd.wait:
-    - name: 'service mysql restart'
-    - watch:
-      - file: mysql port for dummies
-
-  {% endif %}
-{% else %}
-
-mysql port anycast:
-  file.replace:
-    - name: /etc/mysql/my.cnf
-    - pattern: ^bind-address.*
-    - repl: 'bind-address = 0.0.0.0'
-    - require:
-      - pkg: mysql
-  cmd.wait:
-    - name: 'service mysql restart'
-    - watch:
-      - file: mysql port anycast
-
-{% endif %}

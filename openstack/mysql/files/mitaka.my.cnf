@@ -1,3 +1,5 @@
+{% from "virl.jinja" import virl with context %}
+{% from "openstack/worker_pool.jinja" import worker_count %}
 #
 # The MySQL database server configuration file.
 #
@@ -49,7 +51,7 @@ character-set-server = utf8
 #
 # Instead of skip-networking the default is now to listen only on
 # localhost which is more compatible and is not less secure.
-bind-address	     = 0.0.0.0
+bind-address	     = {{ virl.controller_ip }}
 #bind-address	     = localhost
 #
 # * Fine Tuning
@@ -63,7 +65,7 @@ thread_cache_size       = 8
 # the first time they are touched
 # unknown on 5.7
 #myisam-recover         = BACKUP
-max_connections        = 241
+max_connections        = {{ worker_count('mysql') }}
 #table_cache            = 64
 #thread_concurrency     = 10
 #

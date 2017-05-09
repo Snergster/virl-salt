@@ -123,14 +123,14 @@ keystone-pkgs:
 
 {% endif %}
 
+{% if virl.mitaka %}
+
 /etc/keystone/keystone.conf:
   file.managed:
-    - source: "salt://openstack/keystone/files/kilo.keystone.conf.jinja"
+    - source: "salt://openstack/keystone/files/mitaka.keystone.conf.jinja"
     - template: jinja
     - require:
       - pkg: keystone-pkgs
-
-{% if virl.mitaka %}
 
 /usr/local/bin/admin-openrc:
   file.managed:
@@ -140,6 +140,13 @@ keystone-pkgs:
 
 {% else %}
 
+/etc/keystone/keystone.conf:
+  file.managed:
+    - source: "salt://openstack/keystone/files/kilo.keystone.conf.jinja"
+    - template: jinja
+    - require:
+      - pkg: keystone-pkgs
+
 /usr/local/bin/admin-openrc:
   file.managed:
     - source: "salt://openstack/keystone/files/admin-openrc.jinja"
@@ -147,9 +154,11 @@ keystone-pkgs:
     - template: jinja
 
 {% endif %}
+
 /etc/apache2/sites-available/wsgi-keystone.conf:
   file.managed:
     - source: "salt://openstack/keystone/files/wsgi-keystone.conf"
+    - template: jinja
     - mode: 0644
     - require:
       - pkg: keystone-pkgs
