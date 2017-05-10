@@ -1,29 +1,38 @@
 {% from "virl.jinja" import virl with context %}
 
 {% set num_cpus = salt['grains.get']('num_cpus') %}
-{% set cluster_size = virl.cluster * sum([virl.compute1_active, virl.compute2_active, virl.compute3_active, virl.compute4_active]) %}
+{% set cluster_size = [virl.compute1_active, virl.compute2_active, virl.compute3_active, virl.compute4_active] | sum %}
+{% set cluster_size = cluster_size * virl.cluster %}
+
 {# picks machine size as an order of magniture of controller's cpu count #}
-{% set machine_size = sum([cluster_size > 0, num_cpus > 64, num_cpus > 32, num_cpus > 16, num_cpus > 8]) %}
+{% set machine_size = [cluster_size > 0, num_cpus > 64, num_cpus > 32, num_cpus > 16, num_cpus > 8] | sum %}
 
 {% set worker_service = ['keystone', 'nova-api', 'nova-conductor', 'neutron', 'glance-api', 'glance-registry', 'cinder', 'mysql'] %}
 
-# Keystone has both admin and public workers, hence the numbers are halved for it
-# Mysql sets number of allowed connections, should be at most total * (max_size + overflow)
+{# Keystone has both admin and public workers, hence the numbers are halved for it
+ # Mysql sets number of allowed connections, should be at most total * (max_size + overflow)
+
+ #    KS, NV, NC, NE, GA, ID, CA, MS    TOTAL WHEN #} 
 
 {% set worker_counts = [
-{#    KS, NV, NC, NE, GA, ID, CA, MS    TOTAL WHEN #} 
-    [  1,  2,  1,  2,  1,  1,  1,  40 ], # 10 <=8
-    [  2,  3,  1,  3,  2,  2,  1,  64 ], # 16 <=16
-    [  3,  4,  2,  4,  3,  3,  2,  96 ], # 24 <=32
-    [  4,  6,  3,  8,  6,  4,  3, 152 ], # 38 <=64
-    [  6, 10,  4, 10,  8,  6,  4, 216 ], # 54 >64
-    [  8, 16,  5, 16, 10,  8,  5, 304 ], # 76 >64 in cluster
+    [  1,  2,  1,  2,  1,  1,  1,  40, ' # 10 <=8' ],
+    [  2,  3,  1,  3,  2,  2,  1,  64, ' # 16 <=16' ],
+    [  3,  4,  2,  4,  3,  3,  2,  96, ' # 24 <=32' ],
+    [  4,  6,  3,  8,  6,  4,  3, 152, ' # 38 <=64' ],
+    [  6, 10,  4, 10,  8,  6,  4, 216, ' # 54 >64' ],
+    [  8, 16,  5, 16, 10,  8,  5, 304, ' # 76 >64 in cluster' ],
 ] %}
 
-{% macro worker_count(service) %}{{ worker_counts[machine_size][worker_service.index(service)] }}{% endmacro %}
+{% macro worker_count(service) -%}
+    {{ worker_counts[machine_size][worker_service.index(service)] }}
+{%- endmacro %}
 
+{# how many connections will be held by a process long-term
+ # how many more connections can be setup by each process
+ # how long will the overflow connections stay idle with their process
+ #}
 {% set db_pool = {
-    'max_size': 2,   # how many connections will be held by a process long-term
-    'overflow': 4,   # how many more connections can be setup by each process
-    'idle_sec': 120, # how long will the overflow connections stay idle with their process
+    'max_size': 2,
+    'overflow': 4,
+    'idle_sec': 120,
 } %}

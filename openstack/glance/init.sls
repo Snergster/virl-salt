@@ -1,4 +1,5 @@
 {% from "virl.jinja" import virl with context %}
+{% from "openstack/worker_pool.jinja" import worker_count, db_pool %}
 
 glance-pkgs:
   pkg.installed:
