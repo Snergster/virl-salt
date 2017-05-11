@@ -423,16 +423,13 @@ virl init failsafe:
       - service: virl-std
 
 inotify max instances:
-  file.line:
+  file.append:
   {% if virl.mitaka %}
    - name: /etc/sysctl.d/30-tracker.conf
-   - create: True
    {% else %}
    - name: /etc/sysctl.conf
    {% endif %}
-   - mode: ensure
-   - content: "fs.inotify.max_user_instances=1024"
-   - location: end
+   - text: "fs.inotify.max_user_instances=1024"
 
 inotify sysctl restart:
   cmd.run:
