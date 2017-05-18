@@ -1,0 +1,52 @@
+{% from "virl.jinja" import virl with context %}
+{% from "openstack/worker_pool.jinja" import db_pool %}
+[DEFAULT]
+
+#
+# From keystone
+#
+
+# A "shared secret" that can be used to bootstrap Keystone. This "token" does
+# not represent a user, and carries no explicit authorization. To disable in
+# production (highly recommended), remove AdminTokenAuthMiddleware from your
+# paste application pipelines (for example, in keystone-paste.ini). (string
+# value)
+admin_token = {{ virl.ks_token }}
+
+log_dir = /var/log/keystone
+
+[database]
+
+#
+# From oslo.db
+#
+
+# The SQLAlchemy connection string to use to connect to the database. (string
+# value)
+connection = mysql://keystone:{{ virl.mypassword }}@{{ virl.controller_ip }}/keystone
+max_pool_size = {{ db_pool.max_size }}
+max_overflow = {{ db_pool.overflow }}
+idle_timeout = {{ db_pool.idle_sec }}
+
+[memcache]
+
+# Memcache servers in the format of "host:port". (list value)
+servers = localhost:11211
+
+[oslo_messaging_rabbit]
+
+# Seems keystone doesn't use rabbitmq
+
+[token]
+
+# Controls the token construction, validation, and revocation operations. Core
+# providers are "keystone.token.providers.[fernet|pkiz|pki|uuid].Provider".
+# (string value)
+provider = keystone.token.providers.uuid.Provider
+
+# Token persistence backend driver. (string value)
+driver = keystone.token.persistence.backends.sql.Token
+
+
+[extra_headers]
+Distribution = Ubuntu
