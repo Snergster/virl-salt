@@ -217,7 +217,8 @@ class IfaceManager(object):
         pipe.expire(key_name, self.ttl)
         try:
             pipe.execute()
-        except redis.exceptions.ConnectionError:
+        except (redis.exceptions.ConnectionError, redis.exceptions.ResponseError) as exc:
+            print("Could not push to redis instance: {}".format(exc.message))
             self._wait_for_redis()
             return False
         return True
