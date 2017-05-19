@@ -8,6 +8,63 @@ from __future__ import print_function
 
 import sys
 import subprocess
+import configparser
+
+VINSTALL_CFG = '/etc/virl.ini'
+
+class Config():
+    """ Handler for configuration files """
+
+    def __init__(self, path, default_section=None):
+        self._default_section = default_section if default_section else 'DEFAULT'
+        self._path = path
+        self._safeparser = configparser.ConfigParser()
+        self._safeparser.optionxform = str  # Preserve keys' case
+        self._safeparser.read(path)
+
+    @property
+    def path(self):
+        return self._path
+
+    @property
+    def default_section(self):
+        return self._default_section
+
+    @property
+    def parser(self):
+        return self._safeparser
+
+    def get_section(self, section=None):
+        section = section if section else self.default_section
+        return dict(self.parser.items(section))
+
+    def get(self, field, section=None):
+        section = section if section else self.default_section
+        return parser.get(section, field)
+
+    def get_all(self):
+        result = dict()
+        for name, section in self.parser.iteritems():
+            result[name] = dict()
+            for field, value in section.iteritems():
+                result[name][field] = value
+        return result
+
+    def set(self, field, value, section=None):
+        section = section if section else self.default_section
+        if not self.parser.has_section(section):
+            self.parser.add_section(section)
+        self.parser.set(section, field, value)
+
+    def delete(self, field, section=None):
+        section = section if section else self.default_section
+        self.parser.remove_option(section, field)
+
+    def write(self, path=None):
+        path = path if path else self.path
+        with open(path, 'wb') as configfile:
+            self.parser.write(configfile)
+
 
 OPENSTACK_SERVICES = [
     'nova-api.service',
