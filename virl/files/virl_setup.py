@@ -42,9 +42,12 @@ class Config():
         section = section if section else self.default_section
         return dict(self.parser.items(section))
 
-    def get(self, field, section=None):
+    def get(self, field, section=None, default=None):
         section = section if section else self.default_section
-        return self.parser.get(section, field)
+        try:
+            return self.parser.get(section, field)
+        except configparser.NoOptionError:
+            return default
 
     def get_all(self):
         result = dict()
@@ -68,6 +71,12 @@ class Config():
         path = path if path else self.path
         with open(path, 'wb') as configfile:
             self.parser.write(configfile)
+
+    def user_input(self, field, prompt, default):
+        current = self.get(field=field) or default
+        value = raw_input("%s (default: %s): " % (prompt, current)) or current
+        self.set(field=field, value=value)
+        return value
 
 
 OPENSTACK_SERVICES = [
@@ -238,9 +247,11 @@ def handle_1():
 
 def handle_1_1():
     config = Config(path=VINSTALL_CFG)
-    current = config.get(field='public_port')
-    interface = raw_input("Interface (%s): " % current) or current
-    config.set(field='public_port', value=interface)
+    config.user_input(
+        field='public_port',
+        prompt="Interface",
+        default='eth0'
+    )
     config.write()
 
     press_return_to_continue('1.0')
@@ -250,18 +261,73 @@ def handle_1_2():
     config = Config(VINSTALL_CFG)
     config.set(field='using_dhcp_on_the_public_port', value='True')
     config.write()
+
+    # TODO: run dhcp
+
     press_return_to_continue('1.0')
 
 
 def handle_1_3():
+    config = Config(VINSTALL_CFG)
+    config.set(field='using_dhcp_on_the_public_port', value='False')
+    # static ip
+    config.user_input(
+        field='Static_IP',
+        prompt='Static IP',
+        default='172.16.6.250'
+    )
+    # public network
+    config.user_input(
+        field='public_network',
+        prompt='Public network',
+        default='172.16.6.0'
+    )
+    # public_netmask
+    config.user_input(
+        field='public_netmask',
+        prompt='Public netmask',
+        default='255.255.255.0'
+    )
+    # public_gateway:
+    config.user_input(
+        field='public_gateway',
+        prompt='Public gateway',
+        default='172.16.6.1'
+    )
+    config.write()
+
+    # TODO: configure interface
     press_return_to_continue('1.0')
 
 
 def handle_1_4():
+    config = Config(VINSTALL_CFG)
+    # first nameserver
+    config.user_input(
+        field='first_nameserver',
+        prompt='First nameserver',
+        default='8.8.8.8'
+    )
+    # second nameserver
+    config.user_input(
+        field='second_nameserver',
+        prompt='Second nameserver',
+        default='8.8.4.4'
+    )
+    config.write()
+    # TODO: configure
     press_return_to_continue('1.0')
 
 
 def handle_1_5():
+    config = Config(VINSTALL_CFG)
+    config.user_input(
+        field='ntp_server',
+        prompt='NTP Server',
+        default='ntp.ubuntu.com'
+    )
+    config.write()
+    # TODO: configure
     press_return_to_continue('1.0')
 
 
