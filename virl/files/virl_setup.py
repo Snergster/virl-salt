@@ -183,6 +183,7 @@ def read_next_state(previous_state, default='0'):
 
 
 def restart_docker():
+    print('')
     print('restarting docker registry')
     cmd = 'docker restart registry'
     success_msg = 'docker registry restarted'
