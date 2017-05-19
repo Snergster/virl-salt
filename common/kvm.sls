@@ -110,8 +110,9 @@ alter min vnc port:
 
 destroy default network:
   cmd.run:
-    - virsh net-destroy default
-    - virsh net-undefine default
+    - names:
+      - virsh net-destroy default
+      - virsh net-undefine default
 
 
 
