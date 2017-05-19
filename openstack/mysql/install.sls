@@ -112,7 +112,6 @@ mysql:
   service.running:
     - name: mysql
 
-
 root-localhost-test:
   cmd.run:
     - name: mysql -u root -ppassword -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '{{virl.mypassword}}';"

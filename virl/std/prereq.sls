@@ -57,7 +57,7 @@ std_prereq:
       - docker-py >= 1.3.1
       - ipaddr >= 2.1.11
       - flask-sqlalchemy >= 2.0
-      - Flask >= 0.14
+      - Flask >= 0.12.1
       - Flask_Login >= 0.3.0
       - Flask_RESTful >= 0.3.5
       - Flask_WTF >= 0.14
@@ -87,6 +87,6 @@ std_prereq:
       - wsgiref
       - WTForms >= 2.0.2
       - WTForms-JSON == 0.3.0
-      - tornado >= 3.2.2
+      - tornado <= 4.4.3
     - require:
       - pkg: 'std prereq pkgs'

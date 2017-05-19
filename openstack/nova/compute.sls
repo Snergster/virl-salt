@@ -113,6 +113,7 @@ my_ip compute paranoia:
 {% if virl.mitaka %}
 
 {% for basepath in [
+    'nova+api+metadata+base.py',
     'nova+api+openstack+compute+legacy_v2+contrib+consoles.py',
     'nova+api+openstack+compute+remote_consoles.py',
     'nova+api+openstack+compute+schemas+remote_consoles.py',

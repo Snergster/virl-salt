@@ -14,4 +14,4 @@ br4 interface:
     - maxwait: 0
     - post_up_cmds:
       - ip link set br4 promisc on
-      - post-up ip link set eth4 mtu 9000
+      - ip link set eth4 mtu 9000

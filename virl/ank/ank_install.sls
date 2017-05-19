@@ -3,14 +3,27 @@
 
 {% if not virl.masterless %}
 
+{% if virl.cml %}
+
 /var/cache/virl/ank files install:
   file.recurse:
     - name: /var/cache/virl/ank
-    - source: "salt://ank/{{ virl.venv }}/"
+    - source: "salt://cml/ank/{{ virl.venv }}/"
     - user: virl
     - group: virl
     - file_mode: 755
 
+{% else %}
+
+/var/cache/virl/ank files install:
+  file.recurse:
+    - name: /var/cache/virl/ank
+    - source: "salt://virl/ank/{{ virl.venv }}/"
+    - user: virl
+    - group: virl
+    - file_mode: 755
+
+{% endif %}
 {% endif %}
 
 

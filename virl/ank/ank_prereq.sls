@@ -12,7 +12,7 @@ ank prereq pkgs:
 /var/cache/virl/ank files prereq:
   file.recurse:
     - name: /var/cache/virl/ank
-    - source: "salt://ank/{{ virl.venv }}/"
+    - source: "salt://virl/ank/{{ virl.venv }}/"
     - user: virl
     - group: virl
     - file_mode: 755
@@ -40,7 +40,7 @@ ank prereq:
       - PyYAML >= 3.10
       - pexpect == 3.1
       - pyparsing >= 2.0.1
-      - tornado >= 4.3
+      - tornado <= 4.4.3
 
 textfsm:
   pip.installed:

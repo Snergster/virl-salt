@@ -20,9 +20,9 @@ IOSvL2:
     - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.cml.vmdk
     - property-release: 15.2.4063
 {% else %}
-    - checksum: 1a3a21f5697cae64bb930895b986d71e
-    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.vmdk.SSA.152-4.0.55.E
-    - property-release: 15.2.4055
+    - checksum: 3610c56ee8012d148c4b99225dc2d004
+    - copy_from: salt://images/salt/vios_l2-adventerprisek9-m.03.2017.vmdk
+    - property-release: 03.2017
 {% endif %}
     - property-config_disk_type: disk
     - property-hw_cdrom_bus: ide

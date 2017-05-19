@@ -1,4 +1,3 @@
-
 download:
   file.directory:
     - mode: 755

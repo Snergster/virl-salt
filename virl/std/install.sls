@@ -22,7 +22,7 @@ https_proxy unset:
     - source: "salt://cml/std/{{virl.venv}}/"
     - name: /var/cache/virl/std
       {% else %}
-    - source: "salt://std/{{virl.venv}}/"
+    - source: "salt://virl/std/{{virl.venv}}/"
     - name: /var/cache/virl/std
       {% endif %}
     - clean: true
@@ -74,7 +74,7 @@ std docs:
     {% if virl.cml %}
     - source: "salt://cml/std/{{virl.venv}}/doc/html_ext.tar.gz"
     {% else %}
-    - source: "salt://std/{{virl.venv}}/doc/html_ext.tar.gz"
+    - source: "salt://virl/std/{{virl.venv}}/doc/html_ext.tar.gz"
     {% endif %}
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
@@ -92,7 +92,7 @@ std docs redo:
     {% if virl.cml %}
     - source: "salt://cml/std/{{virl.venv}}/doc/html_ext.tar.gz"
     {% else %}
-    - source: "salt://std/{{virl.venv}}/doc/html_ext.tar.gz"
+    - source: "salt://virl/std/{{virl.venv}}/doc/html_ext.tar.gz"
     {% endif %}
     - archive_format: tar
     - if_missing: /var/www/doc/index.html
