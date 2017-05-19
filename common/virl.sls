@@ -16,6 +16,7 @@ include:
   - common.ksm
   - virl.efibios
   - virl.scripts
+  - virl.virl_setup
   - virl.vextra
   - virl.network.dummy
   {% if 'xenial' in salt['grains.get']('oscodename') %}
