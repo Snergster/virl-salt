@@ -189,7 +189,30 @@ def handle_1():
     print('0. Back')
     read_next_state(current_state)
 
-# TODO add 1.x states handlers
+def handle_1_1(interface):
+    config = Config(VINSTALL_CFG)
+    config.set(field='public_port', value=interface)
+    config.write()
+
+
+def handle_1_2(subnet):
+    config = Config(VINSTALL_CFG)
+    config.set(field='using_dhcp_on_the_public_port', value='True')
+    config.write()
+    #TODO: continue
+    pass
+
+
+def handle_1_3(interface):
+    pass
+
+
+def handle_1_4():
+    pass
+
+
+def handle_1_5():
+    pass
 
 
 def handle_2():
@@ -405,11 +428,11 @@ STATES = {
     '2': handle_2,
     '3': handle_3,
     '1.0': handle_start,
-    '1.1': handle_1,
-    '1.2': handle_1,
-    '1.3': handle_1,
-    '1.4': handle_1,
-    '1.5': handle_1,
+    '1.1': handle_1_1,
+    '1.2': handle_1_2,
+    '1.3': handle_1_3,
+    '1.4': handle_1_4,
+    '1.5': handle_1_5,
     '2.0': handle_start,
     '2.1': handle_2_1,
     '2.2': handle_2_2,
