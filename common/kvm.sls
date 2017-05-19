@@ -108,5 +108,11 @@ alter min vnc port:
     - require:
       - file: uncomment min vnc port
 
+destroy default network:
+  cmd.run:
+    - names:
+      - virsh net-destroy default
+      - virsh net-undefine default
+
 
 
