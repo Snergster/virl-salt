@@ -41,9 +41,12 @@ class Config():
         section = section if section else self.default_section
         return dict(self.parser.items(section))
 
-    def get(self, field, section=None):
+    def get(self, field, section=None, default=None):
         section = section if section else self.default_section
-        return self.parser.get(section, field)
+        try:
+            return self.parser.get(section, field)
+        except configparser.NoOptionError:
+            return default
 
     def get_all(self):
         result = dict()
@@ -227,10 +230,34 @@ def handle_1_2():
     config = Config(VINSTALL_CFG)
     config.set(field='using_dhcp_on_the_public_port', value='True')
     config.write()
+
+    # TODO: run dhcp
+
     press_return_to_continue('1.0')
 
 
 def handle_1_3():
+    config = Config(VINSTALL_CFG)
+    config.set(field='using_dhcp_on_the_public_port', value='False')
+    # static ip
+    default = config.get(field='Static_IP') or '172.16.6.250'
+    ip = raw_input("Static IP (default: %s): " % default) or default
+    config.set(field='Static_IP', value=ip)
+    # public network
+    default = config.get(field='public_network') or '172.16.6.0'
+    net = raw_input("Public network (default: %s): " % default) or default
+    config.set(field='public_network', value=net)
+    # public_netmask
+    default = config.get(field='public_netmask') or '255.255.255.0'
+    mask = raw_input("Public netmask (default: %s): " % default) or default
+    config.set(field='public_netmask', value=mask)
+    # public_gateway:
+    default = config.get(field='public_gateway') or '172.16.6.1'
+    gateway = raw_input("Public gateway (default: %s): " % default) or default
+    config.set(field='public_gateway', value=gateway)
+    config.write()
+
+    # TODO: configure interface
     press_return_to_continue('1.0')
 
 
