@@ -15,6 +15,7 @@ import configparser
 
 VINSTALL_CFG = '/etc/virl.ini'
 
+
 class Config():
     """ Handler for configuration files """
 
@@ -109,9 +110,30 @@ LOG_PATHS = [
     '/var/log/virl_tap_counter.log'
 ]
 
+UKSM_KERNEL_PATH = '/sys/kernel/mm/uksm/run'
+# UKSM_KERNEL_PATH = '/sys/kernel/mm/ksm/run'
+
+
+def ask_if_permanent():
+    print('Make this change permanent ? y/N')
+    inp = str(raw_input()).lower() or 'n'
+    if inp not in {'y', 'n'}:
+        fsm('2.4', unknown_state=True)
+    return inp == 'y'
+
 
 def is_sudo():
     return os.getuid() == 0
+
+
+def uksm_enabled_kernel():
+    return os.path.exists(UKSM_KERNEL_PATH)
+
+
+def uksm_enabled():
+    with open(UKSM_KERNEL_PATH, 'r') as uksm_run_file:
+        uksm_state = uksm_run_file.read().strip()
+        return not uksm_state == '1'
 
 
 def run_command(command, on_success_msg='', require_sudo=False):
@@ -213,6 +235,7 @@ def handle_1():
     print('0. Back')
     read_next_state(current_state)
 
+
 def handle_1_1():
     config = Config(path=VINSTALL_CFG)
     current = config.get(field='public_port')
@@ -248,7 +271,14 @@ def handle_2():
     print('')
     print('1. Restart VIRL services')
     print('2. Restart OpenStack services')
-    print('3. Restart OpenStack worker pools')
+    print('3. Reset OpenStack worker pools')
+    if uksm_enabled_kernel():
+        if uksm_enabled():
+            print('4. Enable UKSM')
+        else:
+            print('4. Disable UKSM')
+    else:
+        print('4. ! A UKSM-enabled kernel is not running')
     print('')
     print('0. Back')
     read_next_state(current_state)
@@ -381,12 +411,27 @@ def handle_2_2_6():
 
 
 def handle_2_3():
-    print('***** Restarting OpenStack worker pools *****')
+    print('***** Reseting OpenStack worker pools *****')
     print('')
     print('This may take some time')
     print('')
     run_salt_state('openstack.worker_pool')
     press_return_to_continue('2')
+
+
+def handle_2_4():
+    print('***** UKSM kernel changes *****')
+    if uksm_enabled_kernel():
+        if uksm_enabled():
+            run_command('echo 1 > /sys/kernel/mm/ksm/run')
+            if ask_if_permanent():
+                run_command('sed -i \'s|echo 0> /sys/kernel/mm/ksm/run|echo 1> /sys/kernel/mm/ksm/run|\' /etc/rc.local')
+
+        else:
+            run_command('echo 0 > /sys/kernel/mm/ksm/run')
+            if ask_if_permanent():
+                run_command('sed -i \'s|echo 1> /sys/kernel/mm/ksm/run|echo 0> /sys/kernel/mm/ksm/run|\' /etc/rc.local')
+    fsm('2')
 
 
 def handle_3():
@@ -481,6 +526,7 @@ STATES = {
     '2.1': handle_2_1,
     '2.2': handle_2_2,
     '2.3': handle_2_3,
+    '2.4': handle_2_4,
     '3.0': handle_start,
     '3.1': handle_3_1,
     '3.2': handle_3_2,
