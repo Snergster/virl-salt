@@ -8,6 +8,9 @@ from __future__ import print_function
 
 import sys
 import subprocess
+import signal
+import os
+import datetime
 
 OPENSTACK_SERVICES = [
     'nova-api.service',
@@ -29,6 +32,7 @@ OPENSTACK_SERVICES = [
     'mysql.service ',
     'rabbitmq-server.service'
 ]
+
 VIRL_SERVICES = [
     'virl-std.service',
     'virl-tap-counter.service',
@@ -42,12 +46,32 @@ VIRL_SERVICES = [
     'virl-vis-webserver.service'
 ]
 
-# TODO check for require sudo
+LOG_PATHS = [
+    '/var/local/virl/logs/std_server.log',
+    '/var/local/virl/logs/uwm_server.log',
+    '/var/log/virl_tap_counter.log'
+]
 
-# TODO add error handling
-# TODO use in function below
-def run_command(command):
-    print('running command {}'.format(command))
+
+def is_sudo():
+    return os.getuid() == 0
+
+
+def run_command(command, on_success_msg='', require_sudo=False):
+    try:
+        subprocess.check_call(command, shell=True)
+    except subprocess.CalledProcessError as exc:
+        print('failed with stderr: {}'.format(exc.output))
+    else:
+        if on_success_msg:
+            print(on_success_msg)
+
+
+def run_salt_state(state):
+    print('Restarting OpenStack workers')
+    cmd = 'salt-call state.sls {} --state_verbose=False --state-output=terse'.format(state)
+    success_msg = ''
+    run_command(cmd, success_msg, require_sudo=True)
 
 
 def press_return_to_continue(next_state=''):
@@ -73,6 +97,36 @@ def read_next_state(previous_state, default='0'):
         fsm(previous_state, True)
 
 
+def restart_docker():
+    print('restarting docker registry')
+    cmd = 'docker restart registry'
+    success_msg = 'docker registry restarted'
+    run_command(cmd, success_msg, require_sudo=True)
+
+
+def restart_service(name):
+    print('')
+    print('restarting {}'.format(name))
+    cmd = 'systemctl restart {}'.format(name)
+    success_msg = '{} restarted'.format(name)
+    run_command(cmd, success_msg, require_sudo=True)
+
+
+def show_status(name):
+    print('')
+    print('Status of service {}'.format(name))
+    cmd = "systemctl --lines=0 --output=short status {} | grep 'Active:\|Memory:\|CPU:'".format(name)
+    run_command(cmd)
+
+
+#    #   ##   #    # #####  #      ###### #####   ####
+#    #  #  #  ##   # #    # #      #      #    # #
+###### #    # # #  # #    # #      #####  #    #  ####
+#    # ###### #  # # #    # #      #      #####       #
+#    # #    # #   ## #    # #      #      #   #  #    #
+#    # #    # #    # #####  ###### ###### #    #  ####
+
+
 def handle_start():
     current_state = ''
     print('****** Main menu ******')
@@ -85,36 +139,6 @@ def handle_start():
     read_next_state(current_state)
 
 
-# TODO add error handling, create function to run commands
-def restart_docker():
-    print('restarting docker registry')
-    subprocess.call(['docker', 'restart', 'registry'])
-    print('docker registry restarted')
-
-
-def restart_service(name):
-    print('')
-    print('restarting {}'.format(name))
-    subprocess.call(['systemctl', 'restart', name])
-    print('{} restarted'.format(name))
-
-
-def show_status(name):
-    print('')
-    print('Status of service {}'.format(name))
-    cmd = "systemctl --lines=0 --output=short status {} | grep 'Active:\|Memory:\|CPU:'".format(name)
-    subprocess.call(cmd, shell=True)
-
-
-#    #   ##   #    # #####  #      ###### #####   ####
-#    #  #  #  ##   # #    # #      #      #    # #
-###### #    # # #  # #    # #      #####  #    #  ####
-#    # ###### #  # # #    # #      #      #####       #
-#    # #    # #   ## #    # #      #      #   #  #    #
-#    # #    # #    # #####  ###### ###### #    #  ####
-
-
-# TODO ask y/n
 def handle_0():
     sys.exit()
 
@@ -273,10 +297,12 @@ def handle_2_2_6():
     press_return_to_continue('2.2')
 
 
-# TODO
 def handle_2_3():
     print('***** Restarting OpenStack worker pools *****')
     print('')
+    print('This may take some time')
+    print('')
+    run_salt_state('openstack.worker_pool')
     press_return_to_continue('2')
 
 
@@ -307,18 +333,26 @@ def handle_3_2():
     press_return_to_continue('3')
 
 
-# TODO
 def handle_3_3():
     print('***** Health check *****')
     print('')
-    run_command('virl_health_check')
+    run_command('virl_health_status')
     press_return_to_continue('3')
 
 
-# TODO
 def handle_3_4():
     print('***** Collecting logs *****')
     print('')
+    print('collecting logs')
+    files = ''
+    for log_file in LOG_PATHS:
+        if os.path.isfile(log_file):
+            files += ' '
+            files += log_file
+    output_file = 'virl_logs_' + datetime.datetime.now().isoformat()
+    output_path = '/var/log/virl_logs/'
+    run_command('tar -zcvf {}{}.tgz {} 1>/dev/null 2>/dev/null'.format(output_path, output_file, files))
+    print('logs are in {}{}.tgz'.format(output_path, output_file))
     press_return_to_continue('3')
 
 
@@ -334,13 +368,20 @@ def fsm(state, unknown_state=False):
     STATES[state]()
 
 
+def sigint_handler(signal, frame):
+    print('Ctrl+C detected, exit.')
+    sys.exit()
+
+
 def main():
-    subprocess.call('clear')
+    if not is_sudo():
+        print('You must run this script as root. \'sudo virl_setup\'')
+        handle_0()
+
+    signal.signal(signal.SIGINT, sigint_handler)
     fsm('')
 
 
-# TODO maybe use handler function with params (intro_message, handle fucntion, return state)
-# TODO maybe recall last fucntion from callstack
 STATES = {
     '': handle_start,
     '0': handle_0,
