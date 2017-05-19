@@ -254,7 +254,7 @@ def handle_1_1():
     )
     config.write()
 
-    press_return_to_continue('1.0')
+    press_return_to_continue('1')
 
 
 def handle_1_2():
@@ -264,7 +264,7 @@ def handle_1_2():
 
     # TODO: run dhcp
 
-    press_return_to_continue('1.0')
+    press_return_to_continue('1')
 
 
 def handle_1_3():
@@ -297,7 +297,7 @@ def handle_1_3():
     config.write()
 
     # TODO: configure interface
-    press_return_to_continue('1.0')
+    press_return_to_continue('1')
 
 
 def handle_1_4():
@@ -316,7 +316,7 @@ def handle_1_4():
     )
     config.write()
     # TODO: configure
-    press_return_to_continue('1.0')
+    press_return_to_continue('1')
 
 
 def handle_1_5():
@@ -328,7 +328,7 @@ def handle_1_5():
     )
     config.write()
     # TODO: configure
-    press_return_to_continue('1.0')
+    press_return_to_continue('1')
 
 
 def handle_2():
