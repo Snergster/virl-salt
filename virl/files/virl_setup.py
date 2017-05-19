@@ -252,7 +252,9 @@ def handle_1_2():
     config.set(field='using_dhcp_on_the_public_port', value='True')
     config.write()
 
-    # TODO: run dhcp
+    run_salt_state('virl.vinstall')
+    run_command('sudo vinstall salt')
+    run_command('vinstall rehost')
 
     press_return_to_continue('1')
 
@@ -286,7 +288,9 @@ def handle_1_3():
     )
     config.write()
 
-    # TODO: configure interface
+    run_salt_state('virl.vinstall')
+    run_command('sudo vinstall salt')
+    run_command('sudo vinstall rehost')
     press_return_to_continue('1')
 
 
@@ -305,7 +309,9 @@ def handle_1_4():
         default='8.8.4.4'
     )
     config.write()
-    # TODO: configure
+    run_salt_state('virl.vinstall')
+    run_command('sudo vinstall salt')
+    run_command('sudo vinstall rehost')
     press_return_to_continue('1')
 
 
@@ -317,7 +323,9 @@ def handle_1_5():
         default='ntp.ubuntu.com'
     )
     config.write()
-    # TODO: configure
+    run_salt_state('virl.vinstall')
+    run_command('sudo vinstall salt')
+    run_salt_state('virl.ntp')
     press_return_to_continue('1')
 
 
