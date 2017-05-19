@@ -40,7 +40,7 @@ class Config():
 
     def get(self, field, section=None):
         section = section if section else self.default_section
-        return parser.get(section, field)
+        return self.parser.get(section, field)
 
     def get_all(self):
         result = dict()
@@ -191,6 +191,8 @@ def handle_1():
 
 def handle_1_1():
     config = Config(path=VINSTALL_CFG)
+    current = config.get(field='public_port')
+    interface = raw_input("Interface (%s): " % current) or current
     config.set(field='public_port', value=interface)
     config.write()
 
