@@ -11,6 +11,63 @@ import subprocess
 import signal
 import os
 import datetime
+import configparser
+
+VINSTALL_CFG = '/etc/virl.ini'
+
+class Config():
+    """ Handler for configuration files """
+
+    def __init__(self, path, default_section=None):
+        self._default_section = default_section if default_section else 'DEFAULT'
+        self._path = path
+        self._safeparser = configparser.ConfigParser()
+        self._safeparser.optionxform = str  # Preserve keys' case
+        self._safeparser.read(path)
+
+    @property
+    def path(self):
+        return self._path
+
+    @property
+    def default_section(self):
+        return self._default_section
+
+    @property
+    def parser(self):
+        return self._safeparser
+
+    def get_section(self, section=None):
+        section = section if section else self.default_section
+        return dict(self.parser.items(section))
+
+    def get(self, field, section=None):
+        section = section if section else self.default_section
+        return self.parser.get(section, field)
+
+    def get_all(self):
+        result = dict()
+        for name, section in self.parser.iteritems():
+            result[name] = dict()
+            for field, value in section.iteritems():
+                result[name][field] = value
+        return result
+
+    def set(self, field, value, section=None):
+        section = section if section else self.default_section
+        if section != self.default_section and not self.parser.has_section(section):
+            self.parser.add_section(section)
+        self.parser.set(section, field, value)
+
+    def delete(self, field, section=None):
+        section = section if section else self.default_section
+        self.parser.remove_option(section, field)
+
+    def write(self, path=None):
+        path = path if path else self.path
+        with open(path, 'wb') as configfile:
+            self.parser.write(configfile)
+
 
 OPENSTACK_SERVICES = [
     'nova-api.service',
@@ -156,7 +213,33 @@ def handle_1():
     print('0. Back')
     read_next_state(current_state)
 
-# TODO add 1.x states handlers
+def handle_1_1():
+    config = Config(path=VINSTALL_CFG)
+    current = config.get(field='public_port')
+    interface = raw_input("Interface (%s): " % current) or current
+    config.set(field='public_port', value=interface)
+    config.write()
+
+    press_return_to_continue('1.0')
+
+
+def handle_1_2():
+    config = Config(VINSTALL_CFG)
+    config.set(field='using_dhcp_on_the_public_port', value='True')
+    config.write()
+    press_return_to_continue('1.0')
+
+
+def handle_1_3():
+    press_return_to_continue('1.0')
+
+
+def handle_1_4():
+    press_return_to_continue('1.0')
+
+
+def handle_1_5():
+    press_return_to_continue('1.0')
 
 
 def handle_2():
@@ -389,11 +472,11 @@ STATES = {
     '2': handle_2,
     '3': handle_3,
     '1.0': handle_start,
-    '1.1': handle_1,
-    '1.2': handle_1,
-    '1.3': handle_1,
-    '1.4': handle_1,
-    '1.5': handle_1,
+    '1.1': handle_1_1,
+    '1.2': handle_1_2,
+    '1.3': handle_1_3,
+    '1.4': handle_1_4,
+    '1.5': handle_1_5,
     '2.0': handle_start,
     '2.1': handle_2_1,
     '2.2': handle_2_2,
