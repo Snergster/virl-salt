@@ -154,7 +154,6 @@ def run_command(command, on_success_msg=''):
 
 
 def run_salt_state(state):
-    print('Restarting OpenStack workers')
     cmd = 'salt-call state.sls {} --state_verbose=False --state-output=terse --local'.format(state)
     success_msg = ''
     run_command(cmd, success_msg)
@@ -483,6 +482,7 @@ def handle_2_3():
     print('')
     print('This may take some time')
     print('')
+    print('Restarting OpenStack workers')
     run_salt_state('openstack.worker_pool')
     press_return_to_continue('2')
 
