@@ -144,6 +144,8 @@ def uksm_enabled():
 
 
 def run_command(command, on_success_msg=''):
+    print('')
+    print('running command {}'.format(command))
     try:
         subprocess.check_call(command, shell=True)
     except subprocess.CalledProcessError as exc:
@@ -154,6 +156,8 @@ def run_command(command, on_success_msg=''):
 
 
 def run_salt_state(state):
+    print('')
+    print('running salt state {}'.format(state))
     cmd = 'salt-call state.sls {} --state_verbose=False --state-output=terse --local'.format(state)
     success_msg = ''
     run_command(cmd, success_msg)
