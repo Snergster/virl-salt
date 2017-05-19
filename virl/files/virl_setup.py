@@ -15,6 +15,48 @@ import configparser
 
 VINSTALL_CFG = '/etc/virl.ini'
 
+OPENSTACK_SERVICES = [
+    'nova-api.service',
+    'nova-compute.service',
+    'nova-consoleauth.service',
+    'nova-cert.service',
+    'nova-conductor.service',
+    'nova-novncproxy.service',
+    'nova-serialproxy.service',
+    'neutron-dhcp-agent.service',
+    'neutron-linuxbridge-cleanup.service ',
+    'neutron-server.service',
+    'neutron-l3-agent.service',
+    'neutron-metadata-agent.service',
+    'neutron-linuxbridge-agent.service',
+    'glance-api.service',
+    'glance-registry.service',
+    'keystone.service',
+    'mysql.service ',
+    'rabbitmq-server.service'
+]
+
+VIRL_SERVICES = [
+    'virl-std.service',
+    'virl-tap-counter.service',
+    'redis.service',
+    'redis-server.service',
+    'virl-uwm.service',
+    'virl-webmux.service',
+    'ank-cisco-webserver.service',
+    'virl-vis-mux.service',
+    'virl-vis-processor.service',
+    'virl-vis-webserver.service'
+]
+
+LOG_PATHS = [
+    '/var/local/virl/logs/std_server.log',
+    '/var/local/virl/logs/uwm_server.log',
+    '/var/log/virl_tap_counter.log'
+]
+
+UKSM_KERNEL_PATH = '/sys/kernel/mm/uksm/run'
+
 
 class Config():
     """ Handler for configuration files """
@@ -79,50 +121,6 @@ class Config():
         return value
 
 
-OPENSTACK_SERVICES = [
-    'nova-api.service',
-    'nova-compute.service',
-    'nova-consoleauth.service',
-    'nova-cert.service',
-    'nova-conductor.service',
-    'nova-novncproxy.service',
-    'nova-serialproxy.service',
-    'neutron-dhcp-agent.service',
-    'neutron-linuxbridge-cleanup.service ',
-    'neutron-server.service',
-    'neutron-l3-agent.service',
-    'neutron-metadata-agent.service',
-    'neutron-linuxbridge-agent.service',
-    'glance-api.service',
-    'glance-registry.service',
-    'keystone.service',
-    'mysql.service ',
-    'rabbitmq-server.service'
-]
-
-VIRL_SERVICES = [
-    'virl-std.service',
-    'virl-tap-counter.service',
-    'redis.service',
-    'redis-server.service',
-    'virl-uwm.service',
-    'virl-webmux.service',
-    'ank-cisco-webserver.service',
-    'virl-vis-mux.service',
-    'virl-vis-processor.service',
-    'virl-vis-webserver.service'
-]
-
-LOG_PATHS = [
-    '/var/local/virl/logs/std_server.log',
-    '/var/local/virl/logs/uwm_server.log',
-    '/var/log/virl_tap_counter.log'
-]
-
-UKSM_KERNEL_PATH = '/sys/kernel/mm/uksm/run'
-# UKSM_KERNEL_PATH = '/sys/kernel/mm/ksm/run'
-
-
 def ask_if_permanent():
     print('Make this change permanent ? y/N')
     inp = str(raw_input()).lower() or 'n'
@@ -145,7 +143,7 @@ def uksm_enabled():
         return not uksm_state == '1'
 
 
-def run_command(command, on_success_msg='', require_sudo=False):
+def run_command(command, on_success_msg=''):
     try:
         subprocess.check_call(command, shell=True)
     except subprocess.CalledProcessError as exc:
@@ -159,7 +157,7 @@ def run_salt_state(state):
     print('Restarting OpenStack workers')
     cmd = 'salt-call state.sls {} --state_verbose=False --state-output=terse'.format(state)
     success_msg = ''
-    run_command(cmd, success_msg, require_sudo=True)
+    run_command(cmd, success_msg)
 
 
 def press_return_to_continue(next_state=''):
@@ -189,7 +187,7 @@ def restart_docker():
     print('restarting docker registry')
     cmd = 'docker restart registry'
     success_msg = 'docker registry restarted'
-    run_command(cmd, success_msg, require_sudo=True)
+    run_command(cmd, success_msg)
 
 
 def restart_service(name):
@@ -197,7 +195,7 @@ def restart_service(name):
     print('restarting {}'.format(name))
     cmd = 'systemctl restart {}'.format(name)
     success_msg = '{} restarted'.format(name)
-    run_command(cmd, success_msg, require_sudo=True)
+    run_command(cmd, success_msg)
 
 
 def show_status(name):
@@ -205,14 +203,6 @@ def show_status(name):
     print('Status of service {}'.format(name))
     cmd = "systemctl --lines=0 --output=short status {} | grep 'Active:\|Memory:\|CPU:'".format(name)
     run_command(cmd)
-
-
-#    #   ##   #    # #####  #      ###### #####   ####
-#    #  #  #  ##   # #    # #      #      #    # #
-###### #    # # #  # #    # #      #####  #    #  ####
-#    # ###### #  # # #    # #      #      #####       #
-#    # #    # #   ## #    # #      #      #   #  #    #
-#    # #    # #    # #####  ###### ###### #    #  ####
 
 
 def handle_start():
