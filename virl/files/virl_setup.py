@@ -155,7 +155,7 @@ def run_command(command, on_success_msg=''):
 
 def run_salt_state(state):
     print('Restarting OpenStack workers')
-    cmd = 'salt-call state.sls {} --state_verbose=False --state-output=terse'.format(state)
+    cmd = 'salt-call state.sls {} --state_verbose=False --state-output=terse --local'.format(state)
     success_msg = ''
     run_command(cmd, success_msg)
 
@@ -253,8 +253,9 @@ def handle_1_2():
     config.write()
 
     run_salt_state('virl.vinstall')
+    run_salt_state('virl.host')
+    run_salt_state('virl.network.int')
     run_command('sudo vinstall salt')
-    run_command('vinstall rehost')
 
     press_return_to_continue('1')
 
@@ -289,8 +290,10 @@ def handle_1_3():
     config.write()
 
     run_salt_state('virl.vinstall')
+    run_salt_state('virl.host')
+    run_salt_state('virl.network.int')
     run_command('sudo vinstall salt')
-    run_command('sudo vinstall rehost')
+    
     press_return_to_continue('1')
 
 
