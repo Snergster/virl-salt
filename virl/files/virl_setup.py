@@ -52,7 +52,7 @@ class Config():
 
     def set(self, field, value, section=None):
         section = section if section else self.default_section
-        if not self.parser.has_section(section):
+        if section != self.default_section and not self.parser.has_section(section):
             self.parser.add_section(section)
         self.parser.set(section, field, value)
 
@@ -189,30 +189,31 @@ def handle_1():
     print('0. Back')
     read_next_state(current_state)
 
-def handle_1_1(interface):
-    config = Config(VINSTALL_CFG)
+def handle_1_1():
+    config = Config(path=VINSTALL_CFG)
     config.set(field='public_port', value=interface)
     config.write()
 
+    press_return_to_continue('1.0')
 
-def handle_1_2(subnet):
+
+def handle_1_2():
     config = Config(VINSTALL_CFG)
     config.set(field='using_dhcp_on_the_public_port', value='True')
     config.write()
-    #TODO: continue
-    pass
+    press_return_to_continue('1.0')
 
 
-def handle_1_3(interface):
-    pass
+def handle_1_3():
+    press_return_to_continue('1.0')
 
 
 def handle_1_4():
-    pass
+    press_return_to_continue('1.0')
 
 
 def handle_1_5():
-    pass
+    press_return_to_continue('1.0')
 
 
 def handle_2():
