@@ -58,7 +58,7 @@ LOG_PATHS = [
 UKSM_KERNEL_PATH = '/sys/kernel/mm/uksm/run'
 
 
-class Config():
+class Config(object):
     """ Handler for configuration files """
 
     def __init__(self, path, default_section=None):
@@ -252,10 +252,10 @@ def handle_1_2():
     config.set(field='using_dhcp_on_the_public_port', value='True')
     config.write()
 
+    run_command('sudo vinstall salt')
     run_salt_state('virl.vinstall')
     run_salt_state('virl.host')
     run_salt_state('virl.network.int')
-    run_command('sudo vinstall salt')
 
     press_return_to_continue('1')
 
@@ -289,11 +289,11 @@ def handle_1_3():
     )
     config.write()
 
+    run_command('sudo vinstall salt')
     run_salt_state('virl.vinstall')
     run_salt_state('virl.host')
     run_salt_state('virl.network.int')
-    run_command('sudo vinstall salt')
-    
+
     press_return_to_continue('1')
 
 
@@ -312,9 +312,10 @@ def handle_1_4():
         default='8.8.4.4'
     )
     config.write()
-    run_salt_state('virl.vinstall')
     run_command('sudo vinstall salt')
-    run_command('sudo vinstall rehost')
+    run_salt_state('virl.network.int')
+    run_salt_state('virl.host')
+
     press_return_to_continue('1')
 
 
@@ -326,8 +327,8 @@ def handle_1_5():
         default='ntp.ubuntu.com'
     )
     config.write()
-    run_salt_state('virl.vinstall')
     run_command('sudo vinstall salt')
+    run_salt_state('virl.vinstall')
     run_salt_state('virl.ntp')
     press_return_to_continue('1')
 
