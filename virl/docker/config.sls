@@ -13,7 +13,7 @@ docker_config-opts:
   file.replace:
     - name: /etc/default/docker
     - pattern: '^DOCKER_OPTS.*$'
-    - repl: DOCKER_OPTS="--insecure-registry={{ registry_ip }}:{{ registry_port }}"
+    - repl: DOCKER_OPTS="--ip-masq=false --insecure-registry={{ registry_ip }}:{{ registry_port }}"
                ## Sometimes docker service does not working OK:
                # try play around with docker arg tlsverify=false
     - flags: ['IGNORECASE', 'MULTILINE']
