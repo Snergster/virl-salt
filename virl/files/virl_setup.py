@@ -512,7 +512,7 @@ def handle_2_4():
             run_command('echo 0 > /sys/kernel/mm/ksm/run')
             if ask_if_permanent():
                 run_command('sed -i \'s|echo 1> /sys/kernel/mm/ksm/run|echo 0> /sys/kernel/mm/ksm/run|\' /etc/rc.local')
-    return('2')
+    return '2'
 
 
 def handle_3():
@@ -559,13 +559,18 @@ def handle_3_4():
             files += ' '
             files += log_file
     output_file = 'virl_logs_' + datetime.datetime.now().isoformat()
-    output_path = '/var/log/virl_logs/'
+    output_path = '/var/www/virl_logs/'
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+
     run_command('tar -zcvf {}{}.tgz {} 1>/dev/null 2>/dev/null'.format(output_path, output_file, files))
     print('logs are in {}{}.tgz'.format(output_path, output_file))
+    print('you can also access logs on http://<server ip>/diagnostics')
     return press_return_to_continue('3')
 
 
-def fsm(state, unknown_state=False):
+def fsm():
     global STATES
     current_state = ''
     next_state = ''
@@ -599,7 +604,7 @@ def main():
         handle_0()
 
     signal.signal(signal.SIGINT, sigint_handler)
-    fsm('')
+    fsm()
 
 
 STATES = {
