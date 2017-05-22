@@ -12,8 +12,10 @@ import signal
 import os
 import datetime
 from configobj import ConfigObj
+import netaddr
 
 VINSTALL_CFG = '/etc/virl.ini'
+
 
 OPENSTACK_SERVICES = [
     'nova-api.service',
@@ -120,11 +122,57 @@ class Config(object):
     def write(self):
         self.config.write()
 
-    def user_input(self, field, prompt, default):
-        current = self.get(field=field) or default
-        value = raw_input("%s (default: %s): " % (prompt, current)) or current
-        self.set(field=field, value=value)
-        return value
+    def user_input(self, field, prompt, default, validator=None):
+        if not validator:
+            validator = lambda value: (True, value)
+        while True:
+            current = self.get(field=field) or default
+            value = raw_input("%s (default: %s): " % (prompt, current)) or current
+            (is_valid, value) = validator(value)
+            if is_valid:
+                self.set(field=field, value=value)
+                return value
+            else:
+                print("{value} is not a valid value for {field}".format(
+                    value=value,
+                    field=field)
+                )
+
+
+class Validators(object):
+
+    @staticmethod
+    def is_ipv4_addr(addr):
+        try:
+            addr = str(netaddr.IPAddress(addr))
+            return (True, addr)
+        except:
+            return False, addr
+
+
+    @staticmethod
+    def is_ipv4_netmask(netmask):
+        try:
+            netmask = netaddr.IPAddress(netmask)
+            str(netmask)
+            return (True , str(netmask))
+        except:
+            return (False, netmask)
+
+
+    @staticmethod
+    def is_in_network(addr, network, netmask):
+        ip = netaddr.IPAddress(addr).value
+        netmask_bits = netaddr.IPAddress(netmask).netmask_bits()
+        network = netaddr.IPNetwork(
+            "{network}/{netmask_bits}".format(
+                network=network,
+                netmask_bits=netmask_bits)
+        )
+        if ip >= network.first and ip <= network.last:
+            return True
+        else:
+            return False
 
 
 def ask_if_permanent():
@@ -276,29 +324,50 @@ def handle_1_3():
     config = Config(VINSTALL_CFG)
     config.set(field='using_dhcp_on_the_public_port', value='False')
     # static ip
-    config.user_input(
+    static_ip = config.user_input(
         field='Static_IP',
         prompt='Static IP',
-        default='172.16.6.250'
+        default='172.16.6.250',
+        validator=Validators.is_ipv4_addr
     )
     # public network
-    config.user_input(
+    network = config.user_input(
         field='public_network',
         prompt='Public network',
-        default='172.16.6.0'
+        default='172.16.6.0',
+        validator=Validators.is_ipv4_addr
     )
     # public_netmask
-    config.user_input(
+    netmask = config.user_input(
         field='public_netmask',
         prompt='Public netmask',
-        default='255.255.255.0'
+        default='255.255.255.0',
+        validator=Validators.is_ipv4_netmask
     )
     # public_gateway:
-    config.user_input(
+    gateway = config.user_input(
         field='public_gateway',
         prompt='Public gateway',
-        default='172.16.6.1'
+        default='172.16.6.1',
+        validator=Validators.is_ipv4_addr,
     )
+
+    if not Validators.is_in_network(
+        addr = static_ip,
+        network = network,
+        netmask = netmask
+    ):
+        print("Incorrect settings: IP address {ip} is not in network {net} {mask}".format(ip=static_ip, net=network, mask=netmask))
+        return press_return_to_continue('1')
+
+    if not Validators.is_in_network(
+        addr = gateway,
+        network = network,
+        netmask = netmask
+    ):
+        print("Incorrect settings: Gateway IP address {ip} is not in network {net} {mask}".format(ip=gateway, net=network, mask=netmask))
+        return press_return_to_continue('1')
+
     config.write()
 
     run_command('vinstall salt')
@@ -315,13 +384,15 @@ def handle_1_4():
     config.user_input(
         field='first_nameserver',
         prompt='First nameserver',
-        default='8.8.8.8'
+        default='8.8.8.8',
+        validator=Validators.is_ipv4_addr,
     )
     # second nameserver
     config.user_input(
         field='second_nameserver',
         prompt='Second nameserver',
-        default='8.8.4.4'
+        default='8.8.4.4',
+        validator=Validators.is_ipv4_addr
     )
     config.write()
     run_command('vinstall salt')
