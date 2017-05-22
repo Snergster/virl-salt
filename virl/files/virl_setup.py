@@ -504,14 +504,16 @@ def handle_2_4():
     print('***** UKSM kernel changes *****')
     if uksm_enabled_kernel():
         if uksm_enabled():
-            run_command('echo 1 > /sys/kernel/mm/ksm/run')
+            run_command('echo 1 > {}'.format(UKSM_KERNEL_PATH))
             if ask_if_permanent():
-                run_command('sed -i \'s|echo 0> /sys/kernel/mm/ksm/run|echo 1> /sys/kernel/mm/ksm/run|\' /etc/rc.local')
+                run_command('sed -i \'s|echo 0> {}|echo 1> {}|\' /etc/rc.local'
+                            .format(UKSM_KERNEL_PATH, UKSM_KERNEL_PATH))
 
         else:
-            run_command('echo 0 > /sys/kernel/mm/ksm/run')
+            run_command('echo 0 > {}'.format(UKSM_KERNEL_PATH))
             if ask_if_permanent():
-                run_command('sed -i \'s|echo 1> /sys/kernel/mm/ksm/run|echo 0> /sys/kernel/mm/ksm/run|\' /etc/rc.local')
+                run_command('sed -i \'s|echo 1> {}|echo 0> {}|\' /etc/rc.local')\
+                    .format(UKSM_KERNEL_PATH, UKSM_KERNEL_PATH)
     return '2'
 
 
