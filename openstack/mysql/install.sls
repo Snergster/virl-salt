@@ -105,6 +105,13 @@ verify symlink:
     - target: /usr/bin/crudini
     - mode: 0755
 
+/etc/systemd/system/mysql.service.d/override.conf:
+  file.append:
+    - makedirs: true
+    - text: |
+        [Service]
+        LimitNOFILE=5000:5000
+
 mysql:
   pkg.installed:
     - name: mysql-server
