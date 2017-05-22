@@ -164,7 +164,7 @@ def run_command(command, on_success_msg=''):
 def run_salt_state(state):
     print('')
     print('running salt state {}'.format(state))
-    cmd = 'salt-call state.sls {} --state_verbose=False --state-output=terse --local'.format(state)
+    cmd = 'salt-call --local state.sls {} --state_verbose=False --state-output=terse'.format(state)
     success_msg = ''
     run_command(cmd, success_msg)
 
@@ -265,9 +265,9 @@ def handle_1_2():
     config.write()
 
     run_command('sudo vinstall salt')
-    run_salt_state('virl.vinstall')
     run_salt_state('virl.host')
-    run_salt_state('virl.network.int')
+    run_salt_state('virl.hostname')
+    run_salt_state('virl.network.system')
 
     return press_return_to_continue('1')
 
@@ -301,10 +301,10 @@ def handle_1_3():
     )
     config.write()
 
-    run_command('sudo vinstall salt')
-    run_salt_state('virl.vinstall')
+    run_command('vinstall salt')
     run_salt_state('virl.host')
-    run_salt_state('virl.network.int')
+    run_salt_state('virl.hostname')
+    run_salt_state('virl.network.system')
 
     return press_return_to_continue('1')
 
@@ -324,9 +324,9 @@ def handle_1_4():
         default='8.8.4.4'
     )
     config.write()
-    run_command('sudo vinstall salt')
-    run_salt_state('virl.network.int')
+    run_command('vinstall salt')
     run_salt_state('virl.host')
+    run_salt_state('virl.network.system')
 
     return press_return_to_continue('1')
 
@@ -339,8 +339,7 @@ def handle_1_5():
         default='ntp.ubuntu.com'
     )
     config.write()
-    run_command('sudo vinstall salt')
-    run_salt_state('virl.vinstall')
+    run_command('vinstall salt')
     run_salt_state('virl.ntp')
     return press_return_to_continue('1')
 
