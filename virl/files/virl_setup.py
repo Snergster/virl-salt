@@ -11,7 +11,7 @@ import subprocess
 import signal
 import os
 import datetime
-import configparser
+from configobj import ConfigObj
 
 VINSTALL_CFG = '/etc/virl.ini'
 
@@ -68,55 +68,57 @@ class Config(object):
     def __init__(self, path, default_section=None):
         self._default_section = default_section if default_section else 'DEFAULT'
         self._path = path
-        self._safeparser = configparser.ConfigParser()
-        self._safeparser.optionxform = str  # Preserve keys' case
-        self._safeparser.read(path)
+        self._config_object = ConfigObj(path)
+
 
     @property
     def path(self):
         return self._path
 
+
     @property
     def default_section(self):
         return self._default_section
 
+
     @property
-    def parser(self):
-        return self._safeparser
+    def config(self):
+        return self._config_object
+
 
     def get_section(self, section=None):
         section = section if section else self.default_section
-        return dict(self.parser.items(section))
+        return self.config[section]
+
 
     def get(self, field, section=None, default=None):
         section = section if section else self.default_section
-        try:
-            return self.parser.get(section, field)
-        except configparser.NoOptionError:
-            return default
+        return self.config.get(section, {}).get(field, default)
 
-    def get_all(self):
-        result = dict()
-        for name, section in self.parser.iteritems():
-            result[name] = dict()
-            for field, value in section.iteritems():
-                result[name][field] = value
-        return result
 
     def set(self, field, value, section=None):
         section = section if section else self.default_section
-        if section != self.default_section and not self.parser.has_section(section):
-            self.parser.add_section(section)
-        self.parser.set(section, field, value)
+        if section not in self.config:
+            self.config[section] = {}
+        self.config[section][field] = value
+
+
+    def has_section(self, section):
+        return section in self.config
+
+
+    def has(self, field, section=None):
+        section = section if section else self.default_section
+        return self.has_section(section) and field in self.config[section][field]
+
 
     def delete(self, field, section=None):
         section = section if section else self.default_section
-        self.parser.remove_option(section, field)
+        del self.config[section][field]
 
-    def write(self, path=None):
-        path = path if path else self.path
-        with open(path, 'wb') as configfile:
-            self.parser.write(configfile)
+
+    def write(self):
+        self.config.write()
 
     def user_input(self, field, prompt, default):
         current = self.get(field=field) or default
