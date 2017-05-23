@@ -27,7 +27,8 @@ loop1:
 
 eth0 ifdown:
   cmd.run:
-    - name: ifdown {{virl.publicport}}
+    - name: ifdown --force {{virl.publicport}}
+    - onlyif: grep {{virl.publicport}} /run/network/ifstate
 
 eth0:
   cmd.run:
@@ -44,13 +45,6 @@ set-dns-default:
     - name: /etc/dhcp/dhclient.conf
     - source: 'salt://virl/files/dhclient.conf'
     - mode: 0644  
-
-eth0 ifdown:
-  cmd.run:
-    - name: ifdown {{virl.publicport}}
-    - onlyif: grep {{virl.publicport}} /run/network/ifstate
-    - require:
-      - cmd: eth0
 
 eth0 ifup:
   cmd.run:
