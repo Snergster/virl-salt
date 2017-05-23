@@ -334,6 +334,10 @@ def handle_1():
     current_state = '1'
     print('***** Network configuration *****')
     print('')
+    print('*** WARNING: It is recommended that primary interface  ***')
+    print('*** WARNING: configuration is performed on the console ***')
+    print('*** WARNING: and not over an SSH connection.           ***')
+    print('')
     print('1. Switch primary interface')
     print('2. Run DHCP on primary interface')
     print('3. Static IP configuration on primary interface')
