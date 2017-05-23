@@ -45,8 +45,15 @@ set-dns-default:
     - source: 'salt://virl/files/dhclient.conf'
     - mode: 0644  
 
+eth0 ifdown:
+  cmd.run:
+    - name: ifdown {{virl.publicport}}
+    - require:
+      - cmd: eth0
+
 eth0 ifup:
   cmd.run:
     - name: ifup {{virl.publicport}}
     - require:
       - cmd: eth0
+
