@@ -199,6 +199,8 @@ class Validators(object):
 
     @staticmethod
     def is_ipv4_netmask(netmask):
+        if "." not in netmask:
+            netmask = '.'.join([str((0xffffffff << (32 - int(netmask)) >> i) & 0xff) for i in [24, 16, 8, 0]])
         try:
             netmask = netaddr.IPAddress(netmask)
             str(netmask)
@@ -208,29 +210,16 @@ class Validators(object):
 
 
     @staticmethod
-    def is_in_network(addr, network, netmask):
-        ip = netaddr.IPAddress(addr).value
-        netmask_bits = netaddr.IPAddress(netmask).netmask_bits()
-        network = netaddr.IPNetwork(
-            "{network}/{netmask_bits}".format(
-                network=network,
-                netmask_bits=netmask_bits)
-        )
-        if ip >= network.first and ip <= network.last:
+    def is_in_network(addr, network):
+        if addr.value >= network.first and addr.value <= network.last:
             return True
         else:
             return False
 
 
     @staticmethod
-    def is_broadcast(addr, network, netmask):
-        netmask_bits = netaddr.IPAddress(netmask).netmask_bits()
-        network = netaddr.IPNetwork(
-            "{network}/{netmask_bits}".format(
-                network=network,
-                netmask_bits=netmask_bits)
-        )
-        if network.broadcast == netaddr.IPAddress(addr):
+    def is_broadcast(addr, network):
+        if network.broadcast == addr:
             return True
         return False
 
@@ -390,20 +379,24 @@ def handle_1_3():
         default='172.16.6.250',
         validator=Validators.is_ipv4_addr
     )
-    # public network
-    network = config.user_input(
-        field='public_network',
-        prompt='Public network',
-        default='172.16.6.0',
-        validator=Validators.is_ipv4_addr
-    )
+
     # public_netmask
     netmask = config.user_input(
         field='public_netmask',
-        prompt='Public netmask',
-        default='255.255.255.0',
+        prompt='Netmask or netmask bits',
+        default='24',
         validator=Validators.is_ipv4_netmask
     )
+
+    # public network
+    netmask_bits = netaddr.IPAddress(netmask).netmask_bits()
+    network = netaddr.IPNetwork(
+        "{network}/{netmask_bits}".format(
+            network=static_ip,
+            netmask_bits=netmask_bits)
+    )
+    config.set(field="public_network", value=str(network.network))
+
     # public_gateway:
     gateway = config.user_input(
         field='public_gateway',
@@ -413,35 +406,31 @@ def handle_1_3():
     )
 
     if not Validators.is_in_network(
-        addr=static_ip,
+        addr=netaddr.IPAddress(static_ip),
         network=network,
-        netmask=netmask
     ):
-        print("Incorrect settings: IP address {ip} is not valid for the network {net} {mask}".format(ip=static_ip, net=network, mask=netmask))
+        print("Incorrect settings: IP address {ip} is not valid for the network {net}/{bits}".format(ip=static_ip, net=str(network.network), bits=netmask_bits))
         return press_return_to_continue('1')
 
     if not Validators.is_in_network(
-        addr=gateway,
+        addr=netaddr.IPAddress(gateway),
         network=network,
-        netmask=netmask
     ):
-        print("Incorrect settings: Gateway IP address {ip} is not valid for the network {net} {mask}".format(ip=gateway, net=network, mask=netmask))
+        print("Incorrect settings: Gateway IP address {ip} is not valid for the network {net}/{bits}".format(ip=gateway, net=str(network), bits=netmask_bits))
         return press_return_to_continue('1')
 
     if Validators.is_broadcast(
-        addr=static_ip,
+        addr=netaddr.IPAddress(static_ip),
         network=network,
-        netmask=netmask,
     ):
-        print("Incorrect settings: IP address {ip} is broadcast address of the network {net} {mask}".format(ip=static_ip, net=network, mask=netmask))
+        print("Incorrect settings: IP address {ip} is broadcast address of the network {net}/{bits}".format(ip=static_ip, net=str(network), bits=netmask_bits))
         return press_return_to_continue('1')
 
     if Validators.is_broadcast(
-        addr=gateway,
+        addr=netaddr.IPAddress(gateway),
         network=network,
-        netmask=netmask,
     ):
-        print("Incorrect settings: Gateway IP address {ip} is broadcast address of the network {net} {mask}".format(ip=gateway, net=network, mask=netmask))
+        print("Incorrect settings: Gateway IP address {ip} is broadcast address of the network {net}/{bits}".format(ip=gateway, net=str(network), bits=netmask_bits))
         return press_return_to_continue('1')
 
     config.write()
