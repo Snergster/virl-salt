@@ -222,6 +222,19 @@ class Validators(object):
             return False
 
 
+    @staticmethod
+    def is_broadcast(addr, network, netmask):
+        netmask_bits = netaddr.IPAddress(netmask).netmask_bits()
+        network = netaddr.IPNetwork(
+            "{network}/{netmask_bits}".format(
+                network=network,
+                netmask_bits=netmask_bits)
+        )
+        if network.broadcast == netaddr.IPAddress(addr):
+            return True
+        return False
+
+
 def ask_if_permanent():
     print('Make this change permanent ? y/N')
     inp = str(raw_input()).lower() or 'n'
@@ -400,19 +413,35 @@ def handle_1_3():
     )
 
     if not Validators.is_in_network(
-        addr = static_ip,
-        network = network,
-        netmask = netmask
+        addr=static_ip,
+        network=network,
+        netmask=netmask
     ):
-        print("Incorrect settings: IP address {ip} is not in network {net} {mask}".format(ip=static_ip, net=network, mask=netmask))
+        print("Incorrect settings: IP address {ip} is not valid for the network {net} {mask}".format(ip=static_ip, net=network, mask=netmask))
         return press_return_to_continue('1')
 
     if not Validators.is_in_network(
-        addr = gateway,
-        network = network,
-        netmask = netmask
+        addr=gateway,
+        network=network,
+        netmask=netmask
     ):
-        print("Incorrect settings: Gateway IP address {ip} is not in network {net} {mask}".format(ip=gateway, net=network, mask=netmask))
+        print("Incorrect settings: Gateway IP address {ip} is not valid for the network {net} {mask}".format(ip=gateway, net=network, mask=netmask))
+        return press_return_to_continue('1')
+
+    if Validators.is_broadcast(
+        addr=static_ip,
+        network=network,
+        netmask=netmask,
+    ):
+        print("Incorrect settings: IP address {ip} is broadcast address of the network {net} {mask}".format(ip=static_ip, net=network, mask=netmask))
+        return press_return_to_continue('1')
+
+    if Validators.is_broadcast(
+        addr=gateway,
+        network=network,
+        netmask=netmask,
+    ):
+        print("Incorrect settings: Gateway IP address {ip} is broadcast address of the network {net} {mask}".format(ip=gateway, net=network, mask=netmask))
         return press_return_to_continue('1')
 
     config.write()
