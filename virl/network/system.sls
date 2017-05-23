@@ -48,6 +48,7 @@ set-dns-default:
 eth0 ifdown:
   cmd.run:
     - name: ifdown {{virl.publicport}}
+    - onlyif: grep {{virl.publicport}} /run/network/ifstate
     - require:
       - cmd: eth0
 
