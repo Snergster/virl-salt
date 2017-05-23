@@ -11,8 +11,11 @@ import subprocess
 import signal
 import os
 import datetime
-from configobj import ConfigObj
 import netaddr
+import configparser
+import re
+import tempfile
+import shutil
 
 VINSTALL_CFG = '/etc/virl.ini'
 
@@ -66,11 +69,50 @@ class InvalidState(Exception):
 
 class Config(object):
     """ Handler for configuration files """
-
+    # TODO: missing section support, works only for default section
     def __init__(self, path, default_section=None):
         self._default_section = default_section if default_section else 'DEFAULT'
         self._path = path
-        self._config_object = ConfigObj(path)
+        self._config = {
+            self._default_section:
+                self.read_vinstall_configuration(
+                    path=self.path,
+                    section=self.default_section,
+                ),
+        }
+
+
+    def read_vinstall_configuration(self, path, section):
+        safeparser = configparser.ConfigParser()
+        safeparser.optionxform = str  # Preserve keys' case
+        safeparser.read(path)
+        return dict(safeparser.items(section))
+
+
+    def update_vinstall_configuration(self, path, fields):
+        """Update the VIRL installer config file
+
+        :param fields: fields and their values to be set
+        :type fields: dict (str to str)
+
+        """
+        with open(path) as virl_cfg:
+            virl_cfg = virl_cfg.read()
+
+        written = set()
+        for field, value in fields.iteritems():
+            pattern = '^(?:#|\\s)*' + re.escape(field) + '\\s*:.*?$'
+            sub = (lambda match: written.add(field) or '%s: %s' % (field, value) if field not in written else '')
+            virl_cfg = re.sub(pattern, sub, virl_cfg, flags=re.M)
+
+        for field, value in fields.iteritems():
+            if field not in written:
+                virl_cfg += '\n# Appended by Setup Tool\n%s: %s\n' % (field, value)
+
+        with tempfile.NamedTemporaryFile() as temp_file:
+            temp_file.write(virl_cfg)
+            temp_file.flush()
+            shutil.copy(temp_file.name, path)
 
 
     @property
@@ -85,7 +127,7 @@ class Config(object):
 
     @property
     def config(self):
-        return self._config_object
+        return self._config
 
 
     def get_section(self, section=None):
@@ -119,8 +161,13 @@ class Config(object):
         del self.config[section][field]
 
 
-    def write(self):
-        self.config.write()
+    def write(self, section=None):
+        section = section if section else self.default_section
+        # TODO: missing support for sections
+        self.update_vinstall_configuration(
+            path=self.path,
+            fields=self.config[section],
+        )
 
     def user_input(self, field, prompt, default, validator=None):
         if not validator:
@@ -152,6 +199,8 @@ class Validators(object):
 
     @staticmethod
     def is_ipv4_netmask(netmask):
+        if "." not in netmask:
+            netmask = '.'.join([str((0xffffffff << (32 - int(netmask)) >> i) & 0xff) for i in [24, 16, 8, 0]])
         try:
             netmask = netaddr.IPAddress(netmask)
             str(netmask)
@@ -161,18 +210,18 @@ class Validators(object):
 
 
     @staticmethod
-    def is_in_network(addr, network, netmask):
-        ip = netaddr.IPAddress(addr).value
-        netmask_bits = netaddr.IPAddress(netmask).netmask_bits()
-        network = netaddr.IPNetwork(
-            "{network}/{netmask_bits}".format(
-                network=network,
-                netmask_bits=netmask_bits)
-        )
-        if ip >= network.first and ip <= network.last:
+    def is_in_network(addr, network):
+        if addr.value >= network.first and addr.value <= network.last:
             return True
         else:
             return False
+
+
+    @staticmethod
+    def is_broadcast(addr, network):
+        if network.broadcast == addr:
+            return True
+        return False
 
 
 def ask_if_permanent():
@@ -330,20 +379,24 @@ def handle_1_3():
         default='172.16.6.250',
         validator=Validators.is_ipv4_addr
     )
-    # public network
-    network = config.user_input(
-        field='public_network',
-        prompt='Public network',
-        default='172.16.6.0',
-        validator=Validators.is_ipv4_addr
-    )
+
     # public_netmask
     netmask = config.user_input(
         field='public_netmask',
-        prompt='Public netmask',
-        default='255.255.255.0',
+        prompt='Netmask or netmask bits',
+        default='24',
         validator=Validators.is_ipv4_netmask
     )
+
+    # public network
+    netmask_bits = netaddr.IPAddress(netmask).netmask_bits()
+    network = netaddr.IPNetwork(
+        "{network}/{netmask_bits}".format(
+            network=static_ip,
+            netmask_bits=netmask_bits)
+    )
+    config.set(field="public_network", value=str(network.network))
+
     # public_gateway:
     gateway = config.user_input(
         field='public_gateway',
@@ -353,19 +406,31 @@ def handle_1_3():
     )
 
     if not Validators.is_in_network(
-        addr = static_ip,
-        network = network,
-        netmask = netmask
+        addr=netaddr.IPAddress(static_ip),
+        network=network,
     ):
-        print("Incorrect settings: IP address {ip} is not in network {net} {mask}".format(ip=static_ip, net=network, mask=netmask))
+        print("Incorrect settings: IP address {ip} is not valid for the network {net}/{bits}".format(ip=static_ip, net=str(network.network), bits=netmask_bits))
         return press_return_to_continue('1')
 
     if not Validators.is_in_network(
-        addr = gateway,
-        network = network,
-        netmask = netmask
+        addr=netaddr.IPAddress(gateway),
+        network=network,
     ):
-        print("Incorrect settings: Gateway IP address {ip} is not in network {net} {mask}".format(ip=gateway, net=network, mask=netmask))
+        print("Incorrect settings: Gateway IP address {ip} is not valid for the network {net}/{bits}".format(ip=gateway, net=str(network), bits=netmask_bits))
+        return press_return_to_continue('1')
+
+    if Validators.is_broadcast(
+        addr=netaddr.IPAddress(static_ip),
+        network=network,
+    ):
+        print("Incorrect settings: IP address {ip} is broadcast address of the network {net}/{bits}".format(ip=static_ip, net=str(network), bits=netmask_bits))
+        return press_return_to_continue('1')
+
+    if Validators.is_broadcast(
+        addr=netaddr.IPAddress(gateway),
+        network=network,
+    ):
+        print("Incorrect settings: Gateway IP address {ip} is broadcast address of the network {net}/{bits}".format(ip=gateway, net=str(network), bits=netmask_bits))
         return press_return_to_continue('1')
 
     config.write()
