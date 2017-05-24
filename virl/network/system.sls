@@ -27,7 +27,8 @@ loop1:
 
 eth0 ifdown:
   cmd.run:
-    - name: ifdown {{virl.publicport}}
+    - name: ifdown --force {{virl.publicport}}
+    - onlyif: grep {{virl.publicport}} /run/network/ifstate
 
 eth0:
   cmd.run:
@@ -50,3 +51,4 @@ eth0 ifup:
     - name: ifup {{virl.publicport}}
     - require:
       - cmd: eth0
+
