@@ -41,11 +41,11 @@ update sourcelist to include xenial sources pt3:
   file.line:
     - name: /etc/apt/sources.list
     - mode: ensure
-    - content: 'deb-src http://us.archive.ubuntu.com/ubuntu xenial-security universe'
-    - after: 'deb http://us.archive.ubuntu.com/ubuntu/ xenial-security universe'
+    - content: 'deb-src http://security.ubuntu.com/ubuntu xenial-security universe'
+    - after: 'deb http://security.ubuntu.com/ubuntu xenial-security universe'
 
 
-apt update if any changes      
+apt update if any changes:
   cmd.run:
     - name: 'apt-get update -qq'
     - onchanges:
