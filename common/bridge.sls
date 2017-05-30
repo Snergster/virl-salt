@@ -23,17 +23,35 @@ update sourcelist to include sources:
 
 {% if 'xenial' in salt['grains.get']('oscodename') %}
 
-update sourcelist to include xenial sources:
-  file.append:
+update sourcelist to include xenial sources pt1:
+  file.line:
     - name: /etc/apt/sources.list
-    - text:
-      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu xenial main universe'
-      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu xenial-updates main universe'
-      - 'deb-src [arch=amd64] http://us.archive.ubuntu.com/ubuntu xenial-security main universe'
+    - mode: ensure
+    - content: 'deb-src http://us.archive.ubuntu.com/ubuntu xenial universe'
+    - after: 'deb http://us.archive.ubuntu.com/ubuntu/ xenial universe'
+
+update sourcelist to include xenial sources pt2:
+  file.line:
+    - name: /etc/apt/sources.list
+    - mode: ensure
+    - content: 'deb-src http://us.archive.ubuntu.com/ubuntu xenial-updates universe'
+    - after: 'deb http://us.archive.ubuntu.com/ubuntu/ xenial-updates universe'
+
+update sourcelist to include xenial sources pt3:
+  file.line:
+    - name: /etc/apt/sources.list
+    - mode: ensure
+    - content: 'deb-src http://us.archive.ubuntu.com/ubuntu xenial-security universe'
+    - after: 'deb http://us.archive.ubuntu.com/ubuntu/ xenial-security universe'
+
+
+apt update if any changes      
   cmd.run:
     - name: 'apt-get update -qq'
     - onchanges:
-      - file: update sourcelist to include xenial sources
+      - file: update sourcelist to include xenial sources pt1
+      - file: update sourcelist to include xenial sources pt2
+      - file: update sourcelist to include xenial sources pt3
 
 {% endif %}
 
